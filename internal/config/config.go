@@ -15,6 +15,7 @@ type AppConfig struct {
 	Log      LogConfig  `yaml:"log"`
 	HTTP     HTTPConfig `yaml:"http"`
 	Fetching Fetching   `yaml:"fetching"`
+	StoreURL string     `yaml:"store-url"`
 }
 
 type LogConfig struct {
