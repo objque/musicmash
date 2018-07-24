@@ -12,7 +12,7 @@ func main() {
 		DB: config.DBConfig{
 			DBType:  "mysql",
 			DBHost:  "mariadb",
-			DBLogin: "root",
+			DBLogin: "musicmash",
 			DBPass:  "musicmash",
 			DBName:  "musicmash",
 			Log:     false,
