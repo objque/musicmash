@@ -7,7 +7,7 @@ type Release struct {
 	Kind                   string    `json:"kind"`
 	ArtistID               int       `json:"artistId"`
 	CollectionID           int       `json:"collectionId"`
-	TrackID                int       `json:"trackId"`
+	TrackID                uint64    `json:"trackId"`
 	ArtistName             string    `json:"artistName"`
 	CollectionName         string    `json:"collectionName"`
 	TrackName              string    `json:"trackName"`

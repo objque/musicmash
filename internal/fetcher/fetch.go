@@ -32,7 +32,7 @@ func fetch() error {
 			log.Infof("Found a new release from '%s': '%s'", lastRelease.ArtistName, lastRelease.CollectionName)
 			db.DbMgr.EnsureReleaseExists(&db.Release{
 				ArtistName: artist.Name,
-				Title:      lastRelease.CollectionName,
+				StoreID:    lastRelease.TrackID,
 			})
 			// NOTE (m.kalinin): continue because album may be full ep or single and we
 			// do not need to search single track release
@@ -48,7 +48,7 @@ func fetch() error {
 			log.Infof("Found a new release from '%s': '%s'", lastRelease.ArtistName, lastRelease.CollectionName)
 			db.DbMgr.EnsureReleaseExists(&db.Release{
 				ArtistName: artist.Name,
-				Title:      lastRelease.CollectionName,
+				StoreID:    lastRelease.TrackID,
 			})
 		}
 	}

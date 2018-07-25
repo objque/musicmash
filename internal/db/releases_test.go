@@ -13,15 +13,15 @@ func TestDB_Releases_EnsureExists(t *testing.T) {
 	// action
 	err := DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "skrillex",
-		Title:      "scarry monsters",
+		StoreID:    1265867295,
 	})
 
 	// assert
 	assert.NoError(t, err)
-	release, err := DbMgr.FindRelease("skrillex", "scarry monsters")
+	release, err := DbMgr.FindRelease("skrillex", 1265867295)
 	assert.NoError(t, err)
 	assert.Equal(t, "skrillex", release.ArtistName)
-	assert.Equal(t, "scarry monsters", release.Title)
+	assert.Equal(t, uint64(1265867295), release.StoreID)
 }
 
 func TestDB_Releases_List(t *testing.T) {
@@ -31,11 +31,11 @@ func TestDB_Releases_List(t *testing.T) {
 	// arrange
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "skrillex",
-		Title:      "scarry monsters",
+		StoreID:    uint64(1265867295),
 	}))
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "S.P.Y",
-		Title:      "We Are 21",
+		StoreID:    uint64(63569098),
 	}))
 
 	// action
