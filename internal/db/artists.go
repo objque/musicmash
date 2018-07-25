@@ -5,9 +5,8 @@ import (
 )
 
 type Artist struct {
-	ID         int64 `gorm:"primary_key" sql:"AUTO_INCREMENT" json:"-"`
 	CreatedAt  time.Time
-	Name       string
+	Name       string `gorm:"primary_key"`
 	SearchName string
 }
 

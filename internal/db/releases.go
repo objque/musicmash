@@ -5,7 +5,7 @@ import (
 )
 
 type Release struct {
-	ID         int64 `gorm:"primary_key" sql:"AUTO_INCREMENT" json:"-"`
+	ID         int64 `gorm:"primary_key" sql:"AUTO_INCREMENT"`
 	CreatedAt  time.Time
 	ArtistName string
 	StoreID    uint64
