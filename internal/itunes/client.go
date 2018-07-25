@@ -54,6 +54,5 @@ func GetLatestTrackRelease(artist string) (*Release, error) {
 }
 
 func GetLatestAlbumRelease(artist string) (*Release, error) {
-
 	return get(artist, album)
 }
