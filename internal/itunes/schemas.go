@@ -43,3 +43,9 @@ type SearchResult struct {
 	Releases      []*Release `json:"results"`
 	ReleasesCount int        `json:"resultCount"`
 }
+
+func (r *Release) IsLatest() bool {
+	now := time.Now().UTC().Truncate(time.Hour * 24)
+	yesterday := now.Add(-time.Hour * 48)
+	return r.ReleaseDate.UTC().After(yesterday)
+}

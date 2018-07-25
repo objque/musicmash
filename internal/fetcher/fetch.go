@@ -20,15 +20,12 @@ func fetch() error {
 
 	// load releases from the store
 	for _, artist := range artists {
-		now := time.Now().UTC().Truncate(time.Hour * 24)
-		yesterday := now.Add(-time.Hour * 48)
-
 		lastRelease, err := itunes.GetLatestAlbumRelease(artist.SearchName)
 		if err != nil {
 			log.Error(errors.Wrapf(err, "can't load artist/album '%s' from the iTunes", artist.SearchName))
 			continue
 		}
-		if lastRelease.ReleaseDate.UTC().After(yesterday) {
+		if lastRelease.IsLatest() {
 			log.Infof("Found a new release from '%s': '%s'", lastRelease.ArtistName, lastRelease.CollectionName)
 			db.DbMgr.EnsureReleaseExists(&db.Release{
 				ArtistName: artist.Name,
@@ -44,7 +41,7 @@ func fetch() error {
 			log.Error(errors.Wrapf(err, "can't load artist/track '%s' from the iTunes", artist.SearchName))
 			continue
 		}
-		if lastRelease.ReleaseDate.UTC().After(yesterday) {
+		if lastRelease.IsLatest() {
 			log.Infof("Found a new release from '%s': '%s'", lastRelease.ArtistName, lastRelease.CollectionName)
 			db.DbMgr.EnsureReleaseExists(&db.Release{
 				ArtistName: artist.Name,
