@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
+	"github.com/objque/musicmash/internal/fetcher"
 	"github.com/objque/musicmash/internal/log"
 )
 
@@ -32,5 +33,6 @@ func main() {
 	log.ConfigureStdLogger(config.Config.Log.Level)
 	db.DbMgr = db.NewMainDatabaseMgr()
 
-	log.Info("Hello, from musicmash")
+	log.Info("Running fetching...")
+	fetcher.Run()
 }
