@@ -49,3 +49,18 @@ func (r *Release) IsLatest() bool {
 	yesterday := now.Add(-time.Hour * 48)
 	return r.ReleaseDate.UTC().After(yesterday)
 }
+
+type LastRelease struct {
+	URL  string
+	Date time.Time
+}
+
+func NewInfo(id, released string) *LastRelease {
+	return &LastRelease{}
+}
+
+func (r *LastRelease) IsLatest() bool {
+	now := time.Now().UTC().Truncate(time.Hour * 24)
+	yesterday := now.Add(-time.Hour * 48)
+	return r.Date.UTC().After(yesterday)
+}

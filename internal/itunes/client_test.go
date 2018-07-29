@@ -80,3 +80,19 @@ func TestClient_Resolve(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, "S.P.Y", release.ArtistName)
 }
+
+func TestClient_GetInfo(t *testing.T) {
+	// arrange
+	setup()
+	defer teardown()
+
+	// action
+	release, err := GetArtistInfo("https://itunes.apple.com/us/artist/da-tweekaz/289942206?ign-mpt=uo%3D4")
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, "https://itunes.apple.com/us/album/j%C3%A4germeister-single/1412554258", release.URL)
+	assert.Equal(t, 18, release.Date.Day())
+	assert.Equal(t, "July", release.Date.Month().String())
+	assert.Equal(t, 2018, release.Date.Year())
+}
