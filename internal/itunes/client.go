@@ -17,7 +17,7 @@ const (
 func decode(buffer []byte) (*LastRelease, error) {
 	parts := strings.Split(string(buffer), releasedTag)
 	if len(parts) != 2 {
-		return nil, errors.New("can't decode: after split by a time-html tag we have not 2 parts")
+		return nil, errors.New("after split by a time-html tag we have not 2 parts")
 	}
 
 	// Jul 18, 2018" aria-label="July 18 ...
