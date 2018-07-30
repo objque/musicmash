@@ -1,6 +1,7 @@
 package main
 
 import (
+	"flag"
 	"os"
 
 	"github.com/objque/musicmash/internal/config"
@@ -11,36 +12,31 @@ import (
 	"github.com/objque/musicmash/internal/notify/services"
 )
 
-func main() {
-	// TODO (m.kalinin): replace it with a consul or external cfg
-	config.Config = &config.AppConfig{
-		DB: config.DBConfig{
-			DBType:  "mysql",
-			DBHost:  "mariadb",
-			DBLogin: "musicmash",
-			DBPass:  "musicmash",
-			DBName:  "musicmash",
-			Log:     false,
-		},
-		Log: config.LogConfig{
-			File:          "musicmash.log",
-			Level:         "DEBUG",
-			SyslogEnabled: false,
-		},
-		Fetching: config.Fetching{
-			CountOfSkippedHoursToFetch: 8,
-		},
-		Store: config.Store{
-			URL:    "https://itunes.apple.com",
-			Region: "us",
-		},
+func init() {
+	log.SetLogFormatter(&log.DefaultFormatter)
+	configPath := flag.String("config", "/etc/musicmash/musicmash.yaml", "Path to musicmash.yaml config")
+	logLevel := flag.String("log-level", "info", "log level {debug,info,warning,error}")
+	flag.Parse()
+
+	if err := config.InitConfig(*configPath); err != nil {
+		panic(err)
 	}
 
-	log.SetLogFormatter(&log.DefaultFormatter)
-	log.ConfigureStdLogger(config.Config.Log.Level)
+	if *logLevel != "info" || config.Config.Log.Level == "" {
+		// Priority to command-line
+		log.ConfigureStdLogger(*logLevel)
+	} else {
+		// Priority to config
+		if config.Config.Log.Level != "" {
+			log.ConfigureStdLogger(config.Config.Log.Level)
+		}
+	}
+
 	db.DbMgr = db.NewMainDatabaseMgr()
 	notify.Service = services.New(os.Getenv("TG_TOKEN"))
+}
 
+func main() {
 	log.Info("Running fetching...")
 	fetcher.Run()
 }
