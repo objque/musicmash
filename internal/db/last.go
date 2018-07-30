@@ -5,7 +5,7 @@ import (
 )
 
 type LastFetch struct {
-	ID   int32 `gorm:"primary_key"`
+	ID   int32 `gorm:"primary_key" sql:"AUTO_INCREMENT"`
 	Date time.Time
 }
 
