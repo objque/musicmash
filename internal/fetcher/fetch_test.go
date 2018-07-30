@@ -61,6 +61,10 @@ func TestFetcher_Fetch(t *testing.T) {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
+	assert.Equal(t, uint64(158365636), releases[0].StoreID)
+	assert.Equal(t, 18, releases[0].Date.Day())
+	assert.Equal(t, "July", releases[0].Date.Month().String())
+	assert.Equal(t, 2025, releases[0].Date.Year())
 }
 
 func TestFetcher_Internal_IsMustFetch_FirstRun(t *testing.T) {
