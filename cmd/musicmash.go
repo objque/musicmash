@@ -20,7 +20,7 @@ func main() {
 		},
 		Log: config.LogConfig{
 			File:          "musicmash.log",
-			Level:         "INFO",
+			Level:         "DEBUG",
 			SyslogEnabled: false,
 		},
 		Fetching: config.Fetching{
