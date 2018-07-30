@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/objque/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 
@@ -35,6 +36,7 @@ func decode(buffer []byte) (*LastRelease, error) {
 }
 
 func GetArtistInfo(url string) (*LastRelease, error) {
+	log.Debugf("Requesting '%s'...", url)
 	resp, err := http.Get(url)
 	if err != nil {
 		return nil, errors.Wrapf(err, "can't receive page '%s'", url)
@@ -50,5 +52,6 @@ func GetArtistInfo(url string) (*LastRelease, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "can't decode '%s'", url)
 	}
+	log.Debugf("Last release on '%s'", info.Date)
 	return info, nil
 }
