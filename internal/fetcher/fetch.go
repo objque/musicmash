@@ -28,7 +28,7 @@ func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 	})
 	notify.Service.Send(map[string]interface{}{
 		"chatID": int64(35152258),
-		"message": fmt.Sprintf("new release from %s %s/%s/%d",
+		"message": fmt.Sprintf("new release from %s %s/%s/artist/%d",
 			artist, config.Config.Store.URL, config.Config.Store.Region, release.ID),
 	})
 	return true
