@@ -1,6 +1,7 @@
 package fetcher
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
@@ -8,6 +9,7 @@ import (
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/itunes"
 	"github.com/objque/musicmash/internal/log"
+	"github.com/objque/musicmash/internal/notify"
 	"github.com/pkg/errors"
 )
 
@@ -23,6 +25,11 @@ func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 		ArtistName: artist,
 		Date:       release.Date,
 		StoreID:    release.ID,
+	})
+	notify.Service.Send(map[string]interface{}{
+		"chatID": 35152258,
+		"message": fmt.Sprintf("new release from '%s' '%s/%s/%d': ",
+			artist, config.Config.Store.URL, config.Config.Store.Region, release.ID),
 	})
 	return true
 }

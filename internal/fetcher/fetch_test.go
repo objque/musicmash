@@ -1,6 +1,7 @@
 package fetcher
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -8,6 +9,7 @@ import (
 
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
+	"github.com/objque/musicmash/internal/notify"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,10 +18,18 @@ var (
 	mux    *http.ServeMux
 )
 
+type MockNotifierService struct{}
+
+func (s *MockNotifierService) Send(args map[string]interface{}) error {
+	fmt.Printf("args from notify service: '%v'\n", args)
+	return nil
+}
+
 func setup() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
 	db.DbMgr = db.NewFakeDatabaseMgr()
+	notify.Service = &MockNotifierService{}
 	config.Config = &config.AppConfig{
 		Store: config.Store{
 			URL:    server.URL,

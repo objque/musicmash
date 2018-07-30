@@ -1,10 +1,14 @@
 package main
 
 import (
+	"os"
+
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher"
 	"github.com/objque/musicmash/internal/log"
+	"github.com/objque/musicmash/internal/notify"
+	"github.com/objque/musicmash/internal/notify/services"
 )
 
 func main() {
@@ -35,6 +39,7 @@ func main() {
 	log.SetLogFormatter(&log.DefaultFormatter)
 	log.ConfigureStdLogger(config.Config.Log.Level)
 	db.DbMgr = db.NewMainDatabaseMgr()
+	notify.Service = services.New(os.Getenv("TG_TOKEN"))
 
 	log.Info("Running fetching...")
 	fetcher.Run()

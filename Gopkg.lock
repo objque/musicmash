@@ -69,6 +69,12 @@
   version = "v1.2.2"
 
 [[projects]]
+  name = "github.com/technoweenie/multipartstreamer"
+  packages = ["."]
+  revision = "a90a01d73ae432e2611d178c18367fbaa13e0154"
+  version = "v1.0.1"
+
+[[projects]]
   branch = "master"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
@@ -90,6 +96,12 @@
   version = "v1.1.0"
 
 [[projects]]
+  name = "gopkg.in/telegram-bot-api.v4"
+  packages = ["."]
+  revision = "0e0af0c480ea98e982d5f4d45fb39577c6ab1e3e"
+  version = "v4.6.2"
+
+[[projects]]
   name = "gopkg.in/yaml.v2"
   packages = ["."]
   revision = "5420a8b6744d3b0345ab293f6fcba19c978f1183"
@@ -98,6 +110,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "58e0228fb11ee259623ae1f4601bec9d433d0f73cea023e91f3edaa03d697105"
+  inputs-digest = "76c422953fbbd48e0bec8279494eff1a23feb2e1874f837ffe9a03221dc47f6c"
   solver-name = "gps-cdcl"
   solver-version = 1
