@@ -1,7 +1,6 @@
 package fetcher
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -37,10 +36,10 @@ func TestFetcher_Fetch(t *testing.T) {
 
 	// arrange
 	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{
-		Name:       "S.P.Y",
-		URL:  fmt.Sprintf("%s/artist/s-p-y", server.URL),
+		Name:    "S.P.Y",
+		StoreID: 182821355,
 	}))
-	mux.HandleFunc("/artist/s-p-y", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`
 			<section class="l-content-width section section--bordered">
         	<div class="l-row">

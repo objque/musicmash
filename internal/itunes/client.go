@@ -1,10 +1,12 @@
 package itunes
 
 import (
+	"fmt"
 	"io/ioutil"
 	"net/http"
 	"strings"
 
+	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
@@ -35,7 +37,8 @@ func decode(buffer []byte) (*LastRelease, error) {
 	}, nil
 }
 
-func GetArtistInfo(url string) (*LastRelease, error) {
+func GetArtistInfo(id uint64) (*LastRelease, error) {
+	url := fmt.Sprintf("%s/us/artist/%d", config.Config.StoreURL, id)
 	log.Debugf("Requesting '%s'...", url)
 	resp, err := http.Get(url)
 	if err != nil {

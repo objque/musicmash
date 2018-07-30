@@ -7,7 +7,7 @@ import (
 type Artist struct {
 	CreatedAt time.Time
 	Name      string `gorm:"primary_key"`
-	URL       string
+	StoreID   uint64
 }
 
 type ArtistMgr interface {

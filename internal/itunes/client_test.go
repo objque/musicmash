@@ -1,7 +1,6 @@
 package itunes
 
 import (
-	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -33,7 +32,7 @@ func TestClient_GetInfo(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/artist/da-tweekaz", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`
 			<section class="l-content-width section section--bordered">
         	<div class="l-row">
@@ -49,7 +48,7 @@ func TestClient_GetInfo(t *testing.T) {
 	})
 
 	// action
-	release, err := GetArtistInfo(fmt.Sprintf("%s/artist/da-tweekaz", server.URL))
+	release, err := GetArtistInfo(182821355)
 
 	// assert
 	assert.NoError(t, err)

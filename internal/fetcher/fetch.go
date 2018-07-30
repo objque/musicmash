@@ -35,7 +35,7 @@ func fetch() error {
 
 	// load releases from the store
 	for _, artist := range artists {
-		releaseInfo, err := itunes.GetArtistInfo(artist.URL)
+		releaseInfo, err := itunes.GetArtistInfo(artist.StoreID)
 		if err != nil {
 			log.Error(err)
 			continue
