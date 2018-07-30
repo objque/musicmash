@@ -18,7 +18,10 @@ func setup() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
 	config.Config = &config.AppConfig{
-		StoreURL: server.URL,
+		Store: config.Store{
+			URL:    server.URL,
+			Region: "us",
+		},
 	}
 }
 

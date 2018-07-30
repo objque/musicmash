@@ -15,7 +15,7 @@ type AppConfig struct {
 	Log      LogConfig  `yaml:"log"`
 	HTTP     HTTPConfig `yaml:"http"`
 	Fetching Fetching   `yaml:"fetching"`
-	StoreURL string     `yaml:"store-url"`
+	Store    Store      `yaml:"store"`
 }
 
 type LogConfig struct {
@@ -40,6 +40,11 @@ type HTTPConfig struct {
 
 type Fetching struct {
 	CountOfSkippedHoursToFetch float64
+}
+
+type Store struct {
+	URL    string `yaml:"url"`
+	Region string `yaml:"region"`
 }
 
 func InitConfig(filepath string) error {

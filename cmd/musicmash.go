@@ -26,7 +26,10 @@ func main() {
 		Fetching: config.Fetching{
 			CountOfSkippedHoursToFetch: 8,
 		},
-		StoreURL: "https://itunes.apple.com",
+		Store: config.Store{
+			URL:    "https://itunes.apple.com",
+			Region: "us",
+		},
 	}
 
 	log.SetLogFormatter(&log.DefaultFormatter)

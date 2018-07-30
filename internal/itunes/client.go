@@ -51,7 +51,7 @@ func decode(buffer []byte) (*LastRelease, error) {
 }
 
 func GetArtistInfo(id uint64) (*LastRelease, error) {
-	url := fmt.Sprintf("%s/us/artist/%d", config.Config.StoreURL, id)
+	url := fmt.Sprintf("%s/%s/artist/%d", config.Config.Store.URL, config.Config.Store.Region, id)
 	log.Debugf("Requesting '%s'...", url)
 	resp, err := http.Get(url)
 	if err != nil {

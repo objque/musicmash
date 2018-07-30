@@ -21,7 +21,10 @@ func setup() {
 	server = httptest.NewServer(mux)
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
-		StoreURL: server.URL,
+		Store: config.Store{
+			URL:    server.URL,
+			Region: "us",
+		},
 	}
 }
 
