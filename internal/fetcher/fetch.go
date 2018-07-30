@@ -42,10 +42,6 @@ func fetch() error {
 		}
 
 		saveIfNewestRelease(artist.Name, releaseInfo)
-
-		// NOTE (m.kalinin): iTunes has rate-limit 20 requests per minute.
-		// Until we won't use proxies, we should sleep.
-		time.Sleep(time.Second * 3)
 	}
 	return nil
 }
