@@ -12,12 +12,12 @@ import (
 )
 
 const (
-	releasedTag = `<time data-test-we-datetime datetime="`
-	IDTag       = `class="featured-album targeted-link"`
+	htmlTagTime      = `<time data-test-we-datetime datetime="`
+	htmlTagReleaseID = `class="featured-album targeted-link"`
 )
 
 func decode(buffer []byte) (*LastRelease, error) {
-	parts := strings.Split(string(buffer), releasedTag)
+	parts := strings.Split(string(buffer), htmlTagTime)
 	if len(parts) != 2 {
 		return nil, errors.New("after split by a time-html tag we have not 2 parts")
 	}
@@ -29,7 +29,7 @@ func decode(buffer []byte) (*LastRelease, error) {
 		return nil, errors.Wrapf(err, "can't parse time '%s'", released)
 	}
 
-	xxx := strings.Split(parts[0], IDTag)[0]
+	xxx := strings.Split(parts[0], htmlTagReleaseID)[0]
 	urls := strings.Split(xxx, `<a href="`)
 	return &LastRelease{
 		Date: *t,
