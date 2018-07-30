@@ -5,9 +5,9 @@ import (
 )
 
 type Artist struct {
-	CreatedAt  time.Time
-	Name       string `gorm:"primary_key"`
-	SearchName string
+	CreatedAt time.Time
+	Name      string `gorm:"primary_key"`
+	URL       string
 }
 
 type ArtistMgr interface {

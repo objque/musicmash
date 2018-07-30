@@ -1,6 +1,7 @@
 package fetcher
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
@@ -37,19 +38,21 @@ func TestFetcher_Fetch(t *testing.T) {
 	// arrange
 	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{
 		Name:       "S.P.Y",
-		SearchName: "S.P.Y",
+		URL:  fmt.Sprintf("%s/artist/s-p-y", server.URL),
 	}))
-	mux.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
-          "resultCount": 1,
-          "results": [
-            {
-              "artistName": "S.P.Y",
-              "collectionName": "Hospitality: Summer Drum & Bass 2013",
-              "releaseDate": "2025-06-03T07:00:00Z"
-            }
-          ]
-        }`))
+	mux.HandleFunc("/artist/s-p-y", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`
+			<section class="l-content-width section section--bordered">
+        	<div class="l-row">
+          	<div class="l-column small-valign-top small-12 medium-6 large-4">
+            	<div class="section__nav">
+              	<h2 class="section__headline">Latest Release</h2>
+            	</div>
+        	<a href="https://itunes.apple.com/us/artist/s-p-y/158365636?uo=4" class="featured-album targeted-link"
+        	<span class="featured-album__text__eyebrow targeted-link__target">
+				<time data-test-we-datetime datetime="Jul 18, 2025" aria-label="July 18, 2025" class="" >Jul 18, 2025</time>
+			</span>
+		`))
 	})
 
 	// action

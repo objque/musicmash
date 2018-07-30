@@ -11,17 +11,17 @@ import (
 	"github.com/pkg/errors"
 )
 
-func saveIfNewestRelease(artist string, release *itunes.Release) bool {
+func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 	if !release.IsLatest() {
 		return false
 	}
 
-	log.Infof("Found a new release from '%s' ('%s'): '%s'", release.ArtistName, artist, release.CollectionName)
+	log.Infof("Found a new release from '%s' ('%s'): '%s'", artist, artist, release.URL)
 	db.DbMgr.EnsureReleaseExists(&db.Release{
 		// NOTE (m.kalinin): we provide artist because if artist releases feat with someone, then
 		// release will contain incorrect name.
 		ArtistName: artist,
-		StoreID:    release.TrackID,
+		StoreURL:   release.URL,
 	})
 	return true
 }
@@ -35,23 +35,13 @@ func fetch() error {
 
 	// load releases from the store
 	for _, artist := range artists {
-		lastRelease, err := itunes.GetLatestAlbumRelease(artist.SearchName)
+		releaseInfo, err := itunes.GetArtistInfo(artist.URL)
 		if err != nil {
-			log.Error(errors.Wrapf(err, "can't load artist/album '%s' from the iTunes", artist.SearchName))
-			continue
-		}
-		if saveIfNewestRelease(artist.Name, lastRelease) {
-			// NOTE (m.kalinin): continue because album may be full ep or single and we
-			// do not need to search single track release
+			log.Error(err)
 			continue
 		}
 
-		lastRelease, err = itunes.GetLatestTrackRelease(artist.SearchName)
-		if err != nil {
-			log.Error(errors.Wrapf(err, "can't load artist/track '%s' from the iTunes", artist.SearchName))
-			continue
-		}
-		saveIfNewestRelease(artist.Name, lastRelease)
+		saveIfNewestRelease(artist.Name, releaseInfo)
 
 		// NOTE (m.kalinin): iTunes has rate-limit 20 requests per minute.
 		// Until we won't use proxies, we should sleep.
