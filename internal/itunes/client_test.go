@@ -40,7 +40,7 @@ func TestClient_GetInfo(t *testing.T) {
             	<div class="section__nav">
               	<h2 class="section__headline">Latest Release</h2>
             	</div>
-        	<a href="https://itunes.apple.com/us/album/j%C3%A4germeister-single/1412554258" class="featured-album targeted-link"
+        	<a href="https://itunes.apple.com/us/album/j%C3%A4germeister-single/1412554258/" class="featured-album targeted-link"
         	<span class="featured-album__text__eyebrow targeted-link__target">
 				<time data-test-we-datetime datetime="Jul 18, 2025" aria-label="July 18, 2025" class="" >Jul 18, 2025</time>
 			</span>
@@ -52,7 +52,7 @@ func TestClient_GetInfo(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, "https://itunes.apple.com/us/album/j%C3%A4germeister-single/1412554258", release.URL)
+	assert.Equal(t, uint64(1412554258), release.ID)
 	assert.Equal(t, 18, release.Date.Day())
 	assert.Equal(t, "July", release.Date.Month().String())
 	assert.Equal(t, 2025, release.Date.Year())

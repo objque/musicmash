@@ -21,7 +21,8 @@ func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 		// NOTE (m.kalinin): we provide artist because if artist releases feat with someone, then
 		// release will contain incorrect name.
 		ArtistName: artist,
-		StoreURL:   release.URL,
+		Date:       release.Date,
+		StoreID:    release.ID,
 	})
 	return true
 }

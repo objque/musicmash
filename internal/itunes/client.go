@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"regexp"
+	"strconv"
 	"strings"
 
 	"github.com/objque/musicmash/internal/config"
@@ -15,6 +17,8 @@ const (
 	htmlTagTime      = `<time data-test-we-datetime datetime="`
 	htmlTagReleaseID = `class="featured-album targeted-link"`
 )
+
+var exp = regexp.MustCompile(`.*\/(\d+)`)
 
 func decode(buffer []byte) (*LastRelease, error) {
 	parts := strings.Split(string(buffer), htmlTagTime)
@@ -29,11 +33,20 @@ func decode(buffer []byte) (*LastRelease, error) {
 		return nil, errors.Wrapf(err, "can't parse time '%s'", released)
 	}
 
-	xxx := strings.Split(parts[0], htmlTagReleaseID)[0]
-	urls := strings.Split(xxx, `<a href="`)
+	parts = strings.Split(strings.Split(parts[0], htmlTagReleaseID)[0], `<a href="`)
+	releaseURL := parts[len(parts)-1]
+	releaseID := exp.FindStringSubmatch(releaseURL)
+	if len(releaseID) != 2 {
+		return nil, fmt.Errorf("found too many substrings by regex in '%s'", releaseURL)
+	}
+
+	id, err := strconv.ParseUint(releaseID[1], 10, 64)
+	if err != nil {
+		return nil, errors.Wrapf(err, "can't parse uint from '%s', fullURL: '%s'", releaseID[1], releaseURL)
+	}
 	return &LastRelease{
+		ID:   id,
 		Date: *t,
-		URL:  strings.Replace(urls[len(urls)-1], `" `, "", 1),
 	}, nil
 }
 

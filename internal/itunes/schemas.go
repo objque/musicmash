@@ -3,7 +3,7 @@ package itunes
 import "time"
 
 type LastRelease struct {
-	URL  string
+	ID   uint64
 	Date time.Time
 }
 
