@@ -60,3 +60,49 @@ func TestClient_GetInfo(t *testing.T) {
 	assert.Equal(t, "July", release.Date.Month().String())
 	assert.Equal(t, 2025, release.Date.Year())
 }
+func TestClient_Lookup(t *testing.T) {
+	// arrange
+	setup()
+	defer teardown()
+
+	// arrange
+	mux.HandleFunc("/lookup", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`{
+          "resultCount": 1,
+          "results": [
+            {
+              "wrapperType": "collection",
+              "collectionType": "Album",
+              "artistId": 646638705,
+              "collectionId": 1416749924,
+              "amgArtistId": 3118927,
+              "artistName": "Party Favor & Baauer",
+              "collectionName": "MDR (Remixes) - Single",
+              "collectionCensoredName": "MDR (Remixes) - Single",
+              "artistViewUrl": "https://itunes.apple.com/us/artist/party-favor/646638705?uo=4",
+              "collectionViewUrl": "https://itunes.apple.com/us/album/mdr-remixes-single/1416749924?uo=4",
+              "artworkUrl60": "https://is5-ssl.mzstatic.com/image/thumb/Music128/v4/3b/f6/79/3bf6790f-4d61-202b-9f5e-62dd0467c76c/source/60x60bb.jpg",
+              "artworkUrl100": "https://is5-ssl.mzstatic.com/image/thumb/Music128/v4/3b/f6/79/3bf6790f-4d61-202b-9f5e-62dd0467c76c/source/100x100bb.jpg",
+              "collectionPrice": 2.58,
+              "collectionExplicitness": "notExplicit",
+              "trackCount": 2,
+              "copyright": "℗ 2018 Area 25",
+              "country": "USA",
+              "currency": "USD",
+              "releaseDate": "2018-07-31T07:00:00Z",
+              "primaryGenreName": "Dance"
+            }
+          ]
+        }`))
+	})
+
+	// action
+	release, err := Lookup(1416749924)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, 1416749924, release.CollectionID)
+	assert.Equal(t, 31, release.Released.Day())
+	assert.Equal(t, "July", release.Released.Month().String())
+	assert.Equal(t, 2018, release.Released.Year())
+}

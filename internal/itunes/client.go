@@ -1,6 +1,7 @@
 package itunes
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
@@ -70,4 +71,27 @@ func GetArtistInfo(id uint64) (*LastRelease, error) {
 	}
 	log.Debugf("Last release on '%s'", info.Date)
 	return info, nil
+}
+
+func Lookup(id uint64) (*Release, error) {
+	resp, err := http.Get(fmt.Sprintf("%s/lookup?id=%d", config.Config.Store.URL, id))
+	if err != nil {
+		return nil, err
+	}
+
+	searchResponse := SearchReleaseResponse{}
+	if err := json.NewDecoder(resp.Body).Decode(&searchResponse); err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if searchResponse.Count == 0 {
+		return nil, fmt.Errorf("release with given id '%d' not found", id)
+	}
+
+	if searchResponse.Count > 1 {
+		return nil, fmt.Errorf("found more than one release with given id '%d'", id)
+	}
+
+	return searchResponse.Results[0], nil
 }
