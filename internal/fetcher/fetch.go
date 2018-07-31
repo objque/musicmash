@@ -18,10 +18,12 @@ func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 		return false
 	}
 
+	if db.DbMgr.IsReleaseExists(release.ID) {
+		return false
+	}
+
 	log.Infof("Found a new release from '%s': '%d'", artist, release.ID)
-	db.DbMgr.EnsureReleaseExists(&db.Release{
-		// NOTE (m.kalinin): we provide artist because if artist releases feat with someone, then
-		// release will contain incorrect name.
+	db.DbMgr.CreateRelease(&db.Release{
 		ArtistName: artist,
 		Date:       release.Date,
 		StoreID:    release.ID,

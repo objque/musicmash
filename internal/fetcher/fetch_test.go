@@ -80,6 +80,76 @@ func TestFetcher_Fetch(t *testing.T) {
 	assert.Equal(t, 2025, releases[0].Date.Year())
 }
 
+func TestFetcher_Fetch_NoNewReleases(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{
+		Name:    "S.P.Y",
+		StoreID: 182821355,
+	}))
+	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`
+			<section class="l-content-width section section--bordered">
+        	<div class="l-row">
+          	<div class="l-column small-valign-top small-12 medium-6 large-4">
+            	<div class="section__nav">
+              	<h2 class="section__headline">Latest Release</h2>
+            	</div>
+        	<a href="https://itunes.apple.com/us/artist/s-p-y/158365636?uo=4" class="featured-album targeted-link"
+        	<span class="featured-album__text__eyebrow targeted-link__target">
+				<time data-test-we-datetime datetime="Jul 18, 2017" aria-label="July 18, 2017" class="" >Jul 18, 2025</time>
+			</span>
+		`))
+	})
+
+	// action
+	fetch()
+
+	// assert
+	releases, err := db.DbMgr.GetAllReleases()
+	assert.NoError(t, err)
+	assert.Len(t, releases, 0)
+}
+
+func TestFetcher_Fetch_ReleaseAlreadyExists(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{
+		Name:    "S.P.Y",
+		StoreID: 182821355,
+	}))
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
+		ArtistName: "S.P.Y",
+		StoreID:    158365636,
+	}))
+	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`
+			<section class="l-content-width section section--bordered">
+        	<div class="l-row">
+          	<div class="l-column small-valign-top small-12 medium-6 large-4">
+            	<div class="section__nav">
+              	<h2 class="section__headline">Latest Release</h2>
+            	</div>
+        	<a href="https://itunes.apple.com/us/artist/s-p-y/158365636?uo=4" class="featured-album targeted-link"
+        	<span class="featured-album__text__eyebrow targeted-link__target">
+				<time data-test-we-datetime datetime="Jul 18, 2017" aria-label="July 18, 2025" class="" >Jul 18, 2025</time>
+			</span>
+		`))
+	})
+
+	// action
+	fetch()
+
+	// assert
+	releases, err := db.DbMgr.GetAllReleases()
+	assert.NoError(t, err)
+	assert.Len(t, releases, 1)
+}
+
 func TestFetcher_Internal_IsMustFetch_FirstRun(t *testing.T) {
 	// first run means that no records in last_fetches
 	setup()

@@ -2,6 +2,9 @@ package db
 
 import (
 	"time"
+
+	"github.com/jinzhu/gorm"
+	"github.com/objque/musicmash/internal/log"
 )
 
 type Release struct {
@@ -9,12 +12,13 @@ type Release struct {
 	CreatedAt  time.Time
 	Date       time.Time
 	ArtistName string
-	StoreID    uint64
+	StoreID    uint64 `sql:"index"`
 }
 
 type ReleaseMgr interface {
 	CreateRelease(release *Release) error
 	FindRelease(artist string, storeID uint64) (*Release, error)
+	IsReleaseExists(storeID uint64) bool
 	GetAllReleases() ([]*Release, error)
 	EnsureReleaseExists(release *Release) error
 }
@@ -25,6 +29,19 @@ func (mgr *AppDatabaseMgr) FindRelease(artist string, storeID uint64) (*Release,
 		return nil, err
 	}
 	return &release, mgr.db.Find(&release).Error
+}
+
+func (mgr *AppDatabaseMgr) IsReleaseExists(storeID uint64) bool {
+	release := Release{}
+	if err := mgr.db.Where("store_id = ?", storeID).First(&release).Error; err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return false
+		}
+
+		log.Error(err)
+		return false
+	}
+	return true
 }
 
 func (mgr *AppDatabaseMgr) GetAllReleases() ([]*Release, error) {

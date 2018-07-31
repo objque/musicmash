@@ -24,6 +24,21 @@ func TestDB_Releases_EnsureExists(t *testing.T) {
 	assert.Equal(t, uint64(182821355), release.StoreID)
 }
 
+func TestDB_Releases_IsExists(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// action
+	const storeID = uint64(182821355)
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "skrillex",
+		StoreID:    storeID,
+	}))
+
+	// action and assert
+	assert.True(t, DbMgr.IsReleaseExists(storeID))
+}
+
 func TestDB_Releases_List(t *testing.T) {
 	setup()
 	defer teardown()
