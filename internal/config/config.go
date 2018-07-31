@@ -33,7 +33,7 @@ type DBConfig struct {
 }
 
 type Fetching struct {
-	CountOfSkippedHoursToFetch float64 `json:"count_of_skipped_hours_to_fetch"`
+	CountOfSkippedHoursToFetch float64 `yaml:"count_of_skipped_hours_to_fetch"`
 }
 
 type Store struct {
