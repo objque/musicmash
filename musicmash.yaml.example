@@ -15,4 +15,5 @@ store:
     url: 'https://itunes.apple.com'
     region: 'us'
 
-count_of_skipped_hours_to_fetch: 8
+fetching:
+    count_of_skipped_hours_to_fetch: 8
