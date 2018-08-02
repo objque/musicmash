@@ -1,0 +1,15 @@
+sudo: false
+language: go
+services:
+- "docker"
+go:
+- "1.10.3"
+script:
+- make tests
+- make build
+after_success:
+- eval "$(ssh-agent -s)"
+- make add-ssh-key
+- make docker-build
+- make docker-push
+- make deploy

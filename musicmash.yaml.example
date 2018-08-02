@@ -1,0 +1,19 @@
+db:
+    dbtype:  'mysql'
+    dbhost:  'mariadb'
+    dbname:  'musicmash'
+    dblogin: 'musicmash'
+    dbpass:  'musicmash'
+    log: false
+
+log:
+    level: DEBUG
+    file: 'musicmash.log'
+    syslog_enable: false
+
+store:
+    url: 'https://itunes.apple.com'
+    region: 'us'
+
+fetching:
+    count_of_skipped_hours_to_fetch: 8
