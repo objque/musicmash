@@ -18,8 +18,10 @@ const (
 	htmlTagReleaseID = `class="featured-album targeted-link"`
 )
 
-var exp = regexp.MustCompile(`.*\/(\d+)`)
-var rxReleaseDate = regexp.MustCompile(`<time.*?>(.*?)<\/time>`)
+var (
+	rxReleaseID   = regexp.MustCompile(`.*\/(\d+)`)
+	rxReleaseDate = regexp.MustCompile(`<time.*?>(.*?)<\/time>`)
+)
 
 func decode(buffer []byte) (*LastRelease, error) {
 	body := string(buffer)
@@ -39,7 +41,7 @@ func decode(buffer []byte) (*LastRelease, error) {
 
 	parts = strings.Split(strings.Split(parts[0], htmlTagReleaseID)[0], `<a href="`)
 	releaseURL := parts[len(parts)-1]
-	releaseID := exp.FindStringSubmatch(releaseURL)
+	releaseID := rxReleaseID.FindStringSubmatch(releaseURL)
 	if len(releaseID) != 2 {
 		return nil, fmt.Errorf("found too many substrings by regex in '%s'", releaseURL)
 	}
