@@ -7,29 +7,21 @@ import (
 	"net/http"
 	"regexp"
 	"strconv"
-	"strings"
 
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 
-const (
-	htmlTagReleaseID = `class="featured-album targeted-link"`
-)
-
 var (
-	rxReleaseID   = regexp.MustCompile(`.*\/(\d+)`)
+	rxReleaseID   = regexp.MustCompile(`<a href.*?(\d+)([\?\/].*?)?" class="featured-album targeted-link"`)
 	rxReleaseDate = regexp.MustCompile(`<time.*?>(.*?)<\/time>`)
 )
 
 func decode(buffer []byte) (*LastRelease, error) {
 	body := string(buffer)
-	parts := strings.Split(body, htmlTagTime)
-	if len(parts) != 2 {
-		return nil, errors.New("after split by a time-html tag we have not 2 parts")
-	}
 
+	// find release date
 	released := rxReleaseDate.FindStringSubmatch(body)
 	if len(released) != 2 {
 		return nil, errors.New("found too many substrings by release-regex")
@@ -39,16 +31,14 @@ func decode(buffer []byte) (*LastRelease, error) {
 		return nil, errors.Wrapf(err, "can't parse time '%s'", released[1])
 	}
 
-	parts = strings.Split(strings.Split(parts[0], htmlTagReleaseID)[0], `<a href="`)
-	releaseURL := parts[len(parts)-1]
-	releaseID := rxReleaseID.FindStringSubmatch(releaseURL)
-	if len(releaseID) != 2 {
-		return nil, fmt.Errorf("found too many substrings by regex in '%s'", releaseURL)
+	// find release id
+	releaseID := rxReleaseID.FindStringSubmatch(body)
+	if len(releaseID) != 3 {
+		return nil, errors.New("found too many substrings by id-regex")
 	}
-
 	id, err := strconv.ParseUint(releaseID[1], 10, 64)
 	if err != nil {
-		return nil, errors.Wrapf(err, "can't parse uint from '%s', fullURL: '%s'", releaseID[1], releaseURL)
+		return nil, errors.Wrapf(err, "can't parse uint from '%s'", releaseID[2])
 	}
 	return &LastRelease{
 		ID:   id,
