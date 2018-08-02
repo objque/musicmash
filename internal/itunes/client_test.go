@@ -59,7 +59,59 @@ func TestClient_GetInfo(t *testing.T) {
 	assert.Equal(t, 18, release.Date.Day())
 	assert.Equal(t, "July", release.Date.Month().String())
 	assert.Equal(t, 2025, release.Date.Year())
+	assert.False(t, release.IsComing)
 }
+
+func TestClient_GetInfo_Coming(t *testing.T) {
+	// arrange
+	setup()
+	defer teardown()
+
+	// arrange
+	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`
+			<div class="section__nav">
+                <h2 class="section__headline">Pre-Release</h2>
+            </div>
+			<section class="l-content-width section section--bordered">
+        	<div class="l-row">
+          	<div class="l-column small-valign-top small-12 medium-6 large-4">
+            	<div class="section__nav">
+              		<h2 class="section__headline">Latest Release</h2>
+            	</div>
+        	<a href="https://itunes.apple.com/us/album/j%C3%A4germeister-single/1412554258/" class="featured-album targeted-link"
+			
+			<!-- this html-block must be ignored by our fetcher --> 
+        	<span class="featured-album__text__eyebrow targeted-link__target">
+				<time data-test-we-datetime datetime="Jul 18, 2025" aria-label="July 18, 2025" class="" >Jul 18, 2025</time>
+			</span>
+
+			<div class="featured-album__text">
+                <span class="featured-album__text__eyebrow targeted-link__target">
+                    COMING Aug 24, 2018
+                </span>
+                <span class="featured-album__text__headline targeted-link__target">
+                  Rainier Fog
+                </span>
+                  <span class="featured-album__text__subcopy targeted-link__target">
+                    10 songs
+                  </span>
+            </div>
+		`))
+	})
+
+	// action
+	release, err := GetArtistInfo(182821355)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, uint64(1412554258), release.ID)
+	assert.Equal(t, 24, release.Date.Day())
+	assert.Equal(t, "August", release.Date.Month().String())
+	assert.Equal(t, 2018, release.Date.Year())
+	assert.True(t, release.IsComing)
+}
+
 func TestClient_Lookup(t *testing.T) {
 	// arrange
 	setup()

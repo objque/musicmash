@@ -21,6 +21,11 @@ func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 		return false
 	}
 
+	if release.IsComing {
+		log.Infof("Found pre-release from '%s'", artist)
+		return false
+	}
+
 	log.Infof("Found a new release from '%s': '%d'", artist, release.ID)
 	db.DbMgr.CreateRelease(&db.Release{
 		ArtistName: artist,
