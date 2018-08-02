@@ -20,6 +20,15 @@ var (
 
 func decode(buffer []byte) (*LastRelease, error) {
 	body := string(buffer)
+	// find release id
+	releaseID := rxReleaseID.FindStringSubmatch(body)
+	if len(releaseID) != 3 {
+		return nil, errors.New("found too many substrings by id-regex")
+	}
+	id, err := strconv.ParseUint(releaseID[1], 10, 64)
+	if err != nil {
+		return nil, errors.Wrapf(err, "can't parse uint from '%s'", releaseID[2])
+	}
 
 	// find release date
 	released := rxReleaseDate.FindStringSubmatch(body)
@@ -31,15 +40,6 @@ func decode(buffer []byte) (*LastRelease, error) {
 		return nil, errors.Wrapf(err, "can't parse time '%s'", released[1])
 	}
 
-	// find release id
-	releaseID := rxReleaseID.FindStringSubmatch(body)
-	if len(releaseID) != 3 {
-		return nil, errors.New("found too many substrings by id-regex")
-	}
-	id, err := strconv.ParseUint(releaseID[1], 10, 64)
-	if err != nil {
-		return nil, errors.Wrapf(err, "can't parse uint from '%s'", releaseID[2])
-	}
 	return &LastRelease{
 		ID:   id,
 		Date: *t,
