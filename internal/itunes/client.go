@@ -15,23 +15,26 @@ import (
 )
 
 const (
-	htmlTagTime      = `<time data-test-we-datetime datetime="`
 	htmlTagReleaseID = `class="featured-album targeted-link"`
 )
 
 var exp = regexp.MustCompile(`.*\/(\d+)`)
+var rxReleaseDate = regexp.MustCompile(`<time.*?>(.*?)<\/time>`)
 
 func decode(buffer []byte) (*LastRelease, error) {
-	parts := strings.Split(string(buffer), htmlTagTime)
+	body := string(buffer)
+	parts := strings.Split(body, htmlTagTime)
 	if len(parts) != 2 {
 		return nil, errors.New("after split by a time-html tag we have not 2 parts")
 	}
 
-	// Jul 18, 2018" aria-label="July 18 ...
-	released := strings.Split(parts[1], `"`)[0]
-	t, err := parseTime(released)
+	released := rxReleaseDate.FindStringSubmatch(body)
+	if len(released) != 2 {
+		return nil, errors.New("found too many substrings by release-regex")
+	}
+	t, err := parseTime(released[1])
 	if err != nil {
-		return nil, errors.Wrapf(err, "can't parse time '%s'", released)
+		return nil, errors.Wrapf(err, "can't parse time '%s'", released[1])
 	}
 
 	parts = strings.Split(strings.Split(parts[0], htmlTagReleaseID)[0], `<a href="`)
