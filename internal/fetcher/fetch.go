@@ -82,6 +82,7 @@ func Run() {
 				log.Infof("Finish fetching stage '%s'...", time.Now().UTC().String())
 				db.DbMgr.SetLastFetch(now)
 			}
+			log.Debugf("Elapsed time '%s'", time.Now().UTC().Sub(now).String())
 		}
 
 		time.Sleep(time.Hour)
