@@ -179,3 +179,43 @@ func TestClient_FindReleaseID(t *testing.T) {
 		assert.Equal(t, uint64(158365636), *id)
 	}
 }
+
+func TestClient_FindDate_Coming(t *testing.T) {
+	// arrange
+	body := `<div class="featured-album__text">
+                <span class="featured-album__text__eyebrow targeted-link__target">
+                    COMING Aug 24, 2018
+                </span>
+                <span class="featured-album__text__headline targeted-link__target">
+                  Rainier Fog
+                </span>
+                  <span class="featured-album__text__subcopy targeted-link__target">
+                    10 songs
+                  </span>
+            </div>`
+
+	// action
+	date, err := findComingDate(body)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, 24, date.Day())
+	assert.Equal(t, "August", date.Month().String())
+	assert.Equal(t, 2018, date.Year())
+}
+
+func TestClient_FindDate_Release(t *testing.T) {
+	// arrange
+	body := `<span class="featured-album__text__eyebrow targeted-link__target">
+				<time data-test-we-datetime datetime="Jul 18, 2025" aria-label="July 18, 2025" class="" >Jul 18, 2025</time>
+			</span>`
+
+	// action
+	date, err := findReleaseDate(body)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, 18, date.Day())
+	assert.Equal(t, "July", date.Month().String())
+	assert.Equal(t, 2025, date.Year())
+}
