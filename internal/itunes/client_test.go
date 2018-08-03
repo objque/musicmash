@@ -158,3 +158,24 @@ func TestClient_Lookup(t *testing.T) {
 	assert.Equal(t, "July", release.Released.Month().String())
 	assert.Equal(t, 2018, release.Released.Year())
 }
+
+func TestClient_FindReleaseID(t *testing.T) {
+	// arrange
+	urls := []string{
+		`<a href="https://itunes.apple.com/us/artist/s-p-y/158365636" class="featured-album targeted-link"`,
+		`<a href="https://itunes.apple.com/us/artist/s-p-y/158365636?uo=4" class="featured-album targeted-link"`,
+		`<a href="https://itunes.apple.com/us/artist/s-p-y/158365636/foo" class="featured-album targeted-link"`,
+		`<a href="https://itunes.apple.com/us/artist/s-p-y/158365636/1234" class="featured-album targeted-link"`,
+		`<a href="https://itunes.apple.com/us/artist/123/158365636/1234" class="featured-album targeted-link"`,
+		`<a href="https://itunes.apple.com/us/artist/spy-13/158365636/1234" class="featured-album targeted-link"`,
+	}
+
+	for _, url := range urls {
+		// action
+		id, err := findReleaseID(url)
+
+		// assert
+		assert.NoError(t, err)
+		assert.Equal(t, uint64(158365636), *id)
+	}
+}

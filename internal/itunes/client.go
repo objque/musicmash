@@ -16,7 +16,7 @@ import (
 )
 
 var (
-	rxReleaseID          = regexp.MustCompile(`<a href.*?(\d+)([\?\/].*?)?" class="featured-album targeted-link"`)
+	rxReleaseID          = regexp.MustCompile(`<a href.*\/\/(.*?\/){4}(\d+)([\?\/].*?)?" class="featured-album targeted-link"`)
 	rxReleaseDate        = regexp.MustCompile(`<time.*?>(.*?)<\/time>`)
 	rxComingReleaseDate  = regexp.MustCompile(`COMING (.*\d{4})`)
 	htmlTagComingRelease = []byte(`<h2 class="section__headline">Pre-Release</h2>`)
@@ -44,11 +44,11 @@ func findReleaseDate(body string) (*time.Time, error) {
 
 func findReleaseID(body string) (*uint64, error) {
 	releaseID := rxReleaseID.FindStringSubmatch(body)
-	if len(releaseID) != 3 {
+	if len(releaseID) != 4 {
 		return nil, fmt.Errorf("found too many substrings by id-regex: %v", releaseID)
 	}
 
-	id, err := strconv.ParseUint(releaseID[1], 10, 64)
+	id, err := strconv.ParseUint(releaseID[2], 10, 64)
 	if err != nil {
 		return nil, errors.Wrapf(err, "can't parse uint from '%s'", releaseID[2])
 	}
