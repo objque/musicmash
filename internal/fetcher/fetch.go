@@ -125,7 +125,7 @@ func isMustFetch() bool {
 	log.Debugf("Last fetch was at '%s'", last.Date.String())
 	diff := calcDiffHours(last.Date)
 	log.Debugf("Diff between hours: %v", diff)
-	return diff > config.Config.Fetching.CountOfSkippedHoursToFetch
+	return diff >= config.Config.Fetching.CountOfSkippedHoursToFetch
 }
 
 func Run() {

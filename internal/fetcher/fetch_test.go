@@ -36,7 +36,8 @@ func setup() {
 			Region: "us",
 		},
 		Fetching: config.Fetching{
-			Workers: 10,
+			Workers:                    10,
+			CountOfSkippedHoursToFetch: 8,
 		},
 	}
 }
