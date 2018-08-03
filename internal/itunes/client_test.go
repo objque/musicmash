@@ -219,3 +219,9 @@ func TestClient_FindDate_Release(t *testing.T) {
 	assert.Equal(t, "July", date.Month().String())
 	assert.Equal(t, 2025, date.Year())
 }
+
+func TestClient_IsArtistInactive(t *testing.T) {
+	assert.True(t, isArtistInactive([]byte(``)))
+	assert.False(t, isArtistInactive([]byte(`<h2 class="section__headline">Pre-Release</h2>`)))
+	assert.False(t, isArtistInactive([]byte(`<h2 class="section__headline">Latest Release</h2>`)))
+}

@@ -19,6 +19,7 @@ var (
 	rxReleaseID          = regexp.MustCompile(`<a href.*\/\/(.*?\/){4}(\d+)([\?\/].*?)?" class="featured-album targeted-link"`)
 	rxReleaseDate        = regexp.MustCompile(`<time.*?>(.*?)<\/time>`)
 	rxComingReleaseDate  = regexp.MustCompile(`COMING (.*\d{4})`)
+	htmlTagRelease       = []byte(`<h2 class="section__headline">Latest Release</h2>`)
 	htmlTagComingRelease = []byte(`<h2 class="section__headline">Pre-Release</h2>`)
 )
 
@@ -59,8 +60,16 @@ func isComingRelease(buffer []byte) bool {
 	return bytes.Contains(buffer, htmlTagComingRelease)
 }
 
+func isArtistInactive(buffer []byte) bool {
+	return !bytes.Contains(buffer, htmlTagRelease) && !bytes.Contains(buffer, htmlTagComingRelease)
+}
+
 func decode(buffer []byte) (*LastRelease, error) {
 	body := string(buffer)
+
+	if isArtistInactive(buffer) {
+		return nil, ArtistInactiveErr
+	}
 
 	releaseID, err := findReleaseID(body)
 	if err != nil {
