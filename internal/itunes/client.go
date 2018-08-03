@@ -110,6 +110,11 @@ func GetArtistInfo(id uint64) (*LastRelease, error) {
 
 	info, err := decode(buffer)
 	if err != nil {
+		// do not wrap inactive err
+		// otherwise users can't compare received err with global InActiveErr error
+		if err == ArtistInactiveErr {
+			return nil, err
+		}
 		return nil, errors.Wrapf(err, "can't decode '%s'", url)
 	}
 	log.Debugf("Last release on '%s'", info.Date)

@@ -50,6 +50,11 @@ func fetch() error {
 	for _, artist := range artists {
 		releaseInfo, err := itunes.GetArtistInfo(artist.StoreID)
 		if err != nil {
+			if err == itunes.ArtistInactiveErr {
+				log.Debugln(errors.Wrapf(err, "artist: '%s'#%d", artist.Name, artist.StoreID))
+				continue
+			}
+
 			log.Error(err)
 			continue
 		}
