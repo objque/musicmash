@@ -12,7 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
+func saveIfNewestRelease(release *itunes.LastRelease) bool {
 	if !release.IsLatest() {
 		return false
 	}
@@ -21,22 +21,56 @@ func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 		return false
 	}
 
-	if release.IsComing {
-		log.Infof("Found pre-release from '%s'", artist)
-		return false
+	if !release.IsComing {
+		log.Infof("Found a new release from '%s': '%d'", release.ArtistName, release.ID)
+	} else {
+		log.Infof("Found a new pre-release from '%s': '%d'", release.ArtistName, release.ID)
 	}
 
-	log.Infof("Found a new release from '%s': '%d'", artist, release.ID)
 	db.DbMgr.CreateRelease(&db.Release{
-		ArtistName: artist,
+		ArtistName: release.ArtistName,
 		Date:       release.Date,
 		StoreID:    release.ID,
 	})
+
 	notify.Service.Send(map[string]interface{}{
-		"chatID":    int64(35152258),
-		"releaseID": release.ID,
+		"chatID":          int64(35152258),
+		"releaseID":       release.ID,
+		"isFutureRelease": release.IsComing,
 	})
 	return true
+}
+
+func fetchWorker(id int, artists <-chan *db.Artist, releases chan<- *itunes.LastRelease, done chan<- int) {
+	for artist := range artists {
+		release, err := itunes.GetArtistInfo(artist.StoreID)
+		if err != nil {
+			if err == itunes.ArtistInactiveErr {
+				log.Debugln(errors.Wrapf(err, "artist: '%s'#%d", artist.Name, artist.StoreID))
+				releases <- nil
+				continue
+			}
+
+			log.Error(err)
+			releases <- nil
+			continue
+		}
+
+		release.ArtistName = artist.Name
+		releases <- release
+	}
+	done <- id
+}
+
+func saveWorker(id int, releases <-chan *itunes.LastRelease, done chan<- int) {
+	for release := range releases {
+		if release == nil {
+			continue
+		}
+
+		saveIfNewestRelease(release)
+	}
+	done <- id
 }
 
 func fetch() error {
@@ -46,21 +80,34 @@ func fetch() error {
 		return errors.Wrap(err, "can't load artists from the db")
 	}
 
-	// load releases from the store
-	for _, artist := range artists {
-		releaseInfo, err := itunes.GetArtistInfo(artist.StoreID)
-		if err != nil {
-			if err == itunes.ArtistInactiveErr {
-				log.Debugln(errors.Wrapf(err, "artist: '%s'#%d", artist.Name, artist.StoreID))
-				continue
-			}
+	jobs := make(chan *db.Artist, len(artists))
+	releases := make(chan *itunes.LastRelease, len(artists))
+	fetchWorkersDone := make(chan int, config.Config.Fetching.Workers)
+	saveWorkersDone := make(chan int, config.Config.Fetching.Workers)
 
-			log.Error(err)
-			continue
-		}
-
-		saveIfNewestRelease(artist.Name, releaseInfo)
+	// Starts up X workers, initially blocked because there are no jobs yet.
+	for w := 1; w <= config.Config.Fetching.Workers; w++ {
+		go fetchWorker(w, jobs, releases, fetchWorkersDone)
+		go saveWorker(w, releases, saveWorkersDone)
 	}
+
+	// Here we send `jobs` and then `close` that
+	// channel to indicate that's all the work we have.
+	for _, id := range artists {
+		jobs <- id
+	}
+	close(jobs)
+
+	for w := 1; w <= config.Config.Fetching.Workers; w++ {
+		log.Debugf("#%d fetch-worker done\n", <-fetchWorkersDone)
+	}
+	close(releases)
+
+	for w := 1; w <= config.Config.Fetching.Workers; w++ {
+		log.Debugf("#%d save-worker done\n", <-saveWorkersDone)
+	}
+	close(fetchWorkersDone)
+	close(saveWorkersDone)
 	return nil
 }
 

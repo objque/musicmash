@@ -35,6 +35,9 @@ func setup() {
 			URL:    server.URL,
 			Region: "us",
 		},
+		Fetching: config.Fetching{
+			Workers: 10,
+		},
 	}
 }
 
