@@ -31,9 +31,10 @@ type SearchReleaseResponse struct {
 }
 
 type LastRelease struct {
-	ID       uint64
-	Date     time.Time
-	IsComing bool
+	ID         uint64
+	Date       time.Time
+	IsComing   bool
+	ArtistName string
 }
 
 func NewInfo(id, released string) *LastRelease {

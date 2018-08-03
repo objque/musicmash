@@ -33,6 +33,7 @@ type DBConfig struct {
 }
 
 type Fetching struct {
+	Workers                    int     `yaml:"workers"`
 	CountOfSkippedHoursToFetch float64 `yaml:"count_of_skipped_hours_to_fetch"`
 }
 
