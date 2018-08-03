@@ -10,7 +10,7 @@ import (
 type Release struct {
 	ID         int64 `gorm:"primary_key" sql:"AUTO_INCREMENT"`
 	CreatedAt  time.Time
-	Date       time.Time
+	Date       time.Time `gorm:"not null" sql:"index"`
 	ArtistName string
 	StoreID    uint64 `sql:"index"`
 }
