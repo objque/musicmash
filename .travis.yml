@@ -4,12 +4,21 @@ services:
 - "docker"
 go:
 - "1.10.3"
-script:
-- make tests
-- make build
-after_success:
-- eval "$(ssh-agent -s)"
-- make add-ssh-key
-- make docker-build
-- make docker-push
-- make deploy
+jobs:
+  include:
+  - stage: tests
+    script:
+    - make tests
+  - stage: deploy
+    script:
+    - eval "$(ssh-agent -s)"
+    - make add-ssh-key
+    - make build
+    - make docker-build
+    - make docker-push
+    - make deploy
+stages:
+- tests
+- build
+- name: deploy
+  if: branch = master

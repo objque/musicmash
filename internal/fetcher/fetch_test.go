@@ -99,7 +99,7 @@ func TestFetcher_Fetch_NoNewReleases(t *testing.T) {
             	</div>
         	<a href="https://itunes.apple.com/us/artist/s-p-y/158365636?uo=4" class="featured-album targeted-link"
         	<span class="featured-album__text__eyebrow targeted-link__target">
-				<time data-test-we-datetime datetime="Jul 18, 2017" aria-label="July 18, 2017" class="" >Jul 18, 2025</time>
+				<time data-test-we-datetime datetime="Jul 18, 2017" aria-label="July 18, 2017" class="" >Jul 18, 2017</time>
 			</span>
 		`))
 	})

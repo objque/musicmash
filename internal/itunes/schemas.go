@@ -26,13 +26,14 @@ type Release struct {
 }
 
 type SearchReleaseResponse struct {
-	Count   int       `json:"resultCount"`
+	Count   int        `json:"resultCount"`
 	Results []*Release `json:"results"`
 }
 
 type LastRelease struct {
-	ID   uint64
-	Date time.Time
+	ID       uint64
+	Date     time.Time
+	IsComing bool
 }
 
 func NewInfo(id, released string) *LastRelease {

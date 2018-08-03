@@ -1,53 +1,96 @@
 package itunes
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"net/http"
 	"regexp"
 	"strconv"
-	"strings"
+	"time"
 
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 
-const (
-	htmlTagTime      = `<time data-test-we-datetime datetime="`
-	htmlTagReleaseID = `class="featured-album targeted-link"`
+var (
+	rxReleaseID          = regexp.MustCompile(`<a href.*\/\/(.*?\/){4}(\d+)([\?\/].*?)?" class="featured-album targeted-link"`)
+	rxReleaseDate        = regexp.MustCompile(`<time.*?>(.*?)<\/time>`)
+	rxComingReleaseDate  = regexp.MustCompile(`COMING (.*\d{4})`)
+	htmlTagRelease       = []byte(`<h2 class="section__headline">Latest Release</h2>`)
+	htmlTagComingRelease = []byte(`<h2 class="section__headline">Pre-Release</h2>`)
 )
 
-var exp = regexp.MustCompile(`.*\/(\d+)`)
+func findDate(body string, rx *regexp.Regexp, rxType string) (*time.Time, error) {
+	released := rx.FindStringSubmatch(body)
+	if len(released) != 2 {
+		return nil, fmt.Errorf("found too many substrings by %s-regex: %v", rxType, released)
+	}
+	date, err := parseTime(released[1])
+	if err != nil {
+		return nil, errors.Wrapf(err, "can'date parse time '%s'", released[1])
+	}
+	return date, nil
+}
+
+func findComingDate(body string) (*time.Time, error) {
+	return findDate(body, rxComingReleaseDate, "coming")
+}
+
+func findReleaseDate(body string) (*time.Time, error) {
+	return findDate(body, rxReleaseDate, "release")
+}
+
+func findReleaseID(body string) (*uint64, error) {
+	releaseID := rxReleaseID.FindStringSubmatch(body)
+	if len(releaseID) != 4 {
+		return nil, fmt.Errorf("found too many substrings by id-regex: %v", releaseID)
+	}
+
+	id, err := strconv.ParseUint(releaseID[2], 10, 64)
+	if err != nil {
+		return nil, errors.Wrapf(err, "can't parse uint from '%s'", releaseID[2])
+	}
+	return &id, err
+}
+
+func isComingRelease(buffer []byte) bool {
+	return bytes.Contains(buffer, htmlTagComingRelease)
+}
+
+func isArtistInactive(buffer []byte) bool {
+	return !bytes.Contains(buffer, htmlTagRelease) && !bytes.Contains(buffer, htmlTagComingRelease)
+}
 
 func decode(buffer []byte) (*LastRelease, error) {
-	parts := strings.Split(string(buffer), htmlTagTime)
-	if len(parts) != 2 {
-		return nil, errors.New("after split by a time-html tag we have not 2 parts")
+	body := string(buffer)
+
+	if isArtistInactive(buffer) {
+		return nil, ArtistInactiveErr
 	}
 
-	// Jul 18, 2018" aria-label="July 18 ...
-	released := strings.Split(parts[1], `"`)[0]
-	t, err := parseTime(released)
+	releaseID, err := findReleaseID(body)
 	if err != nil {
-		return nil, errors.Wrapf(err, "can't parse time '%s'", released)
+		return nil, err
 	}
 
-	parts = strings.Split(strings.Split(parts[0], htmlTagReleaseID)[0], `<a href="`)
-	releaseURL := parts[len(parts)-1]
-	releaseID := exp.FindStringSubmatch(releaseURL)
-	if len(releaseID) != 2 {
-		return nil, fmt.Errorf("found too many substrings by regex in '%s'", releaseURL)
+	findDate := findReleaseDate
+	isComingRelease := isComingRelease(buffer)
+	if isComingRelease {
+		findDate = findComingDate
 	}
 
-	id, err := strconv.ParseUint(releaseID[1], 10, 64)
+	date, err := findDate(body)
 	if err != nil {
-		return nil, errors.Wrapf(err, "can't parse uint from '%s', fullURL: '%s'", releaseID[1], releaseURL)
+		return nil, err
 	}
+
 	return &LastRelease{
-		ID:   id,
-		Date: *t,
+		ID:       *releaseID,
+		Date:     *date,
+		IsComing: isComingRelease,
 	}, nil
 }
 
@@ -67,6 +110,11 @@ func GetArtistInfo(id uint64) (*LastRelease, error) {
 
 	info, err := decode(buffer)
 	if err != nil {
+		// do not wrap inactive err
+		// otherwise users can't compare received err with global InActiveErr error
+		if err == ArtistInactiveErr {
+			return nil, err
+		}
 		return nil, errors.Wrapf(err, "can't decode '%s'", url)
 	}
 	log.Debugf("Last release on '%s'", info.Date)

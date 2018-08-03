@@ -21,6 +21,11 @@ func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 		return false
 	}
 
+	if release.IsComing {
+		log.Infof("Found pre-release from '%s'", artist)
+		return false
+	}
+
 	log.Infof("Found a new release from '%s': '%d'", artist, release.ID)
 	db.DbMgr.CreateRelease(&db.Release{
 		ArtistName: artist,
@@ -28,8 +33,8 @@ func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 		StoreID:    release.ID,
 	})
 	notify.Service.Send(map[string]interface{}{
-		"chatID": int64(35152258),
-		"releaseID":     release.ID,
+		"chatID":    int64(35152258),
+		"releaseID": release.ID,
 	})
 	return true
 }
@@ -45,6 +50,11 @@ func fetch() error {
 	for _, artist := range artists {
 		releaseInfo, err := itunes.GetArtistInfo(artist.StoreID)
 		if err != nil {
+			if err == itunes.ArtistInactiveErr {
+				log.Debugln(errors.Wrapf(err, "artist: '%s'#%d", artist.Name, artist.StoreID))
+				continue
+			}
+
 			log.Error(err)
 			continue
 		}
@@ -66,7 +76,9 @@ func isMustFetch() bool {
 	}
 
 	log.Debugf("Last fetch was at '%s'", last.Date.String())
-	return calcDiffHours(last.Date) > config.Config.Fetching.CountOfSkippedHoursToFetch
+	diff := calcDiffHours(last.Date)
+	log.Debugf("Diff between hours: %v", diff)
+	return diff > config.Config.Fetching.CountOfSkippedHoursToFetch
 }
 
 func Run() {
@@ -80,6 +92,7 @@ func Run() {
 				log.Infof("Finish fetching stage '%s'...", time.Now().UTC().String())
 				db.DbMgr.SetLastFetch(now)
 			}
+			log.Debugf("Elapsed time '%s'", time.Now().UTC().Sub(now).String())
 		}
 
 		time.Sleep(time.Hour)
