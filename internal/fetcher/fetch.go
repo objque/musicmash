@@ -21,20 +21,22 @@ func saveIfNewestRelease(artist string, release *itunes.LastRelease) bool {
 		return false
 	}
 
-	if release.IsComing {
-		log.Infof("Found pre-release from '%s'", artist)
-		return false
+	if !release.IsComing {
+		log.Infof("Found a new release from '%s': '%d'", artist, release.ID)
+	} else {
+		log.Infof("Found a new pre-release from '%s': '%d'", artist, release.ID)
 	}
 
-	log.Infof("Found a new release from '%s': '%d'", artist, release.ID)
 	db.DbMgr.CreateRelease(&db.Release{
 		ArtistName: artist,
 		Date:       release.Date,
 		StoreID:    release.ID,
 	})
+
 	notify.Service.Send(map[string]interface{}{
-		"chatID":    int64(35152258),
-		"releaseID": release.ID,
+		"chatID":          int64(35152258),
+		"releaseID":       release.ID,
+		"isFutureRelease": release.IsComing,
 	})
 	return true
 }
