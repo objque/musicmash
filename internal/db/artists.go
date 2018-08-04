@@ -23,7 +23,7 @@ func (mgr *AppDatabaseMgr) FindArtistByName(name string) (*Artist, error) {
 		return nil, err
 	}
 
-	return &artist, mgr.db.Find(&artist).Error
+	return &artist, nil
 }
 
 func (mgr *AppDatabaseMgr) GetAllArtists() ([]*Artist, error) {
