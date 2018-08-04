@@ -13,6 +13,7 @@ type Chat struct {
 type ChatMgr interface {
 	FindChatByUserID(userID string) (*int64, error)
 	EnsureChatExists(chat *Chat) error
+	GetAllChatsThatSubscribedFor(artistName string) ([]*Chat, error)
 }
 
 func (mgr *AppDatabaseMgr) FindChatByUserID(userID string) (*int64, error) {
@@ -30,4 +31,14 @@ func (mgr *AppDatabaseMgr) EnsureChatExists(chat *Chat) error {
 		return mgr.db.Create(chat).Error
 	}
 	return nil
+}
+
+func (mgr *AppDatabaseMgr) GetAllChatsThatSubscribedFor(artistName string) ([]*Chat, error) {
+	chats := []*Chat{}
+	sql := "select * from chats where user_id in (select user_id from subscriptions where artist_name = ?)"
+	if err := mgr.db.Raw(sql, artistName).Scan(&chats).Error; err != nil {
+		return nil, err
+	}
+
+	return chats, nil
 }
