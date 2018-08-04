@@ -23,12 +23,13 @@ func New(token string) *Telegram {
 	return &Telegram{bot: bot}
 }
 
-func makeMessage(artist, releaseName, poster string, isFutureRelease bool) string {
-	releaseType := "release"
+func makeMessage(release *itunes.Release, isFutureRelease bool) string {
+	state := "released"
 	if isFutureRelease {
-		releaseType = "*pre*-release"
+		state = "announced"
 	}
-	return fmt.Sprintf("New %s found \n*%s*\n%s [‌‌](%s)", releaseType, artist, releaseName, poster)
+	
+	return fmt.Sprintf("New %s %s \n*%s*\n%s [‌‌](%s)", release.GetCollectionType(), state, release.ArtistName, release.CollectionName, release.ArtworkURL100)
 }
 
 func (t *Telegram) Send(args map[string]interface{}) error {
@@ -43,7 +44,7 @@ func (t *Telegram) Send(args map[string]interface{}) error {
 	}
 
 	release.ArtworkURL100 = strings.Replace(release.ArtworkURL100, "100x100", "500x500", 1)
-	text := makeMessage(release.ArtistName, release.CollectionName, release.ArtworkURL100, isFutureRelease)
+	text := makeMessage(release, isFutureRelease)
 	message := tgbotapi.NewMessage(chatID, text)
 	message.ParseMode = "markdown"
 	message.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{
