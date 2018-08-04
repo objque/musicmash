@@ -60,6 +60,11 @@ func TestRelease_GetCollectionType(t *testing.T) {
 			Title:       "Thor Ep",
 			TracksCount: 7,
 		},
+		{
+			Type:        LPReleaseType,
+			Title:       "Divergence Lp",
+			TracksCount: 17,
+		},
 	}
 
 	for _, release := range releases {

@@ -9,9 +9,11 @@ const (
 	AlbumReleaseType  = "Album"
 	SingleReleaseType = "Single"
 	EPReleaseType     = "EP"
+	LPReleaseType     = "LP"
 
 	SingleReleaseTypePattern = "- single"
 	EPReleaseTypePattern     = " ep"
+	LPReleaseTypePattern     = " lp"
 )
 
 type Release struct {
@@ -70,6 +72,12 @@ func (r *Release) GetCollectionType() string {
 	// for example album_id: 1380811617
 	if title[len(title)-3:] == EPReleaseTypePattern {
 		return EPReleaseType
+	}
+
+	// NOTE (m.kalinin): sometimes we have LP
+	// for example album_id: 1363601736
+	if title[len(title)-3:] == LPReleaseTypePattern {
+		return LPReleaseType
 	}
 
 	switch {
