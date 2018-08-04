@@ -99,12 +99,12 @@ func fetch() error {
 	close(jobs)
 
 	for w := 1; w <= config.Config.Fetching.Workers; w++ {
-		log.Debugf("#%d fetch-worker done\n", <-fetchWorkersDone)
+		log.Debugf("#%d fetch-worker done", <-fetchWorkersDone)
 	}
 	close(releases)
 
 	for w := 1; w <= config.Config.Fetching.Workers; w++ {
-		log.Debugf("#%d save-worker done\n", <-saveWorkersDone)
+		log.Debugf("#%d save-worker done", <-saveWorkersDone)
 	}
 	close(fetchWorkersDone)
 	close(saveWorkersDone)
