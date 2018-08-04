@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/objque/musicmash/internal/itunes"
 	"github.com/objque/musicmash/internal/log"
@@ -23,18 +24,21 @@ func New(token string) *Telegram {
 	return &Telegram{bot: bot}
 }
 
-func makeMessage(artist, releaseName, poster string, isFutureRelease bool) string {
-	releaseType := "release"
-	if isFutureRelease {
-		releaseType = "*pre*-release"
+func makeMessage(release *itunes.Release) string {
+	releaseDate := ""
+	state := "released"
+	if release.Released.After(time.Now().UTC()) {
+		state = "announced"
+		releaseDate = fmt.Sprintf("\nRelease date: %s", release.Released.Format(time.RFC850))
 	}
-	return fmt.Sprintf("New %s found \n*%s*\n%s [‌‌](%s)", releaseType, artist, releaseName, poster)
+
+	poster := fmt.Sprintf("[‌‌](%s)", release.ArtworkURL100)
+	return fmt.Sprintf("New %s %s \n*%s*\n%s%s %s", release.GetCollectionType(), state, release.ArtistName, release.CollectionName, releaseDate, poster)
 }
 
 func (t *Telegram) Send(args map[string]interface{}) error {
 	chatID := args["chatID"].(int64)
 	releaseID := args["releaseID"].(uint64)
-	isFutureRelease := args["isFutureRelease"].(bool)
 
 	release, err := itunes.Lookup(releaseID)
 	if err != nil {
@@ -43,7 +47,7 @@ func (t *Telegram) Send(args map[string]interface{}) error {
 	}
 
 	release.ArtworkURL100 = strings.Replace(release.ArtworkURL100, "100x100", "500x500", 1)
-	text := makeMessage(release.ArtistName, release.CollectionName, release.ArtworkURL100, isFutureRelease)
+	text := makeMessage(release)
 	message := tgbotapi.NewMessage(chatID, text)
 	message.ParseMode = "markdown"
 	message.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{
