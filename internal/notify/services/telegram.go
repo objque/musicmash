@@ -3,6 +3,7 @@ package services
 import (
 	"fmt"
 	"strings"
+	"time"
 
 	"github.com/objque/musicmash/internal/itunes"
 	"github.com/objque/musicmash/internal/log"
@@ -24,12 +25,15 @@ func New(token string) *Telegram {
 }
 
 func makeMessage(release *itunes.Release, isFutureRelease bool) string {
+	releaseDate := ""
 	state := "released"
 	if isFutureRelease {
 		state = "announced"
+		releaseDate = fmt.Sprintf("\nRelease date: %s", release.Released.Format(time.RFC850))
 	}
-	
-	return fmt.Sprintf("New %s %s \n*%s*\n%s [‌‌](%s)", release.GetCollectionType(), state, release.ArtistName, release.CollectionName, release.ArtworkURL100)
+
+	poster := fmt.Sprintf("[‌‌](%s)", release.ArtworkURL100)
+	return fmt.Sprintf("New %s %s \n*%s*\n%s%s %s", release.GetCollectionType(), state, release.ArtistName, release.CollectionName, releaseDate, poster)
 }
 
 func (t *Telegram) Send(args map[string]interface{}) error {
