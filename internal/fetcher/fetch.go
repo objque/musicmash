@@ -33,10 +33,23 @@ func saveIfNewestRelease(release *itunes.LastRelease) bool {
 		StoreID:    release.ID,
 	})
 
-	notify.Service.Send(map[string]interface{}{
-		"chatID":          int64(35152258),
-		"releaseID":       release.ID,
-	})
+	chats, err := db.DbMgr.GetAllChatsThatSubscribedFor(release.ArtistName)
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			log.Debugf("No one subscribed for '%s'", release.ArtistName)
+			return true
+		}
+
+		log.Error(err)
+		return true
+	}
+
+	for _, chat := range chats {
+		notify.Service.Send(map[string]interface{}{
+			"chatID":    chat.ID,
+			"releaseID": release.ID,
+		})
+	}
 	return true
 }
 

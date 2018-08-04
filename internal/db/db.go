@@ -11,8 +11,11 @@ var DbMgr DataMgr
 
 type DataMgr interface {
 	ArtistMgr
+	UserMgr
 	ReleaseMgr
 	LastFetchMgr
+	ChatMgr
+	SubscriptionMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr

@@ -10,8 +10,11 @@ func NoOp(db *gorm.DB) error {
 
 var tables = []interface{}{
 	&Artist{},
+	&User{},
 	&Release{},
 	&LastFetch{},
+	&Chat{},
+	&Subscription{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -29,6 +32,13 @@ func CreateAll(db *gorm.DB) error {
 
 	fkeys := map[interface{}][][2]string{
 		Release{}: {
+			{"artist_name", "artists(name)"},
+		},
+		Chat{}: {
+			{"user_id", "users(id)"},
+		},
+		Subscription{}: {
+			{"user_id", "users(id)"},
 			{"artist_name", "artists(name)"},
 		},
 	}

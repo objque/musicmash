@@ -28,7 +28,7 @@ func (mgr *AppDatabaseMgr) FindRelease(artist string, storeID uint64) (*Release,
 	if err := mgr.db.Where("artist_name = ? and store_id = ?", artist, storeID).First(&release).Error; err != nil {
 		return nil, err
 	}
-	return &release, mgr.db.Find(&release).Error
+	return &release, nil
 }
 
 func (mgr *AppDatabaseMgr) IsReleaseExists(storeID uint64) bool {
