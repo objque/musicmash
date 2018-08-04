@@ -11,7 +11,7 @@ const (
 	EPReleaseType     = "EP"
 
 	SingleReleaseTypePattern = "- single"
-	EPReleaseTypePattern     = "- ep"
+	EPReleaseTypePattern     = " ep"
 )
 
 type Release struct {
@@ -66,7 +66,9 @@ func (r *Release) GetCollectionType() string {
 		return SingleReleaseType
 	}
 
-	if strings.Contains(title, EPReleaseTypePattern) {
+	// NOTE (m.kalinin): some EP's ends with Ep instead of '- EP'
+	// for example album_id: 1380811617
+	if title[len(title)-3:] == EPReleaseTypePattern {
 		return EPReleaseType
 	}
 

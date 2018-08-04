@@ -55,6 +55,11 @@ func TestRelease_GetCollectionType(t *testing.T) {
 			Title:       "KIDS SEE GHOSTS",
 			TracksCount: 7,
 		},
+		{
+			Type:        EPReleaseType,
+			Title:       "Thor Ep",
+			TracksCount: 7,
+		},
 	}
 
 	for _, release := range releases {
