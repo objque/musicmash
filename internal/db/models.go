@@ -10,6 +10,7 @@ func NoOp(db *gorm.DB) error {
 
 var tables = []interface{}{
 	&Artist{},
+	&User{},
 	&Release{},
 	&LastFetch{},
 }

@@ -11,6 +11,7 @@ var DbMgr DataMgr
 
 type DataMgr interface {
 	ArtistMgr
+	UserMgr
 	ReleaseMgr
 	LastFetchMgr
 	Begin() *AppDatabaseMgr
