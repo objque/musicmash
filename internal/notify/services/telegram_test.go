@@ -19,7 +19,7 @@ func TestTelegram_MakeMessage_Released(t *testing.T) {
 	}
 
 	// action
-	message := makeMessage(&release, false)
+	message := makeMessage(&release)
 
 	// assert
 	assert.Equal(t, "New Single released \n*Gorgon City*\nEscape - Single [‌‌](pic/url)", message)
@@ -35,7 +35,7 @@ func TestTelegram_MakeMessage_Future(t *testing.T) {
 	}
 
 	// action
-	message := makeMessage(&release, true)
+	message := makeMessage(&release)
 
 	// assert
 	wantMessage := fmt.Sprintf("New Single announced \n*Gorgon City*\nEscape - Single\nRelease date: %s [‌‌](pic/url)", release.Released.Format(time.RFC850))

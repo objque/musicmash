@@ -24,10 +24,10 @@ func New(token string) *Telegram {
 	return &Telegram{bot: bot}
 }
 
-func makeMessage(release *itunes.Release, isFutureRelease bool) string {
+func makeMessage(release *itunes.Release) string {
 	releaseDate := ""
 	state := "released"
-	if isFutureRelease {
+	if release.Released.After(time.Now().UTC()) {
 		state = "announced"
 		releaseDate = fmt.Sprintf("\nRelease date: %s", release.Released.Format(time.RFC850))
 	}
@@ -39,7 +39,6 @@ func makeMessage(release *itunes.Release, isFutureRelease bool) string {
 func (t *Telegram) Send(args map[string]interface{}) error {
 	chatID := args["chatID"].(int64)
 	releaseID := args["releaseID"].(uint64)
-	isFutureRelease := args["isFutureRelease"].(bool)
 
 	release, err := itunes.Lookup(releaseID)
 	if err != nil {
@@ -48,7 +47,7 @@ func (t *Telegram) Send(args map[string]interface{}) error {
 	}
 
 	release.ArtworkURL100 = strings.Replace(release.ArtworkURL100, "100x100", "500x500", 1)
-	text := makeMessage(release, isFutureRelease)
+	text := makeMessage(release)
 	message := tgbotapi.NewMessage(chatID, text)
 	message.ParseMode = "markdown"
 	message.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{

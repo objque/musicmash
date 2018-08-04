@@ -36,7 +36,6 @@ func saveIfNewestRelease(release *itunes.LastRelease) bool {
 	notify.Service.Send(map[string]interface{}{
 		"chatID":          int64(35152258),
 		"releaseID":       release.ID,
-		"isFutureRelease": release.IsComing,
 	})
 	return true
 }
