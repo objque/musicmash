@@ -22,3 +22,44 @@ func TestLastRelease_IsLatest_False(t *testing.T) {
 
 	assert.False(t, release.IsLatest())
 }
+
+func TestRelease_GetCollectionType(t *testing.T) {
+	// arrange
+	releases := []struct {
+		TracksCount int
+		Title       string
+		Type        string
+	}{
+		{
+			Type:        EPReleaseType,
+			Title:       "The Remedy",
+			TracksCount: 4,
+		},
+		{
+			Type:        SingleReleaseType,
+			Title:       "City Lights - Single",
+			TracksCount: 1,
+		},
+		{
+			Type:        SingleReleaseType,
+			Title:       "Secrets (The Remixes) - Single",
+			TracksCount: 3,
+		},
+		{
+			Type:        AlbumReleaseType,
+			Title:       "Only the Best",
+			TracksCount: 37,
+		},
+		{
+			Type:        AlbumReleaseType,
+			Title:       "KIDS SEE GHOSTS",
+			TracksCount: 7,
+		},
+	}
+
+	for _, release := range releases {
+		result := Release{TrackCount: release.TracksCount, CollectionName: release.Title}
+		// action and assert
+		assert.Equal(t, release.Type, result.GetCollectionType())
+	}
+}

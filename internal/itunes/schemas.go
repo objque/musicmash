@@ -1,10 +1,21 @@
 package itunes
 
-import "time"
+import (
+	"strings"
+	"time"
+)
+
+const (
+	AlbumReleaseType  = "Album"
+	SingleReleaseType = "Single"
+	EPReleaseType     = "EP"
+
+	SingleReleaseTypePattern = "- single"
+	EPReleaseTypePattern     = "- ep"
+)
 
 type Release struct {
 	WrapperType            string    `json:"wrapperType"`
-	CollectionType         string    `json:"collectionType"`
 	ArtistID               int       `json:"artistId"`
 	CollectionID           int       `json:"collectionId"`
 	AmgArtistID            int       `json:"amgArtistId"`
@@ -45,4 +56,26 @@ func (r *LastRelease) IsLatest() bool {
 	now := time.Now().UTC().Truncate(time.Hour * 24)
 	yesterday := now.Add(-time.Hour * 48)
 	return r.Date.UTC().After(yesterday)
+}
+
+func (r *Release) GetCollectionType() string {
+	// NOTE (m.kalinin): this article is really useful
+	// https://support.tunecore.com/hc/en-us/articles/115006689928
+	title := strings.ToLower(r.CollectionName)
+	if strings.Contains(title, SingleReleaseTypePattern) {
+		return SingleReleaseType
+	}
+
+	if strings.Contains(title, EPReleaseTypePattern) {
+		return EPReleaseType
+	}
+
+	switch {
+	case r.TrackCount <= 3:
+		return SingleReleaseType
+	case r.TrackCount <= 6:
+		return EPReleaseType
+	default:
+		return AlbumReleaseType
+	}
 }
