@@ -1,3 +1,6 @@
+http:
+    port: 8844
+
 db:
     dbtype:  'mysql'
     dbhost:  'mariadb'

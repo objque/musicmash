@@ -11,10 +11,16 @@ import (
 var Config *AppConfig
 
 type AppConfig struct {
-	DB       DBConfig  `yaml:"db"`
-	Log      LogConfig `yaml:"log"`
-	Fetching Fetching  `yaml:"fetching"`
-	Store    Store     `yaml:"store"`
+	HTTP     HTTPConfig `yaml:"http"`
+	DB       DBConfig   `yaml:"db"`
+	Log      LogConfig  `yaml:"log"`
+	Fetching Fetching   `yaml:"fetching"`
+	Store    Store      `yaml:"store"`
+}
+
+type HTTPConfig struct {
+	IP   string `yaml:"ip"`
+	Port int    `yaml:"port"`
 }
 
 type LogConfig struct {
