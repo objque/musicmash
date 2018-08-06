@@ -33,6 +33,6 @@ func TestDB_Subscriptions_FindAll(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, subs, 2)
-	assert.Equal(t, "skrillex", subs[0].ArtistName)
-	assert.Equal(t, "alvin risk", subs[1].ArtistName)
+	assert.Equal(t, "alvin risk", subs[0].ArtistName)
+	assert.Equal(t, "skrillex", subs[1].ArtistName)
 }
