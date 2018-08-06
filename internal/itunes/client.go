@@ -6,8 +6,10 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"net/url"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/objque/musicmash/internal/config"
@@ -142,4 +144,32 @@ func Lookup(id uint64) (*Release, error) {
 	}
 
 	return searchResponse.Results[0], nil
+}
+
+func FindArtistID(artist string) (*Artist, error) {
+	artist = strings.ToLower(artist)
+	resp, err := http.Get(fmt.Sprintf("%s/search?term=%s&media=music&limit=200", config.Config.Store.URL, url.QueryEscape(artist)))
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	searchResponse := SearchReleaseResponse{}
+	if err := json.NewDecoder(resp.Body).Decode(&searchResponse); err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if searchResponse.Count == 0 {
+		return nil, ArtistNotFoundErr
+	}
+
+	for i, song := range searchResponse.Results {
+		if artist == strings.ToLower(song.ArtistName) {
+			log.Debugf("spent %d iterations to find storeID for '%s'", i, artist)
+			artist := Artist{StoreID: uint64(song.ArtistID), Name: song.ArtistName}
+			return &artist, nil
+		}
+	}
+	return nil, errors.Wrapf(ArtistNotFoundErr, artist)
 }
