@@ -52,5 +52,11 @@ func CreateAll(db *gorm.DB) error {
 		}
 	}
 
+	if err := db.Debug().Model(&Subscription{}).AddUniqueIndex(
+		"idx_user_id_artist_name",
+		"user_id", "artist_name").Error; err != nil {
+		return err
+	}
+
 	return nil
 }

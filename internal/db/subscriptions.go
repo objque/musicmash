@@ -2,8 +2,8 @@ package db
 
 type Subscription struct {
 	ID         int64  `gorm:"primary_key"`
-	UserID     string `sql:"index"`
-	ArtistName string
+	UserID     string `sql:"index" gorm:"unique_index:idx_user_id_artist_name"`
+	ArtistName string `gorm:"unique_index:idx_user_id_artist_name"`
 }
 
 type SubscriptionMgr interface {
