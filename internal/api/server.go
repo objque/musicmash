@@ -19,6 +19,7 @@ func getMux() *chi.Mux {
 	r.Use(middleware.Recoverer)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
+	r.Get("/states/{state_id}", getState)
 	r.Post("/{user_id}/subscriptions", createSubscriptions)
 	return r
 }
