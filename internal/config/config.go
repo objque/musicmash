@@ -16,6 +16,7 @@ type AppConfig struct {
 	Log      LogConfig  `yaml:"log"`
 	Fetching Fetching   `yaml:"fetching"`
 	Store    Store      `yaml:"store"`
+	Tasks    Tasks      `yaml:"tasks"`
 }
 
 type HTTPConfig struct {
@@ -41,6 +42,15 @@ type DBConfig struct {
 type Fetching struct {
 	Workers                    int     `yaml:"workers"`
 	CountOfSkippedHoursToFetch float64 `yaml:"count_of_skipped_hours_to_fetch"`
+}
+
+type Tasks struct {
+	Subscriptions SubscriptionsTask `yaml:"subscriptions"`
+}
+
+type SubscriptionsTask struct {
+	FindArtistWorkers      int `yaml:"find_artist_workers"`
+	SubscribeArtistWorkers int `yaml:"subscribe_artist_workers"`
 }
 
 type Store struct {

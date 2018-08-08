@@ -20,3 +20,8 @@ store:
 
 fetching:
     count_of_skipped_hours_to_fetch: 8
+
+tasks:
+    subscriptions:
+        find_artist_workers: 3
+        subscribe_artist_workers: 10

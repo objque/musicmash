@@ -22,6 +22,12 @@ func setup() {
 			URL:    server.URL,
 			Region: "us",
 		},
+		Tasks: config.Tasks{
+			Subscriptions: config.SubscriptionsTask{
+				FindArtistWorkers:      10,
+				SubscribeArtistWorkers: 10,
+			},
+		},
 	}
 }
 

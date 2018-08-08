@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/itunes"
 	"github.com/objque/musicmash/internal/log"
@@ -11,12 +12,7 @@ import (
 	"github.com/pkg/errors"
 )
 
-const (
-	stateIDLength = 8
-
-	findArtistWorkers      = 2
-	subscribeArtistWorkers = 10
-)
+const stateIDLength = 8
 
 func findArtist(id int, jobs <-chan string, results chan<- uint64, done chan<- int) {
 	for {
@@ -75,16 +71,16 @@ func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan
 	done = make(chan bool, 1)
 	jobs := make(chan string, len(artists))
 	results := make(chan uint64, len(artists))
-	findWorkersDone := make(chan int, findArtistWorkers)
+	findWorkersDone := make(chan int, config.Config.Tasks.Subscriptions.FindArtistWorkers)
 	stateID = random.NewStringWithLength(stateIDLength)
 	db.DbMgr.UpdateState(stateID, db.ProcessingState)
 	startedAt := time.Now().UTC()
 
-	for id := 1; id <= findArtistWorkers; id++ {
+	for id := 1; id <= config.Config.Tasks.Subscriptions.FindArtistWorkers; id++ {
 		go findArtist(id, jobs, results, findWorkersDone)
 	}
 
-	for id := 1; id <= subscribeArtistWorkers; id++ {
+	for id := 1; id <= config.Config.Tasks.Subscriptions.SubscribeArtistWorkers; id++ {
 		go subscribeUserForArtist(id, results)
 	}
 
@@ -94,7 +90,7 @@ func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan
 	close(jobs)
 
 	go func() {
-		for id := 1; id <= findArtistWorkers; id++ {
+		for id := 1; id <= config.Config.Tasks.Subscriptions.FindArtistWorkers; id++ {
 			log.Debugf("#%d findArtistWorker done", <-findWorkersDone)
 		}
 		close(results)
