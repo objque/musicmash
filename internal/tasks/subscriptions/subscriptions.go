@@ -12,7 +12,13 @@ import (
 	"github.com/pkg/errors"
 )
 
-const stateIDLength = 8
+const (
+	// NOTE (m.kalinin): we're searching artists via iTunes Public API without auth.
+	// And that's the problem because iTunes API has rate-limit for non-auth-users: 20 rpm
+	findArtistWorkers = 1
+
+	stateIDLength = 8
+)
 
 func findArtist(id int, jobs <-chan string, results chan<- string, done chan<- int) {
 	for {
@@ -51,6 +57,11 @@ func findArtist(id int, jobs <-chan string, results chan<- string, done chan<- i
 
 		log.Debugf("found new artist '%s' storeID: %d", artist.Name, artist.StoreID)
 		results <- artist.Name
+
+		// NOTE (m.kalinin): avoid iTunes rate-limit (20rps)
+		if config.Config.Tasks.Subscriptions.UseSearchDelay {
+			time.Sleep(time.Second * 3)
+		}
 	}
 	done <- id
 }
@@ -73,13 +84,13 @@ func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan
 	done = make(chan bool, 1)
 	jobs := make(chan string, len(artists))
 	results := make(chan string, len(artists))
-	findWorkersDone := make(chan int, config.Config.Tasks.Subscriptions.FindArtistWorkers)
+	findWorkersDone := make(chan int, findArtistWorkers)
 	subscribeWorkersDone := make(chan int, config.Config.Tasks.Subscriptions.SubscribeArtistWorkers)
 	stateID = random.NewStringWithLength(stateIDLength)
 	db.DbMgr.UpdateState(stateID, db.ProcessingState)
 	startedAt := time.Now().UTC()
 
-	for id := 1; id <= config.Config.Tasks.Subscriptions.FindArtistWorkers; id++ {
+	for id := 1; id <= findArtistWorkers; id++ {
 		go findArtist(id, jobs, results, findWorkersDone)
 	}
 
@@ -93,7 +104,7 @@ func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan
 	close(jobs)
 
 	go func() {
-		for id := 1; id <= config.Config.Tasks.Subscriptions.FindArtistWorkers; id++ {
+		for id := 1; id <= findArtistWorkers; id++ {
 			log.Debugf("#%d findArtistWorker done", <-findWorkersDone)
 		}
 		close(results)
