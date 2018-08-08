@@ -49,8 +49,8 @@ type Tasks struct {
 }
 
 type SubscriptionsTask struct {
-	FindArtistWorkers      int `yaml:"find_artist_workers"`
-	SubscribeArtistWorkers int `yaml:"subscribe_artist_workers"`
+	UseSearchDelay         bool `yaml:"use_search_delay"`
+	SubscribeArtistWorkers int  `yaml:"subscribe_artist_workers"`
 }
 
 type Store struct {
