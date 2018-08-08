@@ -7,6 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
+	"github.com/objque/musicmash/internal/log"
 )
 
 func getMux() *chi.Mux {
@@ -25,5 +26,7 @@ func getMux() *chi.Mux {
 }
 
 func ListenAndServe(ip string, port int) error {
-	return http.ListenAndServe(fmt.Sprintf("%s:%d", ip, port), getMux())
+	addr := fmt.Sprintf("%s:%d", ip, port)
+	log.Infof("Listening API on '%s'", addr)
+	return http.ListenAndServe(addr, getMux())
 }
