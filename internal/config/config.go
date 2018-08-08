@@ -82,15 +82,15 @@ func Load(data []byte) error {
 	return nil
 }
 
-func (cfg *AppConfig) GetConnString() (DBType string, ConnString string) {
-	if cfg.DB.DBType != "mysql" {
+func (db *DBConfig) GetConnString() (DBType string, ConnString string) {
+	if db.DBType != "mysql" {
 		panic("Only mysql is currently supported")
 	}
 	var connString = fmt.Sprintf(
 		"%v:%v@tcp(%v)/%v?charset=utf8&parseTime=True&loc=UTC",
-		cfg.DB.DBLogin,
-		cfg.DB.DBPass,
-		cfg.DB.DBHost,
-		cfg.DB.DBName)
-	return cfg.DB.DBType, connString
+		db.DBLogin,
+		db.DBPass,
+		db.DBHost,
+		db.DBName)
+	return db.DBType, connString
 }
