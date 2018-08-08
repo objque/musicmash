@@ -16,7 +16,7 @@ func TestSubscriptions_FindArtistsAndSubscribeUserTask(t *testing.T) {
 	const userID = "objque@me"
 	artists := []string{"King Curtis", "modeRAT"}
 	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{Name: "King Curtis", StoreID: 0001}))
-	assert.NoError(t, db.DbMgr.EnsureUserExists(&db.User{ID: userID}))
+	assert.NoError(t, db.DbMgr.EnsureUserExists(userID))
 	mux.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
           "resultCount": 2,

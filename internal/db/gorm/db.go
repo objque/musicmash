@@ -38,7 +38,7 @@ func InitMain(postCreate postCreateFunc) *gorm.DB {
 		panic("Attempt to init main database twice!")
 	}
 
-	dbtype, connstring := config.Config.GetConnString()
+	dbtype, connstring := config.Config.DB.GetConnString()
 	db, err := gorm.Open(dbtype, connstring)
 	if err != nil {
 		panic("Can't open database connection: " + err.Error())

@@ -32,7 +32,7 @@ func findDate(body string, rx *regexp.Regexp, rxType string) (*time.Time, error)
 	}
 	date, err := parseTime(released[1])
 	if err != nil {
-		return nil, errors.Wrapf(err, "can'date parse time '%s'", released[1])
+		return nil, errors.Wrapf(err, "can't parse datetime '%s'", released[1])
 	}
 	return date, nil
 }
