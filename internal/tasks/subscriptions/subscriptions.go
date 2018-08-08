@@ -55,7 +55,7 @@ func findArtist(id int, jobs <-chan string, results chan<- string, done chan<- i
 	}
 }
 
-func subscribeUserForArtist(id int, userID string, jobs chan string) {
+func subscribeUserForArtist(id int, userID string, jobs chan string, done chan int) {
 	for {
 		artistName, more := <-jobs
 		if !more {
@@ -73,6 +73,7 @@ func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan
 	jobs := make(chan string, len(artists))
 	results := make(chan string, len(artists))
 	findWorkersDone := make(chan int, config.Config.Tasks.Subscriptions.FindArtistWorkers)
+	subscribeWorkersDone := make(chan int, config.Config.Tasks.Subscriptions.SubscribeArtistWorkers)
 	stateID = random.NewStringWithLength(stateIDLength)
 	db.DbMgr.UpdateState(stateID, db.ProcessingState)
 	startedAt := time.Now().UTC()
@@ -82,7 +83,7 @@ func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan
 	}
 
 	for id := 1; id <= config.Config.Tasks.Subscriptions.SubscribeArtistWorkers; id++ {
-		go subscribeUserForArtist(id, userID, results)
+		go subscribeUserForArtist(id, userID, results, subscribeWorkersDone)
 	}
 
 	for _, artist := range artists {
@@ -96,15 +97,20 @@ func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan
 		}
 		close(results)
 
-		if err := db.DbMgr.UpdateState(stateID, db.CompleteState); err != nil {
-			log.Error(errors.Wrapf(err, "tried to update state '%s'", stateID))
-			return
+		for id := 1; id <= config.Config.Tasks.Subscriptions.SubscribeArtistWorkers; id++ {
+			log.Debugf("#%d subscribeArtistWorker done", <-subscribeWorkersDone)
 		}
 
-		elapsed := time.Now().UTC().Sub(startedAt)
-		log.Debugf("State '%s' was updated", stateID)
-		log.Debugf("Finish fetch and subscribe user task. Elapsed time: %s", elapsed.String())
+		err := db.DbMgr.UpdateState(stateID, db.CompleteState)
+		if err != nil {
+			log.Error(errors.Wrapf(err, "tried to update state '%s'", stateID))
+		} else {
+			log.Debugf("State '%s' was updated", stateID)
+		}
+
 		done <- true
+		elapsed := time.Now().UTC().Sub(startedAt)
+		log.Debugf("Finish fetch and subscribe user task. Elapsed time: %s", elapsed.String())
 	}()
 	return
 }
