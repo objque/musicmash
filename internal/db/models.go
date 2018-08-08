@@ -15,6 +15,7 @@ var tables = []interface{}{
 	&LastFetch{},
 	&Chat{},
 	&Subscription{},
+	&State{},
 }
 
 func CreateTables(db *gorm.DB) error {
