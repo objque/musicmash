@@ -148,15 +148,20 @@ func Lookup(id uint64) (*Release, error) {
 
 func FindArtistID(artist string) (*Artist, error) {
 	artist = strings.ToLower(artist)
-	resp, err := http.Get(fmt.Sprintf("%s/search?term=%s&media=music&limit=50", config.Config.Store.URL, url.QueryEscape(artist)))
+	storeURL := fmt.Sprintf("%s/search?term=%s&media=music&limit=50", config.Config.Store.URL, url.QueryEscape(artist))
+	resp, err := http.Get(storeURL)
 	if err != nil {
-		log.Error(err)
+		log.Error(errors.Wrapf(err, "tried to get '%s'", storeURL))
 		return nil, err
+	}
+
+	if resp.StatusCode >= http.StatusBadRequest {
+		return nil, fmt.Errorf("can't recieve answer from API. got status: %d for url: '%s'", resp.StatusCode, storeURL)
 	}
 
 	searchResponse := SearchReleaseResponse{}
 	if err := json.NewDecoder(resp.Body).Decode(&searchResponse); err != nil {
-		return nil, err
+		return nil, errors.Wrapf(err, "can't decode API response from '%s'", storeURL)
 	}
 	defer resp.Body.Close()
 
