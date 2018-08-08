@@ -4,6 +4,7 @@ import (
 	"flag"
 	"os"
 
+	"github.com/objque/musicmash/internal/api"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher"
@@ -38,5 +39,6 @@ func init() {
 
 func main() {
 	log.Info("Running fetching...")
-	fetcher.Run()
+	go fetcher.Run()
+	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }

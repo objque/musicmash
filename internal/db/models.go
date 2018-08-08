@@ -15,6 +15,7 @@ var tables = []interface{}{
 	&LastFetch{},
 	&Chat{},
 	&Subscription{},
+	&State{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -50,6 +51,12 @@ func CreateAll(db *gorm.DB) error {
 				return err
 			}
 		}
+	}
+
+	if err := db.Debug().Model(&Subscription{}).AddUniqueIndex(
+		"idx_user_id_artist_name",
+		"user_id", "artist_name").Error; err != nil {
+		return err
 	}
 
 	return nil

@@ -36,4 +36,4 @@ docker-full:
 deploy:
 	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) "(docker stop $(CONTAINER_NAME) || true) && (docker rm $(CONTAINER_NAME) || true)"
 	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) docker pull $(REGISTRY_REPO)
-	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) docker run -d --link mariadb -e TG_TOKEN=$(TG_TOKEN) --name $(CONTAINER_NAME) -v /etc/musicmash:/etc/musicmash -v /etc/ssl:/etc/ssl $(REGISTRY_REPO)
+	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) docker run -d --link mariadb -e TG_TOKEN=$(TG_TOKEN) --name $(CONTAINER_NAME) -v /etc/musicmash:/etc/musicmash -v /etc/ssl:/etc/ssl -p 127.0.0.1:8844:8844 $(REGISTRY_REPO)

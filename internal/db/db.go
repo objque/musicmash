@@ -16,6 +16,7 @@ type DataMgr interface {
 	LastFetchMgr
 	ChatMgr
 	SubscriptionMgr
+	StateMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr

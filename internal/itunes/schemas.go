@@ -50,6 +50,11 @@ type LastRelease struct {
 	ArtistName string
 }
 
+type Artist struct {
+	Name    string
+	StoreID uint64
+}
+
 func NewInfo(id, released string) *LastRelease {
 	return &LastRelease{}
 }

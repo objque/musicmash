@@ -33,6 +33,24 @@ func TestDB_Subscriptions_FindAll(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, subs, 2)
-	assert.Equal(t, "skrillex", subs[0].ArtistName)
-	assert.Equal(t, "alvin risk", subs[1].ArtistName)
+	assert.Equal(t, "alvin risk", subs[0].ArtistName)
+	assert.Equal(t, "skrillex", subs[1].ArtistName)
+}
+
+func TestDB_Subscriptions_SubscribeUserForArtists(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	artists := []string{"Skrillex", "David Guetta", "Deftones", "Depeche Mode"}
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "objque@me", ArtistName: "Skrillex"}))
+
+	// action
+	err := DbMgr.SubscribeUserForArtists("objque@me", artists)
+
+	// assert
+	assert.NoError(t, err)
+	subs, err := DbMgr.FindAllUserSubscriptions("objque@me")
+	assert.NoError(t, err)
+	assert.Len(t, subs, 4)
 }
