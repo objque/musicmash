@@ -19,6 +19,7 @@ store:
     region: 'us'
 
 fetching:
+    workers: 10
     count_of_skipped_hours_to_fetch: 8
 
 tasks:
