@@ -9,7 +9,7 @@ import (
 	"github.com/go-chi/render"
 )
 
-func ListenAndServe(ip string, port int) error {
+func getMux() *chi.Mux {
 	r := chi.NewRouter()
 
 	// A good base middleware stack
@@ -19,5 +19,10 @@ func ListenAndServe(ip string, port int) error {
 	r.Use(middleware.Recoverer)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	return http.ListenAndServe(fmt.Sprintf("%s:%d", ip, port), r)
+	r.Post("/{user_id}/subscriptions", createSubscriptions)
+	return r
+}
+
+func ListenAndServe(ip string, port int) error {
+	return http.ListenAndServe(fmt.Sprintf("%s:%d", ip, port), getMux())
 }
