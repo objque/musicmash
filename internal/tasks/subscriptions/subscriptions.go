@@ -18,7 +18,6 @@ func findArtist(id int, jobs <-chan string, results chan<- string, done chan<- i
 	for {
 		userArtist, more := <-jobs
 		if !more {
-			done <- id
 			break
 		}
 
@@ -53,6 +52,7 @@ func findArtist(id int, jobs <-chan string, results chan<- string, done chan<- i
 		log.Debugf("found new artist '%s' storeID: %d", artist.Name, artist.StoreID)
 		results <- artist.Name
 	}
+	done <- id
 }
 
 func subscribeUserForArtist(id int, userID string, jobs chan string, done chan int) {
@@ -66,6 +66,7 @@ func subscribeUserForArtist(id int, userID string, jobs chan string, done chan i
 		db.DbMgr.EnsureSubscriptionExists(&db.Subscription{ArtistName: artistName, UserID: userID})
 		log.Debugf("subscribed user %s for %d", userID, artistName)
 	}
+	done <- id
 }
 
 func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan bool, stateID string) {
