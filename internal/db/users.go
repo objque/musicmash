@@ -13,7 +13,7 @@ type UserMgr interface {
 	CreateUser(user *User) error
 	FindUserByID(id string) (*User, error)
 	GetAllUsers() ([]*User, error)
-	EnsureUserExists(user *User) error
+	EnsureUserExists(userID string) error
 }
 
 func (mgr *AppDatabaseMgr) FindUserByID(id string) (*User, error) {
@@ -34,10 +34,10 @@ func (mgr *AppDatabaseMgr) CreateUser(user *User) error {
 	return mgr.db.Create(user).Error
 }
 
-func (mgr *AppDatabaseMgr) EnsureUserExists(user *User) error {
-	_, err := mgr.FindUserByID(user.ID)
+func (mgr *AppDatabaseMgr) EnsureUserExists(userID string) error {
+	_, err := mgr.FindUserByID(userID)
 	if err != nil {
-		return mgr.CreateUser(user)
+		return mgr.CreateUser(&User{ID: userID})
 	}
 	return nil
 }

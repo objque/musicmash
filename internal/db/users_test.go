@@ -11,9 +11,7 @@ func TestDB_Users_EnsureExists(t *testing.T) {
 	defer teardown()
 
 	// action
-	err := DbMgr.EnsureUserExists(&User{
-		ID: "objque@me",
-	})
+	err := DbMgr.EnsureUserExists("objque@me")
 
 	// assert
 	assert.NoError(t, err)
@@ -27,12 +25,8 @@ func TestDB_Users_List(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureUserExists(&User{
-		ID: "objque@me",
-	}))
-	assert.NoError(t, DbMgr.EnsureUserExists(&User{
-		ID: "jade@abuse",
-	}))
+	assert.NoError(t, DbMgr.EnsureUserExists("objque@me"))
+	assert.NoError(t, DbMgr.EnsureUserExists("jade@abuse"))
 
 	// action
 	users, err := DbMgr.GetAllUsers()

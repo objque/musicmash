@@ -16,7 +16,7 @@ func TestAPI_SubscribeUser(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureUserExists(&db.User{ID: "objque"}))
+	assert.NoError(t, db.DbMgr.EnsureUserExists("objque"))
 	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{Name: "Moderat", StoreID: 00001}))
 
 	// action
