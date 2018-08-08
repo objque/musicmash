@@ -148,7 +148,7 @@ func Lookup(id uint64) (*Release, error) {
 
 func FindArtistID(artist string) (*Artist, error) {
 	artist = strings.ToLower(artist)
-	resp, err := http.Get(fmt.Sprintf("%s/search?term=%s&media=music&limit=200", config.Config.Store.URL, url.QueryEscape(artist)))
+	resp, err := http.Get(fmt.Sprintf("%s/search?term=%s&media=music&limit=50", config.Config.Store.URL, url.QueryEscape(artist)))
 	if err != nil {
 		log.Error(err)
 		return nil, err
