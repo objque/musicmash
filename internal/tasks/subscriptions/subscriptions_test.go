@@ -41,4 +41,7 @@ func TestSubscriptions_FindArtistsAndSubscribeUserTask(t *testing.T) {
 	state, err := db.DbMgr.GetState(stateID)
 	assert.NoError(t, err)
 	assert.Equal(t, db.CompleteState, state.Value)
+	subs, err := db.DbMgr.FindAllUserSubscriptions(userID)
+	assert.NoError(t, err)
+	assert.Len(t, subs, 2)
 }
