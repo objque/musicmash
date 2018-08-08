@@ -14,18 +14,17 @@ import (
 
 const stateIDLength = 8
 
-func findArtist(id int, jobs <-chan string, results chan<- uint64, done chan<- int) {
+func findArtist(id int, jobs <-chan string, results chan<- string, done chan<- int) {
 	for {
 		userArtist, more := <-jobs
 		if !more {
-			done <- id
 			break
 		}
 
 		dbArtist, err := db.DbMgr.FindArtistByName(userArtist)
 		// artist already exists
 		if err == nil {
-			results <- dbArtist.StoreID
+			results <- dbArtist.Name
 			continue
 		}
 		// another db err raised
@@ -51,27 +50,31 @@ func findArtist(id int, jobs <-chan string, results chan<- uint64, done chan<- i
 		}
 
 		log.Debugf("found new artist '%s' storeID: %d", artist.Name, artist.StoreID)
-		results <- artist.StoreID
+		results <- artist.Name
 	}
+	done <- id
 }
 
-func subscribeUserForArtist(id int, jobs chan uint64) {
+func subscribeUserForArtist(id int, userID string, jobs chan string, done chan int) {
 	for {
-		storeID, more := <-jobs
+		artistName, more := <-jobs
 		if !more {
 			log.Debugf("#%d subscribeUserForArtistWorker done", id)
 			break
 		}
 
-		log.Debugf("subscribed user %s for %d", "objque", storeID)
+		db.DbMgr.EnsureSubscriptionExists(&db.Subscription{ArtistName: artistName, UserID: userID})
+		log.Debugf("subscribed user %s for %d", userID, artistName)
 	}
+	done <- id
 }
 
 func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan bool, stateID string) {
 	done = make(chan bool, 1)
 	jobs := make(chan string, len(artists))
-	results := make(chan uint64, len(artists))
+	results := make(chan string, len(artists))
 	findWorkersDone := make(chan int, config.Config.Tasks.Subscriptions.FindArtistWorkers)
+	subscribeWorkersDone := make(chan int, config.Config.Tasks.Subscriptions.SubscribeArtistWorkers)
 	stateID = random.NewStringWithLength(stateIDLength)
 	db.DbMgr.UpdateState(stateID, db.ProcessingState)
 	startedAt := time.Now().UTC()
@@ -81,7 +84,7 @@ func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan
 	}
 
 	for id := 1; id <= config.Config.Tasks.Subscriptions.SubscribeArtistWorkers; id++ {
-		go subscribeUserForArtist(id, results)
+		go subscribeUserForArtist(id, userID, results, subscribeWorkersDone)
 	}
 
 	for _, artist := range artists {
@@ -95,15 +98,20 @@ func FindArtistsAndSubscribeUserTask(userID string, artists []string) (done chan
 		}
 		close(results)
 
-		if err := db.DbMgr.UpdateState(stateID, db.CompleteState); err != nil {
-			log.Error(errors.Wrapf(err, "tried to update state '%s'", stateID))
-			return
+		for id := 1; id <= config.Config.Tasks.Subscriptions.SubscribeArtistWorkers; id++ {
+			log.Debugf("#%d subscribeArtistWorker done", <-subscribeWorkersDone)
 		}
 
-		elapsed := time.Now().UTC().Sub(startedAt)
-		log.Debugf("State '%s' was updated", stateID)
-		log.Debugf("Finish fetch and subscribe user task. Elapsed time: %s", elapsed.String())
+		err := db.DbMgr.UpdateState(stateID, db.CompleteState)
+		if err != nil {
+			log.Error(errors.Wrapf(err, "tried to update state '%s'", stateID))
+		} else {
+			log.Debugf("State '%s' was updated", stateID)
+		}
+
 		done <- true
+		elapsed := time.Now().UTC().Sub(startedAt)
+		log.Debugf("Finish fetch and subscribe user task. Elapsed time: %s", elapsed.String())
 	}()
 	return
 }

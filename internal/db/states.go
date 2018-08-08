@@ -14,9 +14,9 @@ const (
 )
 
 type State struct {
-	ID        string `gorm:"primary_key"`
-	CreatedAt time.Time
-	Value     SubscriptionState
+	ID        string            `gorm:"primary_key" json:"id"`
+	CreatedAt time.Time         `json:"created_at"`
+	Value     SubscriptionState `json:"value"`
 }
 
 type StateMgr interface {
