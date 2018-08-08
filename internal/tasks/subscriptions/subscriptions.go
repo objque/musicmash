@@ -64,7 +64,7 @@ func subscribeUserForArtist(id int, userID string, jobs chan string, done chan i
 		}
 
 		db.DbMgr.EnsureSubscriptionExists(&db.Subscription{ArtistName: artistName, UserID: userID})
-		log.Debugf("subscribed user %s for %d", userID, artistName)
+		log.Debugf("subscribed user %s for %s", userID, artistName)
 	}
 	done <- id
 }
