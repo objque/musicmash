@@ -17,8 +17,18 @@ jobs:
     - make docker-build
     - make docker-push
     - make deploy
+  - stage: deploy-staging
+    script:
+    - eval "$(ssh-agent -s)"
+    - make add-ssh-key
+    - make build
+    - make docker-build
+    - make docker-push
+    - make deploy-staging
 stages:
 - tests
 - build
 - name: deploy
   if: branch = master
+- name: deploy-staging
+  if: branch = develop
