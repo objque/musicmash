@@ -22,6 +22,7 @@ func getMux() *chi.Mux {
 
 	r.Get("/states/{state_id}", getState)
 	r.Post("/{user_id}/subscriptions", createSubscriptions)
+	r.Delete("/{user_id}/subscriptions", deleteSubscriptions)
 	return r
 }
 
