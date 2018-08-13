@@ -45,10 +45,13 @@ func saveIfNewestRelease(release *itunes.LastRelease) bool {
 	}
 
 	for _, chat := range chats {
-		notify.Service.Send(map[string]interface{}{
+		err := notify.Service.Send(map[string]interface{}{
 			"chatID":    chat.ID,
 			"releaseID": release.ID,
 		})
+		if err != nil {
+			log.Error(errors.Wrapf(err, "tried to send message into telegram chat with id '%d'", chat.ID))
+		}
 	}
 	return true
 }
