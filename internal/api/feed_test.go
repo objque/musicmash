@@ -73,7 +73,7 @@ func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 	}))
 
 	// action
-	const layout = "2006-01-02T00:00:00"
+	const layout = "2006-01-02"
 	since := time.Now().UTC().Add(-time.Hour * 24 * 2) // two days ago
 	resp, err := http.Get(fmt.Sprintf("%s/%s/feed?since=%s", server.URL, userID, since.Format(layout)))
 
