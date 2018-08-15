@@ -21,6 +21,8 @@ type ReleaseMgr interface {
 	IsReleaseExists(storeID uint64) bool
 	GetAllReleases() ([]*Release, error)
 	EnsureReleaseExists(release *Release) error
+	GetReleasesForUserFilterByPeriod(userID string, since, till time.Time) ([]*Release, error)
+	GetReleasesForUserSince(userID string, since time.Time) ([]*Release, error)
 }
 
 func (mgr *AppDatabaseMgr) FindRelease(artist string, storeID uint64) (*Release, error) {
@@ -59,4 +61,24 @@ func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {
 		return mgr.CreateRelease(release)
 	}
 	return nil
+}
+
+func (mgr *AppDatabaseMgr) GetReleasesForUserFilterByPeriod(userID string, since, till time.Time) ([]*Release, error) {
+	const sub = "select artist_name from subscriptions where user_id = ?"
+	const sql = "select * from releases where artist_name in (" + sub + ") and date >= ? and date <= ? order by date desc"
+	releases := []*Release{}
+	if err := mgr.db.Raw(sql, userID, since, till).Scan(&releases).Error; err != nil {
+		return nil, err
+	}
+	return releases, nil
+}
+
+func (mgr *AppDatabaseMgr) GetReleasesForUserSince(userID string, since time.Time) ([]*Release, error) {
+	const sub = "select artist_name from subscriptions where user_id = ?"
+	const sql = "select * from releases where artist_name in (" + sub + ") and date >= ? order by date desc"
+	releases := []*Release{}
+	if err := mgr.db.Raw(sql, userID, since).Scan(&releases).Error; err != nil {
+		return nil, err
+	}
+	return releases, nil
 }

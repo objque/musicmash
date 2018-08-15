@@ -17,6 +17,7 @@ type DataMgr interface {
 	ChatMgr
 	SubscriptionMgr
 	StateMgr
+	FeedMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr
