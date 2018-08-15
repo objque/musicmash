@@ -5,28 +5,16 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/jinzhu/gorm"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/log"
 	tasks "github.com/objque/musicmash/internal/tasks/subscriptions"
 	"github.com/pkg/errors"
+	"github.com/objque/musicmash/internal/api/validators"
 )
-
-func validateUser(userID string, w http.ResponseWriter) error {
-	_, err := db.DbMgr.FindUserByID(userID)
-	return err
-}
 
 func createSubscriptions(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "user_id")
-	if err := validateUser(userID, w); err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-
-		log.Error(err)
-		w.WriteHeader(http.StatusInternalServerError)
+	if err := validators.IsUserExits(w, userID); err != nil {
 		return
 	}
 
@@ -48,14 +36,7 @@ func createSubscriptions(w http.ResponseWriter, r *http.Request) {
 
 func deleteSubscriptions(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "user_id")
-	if err := validateUser(userID, w); err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			w.WriteHeader(http.StatusNotFound)
-			return
-		}
-
-		log.Error(err)
-		w.WriteHeader(http.StatusInternalServerError)
+	if err := validators.IsUserExits(w, userID); err != nil {
 		return
 	}
 

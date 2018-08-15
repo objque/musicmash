@@ -7,12 +7,12 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/log"
+	"github.com/objque/musicmash/internal/api/validators"
 )
 
 func addUserChat(w http.ResponseWriter, r *http.Request) {
 	userID := chi.URLParam(r, "user_id")
-	if err := validateUser(userID, w); err != nil {
-		w.WriteHeader(http.StatusNotFound)
+	if err := validators.IsUserExits(w, userID); err != nil {
 		return
 	}
 
