@@ -17,7 +17,17 @@ func getUserFeed(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	since := r.URL.Query().Get("since")
 	weekAgo := time.Now().UTC().Add(-time.Hour * 24 * 7)
+	if since != "" {
+		var err error
+		weekAgo, err = time.Parse("2006-01-02T15:04:05", since)
+		if err != nil {
+			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+	}
+
 	feed, err := db.DbMgr.GetUserFeedSince(userID, weekAgo)
 	if err != nil {
 		log.Error(err)
