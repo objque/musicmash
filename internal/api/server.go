@@ -25,6 +25,7 @@ func getMux() *chi.Mux {
 	r.Post("/users", createUser)
 	r.Post("/{user_id}/chats", addUserChat)
 	r.Delete("/{user_id}/subscriptions", deleteSubscriptions)
+	r.Get("/{user_id}/feed", getUserFeed)
 	return r
 }
 
