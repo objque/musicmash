@@ -17,7 +17,7 @@ type FeedMgr interface {
 }
 
 func (mgr *AppDatabaseMgr) GetUserFeedSince(userID string, since time.Time) (*Feed, error) {
-	feed := &Feed{}
+	feed := &Feed{Date: since}
 	var err error
 	now := time.Now().UTC()
 	feed.Released, err = mgr.GetReleasesForUserFilterByPeriod(userID, since, now)
