@@ -18,6 +18,7 @@ type DataMgr interface {
 	SubscriptionMgr
 	StateMgr
 	FeedMgr
+	StoreMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr
