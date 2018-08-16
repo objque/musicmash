@@ -7,7 +7,7 @@ import (
 )
 
 type Feed struct {
-	Date      time.Time
+	Date      time.Time  `json:"date"`
 	Announced []*Release `json:"announced"`
 	Released  []*Release `json:"released"`
 }
