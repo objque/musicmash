@@ -17,7 +17,7 @@ func saveIfNewestRelease(release *itunes.LastRelease) bool {
 		return false
 	}
 
-	if db.DbMgr.IsReleaseExists(release.ID) {
+	if db.DbMgr.IsReleaseExists("itunes", release.ID) {
 		return false
 	}
 
@@ -31,6 +31,7 @@ func saveIfNewestRelease(release *itunes.LastRelease) bool {
 		ArtistName: release.ArtistName,
 		Date:       release.Date,
 		StoreID:    release.ID,
+		StoreType:  "itunes",
 	})
 
 	chats, err := db.DbMgr.GetAllChatsThatSubscribedFor(release.ArtistName)
@@ -140,7 +141,7 @@ func isMustFetch() bool {
 	diff := calcDiffHours(last.Date)
 	log.Infof("Last fetch was at '%s'. Next fetch after %v hour",
 		last.Date.Format("2006-01-02 15:04:05"),
-		config.Config.Fetching.CountOfSkippedHoursToFetch - diff)
+		config.Config.Fetching.CountOfSkippedHoursToFetch-diff)
 	return diff >= config.Config.Fetching.CountOfSkippedHoursToFetch
 }
 

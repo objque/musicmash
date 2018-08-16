@@ -128,6 +128,7 @@ func TestFetcher_Fetch_ReleaseAlreadyExists(t *testing.T) {
 	}))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: "S.P.Y",
+		StoreType:  "itunes",
 		StoreID:    158365636,
 	}))
 	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {

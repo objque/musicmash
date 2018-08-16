@@ -12,30 +12,31 @@ type Release struct {
 	CreatedAt  time.Time `json:"-"`
 	Date       time.Time `gorm:"not null" sql:"index" json:"date"`
 	ArtistName string    `json:"artist_name"`
-	StoreID    uint64    `sql:"index" json:"store_id"`
+	StoreID    uint64    `sql:"index" gorm:"unique_index:idx_store_type_store_id" json:"store_id"`
+	StoreType  string    `sql:"index" gorm:"unique_index:idx_store_type_store_id" json:"store_type"`
 }
 
 type ReleaseMgr interface {
 	CreateRelease(release *Release) error
-	FindRelease(artist string, storeID uint64) (*Release, error)
-	IsReleaseExists(storeID uint64) bool
+	FindRelease(artist string, store string, id uint64) (*Release, error)
+	IsReleaseExists(store string, id uint64) bool
 	GetAllReleases() ([]*Release, error)
 	EnsureReleaseExists(release *Release) error
 	GetReleasesForUserFilterByPeriod(userID string, since, till time.Time) ([]*Release, error)
 	GetReleasesForUserSince(userID string, since time.Time) ([]*Release, error)
 }
 
-func (mgr *AppDatabaseMgr) FindRelease(artist string, storeID uint64) (*Release, error) {
+func (mgr *AppDatabaseMgr) FindRelease(artist string, store string, id uint64) (*Release, error) {
 	release := Release{}
-	if err := mgr.db.Where("artist_name = ? and store_id = ?", artist, storeID).First(&release).Error; err != nil {
+	if err := mgr.db.Where("artist_name = ? and store_type = ? and store_id = ?", artist, store, id).First(&release).Error; err != nil {
 		return nil, err
 	}
 	return &release, nil
 }
 
-func (mgr *AppDatabaseMgr) IsReleaseExists(storeID uint64) bool {
+func (mgr *AppDatabaseMgr) IsReleaseExists(store string, id uint64) bool {
 	release := Release{}
-	if err := mgr.db.Where("store_id = ?", storeID).First(&release).Error; err != nil {
+	if err := mgr.db.Where("store_type = ? and store_id = ?", store, id).First(&release).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return false
 		}
@@ -56,8 +57,7 @@ func (mgr *AppDatabaseMgr) CreateRelease(release *Release) error {
 }
 
 func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {
-	_, err := mgr.FindRelease(release.ArtistName, release.StoreID)
-	if err != nil {
+	if !mgr.IsReleaseExists(release.StoreType, release.StoreID) {
 		return mgr.CreateRelease(release)
 	}
 	return nil

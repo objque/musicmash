@@ -6,8 +6,7 @@ import (
 )
 
 type Store struct {
-	ID   int `gorm:"primary_key" sql:"AUTO_INCREMENT"`
-	Name string
+	Name string `gorm:"primary_key"`
 }
 
 type StoreMgr interface {
