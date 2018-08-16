@@ -15,6 +15,7 @@ type SubscriptionMgr interface {
 	FindAllUserSubscriptions(userID string) ([]*Subscription, error)
 	EnsureSubscriptionExists(subscription *Subscription) error
 	SubscribeUserForArtists(userID string, artists []string) error
+	UnsubscribeUserFromArtists(userID string, artist []string) error
 }
 
 func (mgr *AppDatabaseMgr) IsUserSubscribedForArtist(userID, artistName string) bool {
@@ -50,4 +51,9 @@ func (mgr *AppDatabaseMgr) SubscribeUserForArtists(userID string, artists []stri
 		}
 	}
 	return nil
+}
+
+func (mgr *AppDatabaseMgr) UnsubscribeUserFromArtists(userID string, artists []string) error {
+	const sql = `delete from subscriptions where user_id = ? and artist_name in (?)`
+	return mgr.db.Exec(sql, userID, artists).Error
 }

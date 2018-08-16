@@ -40,6 +40,10 @@ func findArtist(id int, jobs <-chan string, results chan<- string, done chan<- i
 		}
 
 		artist, err := itunes.FindArtistID(userArtist)
+		// NOTE (m.kalinin): avoid iTunes rate-limit (20rps)
+		if config.Config.Tasks.Subscriptions.UseSearchDelay {
+			time.Sleep(time.Second * 3)
+		}
 		if err != nil {
 			if err == itunes.ArtistNotFoundErr {
 				err = errors.Wrap(err, userArtist)
@@ -57,11 +61,6 @@ func findArtist(id int, jobs <-chan string, results chan<- string, done chan<- i
 
 		log.Debugf("found new artist '%s' storeID: %d", artist.Name, artist.StoreID)
 		results <- artist.Name
-
-		// NOTE (m.kalinin): avoid iTunes rate-limit (20rps)
-		if config.Config.Tasks.Subscriptions.UseSearchDelay {
-			time.Sleep(time.Second * 3)
-		}
 	}
 	done <- id
 }
