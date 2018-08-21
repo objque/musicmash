@@ -17,6 +17,7 @@ var tables = []interface{}{
 	&Subscription{},
 	&State{},
 	&StoreType{},
+	&Store{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -43,6 +44,10 @@ func CreateAll(db *gorm.DB) error {
 			{"user_id", "users(id)"},
 			{"artist_name", "artists(name)"},
 		},
+		Store{}: {
+			{"store_type", "store_types(name)"},
+			{"release_id", "releases(id)"},
+		},
 	}
 
 	for model, model_fks := range fkeys {
@@ -62,6 +67,12 @@ func CreateAll(db *gorm.DB) error {
 
 	if err := db.Debug().Model(&Release{}).AddIndex(
 		"idx_store_id", "store_id").Error; err != nil {
+		return err
+	}
+
+	if err := db.Debug().Model(&Store{}).AddIndex(
+		"idx_store_type_release_id",
+		"store_type", "release_id").Error; err != nil {
 		return err
 	}
 

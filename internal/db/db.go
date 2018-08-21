@@ -19,6 +19,7 @@ type DataMgr interface {
 	StateMgr
 	FeedMgr
 	StoreTypeMgr
+	StoreMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr
