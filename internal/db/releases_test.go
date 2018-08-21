@@ -90,6 +90,10 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod(t *testing.T) {
 		UserID:     userID,
 		ArtistName: "S.P.Y",
 	}))
+	// add stores
+	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "4nDoR", 1))
+	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("yandex", "4nDoR", 1))
+	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "wC5Bh", 2))
 
 	// action
 	since := time.Now().UTC().Add(-time.Hour * 48)
@@ -100,6 +104,7 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "skrillex", releases[0].ArtistName)
+	assert.Len(t, releases[0].Stores, 2)
 }
 
 func TestDB_Releases_GetReleasesForUserFilterByPeriod_WithFuture(t *testing.T) {
@@ -128,6 +133,9 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod_WithFuture(t *testing.T) {
 		UserID:     userID,
 		ArtistName: "S.P.Y",
 	}))
+	// add stores
+	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "4nDoR", 1))
+	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("yandex", "4nDoR", 1))
 
 	// action
 	since := time.Now().UTC().Add(-time.Hour * 48)
@@ -137,6 +145,9 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod_WithFuture(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, releases, 2)
+	assert.Equal(t, "skrillex", releases[0].ArtistName)
+	assert.Len(t, releases[0].Stores, 2)
+	assert.Len(t, releases[1].Stores, 0)
 }
 
 func TestDB_Releases_GetReleasesForUserSince(t *testing.T) {
@@ -165,6 +176,8 @@ func TestDB_Releases_GetReleasesForUserSince(t *testing.T) {
 		UserID:     userID,
 		ArtistName: "S.P.Y",
 	}))
+	// add stores
+	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "4nDoR", 1))
 
 	// action
 	releases, err := DbMgr.GetReleasesForUserSince(userID, time.Now())
@@ -173,4 +186,5 @@ func TestDB_Releases_GetReleasesForUserSince(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
+	assert.Len(t, releases[0].Stores, 0)
 }

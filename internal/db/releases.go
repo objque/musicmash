@@ -13,6 +13,7 @@ type Release struct {
 	Date       time.Time `gorm:"not null" sql:"index" json:"date"`
 	ArtistName string    `json:"artist_name"`
 	StoreID    uint64    `sql:"index" gorm:"index:idx_store_id" json:"store_id"`
+	Stores     []Store   `json:"stores"`
 }
 
 type ReleaseMgr interface {
@@ -63,20 +64,26 @@ func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {
 }
 
 func (mgr *AppDatabaseMgr) GetReleasesForUserFilterByPeriod(userID string, since, till time.Time) ([]*Release, error) {
-	const sub = "select artist_name from subscriptions where user_id = ?"
-	const sql = "select * from releases where artist_name in (" + sub + ") and date >= ? and date <= ? order by date desc"
+	// select * from releases where artist_name in (filter by user_subs) and filter by since/till dates;
+	// select * from stores where release_id in (ids from query above);
 	releases := []*Release{}
-	if err := mgr.db.Raw(sql, userID, since, till).Scan(&releases).Error; err != nil {
+	const query = "select artist_name from subscriptions where user_id = ?"
+	innerQuery := mgr.db.Raw(query, userID).QueryExpr()
+	where := mgr.db.Where("artist_name in (?) and date >= ? and date <= ?", innerQuery, since, till)
+	if err := where.Preload("Stores").Find(&releases).Error; err != nil {
 		return nil, err
 	}
 	return releases, nil
 }
 
 func (mgr *AppDatabaseMgr) GetReleasesForUserSince(userID string, since time.Time) ([]*Release, error) {
-	const sub = "select artist_name from subscriptions where user_id = ?"
-	const sql = "select * from releases where artist_name in (" + sub + ") and date >= ? order by date desc"
+	// select * from releases where artist_name in (filter by user_subs) and filter by since date;
+	// select * from stores where release_id in (ids from query above);
 	releases := []*Release{}
-	if err := mgr.db.Raw(sql, userID, since).Scan(&releases).Error; err != nil {
+	const query = "select artist_name from subscriptions where user_id = ?"
+	innerQuery := mgr.db.Raw(query, userID).QueryExpr()
+	where := mgr.db.Where("artist_name in (?) and date >= ?", innerQuery, since)
+	if err := where.Preload("Stores").Find(&releases).Error; err != nil {
 		return nil, err
 	}
 	return releases, nil
