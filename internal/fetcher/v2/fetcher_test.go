@@ -87,7 +87,6 @@ func TestFetcher_FetchAndProcess_AlreadyExists(t *testing.T) {
 		StoreID: 182821355,
 	}))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
-		StoreType: "itunes",
 		StoreID:   158365636,
 	}))
 	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {

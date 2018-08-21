@@ -35,7 +35,6 @@ func CreateAll(db *gorm.DB) error {
 	fkeys := map[interface{}][][2]string{
 		Release{}: {
 			{"artist_name", "artists(name)"},
-			{"store_type", "store_types(name)"},
 		},
 		Chat{}: {
 			{"user_id", "users(id)"},
@@ -61,9 +60,8 @@ func CreateAll(db *gorm.DB) error {
 		return err
 	}
 
-	if err := db.Debug().Model(&Release{}).AddUniqueIndex(
-		"idx_store_type_store_id",
-		"store_type", "store_id").Error; err != nil {
+	if err := db.Debug().Model(&Release{}).AddIndex(
+		"idx_store_id", "store_id").Error; err != nil {
 		return err
 	}
 

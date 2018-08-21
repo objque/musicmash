@@ -31,7 +31,6 @@ func (h *AppleMusicHandler) Fetch(releases []*itunes.LastRelease) []*handlers.Re
 			ArtistName: release.ArtistName,
 			Date:       release.Date,
 			StoreID:    release.ID,
-			StoreType:  storeName,
 		})
 		if err != nil {
 			log.Error(errors.Wrapf(err, "tried to save release for %s %v", storeName, release.ID))

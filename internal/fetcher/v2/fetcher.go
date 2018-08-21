@@ -30,7 +30,7 @@ func fetchWorker(id int, artists <-chan *db.Artist, releases chan<- *itunes.Last
 			continue
 		}
 
-		if db.DbMgr.IsReleaseExists("itunes", release.ID) {
+		if db.DbMgr.IsReleaseExists(release.ID) {
 			continue
 		}
 
