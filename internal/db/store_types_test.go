@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_Store(t *testing.T) {
+func TestDB_StoreType(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -20,7 +20,7 @@ func TestDB_Store(t *testing.T) {
 	assert.True(t, DbMgr.IsStoreExists(store))
 }
 
-func TestDB_Store_NotExists(t *testing.T) {
+func TestDB_StoreType_NotExists(t *testing.T) {
 	setup()
 	defer teardown()
 

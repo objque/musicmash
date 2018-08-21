@@ -16,7 +16,7 @@ var tables = []interface{}{
 	&Chat{},
 	&Subscription{},
 	&State{},
-	&Store{},
+	&StoreType{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -35,7 +35,7 @@ func CreateAll(db *gorm.DB) error {
 	fkeys := map[interface{}][][2]string{
 		Release{}: {
 			{"artist_name", "artists(name)"},
-			{"store_type", "stores(name)"},
+			{"store_type", "store_types(name)"},
 		},
 		Chat{}: {
 			{"user_id", "users(id)"},
