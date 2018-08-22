@@ -13,7 +13,7 @@ type DataMgr interface {
 	ArtistMgr
 	UserMgr
 	ReleaseMgr
-	LastFetchMgr
+	LastActionMgr
 	ChatMgr
 	SubscriptionMgr
 	StateMgr

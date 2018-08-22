@@ -42,7 +42,7 @@ func TestFetcher_Internal_IsMustFetch_ReloadApp_AfterFetching(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	db.DbMgr.SetLastFetch(time.Now().UTC())
+	db.DbMgr.SetLastActionDate(db.ActionFetch, time.Now().UTC())
 
 	// action
 	must := isMustFetch()
@@ -57,7 +57,7 @@ func TestFetcher_Internal_IsMustFetch_ReloadApp_AfterOldestFetching(t *testing.T
 	defer teardown()
 
 	// arrange
-	db.DbMgr.SetLastFetch(time.Now().UTC().Add(-time.Hour * 48))
+	db.DbMgr.SetLastActionDate(db.ActionFetch, time.Now().UTC().Add(-time.Hour * 48))
 
 	// action
 	must := isMustFetch()

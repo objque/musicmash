@@ -12,7 +12,7 @@ var tables = []interface{}{
 	&Artist{},
 	&User{},
 	&Release{},
-	&LastFetch{},
+	&LastAction{},
 	&Chat{},
 	&Subscription{},
 	&State{},
