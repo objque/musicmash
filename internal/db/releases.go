@@ -13,7 +13,7 @@ type Release struct {
 	Date       time.Time `gorm:"not null" sql:"index" json:"date"`
 	ArtistName string    `json:"artist_name"`
 	StoreID    uint64    `sql:"index" gorm:"index:idx_store_id" json:"store_id"`
-	Stores     []Store   `json:"stores"`
+	Stores     []*Store  `json:"stores"`
 }
 
 type ReleaseMgr interface {

@@ -34,7 +34,8 @@ func CreateAll(db *gorm.DB) error {
 	}
 
 	fkeys := map[interface{}][][2]string{
-		Release{}: {
+		// use pointer because release model struct contains a slice
+		&Release{}: {
 			{"artist_name", "artists(name)"},
 		},
 		Chat{}: {
