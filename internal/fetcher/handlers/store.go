@@ -3,11 +3,11 @@ package handlers
 import (
 	"time"
 
-	"github.com/objque/musicmash/internal/itunes"
+	"github.com/objque/musicmash/internal/db"
 )
 
 type StoreHandler interface {
-	Fetch(releases []*itunes.LastRelease) []*ReleaseData
+	Fetch(releases []*db.Release)
 	NotifySubscribers(releases []*ReleaseData)
 	GetStoreName() string
 }

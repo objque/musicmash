@@ -13,7 +13,7 @@ type Fetcher struct {
 	handlers []handlers.StoreHandler
 }
 
-func fetchWorker(id int, artists <-chan *db.Artist, releases chan<- *itunes.LastRelease, done chan<- int) {
+func fetchWorker(id int, artists <-chan *db.Artist, releases chan<- *db.Release, done chan<- int) {
 	for artist := range artists {
 		release, err := itunes.GetArtistInfo(artist.StoreID)
 		if err != nil {
@@ -34,13 +34,23 @@ func fetchWorker(id int, artists <-chan *db.Artist, releases chan<- *itunes.Last
 			continue
 		}
 
-		release.ArtistName = artist.Name
-		releases <- release
+		dbRelease := db.Release{
+			ArtistName: release.ArtistName,
+			Date:       release.Date,
+			StoreID:    release.ID,
+		}
+		err = db.DbMgr.CreateRelease(&dbRelease)
+		if err != nil {
+			log.Error(errors.Wrapf(err, "tried to save release with id %v", release.ID))
+			continue
+		}
+
+		releases <- &dbRelease
 	}
 	done <- id
 }
 
-func (f *Fetcher) fetch() ([]*itunes.LastRelease, error) {
+func (f *Fetcher) fetch() ([]*db.Release, error) {
 	// load all artists from the db
 	artists, err := db.DbMgr.GetAllArtists()
 	if err != nil {
@@ -48,7 +58,7 @@ func (f *Fetcher) fetch() ([]*itunes.LastRelease, error) {
 	}
 
 	jobs := make(chan *db.Artist, len(artists))
-	releases := make(chan *itunes.LastRelease, len(artists))
+	releases := make(chan *db.Release, len(artists))
 	done := make(chan int, config.Config.Fetching.Workers)
 
 	// Starts up X workers, initially blocked because there are no jobs yet.
@@ -69,7 +79,7 @@ func (f *Fetcher) fetch() ([]*itunes.LastRelease, error) {
 	close(releases)
 	close(done)
 
-	result := []*itunes.LastRelease{}
+	result := []*db.Release{}
 	for release := range releases {
 		result = append(result, release)
 	}
@@ -83,7 +93,7 @@ func (f *Fetcher) FetchAndProcess() error {
 	}
 
 	for _, handler := range f.handlers {
-		go handler.NotifySubscribers(handler.Fetch(releases))
+		go handler.Fetch(releases)
 	}
 	return nil
 }
