@@ -16,7 +16,7 @@ func (h *AppleMusicHandler) GetStoreName() string {
 
 func (h *AppleMusicHandler) Fetch(releases []*db.Release) {
 	for _, release := range releases {
-		log.Infof("Found a new info from '%s': '%d'", release.ArtistName, release.ID)
+		log.Infof("Found a new info from '%s': '%d'", release.ArtistName, release.StoreID)
 		err := db.DbMgr.EnsureReleaseExistsInStore(h.GetStoreName(), strconv.FormatUint(release.StoreID, 10), release.ID)
 		if err != nil {
 			log.Error(errors.Wrapf(err, "tried to save release in %s with id '%v'", h.GetStoreName(), release.ID))

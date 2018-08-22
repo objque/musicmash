@@ -35,7 +35,7 @@ func fetchWorker(id int, artists <-chan *db.Artist, releases chan<- *db.Release,
 		}
 
 		dbRelease := db.Release{
-			ArtistName: release.ArtistName,
+			ArtistName: artist.Name,
 			Date:       release.Date,
 			StoreID:    release.ID,
 		}
