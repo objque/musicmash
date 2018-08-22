@@ -12,7 +12,7 @@ type Release struct {
 	CreatedAt  time.Time `json:"-"`
 	Date       time.Time `gorm:"not null" sql:"index" json:"date"`
 	ArtistName string    `json:"artist_name"`
-	StoreID    uint64    `sql:"index" gorm:"index:idx_store_id" json:"store_id"`
+	StoreID    uint64    `sql:"index" gorm:"index:idx_store_id" json:"-"`
 	Stores     []*Store  `json:"stores"`
 }
 
