@@ -5,6 +5,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/itunes"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/pkg/errors"
@@ -38,11 +39,11 @@ func makeMessage(release *itunes.Release) string {
 
 func (t *Telegram) Send(args map[string]interface{}) error {
 	chatID := args["chatID"].(int64)
-	releaseID := args["releaseID"].(uint64)
+	dbRelease := args["release"].(*db.Release)
 
-	release, err := itunes.Lookup(releaseID)
+	release, err := itunes.Lookup(dbRelease.StoreID)
 	if err != nil {
-		log.Error(errors.Wrapf(err, "can't load information for '%d'", releaseID))
+		log.Error(errors.Wrapf(err, "can't load information for '%d'", dbRelease.StoreID))
 		return err
 	}
 
@@ -50,11 +51,12 @@ func (t *Telegram) Send(args map[string]interface{}) error {
 	text := makeMessage(release)
 	message := tgbotapi.NewMessage(chatID, text)
 	message.ParseMode = "markdown"
-	message.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{
-		InlineKeyboard: [][]tgbotapi.InlineKeyboardButton{
-			tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonURL("Open in iTunes", release.CollectionViewURL)),
-		},
+	buttons := [][]tgbotapi.InlineKeyboardButton{}
+	for _, store := range dbRelease.Stores {
+		text := fmt.Sprintf("Open in %s", store.GetName())
+		buttons = append(buttons, tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonURL(text, store.GetLink())))
 	}
+	message.ReplyMarkup = tgbotapi.InlineKeyboardMarkup{InlineKeyboard: buttons}
 
 	_, err = t.bot.Send(message)
 	return err

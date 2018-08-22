@@ -39,6 +39,8 @@ func Run() {
 			if err := f.FetchAndProcess(); err != nil {
 				log.Error(err)
 			} else {
+				// NOTE (m.kalinin): release.created_at must be after last_fetch, because
+				// notifier uses that time to find new releases;
 				log.Infof("Finish fetching stage '%s'...", time.Now().UTC().String())
 				db.DbMgr.SetLastActionDate(db.ActionFetch, now)
 			}

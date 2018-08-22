@@ -24,6 +24,7 @@ type ReleaseMgr interface {
 	EnsureReleaseExists(release *Release) error
 	GetReleasesForUserFilterByPeriod(userID string, since, till time.Time) ([]*Release, error)
 	GetReleasesForUserSince(userID string, since time.Time) ([]*Release, error)
+	FindNewReleases(date time.Time) ([]*Release, error)
 }
 
 func (mgr *AppDatabaseMgr) FindRelease(artist string, id uint64) (*Release, error) {
@@ -84,6 +85,14 @@ func (mgr *AppDatabaseMgr) GetReleasesForUserSince(userID string, since time.Tim
 	innerQuery := mgr.db.Raw(query, userID).QueryExpr()
 	where := mgr.db.Where("artist_name in (?) and date >= ?", innerQuery, since)
 	if err := where.Preload("Stores").Find(&releases).Error; err != nil {
+		return nil, err
+	}
+	return releases, nil
+}
+
+func (mgr *AppDatabaseMgr) FindNewReleases(date time.Time) ([]*Release, error) {
+	releases := []*Release{}
+	if err := mgr.db.Where("created_at >= ?", date).Preload("Stores").Find(&releases).Error; err != nil {
 		return nil, err
 	}
 	return releases, nil
