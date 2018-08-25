@@ -4,29 +4,36 @@ import (
 	"time"
 )
 
-type LastFetch struct {
-	ID   int32 `gorm:"primary_key" sql:"AUTO_INCREMENT"`
-	Date time.Time
+const (
+	ActionFetch  = "fetch"
+	ActionNotify = "notify"
+)
+
+type LastAction struct {
+	ID     int `gorm:"primary_key" sql:"AUTO_INCREMENT"`
+	Date   time.Time
+	Action string
 }
 
-type LastFetchMgr interface {
-	GetLastFetch() (*LastFetch, error)
-	SetLastFetch(time time.Time) error
+type LastActionMgr interface {
+	GetLastActionDate(action string) (*LastAction, error)
+	SetLastActionDate(action string, time time.Time) error
 }
 
-func (mgr *AppDatabaseMgr) GetLastFetch() (*LastFetch, error) {
-	last := LastFetch{}
-	if err := mgr.db.Last(&last).Error; err != nil {
+func (mgr *AppDatabaseMgr) GetLastActionDate(action string) (*LastAction, error) {
+	last := LastAction{}
+	if err := mgr.db.First(&last, "action = ?", action).Error; err != nil {
 		return nil, err
 	}
 	return &last, nil
 }
 
-func (mgr *AppDatabaseMgr) SetLastFetch(time time.Time) error {
-	last, err := mgr.GetLastFetch()
+func (mgr *AppDatabaseMgr) SetLastActionDate(action string, time time.Time) error {
+	last, err := mgr.GetLastActionDate(action)
 	if err != nil {
-		return mgr.db.Create(&LastFetch{
-			Date: time,
+		return mgr.db.Create(&LastAction{
+			Action: action,
+			Date:   time,
 		}).Error
 	}
 

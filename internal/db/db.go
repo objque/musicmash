@@ -13,11 +13,12 @@ type DataMgr interface {
 	ArtistMgr
 	UserMgr
 	ReleaseMgr
-	LastFetchMgr
+	LastActionMgr
 	ChatMgr
 	SubscriptionMgr
 	StateMgr
 	FeedMgr
+	StoreTypeMgr
 	StoreMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr

@@ -11,6 +11,7 @@ import (
 	"github.com/objque/musicmash/internal/log"
 	"github.com/objque/musicmash/internal/notify"
 	"github.com/objque/musicmash/internal/notify/services"
+	"github.com/objque/musicmash/internal/notifier"
 )
 
 func init() {
@@ -40,5 +41,6 @@ func init() {
 func main() {
 	log.Info("Running fetching...")
 	go fetcher.Run()
+	go notifier.Run()
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }

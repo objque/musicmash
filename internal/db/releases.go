@@ -12,31 +12,32 @@ type Release struct {
 	CreatedAt  time.Time `json:"-"`
 	Date       time.Time `gorm:"not null" sql:"index" json:"date"`
 	ArtistName string    `json:"artist_name"`
-	StoreID    uint64    `sql:"index" gorm:"unique_index:idx_store_type_store_id" json:"store_id"`
-	StoreType  string    `sql:"index" gorm:"unique_index:idx_store_type_store_id" json:"store_type"`
+	StoreID    uint64    `sql:"index" gorm:"index:idx_store_id" json:"-"`
+	Stores     []*Store  `json:"stores"`
 }
 
 type ReleaseMgr interface {
 	CreateRelease(release *Release) error
-	FindRelease(artist string, store string, id uint64) (*Release, error)
-	IsReleaseExists(store string, id uint64) bool
+	FindRelease(artist string, id uint64) (*Release, error)
+	IsReleaseExists(id uint64) bool
 	GetAllReleases() ([]*Release, error)
 	EnsureReleaseExists(release *Release) error
 	GetReleasesForUserFilterByPeriod(userID string, since, till time.Time) ([]*Release, error)
 	GetReleasesForUserSince(userID string, since time.Time) ([]*Release, error)
+	FindNewReleases(date time.Time) ([]*Release, error)
 }
 
-func (mgr *AppDatabaseMgr) FindRelease(artist string, store string, id uint64) (*Release, error) {
+func (mgr *AppDatabaseMgr) FindRelease(artist string, id uint64) (*Release, error) {
 	release := Release{}
-	if err := mgr.db.Where("artist_name = ? and store_type = ? and store_id = ?", artist, store, id).First(&release).Error; err != nil {
+	if err := mgr.db.Where("artist_name = ? and store_id = ?", artist, id).First(&release).Error; err != nil {
 		return nil, err
 	}
 	return &release, nil
 }
 
-func (mgr *AppDatabaseMgr) IsReleaseExists(store string, id uint64) bool {
+func (mgr *AppDatabaseMgr) IsReleaseExists(id uint64) bool {
 	release := Release{}
-	if err := mgr.db.Where("store_type = ? and store_id = ?", store, id).First(&release).Error; err != nil {
+	if err := mgr.db.Where("store_id = ?", id).First(&release).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return false
 		}
@@ -57,27 +58,41 @@ func (mgr *AppDatabaseMgr) CreateRelease(release *Release) error {
 }
 
 func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {
-	if !mgr.IsReleaseExists(release.StoreType, release.StoreID) {
+	if !mgr.IsReleaseExists(release.StoreID) {
 		return mgr.CreateRelease(release)
 	}
 	return nil
 }
 
 func (mgr *AppDatabaseMgr) GetReleasesForUserFilterByPeriod(userID string, since, till time.Time) ([]*Release, error) {
-	const sub = "select artist_name from subscriptions where user_id = ?"
-	const sql = "select * from releases where artist_name in (" + sub + ") and date >= ? and date <= ? order by date desc"
+	// select * from releases where artist_name in (filter by user_subs) and filter by since/till dates;
+	// select * from stores where release_id in (ids from query above);
 	releases := []*Release{}
-	if err := mgr.db.Raw(sql, userID, since, till).Scan(&releases).Error; err != nil {
+	const query = "select artist_name from subscriptions where user_id = ?"
+	innerQuery := mgr.db.Raw(query, userID).QueryExpr()
+	where := mgr.db.Where("artist_name in (?) and date >= ? and date <= ?", innerQuery, since, till)
+	if err := where.Preload("Stores").Find(&releases).Error; err != nil {
 		return nil, err
 	}
 	return releases, nil
 }
 
 func (mgr *AppDatabaseMgr) GetReleasesForUserSince(userID string, since time.Time) ([]*Release, error) {
-	const sub = "select artist_name from subscriptions where user_id = ?"
-	const sql = "select * from releases where artist_name in (" + sub + ") and date >= ? order by date desc"
+	// select * from releases where artist_name in (filter by user_subs) and filter by since date;
+	// select * from stores where release_id in (ids from query above);
 	releases := []*Release{}
-	if err := mgr.db.Raw(sql, userID, since).Scan(&releases).Error; err != nil {
+	const query = "select artist_name from subscriptions where user_id = ?"
+	innerQuery := mgr.db.Raw(query, userID).QueryExpr()
+	where := mgr.db.Where("artist_name in (?) and date >= ?", innerQuery, since)
+	if err := where.Preload("Stores").Find(&releases).Error; err != nil {
+		return nil, err
+	}
+	return releases, nil
+}
+
+func (mgr *AppDatabaseMgr) FindNewReleases(date time.Time) ([]*Release, error) {
+	releases := []*Release{}
+	if err := mgr.db.Where("created_at >= ?", date).Preload("Stores").Find(&releases).Error; err != nil {
 		return nil, err
 	}
 	return releases, nil

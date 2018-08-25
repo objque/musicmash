@@ -1,19 +1,10 @@
 package handlers
 
 import (
-	"time"
-
-	"github.com/objque/musicmash/internal/itunes"
+	"github.com/objque/musicmash/internal/db"
 )
 
 type StoreHandler interface {
-	Fetch(releases []*itunes.LastRelease) []*ReleaseData
-	NotifySubscribers(releases []*ReleaseData)
+	Fetch(releases []*db.Release)
 	GetStoreName() string
-}
-
-type ReleaseData struct {
-	Date       time.Time
-	ArtistName string
-	StoreID    uint64
 }
