@@ -6,7 +6,7 @@ import (
 	"github.com/jinzhu/gorm"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/itunes"
+	"github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/objque/musicmash/internal/random"
 	"github.com/pkg/errors"
