@@ -7,6 +7,7 @@ import (
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher/handlers/itunes"
+	"github.com/objque/musicmash/internal/fetcher/handlers/yandex"
 	"github.com/objque/musicmash/internal/fetcher/v2"
 	"github.com/objque/musicmash/internal/log"
 )
@@ -32,6 +33,7 @@ func isMustFetch() bool {
 func Run() {
 	f := v2.Fetcher{}
 	f.RegisterHandler(&itunes.AppleMusicHandler{})
+	f.RegisterHandler(yandex.New("https://music.yandex.ru"))
 	for {
 		if isMustFetch() {
 			now := time.Now().UTC()
