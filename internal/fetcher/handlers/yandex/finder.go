@@ -71,7 +71,6 @@ func find(ya *yandex.Client, releaseAuthor, releaseName string) (int, error) {
 			return 0, errors.Wrapf(err, "tried to get artist (%d) albums", artistID)
 		}
 
-		parts := strings.Split(releaseName, " ")
 		for _, album := range albums {
 			if releaseName == album.Title {
 				log.Debugf("100 album name match: %s album_id: %d year: %d", album.Title, album.ID, album.ReleaseYear)
@@ -87,13 +86,7 @@ func find(ya *yandex.Client, releaseAuthor, releaseName string) (int, error) {
 					return album.ID, nil
 				}
 
-				log.Debugf("75 album name match: %s album_id: %d year: %d", album.Title, album.ID, album.ReleaseYear)
-				return album.ID, nil
-			}
-
-			// example case:
-			// Satisfied (feat. MAX) / Mama Look At Me Now [Remixes Part 1]
-			if strings.Contains(album.Title, parts[0]) {
+				// if releaseName is acoustic/mix/remix and yandexAlbum just release then we will have false-positive result :(
 				log.Debugf("50 album name match: %s album_id: %d year: %d", album.Title, album.ID, album.ReleaseYear)
 				return album.ID, nil
 			}
