@@ -14,14 +14,22 @@ type Store struct {
 	ReleaseID int64  `json:"-" sql:"index" gorm:"unique_index:idx_store_type_release_id" json:"store_type"`
 }
 
-// TODO (m.kalinin): replace with switch/case
 func (s *Store) GetName() string {
-	return "iTunes"
+	switch s.StoreType {
+	case "yandex":
+		return "Yandex.Music"
+	default:
+		return "iTunes"
+	}
 }
 
-// TODO (m.kalinin): replace with switch/case
 func (s *Store) GetLink() string {
-	return fmt.Sprintf("https://itunes.apple.com/us/album/%s?uo=4", s.StoreID)
+	switch s.StoreType {
+	case "yandex":
+		return fmt.Sprintf("https://music.yandex.ru/album/%s", s.StoreID)
+	default:
+		return fmt.Sprintf("https://itunes.apple.com/us/album/%s?uo=4", s.StoreID)
+	}
 }
 
 type StoreMgr interface {

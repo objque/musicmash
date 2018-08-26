@@ -6,7 +6,7 @@ import (
 	"time"
 
 	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/itunes"
+	"github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/pkg/errors"
 	"gopkg.in/telegram-bot-api.v4"

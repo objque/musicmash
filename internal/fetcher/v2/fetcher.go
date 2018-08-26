@@ -4,7 +4,7 @@ import (
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher/handlers"
-	"github.com/objque/musicmash/internal/itunes"
+	"github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
