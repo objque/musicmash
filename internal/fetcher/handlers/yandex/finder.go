@@ -72,7 +72,7 @@ func find(ya *yandex.Client, releaseAuthor, releaseName string) (int, error) {
 		}
 
 		for _, album := range albums {
-			if releaseName == album.Title {
+			if strings.ToLower(releaseName) == strings.ToLower(album.Title) {
 				log.Debugf("100 album name match: %s album_id: %d year: %d", album.Title, album.ID, album.ReleaseYear)
 				return album.ID, nil
 			}
