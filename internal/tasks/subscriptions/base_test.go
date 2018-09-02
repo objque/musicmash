@@ -18,20 +18,16 @@ func setup() {
 	server = httptest.NewServer(mux)
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
-		Store: config.Store{
-			URL:    server.URL,
-			Region: "us",
-		},
 		Tasks: config.Tasks{
 			Subscriptions: config.SubscriptionsTask{
-				UseSearchDelay:         false,
-				SubscribeArtistWorkers: 10,
+				FindArtistWorkers:      1,
+				SubscribeArtistWorkers: 1,
 			},
 		},
 	}
 }
 
 func teardown() {
-	db.DbMgr.DropAllTables()
+	//db.DbMgr.DropAllTables()
 	db.DbMgr.Close()
 }

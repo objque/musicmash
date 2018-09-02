@@ -21,7 +21,7 @@ func setup() {
 		},
 		Tasks: config.Tasks{
 			Subscriptions: config.SubscriptionsTask{
-				UseSearchDelay:         false,
+				FindArtistWorkers:      1,
 				SubscribeArtistWorkers: 10,
 			},
 		},

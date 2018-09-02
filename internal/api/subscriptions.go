@@ -5,11 +5,13 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/objque/musicmash/internal/api/validators"
+	"github.com/objque/musicmash/internal/clients/itunes/v2"
+	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/log"
 	tasks "github.com/objque/musicmash/internal/tasks/subscriptions"
 	"github.com/pkg/errors"
-	"github.com/objque/musicmash/internal/api/validators"
 )
 
 func createSubscriptions(w http.ResponseWriter, r *http.Request) {
@@ -24,7 +26,8 @@ func createSubscriptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, stateID := tasks.FindArtistsAndSubscribeUserTask(userID, userArtists)
+	provider := v2.NewProvider(config.Config.Store.URL, config.Config.Store.Token)
+	_, stateID := tasks.FindArtistsAndSubscribeUserTask(userID, userArtists, provider)
 	body := map[string]interface{}{
 		"state_id": stateID,
 	}
