@@ -26,6 +26,7 @@ func createSubscriptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	log.Debugf("User '%s' wanna subscribe for %d artists", userID, len(userArtists))
 	provider := v2.NewProvider(config.Config.Store.URL, config.Config.Store.Token)
 	_, stateID := tasks.FindArtistsAndSubscribeUserTask(userID, userArtists, provider)
 	body := map[string]interface{}{
