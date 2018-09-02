@@ -17,7 +17,14 @@ func (t *Time) UnmarshalJSON(data []byte) error {
 	var err error
 	t.Value, err = time.ParseInLocation(strconv.Quote("2006-01-02"), string(data), time.FixedZone("UTC", 0))
 	if err != nil {
-		// some oldest releases has only year
+		// some oldest releases have year and month
+		// for example check albums for user: 14548963, 14589060
+		t.Value, err = time.ParseInLocation(strconv.Quote("2006-01"), string(data), time.FixedZone("UTC", 0))
+		if err == nil {
+			return nil
+		}
+
+		// some oldest releases have only year
 		// for example check albums for user: 331647880, 14064764, 101672291
 		t.Value, err = time.ParseInLocation(strconv.Quote("2006"), string(data), time.FixedZone("UTC", 0))
 	}
