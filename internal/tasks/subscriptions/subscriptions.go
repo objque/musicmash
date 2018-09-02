@@ -4,9 +4,9 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	itunes "github.com/objque/musicmash/internal/clients/itunes/v1"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/objque/musicmash/internal/random"
 	"github.com/pkg/errors"

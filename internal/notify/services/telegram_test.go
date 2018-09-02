@@ -5,7 +5,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/objque/musicmash/internal/clients/itunes"
+	itunes "github.com/objque/musicmash/internal/clients/itunes/v1"
 	"github.com/stretchr/testify/assert"
 )
 

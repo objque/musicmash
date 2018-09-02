@@ -3,7 +3,7 @@ package yandex
 import (
 	"strconv"
 
-	"github.com/objque/musicmash/internal/clients/itunes"
+	itunes "github.com/objque/musicmash/internal/clients/itunes/v1"
 	"github.com/objque/musicmash/internal/clients/yandex"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/log"

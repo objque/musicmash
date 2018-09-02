@@ -1,4 +1,4 @@
-package itunes
+package v1
 
 import "time"
 
