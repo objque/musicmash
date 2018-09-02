@@ -4,7 +4,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/objque/musicmash/internal/clients/itunes/v2/types"
+	"github.com/objque/musicmash/internal/clients/itunes/types"
 )
 
 const (

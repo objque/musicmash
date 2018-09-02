@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	itunes "github.com/objque/musicmash/internal/clients/itunes/v2"
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	ituneshandler "github.com/objque/musicmash/internal/fetcher/handlers/itunes"
@@ -15,7 +15,7 @@ import (
 var (
 	server   *httptest.Server
 	mux      *http.ServeMux
-	provider *itunes.Provider
+	provider *v2.Provider
 )
 
 func setup() {
@@ -28,7 +28,7 @@ func setup() {
 			CountOfSkippedHoursToFetch: 8,
 		},
 	}
-	provider = itunes.NewProvider(server.URL, "xxx")
+	provider = v2.NewProvider(server.URL, "xxx")
 }
 
 func teardown() {

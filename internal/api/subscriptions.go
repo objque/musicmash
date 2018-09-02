@@ -6,7 +6,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/objque/musicmash/internal/api/validators"
-	"github.com/objque/musicmash/internal/clients/itunes/v2"
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/log"

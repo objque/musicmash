@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	itunesProvider "github.com/objque/musicmash/internal/clients/itunes/v2"
+	itunesProvider "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher/handlers/itunes"

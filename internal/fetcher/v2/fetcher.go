@@ -4,8 +4,8 @@ import (
 	"strconv"
 	"time"
 
-	itunes "github.com/objque/musicmash/internal/clients/itunes/v2"
-	"github.com/objque/musicmash/internal/clients/itunes/v2/albums"
+	itunes "github.com/objque/musicmash/internal/clients/itunes"
+	"github.com/objque/musicmash/internal/clients/itunes/albums"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher/handlers"

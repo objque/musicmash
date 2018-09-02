@@ -5,7 +5,7 @@ import (
 	"os"
 
 	"github.com/objque/musicmash/internal/api"
-	"github.com/objque/musicmash/internal/clients/itunes/v2"
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher"

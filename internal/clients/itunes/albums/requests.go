@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/objque/musicmash/internal/clients/itunes/v2"
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/pkg/errors"
 )
 

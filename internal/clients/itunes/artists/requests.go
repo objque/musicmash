@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"net/url"
 
-	"github.com/objque/musicmash/internal/clients/itunes/v2"
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/pkg/errors"
 )
 

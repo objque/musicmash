@@ -5,8 +5,8 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/objque/musicmash/internal/clients/itunes/v2"
-	"github.com/objque/musicmash/internal/clients/itunes/v2/artists"
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
+	"github.com/objque/musicmash/internal/clients/itunes/artists"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/log"

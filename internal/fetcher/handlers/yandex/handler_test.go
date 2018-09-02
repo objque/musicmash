@@ -4,7 +4,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/objque/musicmash/internal/clients/itunes/v2"
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
