@@ -35,7 +35,7 @@ func Run() {
 	provider := itunesProvider.NewProvider(config.Config.Store.URL, config.Config.Store.Token)
 	f := v2.Fetcher{Provider: provider}
 	f.RegisterHandler(&itunes.AppleMusicHandler{})
-	f.RegisterHandler(yandex.New("https://music.yandex.ru"))
+	f.RegisterHandler(yandex.New("https://music.yandex.ru", provider))
 	for {
 		if isMustFetch() {
 			now := time.Now().UTC()

@@ -3,7 +3,8 @@ package yandex
 import (
 	"strconv"
 
-	itunes "github.com/objque/musicmash/internal/clients/itunes/v1"
+	"github.com/objque/musicmash/internal/clients/itunes/v2"
+	"github.com/objque/musicmash/internal/clients/itunes/v2/albums"
 	"github.com/objque/musicmash/internal/clients/yandex"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/log"
@@ -11,24 +12,26 @@ import (
 )
 
 type YandexHandler struct {
-	api *yandex.Client
+	api      *yandex.Client
+	provider *v2.Provider
 }
 
-func New(url string) *YandexHandler {
+func New(url string, provider *v2.Provider) *YandexHandler {
 	return &YandexHandler{
-		api: yandex.New(url),
+		api:      yandex.New(url),
+		provider: provider,
 	}
 }
 
 func (h *YandexHandler) Fetch(releases []*db.Release) {
 	for _, dbRelease := range releases {
-		release, err := itunes.Lookup(dbRelease.StoreID)
+		release, err := albums.GetAlbumInfo(h.provider, dbRelease.StoreID)
 		if err != nil {
 			log.Error(errors.Wrapf(err, "tried to lookup '%d' before searching release in yandex", dbRelease.StoreID))
 			continue
 		}
 
-		yandexID, err := find(h.api, release.ArtistName, release.CollectionName)
+		yandexID, err := find(h.api, release.Attributes.ArtistName, release.Attributes.Name)
 		if err != nil {
 			if err == ArtistNotFoundErr || err == ReleaseNotFoundErr {
 				continue

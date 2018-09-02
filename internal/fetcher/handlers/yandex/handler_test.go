@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	"github.com/objque/musicmash/internal/clients/itunes/v2"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
@@ -24,17 +25,18 @@ func TestYandexHandler_Fetch(t *testing.T) {
 	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
-	// mock itunes lookup api
-	mux.HandleFunc("/lookup", func(w http.ResponseWriter, r *http.Request) {
+	// mock apple music answer
+	mux.HandleFunc("/v1/catalog/us/albums/1433791393", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
-          "resultCount": 1,
-          "results": [
-            {
+        "data": [
+          {
+            "attributes": {
               "artistName": "skrillex",
-              "collectionName": "MDR (Remixes) - Single"
+              "name": "MDR (Remixes) - Single"
             }
-          ]
-        }`))
+          }
+        ]
+      }`))
 	})
 	// mock yandex search artist
 	mux.HandleFunc("/handlers/music-search.jsx", func(w http.ResponseWriter, r *http.Request) {
@@ -68,7 +70,7 @@ func TestYandexHandler_Fetch(t *testing.T) {
                 }]
             }`))
 	})
-	yandex := New(server.URL)
+	yandex := New(server.URL, v2.NewProvider(server.URL, "xxx"))
 
 	// action
 	yandex.Fetch(releases)
