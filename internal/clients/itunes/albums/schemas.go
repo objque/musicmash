@@ -47,16 +47,20 @@ func (a *AlbumAttributes) GetCollectionType() string {
 		return SingleReleaseType
 	}
 
-	// NOTE (m.kalinin): some EP's ends with Ep instead of '- EP'
-	// for example album_id: 1380811617
-	if title[len(title)-3:] == EPReleaseTypePattern {
-		return EPReleaseType
-	}
+	// NOTE (m.kalinin): some releases have < 3 chars
+	// for example: 1432623274
+	if len(title) > 3 {
+		// NOTE (m.kalinin): some EP's ends with Ep instead of '- EP'
+		// for example album_id: 1380811617
+		if title[len(title)-3:] == EPReleaseTypePattern {
+			return EPReleaseType
+		}
 
-	// NOTE (m.kalinin): sometimes we have LP
-	// for example album_id: 1363601736
-	if title[len(title)-3:] == LPReleaseTypePattern {
-		return LPReleaseType
+		// NOTE (m.kalinin): sometimes we have LP
+		// for example album_id: 1363601736
+		if title[len(title)-3:] == LPReleaseTypePattern {
+			return LPReleaseType
+		}
 	}
 
 	switch {
