@@ -5,13 +5,14 @@ import (
 	"os"
 
 	"github.com/objque/musicmash/internal/api"
+	"github.com/objque/musicmash/internal/clients/itunes/v2"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher"
 	"github.com/objque/musicmash/internal/log"
+	"github.com/objque/musicmash/internal/notifier"
 	"github.com/objque/musicmash/internal/notify"
 	"github.com/objque/musicmash/internal/notify/services"
-	"github.com/objque/musicmash/internal/notifier"
 )
 
 func init() {
@@ -34,8 +35,9 @@ func init() {
 		}
 	}
 
+	provider := v2.NewProvider(config.Config.Store.URL, config.Config.Store.Token)
 	db.DbMgr = db.NewMainDatabaseMgr()
-	notify.Service = services.New(os.Getenv("TG_TOKEN"))
+	notify.Service = services.New(os.Getenv("TG_TOKEN"), provider)
 }
 
 func main() {

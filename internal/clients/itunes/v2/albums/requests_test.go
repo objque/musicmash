@@ -119,6 +119,49 @@ func TestClient_GetInfo(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	mux.HandleFunc("/v1/catalog/us/albums/1422828208", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`
+{
+  "data": [
+    {
+      "attributes": {
+        "artistName": "K+Lab & Phonik Ops & Jakeda",
+        "artwork": {
+          "height": 3000,
+          "url": "https://is2-ssl.mzstatic.com/image/thumb/Music118/v4/d9/7f/83/d97f8394-acc4-f7db-09aa-6d16391b9040/cover.jpg/{w}x{h}bb.jpeg",
+          "width": 3000
+        },
+		"trackCount": 15,
+        "isComplete": false,
+        "isSingle": true,
+        "name": "Nightmares - Single",
+        "releaseDate": "2018-09-14"
+      },
+      "href": "/v1/catalog/us/albums/1431244851",
+      "id": "1422828208",
+      "type": "albums"
+    }
+  ]
+}
+		`))
+	})
+
+	// action
+	album, err := GetAlbumInfo(provider, 1422828208)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, "1422828208", album.ID)
+	assert.Equal(t, "Nightmares - Single", album.Attributes.Name)
+	assert.Equal(t, 15, album.Attributes.TrackCount)
+	assert.Equal(t, SingleReleaseType, album.Attributes.GetCollectionType())
+}
+
+func TestClient_GetAlbumSongs(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
 	mux.HandleFunc("/v1/catalog/us/albums/1422828208/tracks", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`
 {
@@ -171,7 +214,7 @@ func TestClient_GetInfo(t *testing.T) {
 	})
 
 	// action
-	songs, err := GetInfo(provider, 1422828208)
+	songs, err := GetAlbumSongs(provider, 1422828208)
 
 	// assert
 	assert.NoError(t, err)

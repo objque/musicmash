@@ -47,7 +47,7 @@ func GetLatestArtistAlbum(provider *v2.Provider, artistID uint64) (*Album, error
 	return latest, nil
 }
 
-func GetInfo(provider *v2.Provider, albumID uint64) ([]*Song, error) {
+func GetAlbumSongs(provider *v2.Provider, albumID uint64) ([]*Song, error) {
 	albumsURL := fmt.Sprintf("%s/v1/catalog/us/albums/%v/tracks", provider.URL, albumID)
 	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
@@ -64,4 +64,23 @@ func GetInfo(provider *v2.Provider, albumID uint64) ([]*Song, error) {
 		return nil, errors.Wrapf(err, "tried to decode songs for album %v", albumID)
 	}
 	return data.Songs, nil
+}
+
+func GetAlbumInfo(provider *v2.Provider, albumID uint64) (*Album, error) {
+	albumsURL := fmt.Sprintf("%s/v1/catalog/us/albums/%v", provider.URL, albumID)
+	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
+	resp, err := http.DefaultClient.Do(req)
+	if err != nil {
+		return nil, errors.Wrapf(err, "tried to get songs for album %v", albumID)
+	}
+
+	type answer struct {
+		Album []*Album `json:"data"`
+	}
+	data := answer{}
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return nil, errors.Wrapf(err, "tried to decode songs for album %v", albumID)
+	}
+	return data.Album[0], nil
 }
