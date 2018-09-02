@@ -17,6 +17,7 @@ log:
 store:
     url: 'https://itunes.apple.com'
     region: 'us'
+    token: 'xxxxxx'
 
 fetching:
     workers: 10

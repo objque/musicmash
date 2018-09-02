@@ -56,6 +56,7 @@ type SubscriptionsTask struct {
 type Store struct {
 	URL    string `yaml:"url"`
 	Region string `yaml:"region"`
+	Token  string `yaml:"token"`
 }
 
 func InitConfig(filepath string) error {
