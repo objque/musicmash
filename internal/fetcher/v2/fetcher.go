@@ -29,7 +29,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Artist, releases chan<-
 		release, err := albums.GetLatestArtistAlbum(f.Provider, artist.StoreID)
 		if err != nil {
 			if err == albums.AlbumsNotFoundErr {
-				log.Debugf("Artist '%s' hasn't albums", artist.Name)
+				log.Debugf("Artist '%s' with id %d hasn't albums", artist.Name, artist.StoreID)
 				continue
 			}
 
