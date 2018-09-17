@@ -1,43 +1,55 @@
 package v2
 
 import (
+	"strconv"
+	"time"
+
+	itunes "github.com/objque/musicmash/internal/clients/itunes"
+	"github.com/objque/musicmash/internal/clients/itunes/albums"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher/handlers"
-	"github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 
-type Fetcher struct {
-	handlers []handlers.StoreHandler
+func isLatest(album *albums.Album) bool {
+	now := time.Now().UTC().Truncate(time.Hour * 24)
+	yesterday := now.Add(-time.Hour * 48)
+	return album.Attributes.ReleaseDate.Value.UTC().After(yesterday)
 }
 
-func fetchWorker(id int, artists <-chan *db.Artist, releases chan<- *db.Release, done chan<- int) {
+type Fetcher struct {
+	handlers []handlers.StoreHandler
+	Provider *itunes.Provider
+}
+
+func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Artist, releases chan<- *db.Release, done chan<- int) {
 	for artist := range artists {
-		release, err := itunes.GetArtistInfo(artist.StoreID)
+		release, err := albums.GetLatestArtistAlbum(f.Provider, artist.StoreID)
 		if err != nil {
-			if err == itunes.ArtistInactiveErr {
-				log.Debugln(errors.Wrapf(err, "artist: '%s'#%d", artist.Name, artist.StoreID))
+			if err != albums.AlbumsNotFoundErr {
+				log.Debugf("Artist '%s' hasn't albums", artist.Name)
 				continue
 			}
 
-			log.Error(err)
+			log.Error(errors.Wrapf(err, "tried to get albums for '%s' with id %d", artist.Name, artist.StoreID))
 			continue
 		}
 
-		if !release.IsLatest() {
+		if !isLatest(release) {
 			continue
 		}
 
-		if db.DbMgr.IsReleaseExists(release.ID) {
+		releaseID, _ := strconv.ParseUint(release.ID, 10, 64)
+		if db.DbMgr.IsReleaseExists(releaseID) {
 			continue
 		}
 
 		dbRelease := db.Release{
 			ArtistName: artist.Name,
-			Date:       release.Date,
-			StoreID:    release.ID,
+			Date:       release.Attributes.ReleaseDate.Value,
+			StoreID:    releaseID,
 		}
 		err = db.DbMgr.CreateRelease(&dbRelease)
 		if err != nil {
@@ -63,7 +75,7 @@ func (f *Fetcher) fetch() ([]*db.Release, error) {
 
 	// Starts up X workers, initially blocked because there are no jobs yet.
 	for w := 1; w <= config.Config.Fetching.Workers; w++ {
-		go fetchWorker(w, jobs, releases, done)
+		go f.fetchWorker(w, jobs, releases, done)
 	}
 
 	// Here we send `jobs` and then `close` that

@@ -17,6 +17,7 @@ log:
 store:
     url: 'https://itunes.apple.com'
     region: 'us'
+    token: 'xxxxxx'
 
 fetching:
     workers: 10
@@ -24,5 +25,5 @@ fetching:
 
 tasks:
     subscriptions:
-        find_artist_delay: true
+        find_artist_workers: 3
         subscribe_artist_workers: 10

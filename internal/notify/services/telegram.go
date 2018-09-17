@@ -2,52 +2,54 @@ package services
 
 import (
 	"fmt"
-	"strings"
 	"time"
 
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
+	"github.com/objque/musicmash/internal/clients/itunes/albums"
 	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/log"
 	"github.com/pkg/errors"
 	"gopkg.in/telegram-bot-api.v4"
 )
 
 type Telegram struct {
-	bot *tgbotapi.BotAPI
+	bot      *tgbotapi.BotAPI
+	provider *v2.Provider
 }
 
-func New(token string) *Telegram {
+func New(token string, provider *v2.Provider) *Telegram {
 	bot, err := tgbotapi.NewBotAPI(token)
 	if err != nil {
 		panic(err)
 	}
 
-	return &Telegram{bot: bot}
+	return &Telegram{bot: bot, provider: provider}
 }
 
-func makeMessage(release *itunes.Release) string {
+func makeMessage(release *albums.Album) string {
 	releaseDate := ""
 	state := "released"
-	if release.Released.After(time.Now().UTC()) {
+	if release.Attributes.ReleaseDate.Value.After(time.Now().UTC()) {
 		state = "announced"
-		releaseDate = fmt.Sprintf("\nRelease date: %s", release.Released.Format(time.RFC850))
+		releaseDate = fmt.Sprintf("\nRelease date: %s", release.Attributes.ReleaseDate.Value.Format(time.RFC850))
 	}
 
-	poster := fmt.Sprintf("[‌‌](%s)", release.ArtworkURL100)
-	return fmt.Sprintf("New %s %s \n*%s*\n%s%s %s", release.GetCollectionType(), state, release.ArtistName, release.CollectionName, releaseDate, poster)
+	poster := fmt.Sprintf("[‌‌](%s)", release.Attributes.Artwork.GetLink(500, 500))
+	return fmt.Sprintf("New %s %s \n*%s*\n%s%s %s",
+		release.Attributes.GetCollectionType(), state, release.Attributes.ArtistName,
+		release.Attributes.Name, releaseDate, poster)
 }
 
 func (t *Telegram) Send(args map[string]interface{}) error {
 	chatID := args["chatID"].(int64)
 	dbRelease := args["release"].(*db.Release)
 
-	release, err := itunes.Lookup(dbRelease.StoreID)
+	release, err := albums.GetAlbumInfo(t.provider, dbRelease.StoreID)
 	if err != nil {
 		log.Error(errors.Wrapf(err, "can't load information for '%d'", dbRelease.StoreID))
 		return err
 	}
 
-	release.ArtworkURL100 = strings.Replace(release.ArtworkURL100, "100x100", "500x500", 1)
 	text := makeMessage(release)
 	message := tgbotapi.NewMessage(chatID, text)
 	message.ParseMode = "markdown"

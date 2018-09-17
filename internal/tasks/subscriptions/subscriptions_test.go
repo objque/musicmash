@@ -4,6 +4,7 @@ import (
 	"net/http"
 	"testing"
 
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
@@ -17,24 +18,26 @@ func TestSubscriptions_FindArtistsAndSubscribeUserTask(t *testing.T) {
 	artists := []string{"King Curtis", "modeRAT"}
 	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{Name: "King Curtis", StoreID: 0001}))
 	assert.NoError(t, db.DbMgr.EnsureUserExists(userID))
-	mux.HandleFunc("/search", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
-          "resultCount": 2,
-          "results": [
-            {
-              "artistId": 3316749924,
-              "artistName": "Party Favor & Moderat"
-            },
-            {
-              "artistId": 1416749924,
-              "artistName": "Moderat"
+	mux.HandleFunc("/v1/catalog/us/search", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`
+          {
+            "results": {
+              "artists": {
+                "data": [
+                  {
+                    "attributes": {
+                      "name": "Moderat"
+                    },
+                    "id": "1416749924"
+                  }
+                ]
+              }
             }
-          ]
-        }`))
+          }`))
 	})
 
 	// action
-	done, stateID := FindArtistsAndSubscribeUserTask(userID, artists)
+	done, stateID := FindArtistsAndSubscribeUserTask(userID, artists, v2.NewProvider(server.URL, "xxx"))
 	<-done
 
 	// assert

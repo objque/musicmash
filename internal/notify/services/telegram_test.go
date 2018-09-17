@@ -5,17 +5,23 @@ import (
 	"testing"
 	"time"
 
-	"github.com/objque/musicmash/internal/clients/itunes"
+	"github.com/objque/musicmash/internal/clients/itunes/albums"
+	"github.com/objque/musicmash/internal/clients/itunes/types"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTelegram_MakeMessage_Released(t *testing.T) {
 	// arrange
-	release := itunes.Release{
-		CollectionName: "Escape - Single",
-		ArtistName:     "Gorgon City",
-		Released:       time.Now().UTC().Truncate(time.Hour).Add(-time.Hour),
-		ArtworkURL100:  "pic/url",
+	release := albums.Album{
+		Attributes: albums.AlbumAttributes{
+			Name:        "Escape - Single",
+			ArtistName:  "Gorgon City",
+			IsSingle:    true,
+			ReleaseDate: types.Time{Value: time.Now().UTC().Truncate(time.Hour).Add(-time.Hour)},
+			Artwork: &albums.AlbumArtwork{
+				URL: "pic/url",
+			},
+		},
 	}
 
 	// action
@@ -27,17 +33,22 @@ func TestTelegram_MakeMessage_Released(t *testing.T) {
 
 func TestTelegram_MakeMessage_Future(t *testing.T) {
 	// arrange
-	release := itunes.Release{
-		CollectionName: "Escape - Single",
-		ArtistName:     "Gorgon City",
-		Released:       time.Now().UTC().Truncate(time.Hour).Add(time.Hour * 24),
-		ArtworkURL100:  "pic/url",
+	release := albums.Album{
+		Attributes: albums.AlbumAttributes{
+			Name:        "Escape - Single",
+			ArtistName:  "Gorgon City",
+			IsSingle:    true,
+			ReleaseDate: types.Time{time.Now().UTC().Truncate(time.Hour).Add(time.Hour * 24)},
+			Artwork: &albums.AlbumArtwork{
+				URL: "pic/url",
+			},
+		},
 	}
 
 	// action
 	message := makeMessage(&release)
 
 	// assert
-	wantMessage := fmt.Sprintf("New Single announced \n*Gorgon City*\nEscape - Single\nRelease date: %s [‌‌](pic/url)", release.Released.Format(time.RFC850))
+	wantMessage := fmt.Sprintf("New Single announced \n*Gorgon City*\nEscape - Single\nRelease date: %s [‌‌](pic/url)", release.Attributes.ReleaseDate.Value.Format(time.RFC850))
 	assert.Equal(t, wantMessage, message)
 }

@@ -5,15 +5,17 @@ import (
 	"net/http/httptest"
 	"testing"
 
+	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/fetcher/handlers/itunes"
+	ituneshandler "github.com/objque/musicmash/internal/fetcher/handlers/itunes"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
-	server *httptest.Server
-	mux    *http.ServeMux
+	server   *httptest.Server
+	mux      *http.ServeMux
+	provider *v2.Provider
 )
 
 func setup() {
@@ -21,15 +23,12 @@ func setup() {
 	server = httptest.NewServer(mux)
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
-		Store: config.Store{
-			URL:    server.URL,
-			Region: "us",
-		},
 		Fetching: config.Fetching{
 			Workers:                    10,
 			CountOfSkippedHoursToFetch: 8,
 		},
 	}
+	provider = v2.NewProvider(server.URL, "xxx")
 }
 
 func teardown() {
@@ -43,27 +42,41 @@ func TestFetcher_FetchAndProcess(t *testing.T) {
 
 	// arrange
 	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{
-		Name:    "S.P.Y",
+		Name:    "Architects",
 		StoreID: 182821355,
 	}))
-	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`
-			<section class="l-content-width section section--bordered">
-        	<div class="l-row">
-          	<div class="l-column small-valign-top small-12 medium-6 large-4">
-            	<div class="section__nav">
-              	<h2 class="section__headline">Latest Release</h2>
-            	</div>
-        	<a href="https://itunes.apple.com/us/artist/s-p-y/158365636?uo=4" class="featured-album targeted-link"
-        	<span class="featured-album__text__eyebrow targeted-link__target">
-				<time data-test-we-datetime datetime="Jul 18, 2025" aria-label="July 18, 2025" class="" >Jul 18, 2025</time>
-			</span>
+			{
+  "data": [
+    {
+      "attributes": {
+        "artistName": "Architects",
+        "isComplete": true,
+        "isSingle": false,
+        "name": "Daybreaker (Deluxe Edition)",
+        "releaseDate": "2025-07-18"
+      },
+      "id": "158365636"
+    },
+    {
+      "attributes": {
+        "artistName": "Architects",
+        "isComplete": true,
+        "isSingle": false,
+        "name": "The Here and Now",
+        "releaseDate": "2012-07-13"
+      },
+      "id": "1045635474"
+    }
+  ]
+}
 		`))
 	})
 
 	// action
-	f := Fetcher{}
-	f.RegisterHandler(&itunes.AppleMusicHandler{})
+	f := Fetcher{Provider: provider}
+	f.RegisterHandler(&ituneshandler.AppleMusicHandler{})
 	err := f.FetchAndProcess()
 
 	// assert
@@ -83,30 +96,44 @@ func TestFetcher_FetchAndProcess_AlreadyExists(t *testing.T) {
 
 	// arrange
 	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{
-		Name:    "S.P.Y",
+		Name:    "Architects",
 		StoreID: 182821355,
 	}))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
-		StoreID:   158365636,
+		StoreID: 158365636,
 	}))
 	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`
-			<section class="l-content-width section section--bordered">
-        	<div class="l-row">
-          	<div class="l-column small-valign-top small-12 medium-6 large-4">
-            	<div class="section__nav">
-              	<h2 class="section__headline">Latest Release</h2>
-            	</div>
-        	<a href="https://itunes.apple.com/us/artist/s-p-y/158365636?uo=4" class="featured-album targeted-link"
-        	<span class="featured-album__text__eyebrow targeted-link__target">
-				<time data-test-we-datetime datetime="Jul 18, 2025" aria-label="July 18, 2025" class="" >Jul 18, 2025</time>
-			</span>
+			{
+  "data": [
+    {
+      "attributes": {
+        "artistName": "Architects",
+        "isComplete": true,
+        "isSingle": false,
+        "name": "Daybreaker (Deluxe Edition)",
+        "releaseDate": "2025-07-18"
+      },
+      "id": "158365636"
+    },
+    {
+      "attributes": {
+        "artistName": "Architects",
+        "isComplete": true,
+        "isSingle": false,
+        "name": "The Here and Now",
+        "releaseDate": "2012-07-13"
+      },
+      "id": "1045635474"
+    }
+  ]
+}
 		`))
 	})
 
 	// action
-	f := Fetcher{}
-	f.RegisterHandler(&itunes.AppleMusicHandler{})
+	f := Fetcher{Provider: provider}
+	f.RegisterHandler(&ituneshandler.AppleMusicHandler{})
 	err := f.FetchAndProcess()
 
 	// assert

@@ -49,13 +49,14 @@ type Tasks struct {
 }
 
 type SubscriptionsTask struct {
-	UseSearchDelay         bool `yaml:"use_search_delay"`
-	SubscribeArtistWorkers int  `yaml:"subscribe_artist_workers"`
+	FindArtistWorkers      int `yaml:"find_artist_workers"`
+	SubscribeArtistWorkers int `yaml:"subscribe_artist_workers"`
 }
 
 type Store struct {
 	URL    string `yaml:"url"`
 	Region string `yaml:"region"`
+	Token  string `yaml:"token"`
 }
 
 func InitConfig(filepath string) error {

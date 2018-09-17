@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
+	itunesProvider "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/fetcher/handlers/itunes"
@@ -31,9 +32,10 @@ func isMustFetch() bool {
 }
 
 func Run() {
-	f := v2.Fetcher{}
+	provider := itunesProvider.NewProvider(config.Config.Store.URL, config.Config.Store.Token)
+	f := v2.Fetcher{Provider: provider}
 	f.RegisterHandler(&itunes.AppleMusicHandler{})
-	f.RegisterHandler(yandex.New("https://music.yandex.ru"))
+	f.RegisterHandler(yandex.New("https://music.yandex.ru", provider))
 	for {
 		if isMustFetch() {
 			now := time.Now().UTC()
