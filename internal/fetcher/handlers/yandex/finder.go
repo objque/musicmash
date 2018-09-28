@@ -37,7 +37,7 @@ func searchArtistID(ya *yandex.Client, artistName string) (int, error) {
 	log.Debugf("searching %s", artistName)
 	res, err := ya.Search(artistName)
 	if err != nil {
-		return 0, errors.Wrapf(err, "tried to search artist", artistName)
+		return 0, errors.Wrapf(err, "tried to search artist %s", artistName)
 	}
 
 	log.Debugf("found %d artists", len(res.Artists.Items))
