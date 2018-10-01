@@ -1,4 +1,4 @@
-package v2
+package itunes
 
 import (
 	"net/http"
@@ -8,7 +8,6 @@ import (
 	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/config"
 	"github.com/objque/musicmash/internal/db"
-	ituneshandler "github.com/objque/musicmash/internal/fetcher/handlers/itunes"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,19 +40,18 @@ func TestFetcher_FetchAndProcess(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{
-		Name:    "Architects",
-		StoreID: 182821355,
-	}))
+	done := make(chan bool, 1)
+	f := Fetcher{Provider: provider}
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", f.GetStoreName(), "182821355"))
 	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`
-			{
+		w.Write([]byte(`{
   "data": [
     {
       "attributes": {
         "artistName": "Architects",
-        "isComplete": true,
-        "isSingle": false,
+        "artwork": {
+          "url": "https://is4-ssl.mzstatic.com/image/thumb/Music/0a/90/94/mzi.nyyoiwvs.jpg/{w}x{h}bb.jpeg"
+        },
         "name": "Daybreaker (Deluxe Edition)",
         "releaseDate": "2025-07-18"
       },
@@ -62,32 +60,27 @@ func TestFetcher_FetchAndProcess(t *testing.T) {
     {
       "attributes": {
         "artistName": "Architects",
-        "isComplete": true,
-        "isSingle": false,
         "name": "The Here and Now",
         "releaseDate": "2012-07-13"
       },
       "id": "1045635474"
     }
   ]
-}
-		`))
+}`))
 	})
 
 	// action
-	f := Fetcher{Provider: provider}
-	f.RegisterHandler(&ituneshandler.AppleMusicHandler{})
-	err := f.FetchAndProcess()
+	f.FetchAndSave(done)
+	<-done
 
 	// assert
-	assert.NoError(t, err)
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
-	assert.Equal(t, uint64(158365636), releases[0].StoreID)
-	assert.Equal(t, 18, releases[0].Date.Day())
-	assert.Equal(t, "July", releases[0].Date.Month().String())
-	assert.Equal(t, 2025, releases[0].Date.Year())
+	assert.Equal(t, "158365636", releases[0].StoreID)
+	assert.Equal(t, 18, releases[0].Released.Day())
+	assert.Equal(t, "July", releases[0].Released.Month().String())
+	assert.Equal(t, 2025, releases[0].Released.Year())
 }
 
 func TestFetcher_FetchAndProcess_AlreadyExists(t *testing.T) {
@@ -95,22 +88,19 @@ func TestFetcher_FetchAndProcess_AlreadyExists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{
-		Name:    "Architects",
-		StoreID: 182821355,
-	}))
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
-		StoreID: 158365636,
-	}))
+	done := make(chan bool, 1)
+	f := Fetcher{Provider: provider}
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", f.GetStoreName(), "182821355"))
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "158365636", StoreName: f.GetStoreName()}))
 	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`
-			{
+		w.Write([]byte(`{
   "data": [
     {
       "attributes": {
         "artistName": "Architects",
-        "isComplete": true,
-        "isSingle": false,
+        "artwork": {
+          "url": "https://is4-ssl.mzstatic.com/image/thumb/Music/0a/90/94/mzi.nyyoiwvs.jpg/{w}x{h}bb.jpeg"
+        },
         "name": "Daybreaker (Deluxe Edition)",
         "releaseDate": "2025-07-18"
       },
@@ -119,30 +109,25 @@ func TestFetcher_FetchAndProcess_AlreadyExists(t *testing.T) {
     {
       "attributes": {
         "artistName": "Architects",
-        "isComplete": true,
-        "isSingle": false,
         "name": "The Here and Now",
         "releaseDate": "2012-07-13"
       },
       "id": "1045635474"
     }
   ]
-}
-		`))
+}`))
 	})
 
 	// action
-	f := Fetcher{Provider: provider}
-	f.RegisterHandler(&ituneshandler.AppleMusicHandler{})
-	err := f.FetchAndProcess()
+	f.FetchAndSave(done)
+	<-done
 
 	// assert
-	assert.NoError(t, err)
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
-	assert.Equal(t, uint64(158365636), releases[0].StoreID)
-	assert.Equal(t, 1, releases[0].Date.Day())
-	assert.Equal(t, "January", releases[0].Date.Month().String())
-	assert.Equal(t, 1, releases[0].Date.Year())
+	assert.Equal(t, "158365636", releases[0].StoreID)
+	assert.Equal(t, 1, releases[0].Released.Day())
+	assert.Equal(t, "January", releases[0].Released.Month().String())
+	assert.Equal(t, 1, releases[0].Released.Year())
 }
