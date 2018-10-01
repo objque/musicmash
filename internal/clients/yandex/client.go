@@ -58,3 +58,23 @@ func (c *Client) GetArtistAlbums(id int) ([]*ArtistAlbum, error) {
 	}
 	return result.Albums, nil
 }
+
+func (c *Client) GetArtistLatestAlbum(artistID int) (*ArtistAlbum, error) {
+	searchURL := fmt.Sprintf("%s/handlers/artist.jsx?what=albums&sort=year&artist=%d", c.URL, artistID)
+	result := ArtistInfo{}
+	if err := c.do(searchURL, &result); err != nil {
+		return nil, err
+	}
+
+	if len(result.Albums) == 0 {
+		return nil, AlbumsNotFoundErr
+	}
+
+	latest := result.Albums[0]
+	for _, album := range result.Albums {
+		if album.Released.Value.After(latest.Released.Value) {
+			latest = album
+		}
+	}
+	return latest, nil
+}
