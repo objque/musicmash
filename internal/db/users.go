@@ -6,19 +6,19 @@ import (
 
 type User struct {
 	CreatedAt time.Time
-	ID        string `gorm:"primary_key"`
+	Name      string `gorm:"primary_key"`
 }
 
 type UserMgr interface {
 	CreateUser(user *User) error
-	FindUserByID(id string) (*User, error)
+	FindUserByName(name string) (*User, error)
 	GetAllUsers() ([]*User, error)
 	EnsureUserExists(userID string) error
 }
 
-func (mgr *AppDatabaseMgr) FindUserByID(id string) (*User, error) {
+func (mgr *AppDatabaseMgr) FindUserByName(id string) (*User, error) {
 	user := User{}
-	if err := mgr.db.Where("id = ?", id).First(&user).Error; err != nil {
+	if err := mgr.db.Where("name = ?", id).First(&user).Error; err != nil {
 		return nil, err
 	}
 
@@ -34,10 +34,10 @@ func (mgr *AppDatabaseMgr) CreateUser(user *User) error {
 	return mgr.db.Create(user).Error
 }
 
-func (mgr *AppDatabaseMgr) EnsureUserExists(userID string) error {
-	_, err := mgr.FindUserByID(userID)
+func (mgr *AppDatabaseMgr) EnsureUserExists(name string) error {
+	_, err := mgr.FindUserByName(name)
 	if err != nil {
-		return mgr.CreateUser(&User{ID: userID})
+		return mgr.CreateUser(&User{Name: name})
 	}
 	return nil
 }

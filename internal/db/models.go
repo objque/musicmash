@@ -10,14 +10,12 @@ func NoOp(db *gorm.DB) error {
 
 var tables = []interface{}{
 	&Artist{},
+	&ArtistStoreInfo{},
+	&Store{},
 	&User{},
 	&Release{},
 	&LastAction{},
-	&Chat{},
 	&Subscription{},
-	&State{},
-	&StoreType{},
-	&Store{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -34,20 +32,17 @@ func CreateAll(db *gorm.DB) error {
 	}
 
 	fkeys := map[interface{}][][2]string{
-		// use pointer because release model struct contains a slice
-		&Release{}: {
+		&ArtistStoreInfo{}: {
 			{"artist_name", "artists(name)"},
-		},
-		Chat{}: {
-			{"user_id", "users(id)"},
+			{"store_name", "stores(name)"},
 		},
 		Subscription{}: {
-			{"user_id", "users(id)"},
+			{"user_name", "users(name)"},
 			{"artist_name", "artists(name)"},
 		},
-		Store{}: {
-			{"store_type", "store_types(name)"},
-			{"release_id", "releases(id)"},
+		&Release{}: {
+			{"artist_name", "artists(name)"},
+			{"store_name", "stores(name)"},
 		},
 	}
 
@@ -60,22 +55,22 @@ func CreateAll(db *gorm.DB) error {
 		}
 	}
 
-	if err := db.Debug().Model(&Subscription{}).AddUniqueIndex(
-		"idx_user_id_artist_name",
-		"user_id", "artist_name").Error; err != nil {
-		return err
-	}
-
-	if err := db.Debug().Model(&Release{}).AddIndex(
-		"idx_store_id", "store_id").Error; err != nil {
-		return err
-	}
-
-	if err := db.Debug().Model(&Store{}).AddIndex(
-		"idx_store_type_release_id",
-		"store_type", "release_id").Error; err != nil {
-		return err
-	}
+	//if err := db.Debug().Model(&Subscription{}).AddUniqueIndex(
+	//	"idx_user_id_artist_name",
+	//	"user_id", "artist_name").Error; err != nil {
+	//	return err
+	//}
+	//
+	//if err := db.Debug().Model(&Release{}).AddIndex(
+	//	"idx_store_id", "store_id").Error; err != nil {
+	//	return err
+	//}
+	//
+	//if err := db.Debug().Model(&Store{}).AddIndex(
+	//	"idx_store_type_release_id",
+	//	"store_type", "release_id").Error; err != nil {
+	//	return err
+	//}
 
 	return nil
 }

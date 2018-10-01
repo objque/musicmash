@@ -15,9 +15,9 @@ func TestDB_Users_EnsureExists(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	user, err := DbMgr.FindUserByID("objque@me")
+	user, err := DbMgr.FindUserByName("objque@me")
 	assert.NoError(t, err)
-	assert.Equal(t, "objque@me", user.ID)
+	assert.Equal(t, "objque@me", user.Name)
 }
 
 func TestDB_Users_List(t *testing.T) {
@@ -34,6 +34,6 @@ func TestDB_Users_List(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, users, 2)
-	assert.Equal(t, "objque@me", users[0].ID)
-	assert.Equal(t, "jade@abuse", users[1].ID)
+	assert.Equal(t, "objque@me", users[0].Name)
+	assert.Equal(t, "jade@abuse", users[1].Name)
 }

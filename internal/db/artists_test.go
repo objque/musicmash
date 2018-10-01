@@ -6,40 +6,27 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_Artists_EnsureExists(t *testing.T) {
+func TestDB_Artist_EnsureExists(t *testing.T) {
 	setup()
 	defer teardown()
 
 	// action
-	err := DbMgr.EnsureArtistExists(&Artist{
-		Name: "skrillex",
-	})
+	err := DbMgr.EnsureArtistExists("skrillex")
 
 	// assert
 	assert.NoError(t, err)
-	artist, err := DbMgr.FindArtistByName("skrillex")
-	assert.NoError(t, err)
-	assert.Equal(t, "skrillex", artist.Name)
 }
 
-func TestDB_Artists_List(t *testing.T) {
+
+func TestDB_ArtistStoreInfo_EnsureArtistExistsInStore(t *testing.T) {
 	setup()
 	defer teardown()
 
-	// arrange
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{
-		Name: "skrillex",
-	}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{
-		Name: "S.P.Y",
-	}))
-
 	// action
-	artists, err := DbMgr.GetAllArtists()
+	err := DbMgr.EnsureArtistExistsInStore("skrillex", "deezer", "xyz")
 
 	// assert
 	assert.NoError(t, err)
-	assert.Len(t, artists, 2)
-	assert.Equal(t, "skrillex", artists[0].Name)
-	assert.Equal(t, "S.P.Y", artists[1].Name)
+	artists, err := DbMgr.GetArtistsForStore("deezer")
+	assert.Len(t, artists, 1)
 }

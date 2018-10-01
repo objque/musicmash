@@ -11,7 +11,7 @@ func TestDB_Subscriptions_EnsureExists(t *testing.T) {
 	defer teardown()
 
 	// action
-	err := DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "objque@me", ArtistName: "skrillex"})
+	err := DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: "skrillex"})
 
 	// assert
 	assert.NoError(t, err)
@@ -23,9 +23,9 @@ func TestDB_Subscriptions_FindAll(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "objque@me", ArtistName: "skrillex"}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "objque@me", ArtistName: "alvin risk"}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "jade@dynasty", ArtistName: "rammstein"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: "skrillex"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: "alvin risk"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "jade@dynasty", ArtistName: "rammstein"}))
 
 	// action
 	subs, err := DbMgr.FindAllUserSubscriptions("objque@me")
@@ -33,8 +33,6 @@ func TestDB_Subscriptions_FindAll(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, subs, 2)
-	assert.Equal(t, "alvin risk", subs[0].ArtistName)
-	assert.Equal(t, "skrillex", subs[1].ArtistName)
 }
 
 func TestDB_Subscriptions_SubscribeUserForArtists(t *testing.T) {
@@ -43,7 +41,7 @@ func TestDB_Subscriptions_SubscribeUserForArtists(t *testing.T) {
 
 	// arrange
 	artists := []string{"Skrillex", "David Guetta", "Deftones", "Depeche Mode"}
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "objque@me", ArtistName: "Skrillex"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: "Skrillex"}))
 
 	// action
 	err := DbMgr.SubscribeUserForArtists("objque@me", artists)
@@ -60,10 +58,10 @@ func TestDB_Subscriptions_UnsubscribeUserFromArtists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "objque@me", ArtistName: "Skrillex"}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "objque@me", ArtistName: "Calvin Risk"}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "objque@me", ArtistName: "AC/DC"}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserID: "mike@wels", ArtistName: "AC/DC"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: "Skrillex"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: "Calvin Risk"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: "AC/DC"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "mike@wels", ArtistName: "AC/DC"}))
 
 	// action
 	err := DbMgr.UnsubscribeUserFromArtists("objque@me", []string{"Calvin Risk"})

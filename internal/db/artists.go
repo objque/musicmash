@@ -1,44 +1,49 @@
 package db
 
-import (
-	"time"
-)
+import "github.com/jinzhu/gorm"
 
 type Artist struct {
-	CreatedAt time.Time
-	Name      string `gorm:"primary_key"`
-	StoreID   uint64
+	Name string `gorm:"primary_key"`
+}
+
+type ArtistStoreInfo struct {
+	id         uint64
+	ArtistName string
+	StoreName  string `gorm:"unique_index:idx_art_store_name_store_id"`
+	StoreID    string `gorm:"unique_index:idx_art_store_name_store_id"`
 }
 
 type ArtistMgr interface {
-	CreateArtist(artist *Artist) error
-	FindArtistByName(id string) (*Artist, error)
-	GetAllArtists() ([]*Artist, error)
-	EnsureArtistExists(artist *Artist) error
+	EnsureArtistExists(name string) error
 }
 
-func (mgr *AppDatabaseMgr) FindArtistByName(name string) (*Artist, error) {
-	artist := Artist{}
-	if err := mgr.db.Where("name = ?", name).First(&artist).Error; err != nil {
+func (mgr *AppDatabaseMgr) EnsureArtistExists(name string) error {
+	info := ArtistStoreInfo{}
+	err := mgr.db.Where("artist_name = ?", name).First(&info).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return mgr.db.Create(Artist{Name: name}).Error
+	}
+	return err
+}
+
+type ArtistStoreInfoMgr interface {
+	GetArtistsForStore(name string) ([]*ArtistStoreInfo, error)
+	EnsureArtistExistsInStore(artistName, storeName, storeID string) error
+}
+
+func (mgr *AppDatabaseMgr) GetArtistsForStore(name string) ([]*ArtistStoreInfo, error) {
+	artists := []*ArtistStoreInfo{}
+	if err := mgr.db.Where("store_name = ?", name).Find(&artists).Error; err != nil {
 		return nil, err
 	}
-
-	return &artist, nil
+	return artists, nil
 }
 
-func (mgr *AppDatabaseMgr) GetAllArtists() ([]*Artist, error) {
-	var artists = make([]*Artist, 0)
-	return artists, mgr.db.Find(&artists).Error
-}
-
-func (mgr *AppDatabaseMgr) CreateArtist(artist *Artist) error {
-	return mgr.db.Create(artist).Error
-}
-
-func (mgr *AppDatabaseMgr) EnsureArtistExists(artist *Artist) error {
-	_, err := mgr.FindArtistByName(artist.Name)
-	if err != nil {
-		return mgr.CreateArtist(artist)
+func (mgr *AppDatabaseMgr) EnsureArtistExistsInStore(artistName, storeName, storeID string) error {
+	info := ArtistStoreInfo{}
+	err := mgr.db.Where("artist_name = ? and store_name = ?", artistName, storeName).First(&info).Error
+	if gorm.IsRecordNotFoundError(err) {
+		return mgr.db.Create(ArtistStoreInfo{ArtistName: artistName, StoreName: storeName, StoreID: storeID}).Error
 	}
-	return nil
+	return err
 }

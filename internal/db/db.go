@@ -10,16 +10,13 @@ import (
 var DbMgr DataMgr
 
 type DataMgr interface {
+	StoreMgr
 	ArtistMgr
+	ArtistStoreInfoMgr
 	UserMgr
+	SubscriptionMgr
 	ReleaseMgr
 	LastActionMgr
-	ChatMgr
-	SubscriptionMgr
-	StateMgr
-	FeedMgr
-	StoreTypeMgr
-	StoreMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr
