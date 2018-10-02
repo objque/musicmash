@@ -46,7 +46,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, done c
 				continue
 			}
 
-			log.Error(errors.Wrapf(err, "tried to get albums for '%s' with id %d", artist.ArtistName, artist.StoreID))
+			log.Error(errors.Wrapf(err, "tried to get albums for '%s' with id %s", artist.ArtistName, artist.StoreID))
 			continue
 		}
 
