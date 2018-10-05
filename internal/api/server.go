@@ -21,10 +21,8 @@ func getMux() *chi.Mux {
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Get("/states/{state_id}", getState)
-	r.Post("/{user_id}/subscriptions", createSubscriptions)
 	r.Post("/users", createUser)
 	r.Post("/{user_id}/chats", addUserChat)
-	r.Delete("/{user_id}/subscriptions", deleteSubscriptions)
 	r.Get("/{user_id}/feed", getUserFeed)
 	return r
 }
