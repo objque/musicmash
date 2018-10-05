@@ -1,6 +1,8 @@
 package services
 
+import "sync"
+
 type Service interface {
-	FetchAndSave(done chan<- bool)
+	FetchAndSave(done *sync.WaitGroup)
 	GetStoreName() string
 }

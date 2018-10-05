@@ -3,6 +3,7 @@ package yandex
 import (
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 
 	"github.com/objque/musicmash/internal/clients/yandex"
@@ -39,7 +40,6 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	done := make(chan bool, 1)
 	// mock yandex auth
 	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
@@ -67,8 +67,10 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Gorgon City", f.GetStoreName(), "817678"))
 
 	// action
-	f.FetchAndSave(done)
-	<-done
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	f.FetchAndSave(&wg)
+	wg.Wait()
 
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()
@@ -85,7 +87,6 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	done := make(chan bool, 1)
 	// mock yandex auth
 	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
@@ -114,8 +115,10 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "5647716", StoreName: f.GetStoreName()}))
 
 	// action
-	f.FetchAndSave(done)
-	<-done
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	f.FetchAndSave(&wg)
+	wg.Wait()
 
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()

@@ -2,6 +2,7 @@ package itunes
 
 import (
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/objque/musicmash/internal/clients/itunes"
@@ -70,7 +71,8 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, done c
 	done <- id
 }
 
-func (f *Fetcher) FetchAndSave(done chan<- bool) {
+func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup) {
+	defer wg.Done()
 	// load all artists from the db
 	artists, err := db.DbMgr.GetArtistsForStore(f.GetStoreName())
 	if err != nil {
@@ -95,9 +97,7 @@ func (f *Fetcher) FetchAndSave(done chan<- bool) {
 	close(jobs)
 
 	for w := 1; w <= config.Config.Fetching.Workers; w++ {
-		log.Debugf("#%d fetch-worker done", <-_done)
+		log.Debugf("#%d fetch-worker wg", <-_done)
 	}
 	close(_done)
-
-	done <- true
 }

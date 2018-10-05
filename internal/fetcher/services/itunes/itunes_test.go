@@ -3,6 +3,7 @@ package itunes
 import (
 	"net/http"
 	"net/http/httptest"
+	"sync"
 	"testing"
 
 	v2 "github.com/objque/musicmash/internal/clients/itunes"
@@ -35,12 +36,11 @@ func teardown() {
 	db.DbMgr.Close()
 }
 
-func TestFetcher_FetchAndProcess(t *testing.T) {
+func TestFetcher_FetchAndSave(t *testing.T) {
 	setup()
 	defer teardown()
 
 	// arrange
-	done := make(chan bool, 1)
 	f := Fetcher{Provider: provider}
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", f.GetStoreName(), "182821355"))
 	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
@@ -70,8 +70,10 @@ func TestFetcher_FetchAndProcess(t *testing.T) {
 	})
 
 	// action
-	f.FetchAndSave(done)
-	<-done
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	f.FetchAndSave(&wg)
+	wg.Wait()
 
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()
@@ -83,16 +85,15 @@ func TestFetcher_FetchAndProcess(t *testing.T) {
 	assert.Equal(t, 2025, releases[0].Released.Year())
 }
 
-func TestFetcher_FetchAndProcess_AlreadyExists(t *testing.T) {
+func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	setup()
 	defer teardown()
 
 	// arrange
-	done := make(chan bool, 1)
 	f := Fetcher{Provider: provider}
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", f.GetStoreName(), "182821355"))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "158365636", StoreName: f.GetStoreName()}))
-	mux.HandleFunc("/us/artist/182821355", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
   "data": [
     {
@@ -119,8 +120,10 @@ func TestFetcher_FetchAndProcess_AlreadyExists(t *testing.T) {
 	})
 
 	// action
-	f.FetchAndSave(done)
-	<-done
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	f.FetchAndSave(&wg)
+	wg.Wait()
 
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()

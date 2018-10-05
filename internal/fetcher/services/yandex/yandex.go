@@ -2,6 +2,7 @@ package yandex
 
 import (
 	"strconv"
+	"sync"
 	"time"
 
 	"github.com/objque/musicmash/internal/clients/yandex"
@@ -68,7 +69,8 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, done c
 	done <- id
 }
 
-func (f *Fetcher) FetchAndSave(done chan<- bool) {
+func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup) {
+	defer wg.Done()
 	// load all artists from the db
 	artists, err := db.DbMgr.GetArtistsForStore(f.GetStoreName())
 	if err != nil {
@@ -96,6 +98,4 @@ func (f *Fetcher) FetchAndSave(done chan<- bool) {
 		log.Debugf("#%d fetch-worker done", <-_done)
 	}
 	close(_done)
-
-	done <- true
 }
