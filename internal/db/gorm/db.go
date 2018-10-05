@@ -59,5 +59,5 @@ type mainDBLogger struct {
 }
 
 func (l mainDBLogger) Println(v ...interface{}) {
-	log.Info(v)
+	log.Info(v...)
 }
