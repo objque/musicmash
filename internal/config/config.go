@@ -15,8 +15,8 @@ type AppConfig struct {
 	DB       DBConfig   `yaml:"db"`
 	Log      LogConfig  `yaml:"log"`
 	Fetching Fetching   `yaml:"fetching"`
-	Store    Store      `yaml:"store"`
 	Tasks    Tasks      `yaml:"tasks"`
+	Stores   []*Store   `yaml:"stores"`
 }
 
 type HTTPConfig struct {
@@ -40,6 +40,7 @@ type DBConfig struct {
 }
 
 type Fetching struct {
+	// TODO (m.kalinin): extraxt workers into the store struct
 	Workers                    int     `yaml:"workers"`
 	CountOfSkippedHoursToFetch float64 `yaml:"count_of_skipped_hours_to_fetch"`
 }
@@ -54,10 +55,12 @@ type SubscriptionsTask struct {
 }
 
 type Store struct {
-	URL    string `yaml:"url"`
-	Region string `yaml:"region"`
-	Token  string `yaml:"token"`
+	Name    string `yaml:"type"`
+	URL     string `yaml:"url"`
+	Meta    Meta   `yaml:"meta"`
 }
+
+type Meta map[string]string
 
 func InitConfig(filepath string) error {
 	data, err := ioutil.ReadFile(filepath)

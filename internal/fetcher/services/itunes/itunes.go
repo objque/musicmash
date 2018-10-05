@@ -28,6 +28,12 @@ type Fetcher struct {
 	Provider *itunes.Provider
 }
 
+func NewService(url, token string) *Fetcher {
+	return &Fetcher{
+		Provider: itunes.NewProvider(url, token),
+	}
+}
+
 func (f *Fetcher) GetStoreName() string {
 	return "itunes"
 }

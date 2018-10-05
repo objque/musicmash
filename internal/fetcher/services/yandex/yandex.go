@@ -27,6 +27,12 @@ type Fetcher struct {
 	API *yandex.Client
 }
 
+func NewService(url string) *Fetcher {
+	return &Fetcher{
+		API: yandex.New(url),
+	}
+}
+
 func (f *Fetcher) GetStoreName() string {
 	return "yandex"
 }

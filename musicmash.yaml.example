@@ -14,11 +14,6 @@ log:
     file: 'musicmash.log'
     syslog_enable: false
 
-store:
-    url: 'https://itunes.apple.com'
-    region: 'us'
-    token: 'xxxxxx'
-
 fetching:
     workers: 10
     count_of_skipped_hours_to_fetch: 8
@@ -27,3 +22,13 @@ tasks:
     subscriptions:
         find_artist_workers: 3
         subscribe_artist_workers: 10
+
+stores:
+    - type: yandex
+      url: "https://music.yandex.ru"
+
+    - type: itunes
+      url: "https://api.music.apple.com"
+      meta:
+        token: "kpXVCIsInR5cCI6IkpXVCIsInR5cCI6IkpXVCIsInR5cCI6I"
+        region: "us"
