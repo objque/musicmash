@@ -2,17 +2,11 @@ package main
 
 import (
 	"flag"
-	"os"
 
-	"github.com/objque/musicmash/internal/api"
-	v2 "github.com/objque/musicmash/internal/clients/itunes"
 	"github.com/objque/musicmash/internal/config"
+	"github.com/objque/musicmash/internal/cron"
 	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/fetcher"
 	"github.com/objque/musicmash/internal/log"
-	"github.com/objque/musicmash/internal/notifier"
-	"github.com/objque/musicmash/internal/notify"
-	"github.com/objque/musicmash/internal/notify/services"
 )
 
 func init() {
@@ -35,14 +29,10 @@ func init() {
 		}
 	}
 
-	provider := v2.NewProvider(config.Config.Store.URL, config.Config.Store.Token)
 	db.DbMgr = db.NewMainDatabaseMgr()
-	notify.Service = services.New(os.Getenv("TG_TOKEN"), provider)
 }
 
 func main() {
-	log.Info("Running fetching...")
-	go fetcher.Run()
-	go notifier.Run()
-	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
+	log.Info("Running musicmash..")
+	cron.Run()
 }
