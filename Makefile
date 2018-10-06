@@ -20,20 +20,22 @@ add-ssh-key:
 	chmod 600 /tmp/travis_key
 	ssh-add /tmp/travis_key
 
-docker-build:
-	docker build -t $(REGISTRY_REPO) .
-
 docker-login:
 	docker login -u $(REGISTRY_USER) -p $(REGISTRY_PASS)
 
-docker-push: docker-login
-	docker push $(REGISTRY_REPO)
+docker-build-stable:
+	docker build -t $(REGISTRY_REPO):stable .
 
-docker-full:
-	make docker-build
-	make docker-push
+docker-build-nightly:
+	docker build -t $(REGISTRY_REPO):nightly .
 
-deploy:
+docker-push-stable: docker-login
+	docker push $(REGISTRY_REPO):stable
+
+docker-push-nightly: docker-login
+	docker push $(REGISTRY_REPO):nightly
+
+deploy-stable:
 	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music
 
 deploy-staging:

@@ -14,16 +14,16 @@ jobs:
     - eval "$(ssh-agent -s)"
     - make add-ssh-key
     - make build
-    - make docker-build
-    - make docker-push
-    - make deploy
+    - make docker-build-stable
+    - make docker-push-stable
+    - make deploy-stable
   - stage: deploy-staging
     script:
     - eval "$(ssh-agent -s)"
     - make add-ssh-key
     - make build
-    - make docker-build
-    - make docker-push
+    - make docker-build-nightly
+    - make docker-push-nightly
     - make deploy-staging
 stages:
 - tests
