@@ -2,6 +2,7 @@ package itunes
 
 import (
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -16,6 +17,11 @@ import (
 const (
 	posterWidth  = 500
 	posterHeight = 500
+
+	AlbumReleaseType  = " - Album"
+	SingleReleaseType = " - Single"
+	EPReleaseType     = " - EP"
+	LPReleaseType     = " - LP"
 )
 
 func isLatest(album *albums.Album) bool {
@@ -36,6 +42,13 @@ func NewService(url, token string) *Fetcher {
 
 func (f *Fetcher) GetStoreName() string {
 	return "itunes"
+}
+
+func removeAlbumType(title string) string {
+	title = strings.Replace(title, AlbumReleaseType, "", -1)
+	title = strings.Replace(title, SingleReleaseType, "", -1)
+	title = strings.Replace(title, EPReleaseType, "", -1)
+	return strings.Replace(title, LPReleaseType, "", -1)
 }
 
 func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, done chan<- int) {
@@ -66,7 +79,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, done c
 			StoreName:  f.GetStoreName(),
 			StoreID:    release.ID,
 			ArtistName: artist.ArtistName,
-			Title:      release.Attributes.Name,
+			Title:      removeAlbumType(release.Attributes.Name),
 			Poster:     release.Attributes.Artwork.GetLink(posterWidth, posterHeight),
 			Released:   release.Attributes.ReleaseDate.Value,
 		})
