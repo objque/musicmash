@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 
+	"github.com/musicmash/musicmash/internal/api"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/cron"
 	"github.com/musicmash/musicmash/internal/db"
@@ -36,5 +37,6 @@ func init() {
 
 func main() {
 	log.Info("Running musicmash..")
-	cron.Run()
+	go cron.Run()
+	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }
