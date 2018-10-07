@@ -4,8 +4,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/db"
 )
 
 var (

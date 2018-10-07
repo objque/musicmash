@@ -7,7 +7,7 @@ import (
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 	logrus_syslog "github.com/sirupsen/logrus/hooks/syslog"
-	"github.com/objque/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/config"
 )
 
 const (

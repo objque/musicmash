@@ -4,7 +4,7 @@ import (
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	db "github.com/objque/musicmash/internal/db/gorm"
+	db "github.com/musicmash/musicmash/internal/db/gorm"
 )
 
 var DbMgr DataMgr

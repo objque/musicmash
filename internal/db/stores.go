@@ -2,7 +2,7 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 type Store struct {

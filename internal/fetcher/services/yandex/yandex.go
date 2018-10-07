@@ -5,10 +5,10 @@ import (
 	"sync"
 	"time"
 
-	"github.com/objque/musicmash/internal/clients/yandex"
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/clients/yandex"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 

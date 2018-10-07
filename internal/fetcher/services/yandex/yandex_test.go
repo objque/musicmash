@@ -6,10 +6,10 @@ import (
 	"sync"
 	"testing"
 
-	"github.com/objque/musicmash/internal/clients/yandex"
+	"github.com/musicmash/musicmash/internal/clients/yandex"
 
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
 

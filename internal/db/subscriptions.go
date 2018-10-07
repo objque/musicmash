@@ -1,7 +1,7 @@
 package db
 
 import (
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 type Subscription struct {

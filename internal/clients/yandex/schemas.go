@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/objque/musicmash/internal/clients/yandex/types"
+	"github.com/musicmash/musicmash/internal/clients/yandex/types"
 )
 
 type Session struct {

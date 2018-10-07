@@ -3,11 +3,11 @@ package fetcher
 import (
 	"sync"
 
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/fetcher/services"
-	"github.com/objque/musicmash/internal/fetcher/services/itunes"
-	"github.com/objque/musicmash/internal/fetcher/services/yandex"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/fetcher/services"
+	"github.com/musicmash/musicmash/internal/fetcher/services/itunes"
+	"github.com/musicmash/musicmash/internal/fetcher/services/yandex"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 func getServices() []services.Service {

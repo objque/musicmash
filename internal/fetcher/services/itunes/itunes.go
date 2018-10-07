@@ -6,11 +6,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/objque/musicmash/internal/clients/itunes"
-	"github.com/objque/musicmash/internal/clients/itunes/albums"
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/clients/itunes/albums"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 

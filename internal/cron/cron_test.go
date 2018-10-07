@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
 

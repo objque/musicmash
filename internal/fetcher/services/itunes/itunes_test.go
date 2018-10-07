@@ -6,9 +6,9 @@ import (
 	"sync"
 	"testing"
 
-	v2 "github.com/objque/musicmash/internal/clients/itunes"
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
+	v2 "github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
 

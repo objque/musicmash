@@ -1,10 +1,10 @@
 package subscribe
 
 import (
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/tasks/subscribe/linkers/apple"
-	"github.com/objque/musicmash/internal/tasks/subscribe/linkers/yandex"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/tasks/subscribe/linkers/apple"
+	"github.com/musicmash/musicmash/internal/tasks/subscribe/linkers/yandex"
 )
 
 type job struct {

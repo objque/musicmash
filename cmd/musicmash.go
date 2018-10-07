@@ -3,11 +3,11 @@ package main
 import (
 	"flag"
 
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/cron"
-	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/log"
-	tasks "github.com/objque/musicmash/internal/tasks/subscribe"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/cron"
+	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/log"
+	tasks "github.com/musicmash/musicmash/internal/tasks/subscribe"
 )
 
 func init() {

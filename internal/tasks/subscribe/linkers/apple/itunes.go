@@ -3,10 +3,10 @@ package apple
 import (
 	"sync"
 
-	"github.com/objque/musicmash/internal/clients/itunes"
-	"github.com/objque/musicmash/internal/clients/itunes/artists"
-	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/clients/itunes/artists"
+	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 

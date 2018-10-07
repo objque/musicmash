@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	v2 "github.com/objque/musicmash/internal/clients/itunes"
+	v2 "github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/stretchr/testify/assert"
 )
 

@@ -5,8 +5,8 @@ import (
 	"sync/atomic"
 
 	"github.com/jinzhu/gorm"
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 var mainDB *gorm.DB
