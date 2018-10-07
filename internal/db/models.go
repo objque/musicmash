@@ -16,6 +16,7 @@ var tables = []interface{}{
 	&Release{},
 	&LastAction{},
 	&Subscription{},
+	&Chat{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -43,6 +44,9 @@ func CreateAll(db *gorm.DB) error {
 		&Release{}: {
 			{"artist_name", "artists(name)"},
 			{"store_name", "stores(name)"},
+		},
+		Chat{}: {
+			{"user_name", "users(name)"},
 		},
 	}
 

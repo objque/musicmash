@@ -17,6 +17,7 @@ type DataMgr interface {
 	SubscriptionMgr
 	ReleaseMgr
 	LastActionMgr
+	ChatMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr
