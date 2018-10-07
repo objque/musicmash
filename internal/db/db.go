@@ -18,6 +18,7 @@ type DataMgr interface {
 	ReleaseMgr
 	LastActionMgr
 	ChatMgr
+	FeedMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr
