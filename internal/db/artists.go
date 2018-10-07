@@ -28,6 +28,7 @@ func (mgr *AppDatabaseMgr) EnsureArtistExists(name string) error {
 
 type ArtistStoreInfoMgr interface {
 	GetArtistsForStore(name string) ([]*ArtistStoreInfo, error)
+	IsArtistExistsInStore(artistName, storeName, storeID string) bool
 	EnsureArtistExistsInStore(artistName, storeName, storeID string) error
 }
 
@@ -39,11 +40,21 @@ func (mgr *AppDatabaseMgr) GetArtistsForStore(name string) ([]*ArtistStoreInfo, 
 	return artists, nil
 }
 
-func (mgr *AppDatabaseMgr) EnsureArtistExistsInStore(artistName, storeName, storeID string) error {
+func (mgr *AppDatabaseMgr) IsArtistExistsInStore(artistName, storeName, storeID string) bool {
 	info := ArtistStoreInfo{}
-	err := mgr.db.Where("artist_name = ? and store_name = ?", artistName, storeName).First(&info).Error
-	if gorm.IsRecordNotFoundError(err) {
+	err := mgr.db.Where("artist_name = ? and store_name = ? and store_id = ?", artistName, storeName, storeID).First(&info).Error
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			return false
+		}
+		return false
+	}
+	return true
+}
+
+func (mgr *AppDatabaseMgr) EnsureArtistExistsInStore(artistName, storeName, storeID string) error {
+	if !mgr.IsArtistExistsInStore(artistName, storeName, storeID) {
 		return mgr.db.Create(ArtistStoreInfo{ArtistName: artistName, StoreName: storeName, StoreID: storeID}).Error
 	}
-	return err
+	return nil
 }
