@@ -7,6 +7,7 @@ import (
 	"github.com/objque/musicmash/internal/cron"
 	"github.com/objque/musicmash/internal/db"
 	"github.com/objque/musicmash/internal/log"
+	tasks "github.com/objque/musicmash/internal/tasks/subscribe"
 )
 
 func init() {
@@ -29,6 +30,7 @@ func init() {
 		}
 	}
 
+	tasks.InitWorkerPool()
 	db.DbMgr = db.NewMainDatabaseMgr()
 }
 
