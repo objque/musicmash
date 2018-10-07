@@ -15,7 +15,6 @@ type AppConfig struct {
 	DB       DBConfig   `yaml:"db"`
 	Log      LogConfig  `yaml:"log"`
 	Fetching Fetching   `yaml:"fetching"`
-	Tasks    Tasks      `yaml:"tasks"`
 	Stores   []*Store   `yaml:"stores"`
 }
 
@@ -45,19 +44,10 @@ type Fetching struct {
 	CountOfSkippedHoursToFetch float64 `yaml:"count_of_skipped_hours_to_fetch"`
 }
 
-type Tasks struct {
-	Subscriptions SubscriptionsTask `yaml:"subscriptions"`
-}
-
-type SubscriptionsTask struct {
-	FindArtistWorkers      int `yaml:"find_artist_workers"`
-	SubscribeArtistWorkers int `yaml:"subscribe_artist_workers"`
-}
-
 type Store struct {
-	Name    string `yaml:"type"`
-	URL     string `yaml:"url"`
-	Meta    Meta   `yaml:"meta"`
+	Name string `yaml:"type"`
+	URL  string `yaml:"url"`
+	Meta Meta   `yaml:"meta"`
 }
 
 type Meta map[string]string
