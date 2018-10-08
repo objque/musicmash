@@ -34,7 +34,7 @@ func InitWorkerPool() {
 			}
 		case "yandex":
 			yandexLinker = yandex.NewLinker(store.URL)
-			for w := 1; w <= 3; w++ {
+			for w := 1; w <= 1; w++ {
 				go runYandexWorker(w, yandexJobs)
 			}
 		}
