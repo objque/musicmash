@@ -48,7 +48,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, done c
 		album, err := f.API.GetArtistLatestAlbum(artistID)
 		if err != nil {
 			if err == yandex.AlbumsNotFoundErr {
-				log.Debugf("Artist '%s' with id %d hasn't albums", artist.ArtistName, artist.StoreID)
+				log.Debugf("Artist '%s' with id %s hasn't albums", artist.ArtistName, artist.StoreID)
 				continue
 			}
 
