@@ -69,6 +69,7 @@ func (l *Linker) SearchArtists(userArtists []string) {
 		storeArtists, err := l.client.Search(artist)
 		if err != nil {
 			log.Error(errors.Wrapf(err, "tried to search artist in the yandex: %s", artist))
+			continue
 		}
 
 		if len(storeArtists.Artists.Items) == 0 {
