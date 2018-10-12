@@ -15,6 +15,15 @@ type ArtistStoreInfo struct {
 
 type ArtistMgr interface {
 	EnsureArtistExists(name string) error
+	GetAllArtists() ([]*Artist, error)
+}
+
+func (mgr *AppDatabaseMgr) GetAllArtists() ([]*Artist, error) {
+	artists := []*Artist{}
+	if err := mgr.db.Find(&artists).Error; err != nil {
+		return nil, err
+	}
+	return artists, nil
 }
 
 func (mgr *AppDatabaseMgr) EnsureArtistExists(name string) error {

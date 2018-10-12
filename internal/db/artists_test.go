@@ -17,6 +17,21 @@ func TestDB_Artist_EnsureExists(t *testing.T) {
 	assert.NoError(t, err)
 }
 
+func TestDB_Artists_GetAll(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, DbMgr.EnsureArtistExists("skrillex"))
+
+	// action
+	artists, err := DbMgr.GetAllArtists()
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, artists, 1)
+}
+
 func TestDB_ArtistStoreInfo_EnsureArtistExistsInStore(t *testing.T) {
 	setup()
 	defer teardown()
