@@ -6,7 +6,7 @@ clean:
 build: clean
 	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -a -installsuffix cgo -gcflags "all=-trimpath=$(GOPATH)" -o bin/musicmash cmd/musicmash.go
 
-prepare-tests:
+rgo:
 	go get -u github.com/kyoh86/richgo
 
 install:
