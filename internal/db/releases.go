@@ -6,15 +6,21 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
+type ReleaseStore struct {
+	StoreName string
+	StoreID   string
+}
+
 type Release struct {
-	ID         uint64
-	CreatedAt  time.Time
-	ArtistName string
-	Title      string
-	Poster     string
-	Released   time.Time
-	StoreName  string `gorm:"unique_index:idx_rel_store_name_store_id"`
-	StoreID    string `gorm:"unique_index:idx_rel_store_name_store_id"`
+	ID         uint64          `json:"-"`
+	CreatedAt  time.Time       `json:"-"`
+	ArtistName string          `json:"artist_name"`
+	Title      string          `json:"title"`
+	Poster     string          `json:"poster"`
+	Released   time.Time       `json:"released"`
+	StoreName  string          `gorm:"unique_index:idx_rel_store_name_store_id" json:"-"`
+	StoreID    string          `gorm:"unique_index:idx_rel_store_name_store_id" json:"-"`
+	Stores     []*ReleaseStore `gorm:"-" json:"stores"`
 }
 
 type ReleaseMgr interface {

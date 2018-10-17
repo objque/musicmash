@@ -23,8 +23,16 @@ func TestDB_Feed_GetUserFeedSince(t *testing.T) {
 	// announced release
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "S.P.Y",
+		Title:      "Pizza",
 		StoreName:  "itunes",
 		StoreID:    "213551828",
+		Released:   time.Now().UTC().Add(time.Hour * 24),
+	}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "S.P.Y",
+		Title:      "Pizza",
+		StoreName:  "yandex",
+		StoreID:    "1067",
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
 	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
@@ -44,6 +52,7 @@ func TestDB_Feed_GetUserFeedSince(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, feed.Announced, 1)
 	assert.Len(t, feed.Released, 1)
+	assert.Len(t, feed.Announced[0].Stores, 2)
 	assert.Equal(t, "S.P.Y", feed.Announced[0].ArtistName)
 	assert.Equal(t, "skrillex", feed.Released[0].ArtistName)
 }
