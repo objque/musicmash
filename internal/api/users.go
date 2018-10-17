@@ -3,6 +3,7 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/jinzhu/gorm"
 	"github.com/musicmash/musicmash/internal/db"
@@ -12,6 +13,11 @@ import (
 func createUser(w http.ResponseWriter, r *http.Request) {
 	body := CreateUserScheme{}
 	if err := json.NewDecoder(r.Body).Decode(&body); err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	if len(strings.TrimSpace(body.UserName)) == 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		return
 	}
