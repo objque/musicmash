@@ -14,6 +14,7 @@ type UserMgr interface {
 	FindUserByName(name string) (*User, error)
 	GetAllUsers() ([]*User, error)
 	EnsureUserExists(userID string) error
+	GetUsersWithReleases(date time.Time) ([]string, error)
 }
 
 func (mgr *AppDatabaseMgr) FindUserByName(id string) (*User, error) {
@@ -40,4 +41,14 @@ func (mgr *AppDatabaseMgr) EnsureUserExists(name string) error {
 		return mgr.CreateUser(&User{Name: name})
 	}
 	return nil
+}
+
+// Returns list of users that subscribed for artists that released/announced a new release
+func (mgr *AppDatabaseMgr) GetUsersWithReleases(date time.Time) ([]string, error) {
+	const query = "select user_name from subscriptions where artist_name in (select artist_name from releases) group by user_name"
+	users := []string{}
+	if err := mgr.db.Raw(query).Pluck("user_name", &users).Error; err != nil {
+		return nil, err
+	}
+	return users, nil
 }
