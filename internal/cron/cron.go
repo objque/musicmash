@@ -4,16 +4,38 @@ import (
 	"time"
 
 	"github.com/jinzhu/gorm"
-	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
-	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
 )
 
-func isMustFetch() bool {
-	last, err := db.DbMgr.GetLastActionDate(db.ActionFetch)
+type cron struct {
+	ActionName               string
+	Action                   func()
+	CountOfSkippedHoursToRun float64
+}
+
+func (c *cron) Run() {
+	for {
+		if !c.IsMustFetch() {
+			time.Sleep(time.Hour)
+		}
+
+		now := time.Now().UTC()
+		log.Infof("Start %sing stage for '%s'...", c.ActionName, now.String())
+		c.Action()
+		log.Infof("Finish %sing stage '%s'...", c.ActionName, time.Now().UTC().String())
+		log.Infof("Elapsed time '%s' for %s", time.Now().UTC().Sub(now).String(), c.ActionName)
+		if err := db.DbMgr.SetLastActionDate(c.ActionName, now); err != nil {
+			log.Errorf("can't save last_action date for '%s'", c.ActionName)
+		}
+	}
+}
+
+func (c *cron) IsMustFetch() bool {
+	last, err := db.DbMgr.GetLastActionDate(c.ActionName)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
+			log.Infof("LastAction for '%s' not found, will start now...", c.ActionName)
 			return true
 		}
 
@@ -22,25 +44,13 @@ func isMustFetch() bool {
 	}
 
 	diff := calcDiffHours(last.Date)
-	log.Infof("LastAction fetch was at '%s'. Next fetch after %v hour",
+	log.Infof("LastAction '%s' was at '%s'. Next fetch after %v hour",
 		last.Date.Format("2006-01-02 15:04:05"),
-		config.Config.Fetching.CountOfSkippedHoursToFetch-diff)
-	return diff >= config.Config.Fetching.CountOfSkippedHoursToFetch
+		c.CountOfSkippedHoursToRun-diff)
+	return diff >= c.CountOfSkippedHoursToRun
 }
 
-func Run() {
-	for {
-		if isMustFetch() {
-			now := time.Now().UTC()
-			log.Infof("Start fetching stage for '%s'...", now.String())
-			fetcher.Fetch()
-			log.Infof("Finish fetching stage '%s'...", time.Now().UTC().String())
-			log.Infof("Elapsed time '%s'", time.Now().UTC().Sub(now).String())
-			if err := db.DbMgr.SetLastActionDate(db.ActionFetch, now); err != nil {
-				log.Error("can't save last_fetch date")
-			}
-		}
-
-		time.Sleep(time.Hour)
-	}
+func Run(actionName string, countOfSkippedHours float64, action func()) {
+	c := cron{Action: action, ActionName: actionName, CountOfSkippedHoursToRun: countOfSkippedHours}
+	c.Run()
 }

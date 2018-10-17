@@ -4,19 +4,12 @@ import (
 	"testing"
 	"time"
 
-	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
 
 func setup() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
-	config.Config = &config.AppConfig{
-		Fetching: config.Fetching{
-			Workers:                    10,
-			CountOfSkippedHoursToFetch: 8,
-		},
-	}
 }
 
 func teardown() {
@@ -24,43 +17,46 @@ func teardown() {
 	db.DbMgr.Close()
 }
 
-func TestFetcher_Internal_IsMustFetch_FirstRun(t *testing.T) {
+func TestCron_IsMustFetch_FirstRun(t *testing.T) {
 	// first run means that no records in last_fetches
 	setup()
 	defer teardown()
+	c := cron{ActionName: db.ActionFetch}
 
 	// action
-	must := isMustFetch()
+	must := c.IsMustFetch()
 
 	// assert
 	assert.True(t, must)
 }
 
-func TestFetcher_Internal_IsMustFetch_ReloadApp_AfterFetching(t *testing.T) {
+func TestCron_IsMustFetch_ReloadApp_AfterFetching(t *testing.T) {
 	// fetch was successful and someone restart the app
 	setup()
 	defer teardown()
+	c := cron{ActionName: db.ActionFetch, CountOfSkippedHoursToRun: 8}
 
 	// arrange
 	db.DbMgr.SetLastActionDate(db.ActionFetch, time.Now().UTC())
 
 	// action
-	must := isMustFetch()
+	must := c.IsMustFetch()
 
 	// assert
 	assert.False(t, must)
 }
 
-func TestFetcher_Internal_IsMustFetch_ReloadApp_AfterOldestFetching(t *testing.T) {
+func TestCron_IsMustFetch_ReloadApp_AfterOldestFetching(t *testing.T) {
 	// fetch was successful some times ago and someone restart the app
 	setup()
 	defer teardown()
+	c := cron{ActionName: db.ActionFetch}
 
 	// arrange
-	db.DbMgr.SetLastActionDate(db.ActionFetch, time.Now().UTC().Add(-time.Hour * 48))
+	db.DbMgr.SetLastActionDate(db.ActionFetch, time.Now().UTC().Add(-time.Hour*48))
 
 	// action
-	must := isMustFetch()
+	must := c.IsMustFetch()
 
 	// assert
 	assert.True(t, must)
