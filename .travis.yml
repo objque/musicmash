@@ -10,21 +10,22 @@ jobs:
     script:
     - make tests
   - stage: deploy
+    env: VERSION=stable
     script:
     - eval "$(ssh-agent -s)"
     - make add-ssh-key
-    - make build
-    - make docker-build-stable
-    - make docker-push-stable
-    - make deploy-stable
+    - make docker-build
+    - make docker-push
+    - make deploy
+
   - stage: deploy-staging
+    env: VERSION=nightly
     script:
     - eval "$(ssh-agent -s)"
     - make add-ssh-key
-    - make build
-    - make docker-build-nightly
-    - make docker-push-nightly
-    - make deploy-staging
+    - make docker-build
+    - make docker-push
+    - make deploy
 stages:
 - tests
 - build

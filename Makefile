@@ -4,7 +4,7 @@ clean:
 	rm bin/musicmash || true
 
 build: clean
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -a -installsuffix cgo -gcflags "all=-trimpath=$(GOPATH)" -o bin/musicmash cmd/musicmash.go
+	GOOS=linux GOARCH=amd64 go build -v -a -installsuffix cgo -gcflags "all=-trimpath=$(GOPATH)" -o bin/musicmash cmd/musicmash.go
 
 rgo:
 	go get -u github.com/kyoh86/richgo
@@ -23,20 +23,11 @@ add-ssh-key:
 docker-login:
 	docker login -u $(REGISTRY_USER) -p $(REGISTRY_PASS)
 
-docker-build-stable:
-	docker build -t $(REGISTRY_REPO):stable .
+docker-build:
+	docker build -t $(REGISTRY_REPO):$(VERSION) .
 
-docker-build-nightly:
-	docker build -t $(REGISTRY_REPO):nightly .
+docker-push: docker-login
+	docker push $(REGISTRY_REPO):$(VERSION)
 
-docker-push-stable: docker-login
-	docker push $(REGISTRY_REPO):stable
-
-docker-push-nightly: docker-login
-	docker push $(REGISTRY_REPO):nightly
-
-deploy-stable:
-	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music
-
-deploy-staging:
-	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music-staging
+deploy:
+	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music-$(VERSION)
