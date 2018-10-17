@@ -7,8 +7,8 @@ import (
 )
 
 type ReleaseStore struct {
-	StoreName string
-	StoreID   string
+	StoreName string `json:"name"`
+	StoreID   string `json:"id"`
 }
 
 type Release struct {
