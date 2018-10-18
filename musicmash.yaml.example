@@ -32,3 +32,6 @@ stores:
       meta:
         token: "kpXVCIsInR5cCI6IkpXVCIsInR5cCI6IkpXVCIsInR5cCI6I"
         region: "us"
+
+notifier:
+    telegram_token: "12340255:BBBZZZJJJJJAAAEEEEE"

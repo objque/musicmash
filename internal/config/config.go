@@ -16,6 +16,7 @@ type AppConfig struct {
 	Log      LogConfig  `yaml:"log"`
 	Fetching Fetching   `yaml:"fetching"`
 	Stores   []*Store   `yaml:"stores"`
+	Notifier Notifier   `yaml:"notifier"`
 }
 
 type HTTPConfig struct {
@@ -51,6 +52,10 @@ type Store struct {
 }
 
 type Meta map[string]string
+
+type Notifier struct {
+	TelegramToken string `yaml:"telegram_token"`
+}
 
 func InitConfig(filepath string) error {
 	data, err := ioutil.ReadFile(filepath)

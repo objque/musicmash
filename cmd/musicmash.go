@@ -10,6 +10,7 @@ import (
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/notifier"
+	"github.com/musicmash/musicmash/internal/notifier/telegram"
 	tasks "github.com/musicmash/musicmash/internal/tasks/subscribe"
 )
 
@@ -35,6 +36,7 @@ func init() {
 
 	tasks.InitWorkerPool()
 	db.DbMgr = db.NewMainDatabaseMgr()
+	telegram.New(config.Config.Notifier.TelegramToken)
 }
 
 func main() {
