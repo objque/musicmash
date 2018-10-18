@@ -9,6 +9,7 @@ import (
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/notifier"
 	tasks "github.com/musicmash/musicmash/internal/tasks/subscribe"
 )
 
@@ -39,5 +40,7 @@ func init() {
 func main() {
 	log.Info("Running musicmash..")
 	go cron.Run(db.ActionFetch, config.Config.Fetching.CountOfSkippedHoursToFetch, fetcher.Fetch)
+	// TODO (m.kalinin): extract into config
+	go cron.Run(db.ActionNotify, config.Config.Fetching.CountOfSkippedHoursToFetch+1, notifier.Notify)
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }
