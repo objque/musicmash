@@ -45,19 +45,43 @@ func TestDB_Users_GetUsersWithReleases(t *testing.T) {
 
 	// arrange
 	const artist = "Architects"
+	now := time.Now().UTC()
 	assert.NoError(t, DbMgr.EnsureUserExists("objque@me"))
 	assert.NoError(t, DbMgr.EnsureUserExists("jade@abuse"))
 	assert.NoError(t, DbMgr.EnsureUserExists("jake@worrow"))
 	assert.NoError(t, DbMgr.EnsureArtistExists("architects"))
 	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: artist}))
 	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "jake@worrow", ArtistName: artist}))
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, Released: now}))
 
 	// action
-	users, err := DbMgr.GetUsersWithReleases(time.Now().UTC())
+	users, err := DbMgr.GetUsersWithReleases(now)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, users, 2)
 	assert.EqualValues(t, []string{"jake@worrow", "objque@me"}, users)
+}
+
+func TestDB_Users_GetUsersWithReleases_NoReleases_ForProvidedHour(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	const artist = "Architects"
+	now := time.Now().UTC()
+	assert.NoError(t, DbMgr.EnsureUserExists("objque@me"))
+	assert.NoError(t, DbMgr.EnsureUserExists("jade@abuse"))
+	assert.NoError(t, DbMgr.EnsureUserExists("jake@worrow"))
+	assert.NoError(t, DbMgr.EnsureArtistExists("architects"))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: artist}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "jake@worrow", ArtistName: artist}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, Released: now.Add(-time.Hour)}))
+
+	// action
+	users, err := DbMgr.GetUsersWithReleases(now)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, users, 0)
 }
