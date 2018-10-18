@@ -1,8 +1,6 @@
 package notifier
 
 import (
-	"time"
-
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/notifier/telegram"
@@ -20,15 +18,15 @@ func notify(chatID int64, releases []*db.Release) {
 }
 
 func Notify() {
-	users, err := db.DbMgr.GetUsersWithReleases(time.Now().UTC())
-	if err != nil {
-		log.Error(errors.Wrap(err, "tried to get users with releases for notify stage"))
-		return
-	}
-
 	last, err := db.DbMgr.GetLastActionDate(db.ActionNotify)
 	if err != nil {
 		log.Error(errors.Wrap(err, "tried to get last_action for notify stage"))
+		return
+	}
+
+	users, err := db.DbMgr.GetUsersWithReleases(last.Date)
+	if err != nil {
+		log.Error(errors.Wrap(err, "tried to get users with releases for notify stage"))
 		return
 	}
 

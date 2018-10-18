@@ -52,7 +52,7 @@ func TestDB_Users_GetUsersWithReleases(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureArtistExists("architects"))
 	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: artist}))
 	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "jake@worrow", ArtistName: artist}))
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, Released: now}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, CreatedAt: now}))
 
 	// action
 	users, err := DbMgr.GetUsersWithReleases(now)
@@ -76,7 +76,7 @@ func TestDB_Users_GetUsersWithReleases_NoReleases_ForProvidedHour(t *testing.T) 
 	assert.NoError(t, DbMgr.EnsureArtistExists("architects"))
 	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: artist}))
 	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "jake@worrow", ArtistName: artist}))
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, Released: now.Add(-time.Hour)}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, CreatedAt: now.Add(-time.Hour)}))
 
 	// action
 	users, err := DbMgr.GetUsersWithReleases(now)
