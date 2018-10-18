@@ -54,7 +54,8 @@ type Store struct {
 type Meta map[string]string
 
 type Notifier struct {
-	TelegramToken string `yaml:"telegram_token"`
+	TelegramToken       string  `yaml:"telegram_token"`
+	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
 }
 
 func InitConfig(filepath string) error {

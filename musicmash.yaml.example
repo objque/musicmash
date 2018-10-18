@@ -34,4 +34,5 @@ stores:
         region: "us"
 
 notifier:
+    count_of_skipped_hours: 8
     telegram_token: "12340255:BBBZZZJJJJJAAAEEEEE"
