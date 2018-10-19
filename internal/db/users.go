@@ -43,8 +43,8 @@ func (mgr *AppDatabaseMgr) EnsureUserExists(name string) error {
 	return nil
 }
 
-// Returns list of users that subscribed for artists that released/announced a new release
 func (mgr *AppDatabaseMgr) GetUsersWithReleases(date time.Time) ([]string, error) {
+	// Returns list of users that subscribed for artists that released/announced a new release
 	const query = "select user_name from subscriptions where artist_name in (select artist_name from releases where created_at >= ?) group by user_name"
 	users := []string{}
 	if err := mgr.db.Raw(query, date).Pluck("user_name", &users).Error; err != nil {
