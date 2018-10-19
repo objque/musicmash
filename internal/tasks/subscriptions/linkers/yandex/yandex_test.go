@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
-
 	"github.com/stretchr/testify/assert"
 )
 
