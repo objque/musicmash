@@ -27,11 +27,9 @@ func init() {
 	if *logLevel != "info" || config.Config.Log.Level == "" {
 		// Priority to command-line
 		log.ConfigureStdLogger(*logLevel)
-	} else {
+	} else if config.Config.Log.Level != "" {
 		// Priority to config
-		if config.Config.Log.Level != "" {
-			log.ConfigureStdLogger(config.Config.Log.Level)
-		}
+		log.ConfigureStdLogger(config.Config.Log.Level)
 	}
 
 	tasks.InitWorkerPool()

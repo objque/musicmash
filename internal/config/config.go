@@ -82,11 +82,11 @@ func Load(data []byte) error {
 	return nil
 }
 
-func (db *DBConfig) GetConnString() (DBType string, ConnString string) {
+func (db *DBConfig) GetConnString() (dialect, connString string) {
 	if db.DBType != "mysql" {
 		panic("Only mysql is currently supported")
 	}
-	var connString = fmt.Sprintf(
+	connString = fmt.Sprintf(
 		"%v:%v@tcp(%v)/%v?charset=utf8&parseTime=True&loc=UTC",
 		db.DBLogin,
 		db.DBPass,

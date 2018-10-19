@@ -18,18 +18,18 @@ type FeedMgr interface {
 }
 
 func groupReleases(releases []*Release) []*Release {
-	// lower(title) = Release
+	// key: lower(title), value: Release
 	result := map[string]*Release{}
-	for i := range releases {
-		title := strings.ToLower(releases[i].Title)
+	for _, value := range releases {
+		title := strings.ToLower(value.Title)
 		if _, ok := result[title]; !ok {
-			releases[i].Stores = []*ReleaseStore{}
-			result[title] = releases[i]
+			value.Stores = []*ReleaseStore{}
+			result[title] = value
 		}
 
 		result[title].Stores = append(result[title].Stores, &ReleaseStore{
-			releases[i].StoreName,
-			releases[i].StoreID,
+			value.StoreName,
+			value.StoreID,
 		})
 	}
 
