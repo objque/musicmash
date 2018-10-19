@@ -44,14 +44,7 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod(t *testing.T) {
 		StoreID:    "213551828",
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserName:   userName,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserName:   userName,
-		ArtistName: "S.P.Y",
-	}))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(userName, []string{"skrillex",  "S.P.Y"}))
 
 	// action
 	since := time.Now().UTC().Add(-time.Hour * 48)
@@ -84,14 +77,7 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod_WithFuture(t *testing.T) {
 		StoreID:    "213551828",
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserName:   userName,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserName:   userName,
-		ArtistName: "S.P.Y",
-	}))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(userName, []string{"skrillex",  "S.P.Y"}))
 
 	// action
 	since := time.Now().UTC().Add(-time.Hour * 48)
@@ -124,14 +110,7 @@ func TestDB_Releases_GetReleasesForUserSince(t *testing.T) {
 		StoreID:    "213551828",
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserName:   userName,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserName:   userName,
-		ArtistName: "S.P.Y",
-	}))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(userName, []string{"skrillex",  "S.P.Y"}))
 
 	// action
 	releases, err := DbMgr.GetReleasesForUserSince(userName, time.Now())

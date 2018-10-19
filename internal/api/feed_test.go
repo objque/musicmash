@@ -15,8 +15,8 @@ func TestAPI_Feed_Get(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	const UserName = "objque@me"
-	assert.NoError(t, db.DbMgr.EnsureUserExists(UserName))
+	const userName = "objque@me"
+	assert.NoError(t, db.DbMgr.EnsureUserExists(userName))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: "skrillex",
 		StoreName:  "itunes",
@@ -30,17 +30,9 @@ func TestAPI_Feed_Get(t *testing.T) {
 		StoreID:    "213551828",
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{
-		UserName:   UserName,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{
-		UserName:   UserName,
-		ArtistName: "S.P.Y",
-	}))
 
 	// action
-	resp, err := http.Get(fmt.Sprintf("%s/%s/feed", server.URL, UserName))
+	resp, err := http.Get(fmt.Sprintf("%s/%s/feed", server.URL, userName))
 
 	// assert
 	assert.NoError(t, err)
@@ -52,8 +44,8 @@ func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	const UserName = "objque@me"
-	assert.NoError(t, db.DbMgr.EnsureUserExists(UserName))
+	const userName = "objque@me"
+	assert.NoError(t, db.DbMgr.EnsureUserExists(userName))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: "skrillex",
 		StoreName:  "itunes",
@@ -67,19 +59,12 @@ func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 		StoreID:    "213551828",
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{
-		UserName:   UserName,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{
-		UserName:   UserName,
-		ArtistName: "S.P.Y",
-	}))
+	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(userName, []string{"skrillex", "S.P.Y"}))
 
 	// action
 	const layout = "2006-01-02"
 	since := time.Now().UTC().Add(-time.Hour * 24 * 2) // two days ago
-	resp, err := http.Get(fmt.Sprintf("%s/%s/feed?since=%s", server.URL, UserName, since.Format(layout)))
+	resp, err := http.Get(fmt.Sprintf("%s/%s/feed?since=%s", server.URL, userName, since.Format(layout)))
 
 	// assert
 	assert.NoError(t, err)

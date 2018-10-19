@@ -35,14 +35,7 @@ func TestDB_Feed_GetUserFeedSince(t *testing.T) {
 		StoreID:    "1067",
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserName:   userName,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserName:   userName,
-		ArtistName: "S.P.Y",
-	}))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(userName, []string{"skrillex",  "S.P.Y"}))
 
 	// action
 	since := time.Now().UTC().Add(-time.Hour * 48)
