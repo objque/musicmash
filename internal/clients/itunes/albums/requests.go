@@ -35,7 +35,7 @@ func GetLatestArtistAlbum(provider *v2.Provider, artistID uint64) (*Album, error
 	}
 
 	if len(albums) == 0 {
-		return nil, AlbumsNotFoundErr
+		return nil, ErrAlbumsNotFound
 	}
 
 	latest := albums[0]

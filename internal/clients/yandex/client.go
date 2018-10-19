@@ -67,7 +67,7 @@ func (c *Client) GetArtistLatestAlbum(artistID int) (*ArtistAlbum, error) {
 	}
 
 	if len(result.Albums) == 0 {
-		return nil, AlbumsNotFoundErr
+		return nil, ErrAlbumsNotFound
 	}
 
 	latest := result.Albums[0]

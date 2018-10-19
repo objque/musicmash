@@ -68,7 +68,7 @@ func (l *Linker) SearchArtists(userArtists []string) {
 
 		storeArtist, err := artists.SearchArtist(l.client, artist)
 		if err != nil {
-			if err == artists.ArtistNotFoundErr {
+			if err == artists.ErrArtistNotFound {
 				continue
 			}
 		}

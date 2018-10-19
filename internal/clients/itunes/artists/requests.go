@@ -31,7 +31,7 @@ func SearchArtist(provider *v2.Provider, term string) (*Artist, error) {
 		return nil, errors.Wrapf(err, "tried to decode search result for artist with name '%v'", term)
 	}
 	if len(a.Results.Data.Artists) == 0 {
-		return nil, ArtistNotFoundErr
+		return nil, ErrArtistNotFound
 	}
 	return a.Results.Data.Artists[0], nil
 }
