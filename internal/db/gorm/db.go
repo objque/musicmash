@@ -21,7 +21,7 @@ func InitFake(postCreate postCreateFunc) *gorm.DB {
 	}
 
 	mainDB = mainDB.LogMode(false)
-	mainDB.SetLogger(gorm.Logger{mainDBLogger{}})
+	mainDB.SetLogger(gorm.Logger{LogWriter: mainDBLogger{}})
 	mainDB.DB().SetMaxIdleConns(10)
 	mainDB.DB().SetMaxOpenConns(100)
 	if err = mainDB.Error; err != nil {
@@ -47,7 +47,7 @@ func InitMain(postCreate postCreateFunc) *gorm.DB {
 
 	if config.Config.DB.Log {
 		mainDB = mainDB.LogMode(true)
-		mainDB.SetLogger(gorm.Logger{mainDBLogger{}})
+		mainDB.SetLogger(gorm.Logger{LogWriter: mainDBLogger{}})
 	}
 	if err := postCreate(mainDB); err != nil {
 		panic(err)
