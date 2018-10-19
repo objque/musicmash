@@ -30,9 +30,9 @@ func TestDB_Chat_GetAllChatsThatSubscribedFor(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 3004, UserName: "another@user"}))
 	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 5005, UserName: "friction@user"}))
 	// subs
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{ArtistName: "Skrillex", UserName: "objque@me"}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{ArtistName: "Rammstein", UserName: "another@user"}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{ArtistName: "Rammstein", UserName: "objque@me"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "Skrillex"))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("another@user", "Rammstein"))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "Rammstein"))
 	want := []struct {
 		Artist     string
 		ChatsCount int

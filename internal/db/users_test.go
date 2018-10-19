@@ -50,8 +50,8 @@ func TestDB_Users_GetUsersWithReleases(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureUserExists("jade@abuse"))
 	assert.NoError(t, DbMgr.EnsureUserExists("jake@worrow"))
 	assert.NoError(t, DbMgr.EnsureArtistExists("architects"))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: artist}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "jake@worrow", ArtistName: artist}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", artist))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("jake@worrow", artist))
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, CreatedAt: now}))
 
 	// action
@@ -74,8 +74,8 @@ func TestDB_Users_GetUsersWithReleases_NoReleases_ForProvidedHour(t *testing.T) 
 	assert.NoError(t, DbMgr.EnsureUserExists("jade@abuse"))
 	assert.NoError(t, DbMgr.EnsureUserExists("jake@worrow"))
 	assert.NoError(t, DbMgr.EnsureArtistExists("architects"))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "objque@me", ArtistName: artist}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{UserName: "jake@worrow", ArtistName: artist}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", artist))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("jake@worrow", artist))
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, CreatedAt: now.Add(-time.Hour)}))
 
 	// action

@@ -29,10 +29,10 @@ func TestAPI_UnsubscribeUser(t *testing.T) {
 
 	// arrange
 	assert.NoError(t, db.DbMgr.EnsureUserExists("objque"))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{UserName: "objque", ArtistName: "Skrillex"}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{UserName: "objque", ArtistName: "Calvin Risk"}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{UserName: "objque", ArtistName: "AC/DC"}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{UserName: "mike", ArtistName: "AC/DC"}))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("objque", "Skrillex"))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("objque", "Calvin Risk"))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("objque", "AC/DC"))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("mike", "AC/DC"))
 
 	// action
 	artists := []string{"Calvin Risk"}

@@ -13,7 +13,7 @@ type Subscription struct {
 type SubscriptionMgr interface {
 	IsUserSubscribedForArtist(userName, artistName string) bool
 	FindAllUserSubscriptions(userName string) ([]*Subscription, error)
-	EnsureSubscriptionExists(subscription *Subscription) error
+	EnsureSubscriptionExists(userName, artistName string) error
 	SubscribeUserForArtists(userName string, artists []string) error
 	UnsubscribeUserFromArtists(userName string, artist []string) error
 }
@@ -36,9 +36,9 @@ func (mgr *AppDatabaseMgr) FindAllUserSubscriptions(userName string) ([]*Subscri
 	return subscriptions, nil
 }
 
-func (mgr *AppDatabaseMgr) EnsureSubscriptionExists(subscription *Subscription) error {
-	if !mgr.IsUserSubscribedForArtist(subscription.UserName, subscription.ArtistName) {
-		return mgr.db.Create(subscription).Error
+func (mgr *AppDatabaseMgr) EnsureSubscriptionExists(userName, artistName string) error {
+	if !mgr.IsUserSubscribedForArtist(userName, artistName) {
+		return mgr.db.Create(&Subscription{UserName: userName, ArtistName: artistName}).Error
 	}
 	return nil
 }
