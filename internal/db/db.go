@@ -2,6 +2,7 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
+	// load dialects
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 	db "github.com/musicmash/musicmash/internal/db/gorm"
