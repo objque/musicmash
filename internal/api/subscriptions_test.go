@@ -20,7 +20,7 @@ func TestAPI_SubscribeUser_UserNotFound(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
 
 func TestAPI_UnsubscribeUser(t *testing.T) {
@@ -41,7 +41,7 @@ func TestAPI_UnsubscribeUser(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 	subs, err := db.DbMgr.FindAllUserSubscriptions("mike")
 	assert.NoError(t, err)
@@ -64,5 +64,5 @@ func TestAPI_UnsubscribeUser_UserNotFound(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }

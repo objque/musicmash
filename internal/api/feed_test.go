@@ -36,7 +36,7 @@ func TestAPI_Feed_Get(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func TestAPI_Feed_Get_WithQuery(t *testing.T) {
@@ -68,7 +68,7 @@ func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func TestAPI_Feed_Get_UserNotFound(t *testing.T) {
@@ -80,5 +80,5 @@ func TestAPI_Feed_Get_UserNotFound(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }

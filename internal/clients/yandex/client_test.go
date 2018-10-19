@@ -47,7 +47,7 @@ func TestYandexClient_Search(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, result.Artists.Items, 1)
-	assert.Equal(t, 817678, result.Artists.Items[0].ID, )
+	assert.Equal(t, 817678, result.Artists.Items[0].ID)
 	assert.Equal(t, "Gorgon City", result.Artists.Items[0].Name)
 }
 
