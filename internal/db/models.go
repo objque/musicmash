@@ -50,8 +50,8 @@ func CreateAll(db *gorm.DB) error {
 		},
 	}
 
-	for model, model_fks := range fkeys {
-		for _, fk := range model_fks {
+	for model, foreignKey := range fkeys {
+		for _, fk := range foreignKey {
 			if err := db.Debug().Model(model).AddForeignKey(
 				fk[0], fk[1], "RESTRICT", "RESTRICT").Error; err != nil {
 				return err
