@@ -18,6 +18,7 @@ func (c *cron) Run() {
 	for {
 		if !c.IsMustFetch() {
 			time.Sleep(time.Hour)
+			continue
 		}
 
 		now := time.Now().UTC()
