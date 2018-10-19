@@ -11,7 +11,7 @@ import (
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/notifier"
 	"github.com/musicmash/musicmash/internal/notifier/telegram"
-	tasks "github.com/musicmash/musicmash/internal/tasks/subscribe"
+	tasks "github.com/musicmash/musicmash/internal/tasks/subscriptions"
 )
 
 func init() {

@@ -1,4 +1,4 @@
-package subscribe
+package subscriptions
 
 func runAppleWorker(id int, jobs <-chan []string) {
 	for {

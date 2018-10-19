@@ -8,7 +8,7 @@ import (
 	"github.com/musicmash/musicmash/internal/api/validators"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
-	tasks "github.com/musicmash/musicmash/internal/tasks/subscribe"
+	tasks "github.com/musicmash/musicmash/internal/tasks/subscriptions"
 	"github.com/pkg/errors"
 )
 
@@ -24,7 +24,7 @@ func createSubscriptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Debugf("User '%s' wanna subscribe for %d artists", userName, len(userArtists))
+	log.Debugf("User '%s' wanna subscriptions for %d artists", userName, len(userArtists))
 	tasks.SubscribeUserForArtists(userName, userArtists)
 	w.WriteHeader(http.StatusAccepted)
 }
