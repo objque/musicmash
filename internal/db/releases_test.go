@@ -172,3 +172,35 @@ func TestDB_Releases_FindReleasesWithFilter(t *testing.T) {
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
 }
+
+func TestDB_Releases_FindNewReleasesForUser(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	const userID = "objque@me"
+	now := time.Now().UTC()
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "skrillex",
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Released:   time.Now().UTC().Add(time.Hour * 48),
+		CreatedAt:  now.Add(-time.Hour * 48),
+	}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "S.P.Y",
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+		Released:   time.Now().UTC().Add(time.Hour * 48),
+		CreatedAt:  now.Add(time.Hour * 24),
+	}))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists("objque", []string{"skrillex", "S.P.Y"}))
+
+	// action
+	releases, err := DbMgr.FindNewReleasesForUser("objque", now)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, releases, 1)
+	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
+}

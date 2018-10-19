@@ -37,13 +37,12 @@ func Notify() {
 			continue
 		}
 
-		feed, err := db.DbMgr.GetUserFeedSince(user, last.Date)
+		releases, err := db.DbMgr.FindNewReleasesForUser(user, last.Date)
 		if err != nil {
 			log.Error(errors.Wrapf(err, "tried to get feed for '%s' for notify stage", user))
 			return
 		}
 
-		notify(*chat, feed.Announced)
-		notify(*chat, feed.Released)
+		notify(*chat, releases)
 	}
 }
