@@ -75,7 +75,6 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, done c
 		}
 
 		err = db.DbMgr.EnsureReleaseExists(&db.Release{
-			// TODO (m.kalinin): remove - Single, -Ep prefixes
 			StoreName:  f.GetStoreName(),
 			StoreID:    release.ID,
 			ArtistName: artist.ArtistName,
