@@ -19,8 +19,8 @@ func (s *service) getURL(id string) string {
 }
 
 var services = map[string]*service{
-	"yandex": &service{Name: "Yandex", URL: "https://music.yandex.ru/artist/%s"},
-	"itunes": &service{Name: "Apple Music", URL: "https://itunes.apple.com/us/album/%s"},
+	"yandex": {Name: "Yandex", URL: "https://music.yandex.ru/artist/%s"},
+	"itunes": {Name: "Apple Music", URL: "https://itunes.apple.com/us/album/%s"},
 }
 
 func makeText(release *db.Release) string {
