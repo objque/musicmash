@@ -90,5 +90,5 @@ func (mgr *AppDatabaseMgr) FindNewReleasesForUser(userName string, date time.Tim
 	if err := where.Find(&releases).Error; err != nil {
 		return nil, err
 	}
-	return releases, nil
+	return groupReleases(releases), nil
 }

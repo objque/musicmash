@@ -180,4 +180,5 @@ func TestDB_Releases_FindNewReleasesForUser(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
+	assert.Len(t, releases[0].Stores, 1)
 }
