@@ -55,8 +55,8 @@ func Test_YandexLinker_Search_AlreadyExists(t *testing.T) {
 	})
 	task := NewLinker(server.URL)
 	artists := []string{"skrillex", "nero"}
-	db.DbMgr.EnsureArtistExistsInStore("skrillex", "yandex", "xyz")
-	db.DbMgr.EnsureArtistExistsInStore("nero", "yandex", "zyx")
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("skrillex", "yandex", "xyz"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("nero", "yandex", "zyx"))
 
 	// action
 	task.SearchArtists(artists)

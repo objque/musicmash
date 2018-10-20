@@ -39,8 +39,8 @@ func Test_AppleLinker_Search_AlreadyExists(t *testing.T) {
 	// arrange
 	task := NewLinker("http://url.mock", "xxx")
 	artists := []string{"skrillex", "nero"}
-	db.DbMgr.EnsureArtistExistsInStore("skrillex", "itunes", "xyz")
-	db.DbMgr.EnsureArtistExistsInStore("nero", "itunes", "zyx")
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("skrillex", "itunes", "xyz"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("nero", "itunes", "zyx"))
 
 	// action
 	task.SearchArtists(artists)
