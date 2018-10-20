@@ -15,9 +15,9 @@ func getServices() []services.Service {
 	for _, store := range config.Config.Stores {
 		switch store.Name {
 		case "itunes":
-			fetchers = append(fetchers, itunes.NewService(store.URL, store.Meta["token"]))
+			fetchers = append(fetchers, itunes.NewService(store.URL, store.FetchWorkers, store.Meta["token"]))
 		case "yandex":
-			fetchers = append(fetchers, yandex.NewService(store.URL))
+			fetchers = append(fetchers, yandex.NewService(store.URL, store.FetchWorkers))
 		}
 	}
 	return fetchers

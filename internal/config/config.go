@@ -40,15 +40,14 @@ type DBConfig struct {
 }
 
 type Fetching struct {
-	// TODO (m.kalinin): extraxt workers into the store struct
-	Workers             int     `yaml:"workers"`
 	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
 }
 
 type Store struct {
-	Name string `yaml:"type"`
-	URL  string `yaml:"url"`
-	Meta Meta   `yaml:"meta"`
+	Name         string `yaml:"type"`
+	URL          string `yaml:"url"`
+	FetchWorkers int    `yaml:"fetch_workers"`
+	Meta         Meta   `yaml:"meta"`
 }
 
 type Meta map[string]string

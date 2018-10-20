@@ -23,7 +23,6 @@ func setup() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
 		Fetching: config.Fetching{
-			Workers:             10,
 			CountOfSkippedHours: 8,
 		},
 	}
@@ -62,7 +61,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
     }]
 }`))
 	})
-	f := Fetcher{API: yandex.New(server.URL)}
+	f := Fetcher{API: yandex.New(server.URL), FetchWorkers: 1}
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Gorgon City", f.GetStoreName(), "817678"))
 
 	// action
@@ -109,7 +108,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
     }]
 }`))
 	})
-	f := Fetcher{API: yandex.New(server.URL)}
+	f := Fetcher{API: yandex.New(server.URL), FetchWorkers: 1}
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Gorgon City", f.GetStoreName(), "817678"))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "5647716", StoreName: f.GetStoreName()}))
 

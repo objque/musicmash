@@ -24,7 +24,6 @@ func setup() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
 		Fetching: config.Fetching{
-			Workers:             10,
 			CountOfSkippedHours: 8,
 		},
 	}
@@ -41,7 +40,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	f := Fetcher{Provider: provider}
+	f := Fetcher{Provider: provider, FetchWorkers: 1}
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", f.GetStoreName(), "182821355"))
 	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
@@ -90,7 +89,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	f := Fetcher{Provider: provider}
+	f := Fetcher{Provider: provider, FetchWorkers: 1}
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", f.GetStoreName(), "182821355"))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "158365636", StoreName: f.GetStoreName()}))
 	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {

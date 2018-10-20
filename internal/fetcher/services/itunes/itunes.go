@@ -8,7 +8,6 @@ import (
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/clients/itunes/albums"
-	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/pkg/errors"
@@ -31,12 +30,14 @@ func isLatest(album *albums.Album) bool {
 }
 
 type Fetcher struct {
-	Provider *itunes.Provider
+	Provider     *itunes.Provider
+	FetchWorkers int
 }
 
-func NewService(url, token string) *Fetcher {
+func NewService(url string, fetchWorkers int, token string) *Fetcher {
 	return &Fetcher{
-		Provider: itunes.NewProvider(url, token),
+		Provider:     itunes.NewProvider(url, token),
+		FetchWorkers: fetchWorkers,
 	}
 }
 
@@ -99,11 +100,10 @@ func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup) {
 	}
 
 	jobs := make(chan *db.ArtistStoreInfo, len(artists))
-	_done := make(chan int, config.Config.Fetching.Workers)
+	_done := make(chan int, f.FetchWorkers)
 
 	// Starts up X workers, initially blocked because there are no jobs yet.
-	// TODO (m.kalinin): replace with store-workers count
-	for w := 1; w <= config.Config.Fetching.Workers; w++ {
+	for w := 1; w <= f.FetchWorkers; w++ {
 		go f.fetchWorker(w, jobs, _done)
 	}
 
@@ -114,7 +114,7 @@ func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup) {
 	}
 	close(jobs)
 
-	for w := 1; w <= config.Config.Fetching.Workers; w++ {
+	for w := 1; w <= f.FetchWorkers; w++ {
 		log.Debugf("#%d fetch-worker wg", <-_done)
 	}
 	close(_done)

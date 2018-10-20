@@ -19,11 +19,8 @@ func setup() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
 		Stores: []*config.Store{
-			{Name: "yandex", URL: server.URL},
-			{Name: "itunes", URL: server.URL, Meta: map[string]string{"token": "xxx"}},
-		},
-		Fetching: config.Fetching{
-			Workers: 1,
+			{Name: "yandex", URL: server.URL, FetchWorkers: 1},
+			{Name: "itunes", URL: server.URL, Meta: map[string]string{"token": "xxx"}, FetchWorkers: 1},
 		},
 	}
 }

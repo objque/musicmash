@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/yandex"
-	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/pkg/errors"
@@ -24,12 +23,14 @@ func isLatest(album *yandex.ArtistAlbum) bool {
 }
 
 type Fetcher struct {
-	API *yandex.Client
+	API          *yandex.Client
+	FetchWorkers int
 }
 
-func NewService(url string) *Fetcher {
+func NewService(url string, fetchWorkers int) *Fetcher {
 	return &Fetcher{
-		API: yandex.New(url),
+		API:          yandex.New(url),
+		FetchWorkers: fetchWorkers,
 	}
 }
 
@@ -85,11 +86,10 @@ func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup) {
 	}
 
 	jobs := make(chan *db.ArtistStoreInfo, len(artists))
-	_done := make(chan int, config.Config.Fetching.Workers)
+	_done := make(chan int, f.FetchWorkers)
 
 	// Starts up X workers, initially blocked because there are no jobs yet.
-	// TODO (m.kalinin): replace with store-workers count
-	for w := 1; w <= config.Config.Fetching.Workers; w++ {
+	for w := 1; w <= f.FetchWorkers; w++ {
 		go f.fetchWorker(w, jobs, _done)
 	}
 
@@ -100,7 +100,7 @@ func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup) {
 	}
 	close(jobs)
 
-	for w := 1; w <= config.Config.Fetching.Workers; w++ {
+	for w := 1; w <= f.FetchWorkers; w++ {
 		log.Debugf("#%d fetch-worker done", <-_done)
 	}
 	close(_done)
