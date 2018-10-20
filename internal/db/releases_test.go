@@ -126,7 +126,6 @@ func TestDB_Releases_FindReleasesWithFilter(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	const userID = "objque@me"
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "skrillex",
 		StoreName:  "itunes",
@@ -157,7 +156,6 @@ func TestDB_Releases_FindNewReleasesForUser(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	const userID = "objque@me"
 	now := time.Now().UTC()
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "skrillex",

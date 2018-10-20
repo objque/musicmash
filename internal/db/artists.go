@@ -7,7 +7,6 @@ type Artist struct {
 }
 
 type ArtistStoreInfo struct {
-	id         uint64
 	ArtistName string
 	StoreName  string `gorm:"unique_index:idx_art_store_name_store_id"`
 	StoreID    string `gorm:"unique_index:idx_art_store_name_store_id"`

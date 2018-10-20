@@ -11,7 +11,7 @@ func notify(chatID int64, releases []*db.Release) {
 	for i := range releases {
 		message := MakeMessage(releases[i])
 		message.ChatID = chatID
-		if err := telegram.SendMessage(chatID, message); err != nil {
+		if err := telegram.SendMessage(message); err != nil {
 			log.Error(errors.Wrapf(err, "tried to send release to '%d'", chatID))
 		}
 	}

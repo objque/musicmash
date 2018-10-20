@@ -12,7 +12,7 @@ func New(token string) {
 	}
 }
 
-func SendMessage(chatID int64, message tgbotapi.Chattable) error {
+func SendMessage(message tgbotapi.Chattable) error {
 	_, err := bot.Send(message)
 	return err
 }

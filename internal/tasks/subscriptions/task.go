@@ -22,7 +22,7 @@ var (
 
 func InitWorkerPool() {
 	for w := 1; w <= 3; w++ {
-		go subscriber(w, subscribeJobs)
+		go subscriber(subscribeJobs)
 	}
 
 	for _, store := range config.Config.Stores {
@@ -30,12 +30,12 @@ func InitWorkerPool() {
 		case "itunes":
 			appleLinker = apple.NewLinker(store.URL, store.Meta["token"])
 			for w := 1; w <= 3; w++ {
-				go runAppleWorker(w, appleJobs)
+				go runAppleWorker(appleJobs)
 			}
 		case "yandex":
 			yandexLinker = yandex.NewLinker(store.URL)
 			for w := 1; w <= 1; w++ {
-				go runYandexWorker(w, yandexJobs)
+				go runYandexWorker(yandexJobs)
 			}
 		}
 	}
@@ -45,7 +45,7 @@ func SubscribeUserForArtists(userName string, artists []string) {
 	subscribeJobs <- job{userName, artists}
 }
 
-func subscriber(worker int, jobs <-chan job) {
+func subscriber(jobs <-chan job) {
 	// TODO (m.kalinin): handle concurrent requests from one user
 	// TODO (m.kalinin): get artists that the user is not subscribed to
 	for {

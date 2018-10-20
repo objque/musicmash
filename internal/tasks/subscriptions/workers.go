@@ -1,6 +1,6 @@
 package subscriptions
 
-func runAppleWorker(id int, jobs <-chan []string) {
+func runAppleWorker(jobs <-chan []string) {
 	for {
 		select {
 		case artists, ok := <-jobs:
@@ -13,7 +13,7 @@ func runAppleWorker(id int, jobs <-chan []string) {
 	}
 }
 
-func runYandexWorker(id int, jobs <-chan []string) {
+func runYandexWorker(jobs <-chan []string) {
 	for {
 		select {
 		case artists, ok := <-jobs:
