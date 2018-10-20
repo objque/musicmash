@@ -4,10 +4,6 @@ import (
 	"github.com/jinzhu/gorm"
 )
 
-func NoOp(db *gorm.DB) error {
-	return nil
-}
-
 var tables = []interface{}{
 	&Artist{},
 	&ArtistStoreInfo{},
