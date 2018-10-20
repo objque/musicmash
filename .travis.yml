@@ -2,6 +2,10 @@ sudo: false
 language: go
 services:
 - "docker"
+cache:
+  directories:
+    - ${TRAVIS_HOME}/gopath/bin
+    - ${TRAVIS_HOME}/gopath/pkg
 go:
 - "1.11.1"
 jobs:
