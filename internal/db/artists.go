@@ -61,13 +61,7 @@ func (mgr *AppDatabaseMgr) GetArtistsForStore(name string) ([]*ArtistStoreInfo, 
 func (mgr *AppDatabaseMgr) IsArtistExistsInStore(artistName, storeName, storeID string) bool {
 	info := ArtistStoreInfo{}
 	err := mgr.db.Where("artist_name = ? and store_name = ? and store_id = ?", artistName, storeName, storeID).First(&info).Error
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			return false
-		}
-		return false
-	}
-	return true
+	return err == nil
 }
 
 func (mgr *AppDatabaseMgr) EnsureArtistExistsInStore(artistName, storeName, storeID string) error {
