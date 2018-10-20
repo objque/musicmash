@@ -14,10 +14,6 @@ log:
     file: 'musicmash.log'
     syslog_enable: false
 
-fetching:
-    workers: 10
-    count_of_skipped_hours: 8
-
 tasks:
     subscriptions:
         find_artist_workers: 3
@@ -34,6 +30,9 @@ stores:
       meta:
         token: "kpXVCIsInR5cCI6IkpXVCIsInR5cCI6IkpXVCIsInR5cCI6I"
         region: "us"
+
+fetching:
+  count_of_skipped_hours: 8
 
 notifier:
     count_of_skipped_hours: 8
