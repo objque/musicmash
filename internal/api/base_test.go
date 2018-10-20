@@ -5,13 +5,11 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/go-chi/chi"
 	"github.com/musicmash/musicmash/internal/db"
 )
 
 var (
 	server *httptest.Server
-	mux    *chi.Mux
 )
 
 func setup() {
