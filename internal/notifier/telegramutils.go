@@ -19,7 +19,7 @@ func (s *service) getURL(id string) string {
 }
 
 var services = map[string]*service{
-	"yandex": {Name: "Yandex", URL: "https://music.yandex.ru/artist/%s"},
+	"yandex": {Name: "Yandex", URL: "https://music.yandex.ru/album/%s"},
 	"itunes": {Name: "Apple Music", URL: "https://itunes.apple.com/us/album/%s"},
 }
 
