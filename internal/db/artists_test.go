@@ -42,6 +42,7 @@ func TestDB_ArtistStoreInfo_EnsureArtistExistsInStore(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	artists, err := DbMgr.GetArtistsForStore("deezer")
+	assert.NoError(t, err)
 	assert.Len(t, artists, 1)
 }
 

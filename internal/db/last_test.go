@@ -48,6 +48,7 @@ func TestDB_LastAction_Update(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	last, err := DbMgr.GetLastActionDate(ActionFetch)
+	assert.NoError(t, err)
 	assert.Equal(t, last.Date, n)
 }
 
