@@ -34,5 +34,5 @@ type ArtistAlbum struct {
 }
 
 func (a *ArtistAlbum) GetPosterWithSize(width, height int) string {
-	return strings.Replace(a.Poster, "https://%%", fmt.Sprintf("%dx%d", width, height), -1)
+	return "https://" + strings.Replace(a.Poster, "%%", fmt.Sprintf("%dx%d", width, height), -1)
 }
