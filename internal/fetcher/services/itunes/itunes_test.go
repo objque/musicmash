@@ -24,8 +24,8 @@ func setup() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
 		Fetching: config.Fetching{
-			Workers:                    10,
-			CountOfSkippedHoursToFetch: 8,
+			Workers:             10,
+			CountOfSkippedHours: 8,
 		},
 	}
 	provider = v2.NewProvider(server.URL, "xxx")

@@ -41,8 +41,8 @@ type DBConfig struct {
 
 type Fetching struct {
 	// TODO (m.kalinin): extraxt workers into the store struct
-	Workers                    int     `yaml:"workers"`
-	CountOfSkippedHoursToFetch float64 `yaml:"count_of_skipped_hours_to_fetch"`
+	Workers             int     `yaml:"workers"`
+	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
 }
 
 type Store struct {
