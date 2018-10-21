@@ -19,6 +19,7 @@ func SearchArtist(provider *itunes.Provider, term string) (*Artist, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to search artist with name '%v'", term)
 	}
+	defer resp.Body.Close()
 
 	type answer struct {
 		Results struct {

@@ -23,6 +23,7 @@ func New(url string) *Client {
 	if err != nil {
 		panic(err)
 	}
+	defer resp.Body.Close()
 
 	if err := json.NewDecoder(resp.Body).Decode(&api.Session); err != nil {
 		panic(err)

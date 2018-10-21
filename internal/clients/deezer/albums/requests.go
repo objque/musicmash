@@ -16,6 +16,7 @@ func GetArtistAlbums(provider *deezer.Provider, artistID int) ([]*Album, error) 
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
 	}
+	defer resp.Body.Close()
 
 	type answer struct {
 		Albums []*Album `json:"data"`

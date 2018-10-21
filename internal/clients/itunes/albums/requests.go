@@ -18,6 +18,7 @@ func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, erro
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
 	}
+	defer resp.Body.Close()
 
 	type answer struct {
 		Albums []*Album `json:"data"`
