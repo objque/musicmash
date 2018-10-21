@@ -117,6 +117,17 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:3e4c7966b60df887418bf1b880be9a1e6c36f97ef40491b7bad72d21a4334cd0"
+  name = "go.uber.org/ratelimit"
+  packages = [
+    ".",
+    "internal/clock",
+  ]
+  pruneopts = "UT"
+  revision = "c15da02342779cb6dc027fc95ee2277787698f36"
+
+[[projects]]
+  branch = "master"
   digest = "1:3f3a05ae0b95893d90b9b3b5afdb79a9b3d96e4e36e099d841ae602e4aca0da8"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
@@ -173,6 +184,7 @@
     "github.com/sirupsen/logrus",
     "github.com/sirupsen/logrus/hooks/syslog",
     "github.com/stretchr/testify/assert",
+    "go.uber.org/ratelimit",
     "gopkg.in/telegram-bot-api.v4",
     "gopkg.in/yaml.v2",
   ]

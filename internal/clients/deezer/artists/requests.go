@@ -12,6 +12,7 @@ import (
 
 func SearchArtist(provider *deezer.Provider, term string) (*Artist, error) {
 	searchURL := fmt.Sprintf("%s/search/artist?limit=1&q=%s", provider.URL, url.QueryEscape(term))
+	provider.WaitRateLimit()
 	resp, err := http.Get(searchURL)
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to search artist with name '%v'", term)

@@ -11,6 +11,7 @@ import (
 
 func GetArtistAlbums(provider *deezer.Provider, artistID int) ([]*Album, error) {
 	albumsURL := fmt.Sprintf("%s/artist/%d/albums?limit=50", provider.URL, artistID)
+	provider.WaitRateLimit()
 	resp, err := http.Get(albumsURL)
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
