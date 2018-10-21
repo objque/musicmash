@@ -6,7 +6,7 @@ import (
 	"sync"
 	"testing"
 
-	v2 "github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
@@ -15,7 +15,7 @@ import (
 var (
 	server   *httptest.Server
 	mux      *http.ServeMux
-	provider *v2.Provider
+	provider *itunes.Provider
 )
 
 func setup() {
@@ -27,7 +27,7 @@ func setup() {
 			CountOfSkippedHours: 8,
 		},
 	}
-	provider = v2.NewProvider(server.URL, "xxx")
+	provider = itunes.NewProvider(server.URL, "xxx")
 }
 
 func teardown() {

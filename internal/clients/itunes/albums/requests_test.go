@@ -5,20 +5,20 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	v2 "github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/stretchr/testify/assert"
 )
 
 var (
 	server   *httptest.Server
 	mux      *http.ServeMux
-	provider *v2.Provider
+	provider *itunes.Provider
 )
 
 func setup() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
-	provider = v2.NewProvider(server.URL, "82001a6688a941dea1d35f60a7a0f8c3")
+	provider = itunes.NewProvider(server.URL, "82001a6688a941dea1d35f60a7a0f8c3")
 }
 
 func teardown() {
