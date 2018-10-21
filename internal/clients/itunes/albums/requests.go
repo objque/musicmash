@@ -13,6 +13,7 @@ func GetArtistAlbums(provider *v2.Provider, artistID uint64) ([]*Album, error) {
 	albumsURL := fmt.Sprintf("%s/v1/catalog/us/artists/%v/albums", provider.URL, artistID)
 	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
+	provider.WaitRateLimit()
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
@@ -51,6 +52,7 @@ func GetAlbumSongs(provider *v2.Provider, albumID uint64) ([]*Song, error) {
 	albumsURL := fmt.Sprintf("%s/v1/catalog/us/albums/%v/tracks", provider.URL, albumID)
 	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
+	provider.WaitRateLimit()
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to get songs for album %v", albumID)
@@ -70,6 +72,7 @@ func GetAlbumInfo(provider *v2.Provider, albumID uint64) (*Album, error) {
 	albumsURL := fmt.Sprintf("%s/v1/catalog/us/albums/%v", provider.URL, albumID)
 	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
+	provider.WaitRateLimit()
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to get songs for album %v", albumID)

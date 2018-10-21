@@ -14,6 +14,7 @@ func SearchArtist(provider *v2.Provider, term string) (*Artist, error) {
 	albumsURL := fmt.Sprintf("%s/v1/catalog/us/search?types=artists&limit=1&term=%s", provider.URL, url.QueryEscape(term))
 	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
+	provider.WaitRateLimit()
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to search artist with name '%v'", term)
