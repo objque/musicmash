@@ -83,20 +83,3 @@ func (a *AlbumArtwork) GetLink(width, height int) string {
 	url := strings.Replace(a.URL, "{w}", strconv.Itoa(width), 1)
 	return strings.Replace(url, "{h}", strconv.Itoa(height), 1)
 }
-
-type Song struct {
-	ID         string         `json:"id"`
-	Attributes SongAttributes `json:"attributes"`
-}
-
-type SongAttributes struct {
-	Name        string        `json:"name"`
-	ReleaseDate string        `json:"releaseDate"`
-	Date        types.Time    `json:"date"`
-	ArtistName  string        `json:"artistName"`
-	Previews    []interface{} `json:"previews"`
-}
-
-func (s *Song) IsAvailable() bool {
-	return len(s.Attributes.Previews) > 0
-}
