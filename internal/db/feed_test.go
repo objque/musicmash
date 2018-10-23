@@ -1,6 +1,7 @@
 package db
 
 import (
+	"strings"
 	"testing"
 	"time"
 
@@ -48,4 +49,48 @@ func TestDB_Feed_GetUserFeedSince(t *testing.T) {
 	assert.Len(t, feed.Announced[0].Stores, 2)
 	assert.Equal(t, "S.P.Y", feed.Announced[0].ArtistName)
 	assert.Equal(t, "skrillex", feed.Released[0].ArtistName)
+}
+
+func TestDB_Feed_GroupReleases(t *testing.T) {
+	// arrange
+	releases := []*Release{
+		{
+			Title:      "Holy hell",
+			StoreName:  "deezer",
+			ArtistName: "Architects",
+		},
+		{
+			Title:      "Wings",
+			StoreName:  "deezer",
+			ArtistName: "Dead birds",
+		},
+		{
+			Title:      "Holy Hell",
+			StoreName:  "itunes",
+			ArtistName: "Architects",
+		},
+		{
+			Title:      "Revolver",
+			ArtistName: "Deadbirds",
+			StoreName:  "deezer",
+		},
+		{
+			Title:      "Holy Hell",
+			StoreName:  "spotify",
+			ArtistName: "Architects",
+		},
+		{
+			Title:      "holy hell",
+			StoreName:  "spotify",
+			ArtistName: "Bring Me The Horizon",
+		},
+	}
+
+	// action
+	grouped := groupReleases(releases)
+
+	// assert
+	assert.Len(t, grouped, 3)
+	assert.Len(t, grouped[0].Stores, 4)
+	assert.Equal(t, "holy hell", strings.ToLower(grouped[0].Title))
 }
