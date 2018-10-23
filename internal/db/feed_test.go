@@ -94,3 +94,33 @@ func TestDB_Feed_GroupReleases(t *testing.T) {
 	assert.Len(t, grouped[0].Stores, 4)
 	assert.Equal(t, "holy hell", strings.ToLower(grouped[0].Title))
 }
+
+func TestDB_Feed_GroupReleases_OverridePoster_IfWasEmpty(t *testing.T) {
+	// arrange
+	const posterURL = "http://pic.jpeg"
+	releases := []*Release{
+		{
+			Title:      "Holy hell",
+			StoreName:  "deezer",
+			ArtistName: "Architects",
+		},
+		{
+			Title:      "Holy hell",
+			StoreName:  "spotify",
+			ArtistName: "Architects",
+		},
+		{
+			Title:      "Holy Hell",
+			StoreName:  "itunes",
+			ArtistName: "Architects",
+			Poster:     posterURL,
+		},
+	}
+
+	// action
+	grouped := groupReleases(releases)
+
+	// assert
+	assert.Len(t, grouped, 1)
+	assert.Equal(t, posterURL, grouped[0].Poster)
+}

@@ -31,6 +31,12 @@ func groupReleases(releases []*Release) []*Release {
 			value.StoreName,
 			value.StoreID,
 		})
+
+		// some releases haven't a poster, but if another
+		// grouped release has a poster we should use it.
+		if result[title].Poster == "" && value.Poster != "" {
+			result[title].Poster = value.Poster
+		}
 	}
 
 	releases = []*Release{}
