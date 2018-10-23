@@ -21,21 +21,22 @@ func groupReleases(releases []*Release) []*Release {
 	// key: lower(title), value: Release
 	result := map[string]*Release{}
 	for _, value := range releases {
-		title := strings.ToLower(value.Title)
-		if _, ok := result[title]; !ok {
+		// some releases might have equal titles, but from different artists
+		key := strings.ToLower(value.ArtistName) + strings.ToLower(value.Title)
+		if _, ok := result[key]; !ok {
 			value.Stores = []*ReleaseStore{}
-			result[title] = value
+			result[key] = value
 		}
 
-		result[title].Stores = append(result[title].Stores, &ReleaseStore{
+		result[key].Stores = append(result[key].Stores, &ReleaseStore{
 			value.StoreName,
 			value.StoreID,
 		})
 
 		// some releases haven't a poster, but if another
 		// grouped release has a poster we should use it.
-		if result[title].Poster == "" && value.Poster != "" {
-			result[title].Poster = value.Poster
+		if result[key].Poster == "" && value.Poster != "" {
+			result[key].Poster = value.Poster
 		}
 	}
 

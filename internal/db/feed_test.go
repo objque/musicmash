@@ -70,14 +70,14 @@ func TestDB_Feed_GroupReleases(t *testing.T) {
 			ArtistName: "Architects",
 		},
 		{
-			Title:      "Revolver",
-			ArtistName: "Deadbirds",
+			Title:      "Pirate Station History",
+			ArtistName: "Pirate Station",
 			StoreName:  "deezer",
 		},
 		{
 			Title:      "Holy Hell",
 			StoreName:  "spotify",
-			ArtistName: "Architects",
+			ArtistName: "architects",
 		},
 		{
 			Title:      "holy hell",
@@ -90,9 +90,34 @@ func TestDB_Feed_GroupReleases(t *testing.T) {
 	grouped := groupReleases(releases)
 
 	// assert
-	assert.Len(t, grouped, 3)
-	assert.Len(t, grouped[0].Stores, 4)
-	assert.Equal(t, "holy hell", strings.ToLower(grouped[0].Title))
+	want := map[string]struct {
+		StoresCount int
+		Title       string
+	}{
+		"architects": {
+			StoresCount: 3,
+			Title:       "holy hell",
+		},
+		"dead birds": {
+			StoresCount: 1,
+			Title:       "wings",
+		},
+		"pirate station": {
+			StoresCount: 1,
+			Title:       "pirate station history",
+		},
+		"bring me the horizon": {
+			StoresCount: 1,
+			Title:       "holy hell",
+		},
+	}
+	assert.Len(t, grouped, 4)
+	for _, release := range grouped {
+		val, ok := want[strings.ToLower(release.ArtistName)]
+		assert.True(t, ok)
+		assert.Len(t, release.Stores, val.StoresCount)
+		assert.Equal(t, val.Title, strings.ToLower(release.Title))
+	}
 }
 
 func TestDB_Feed_GroupReleases_OverridePoster_IfWasEmpty(t *testing.T) {
