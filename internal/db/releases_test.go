@@ -182,3 +182,29 @@ func TestDB_Releases_FindNewReleasesForUser(t *testing.T) {
 	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
 	assert.Len(t, releases[0].Stores, 1)
 }
+
+func TestDB_Releases_FindReleases(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "skrillex",
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Poster:     "http://pic.jpeg",
+	}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "S.P.Y",
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+	}))
+
+	// action
+	releases, err := DbMgr.FindReleases(map[string]interface{}{"poster": ""})
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, releases, 1)
+	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
+}

@@ -28,6 +28,7 @@ type ReleaseMgr interface {
 	GetAllReleases() ([]*Release, error)
 	GetReleasesForUserFilterByPeriod(userName string, since, till time.Time) ([]*Release, error)
 	GetReleasesForUserSince(userName string, since time.Time) ([]*Release, error)
+	FindReleases(condition map[string]interface{}) ([]*Release, error)
 	FindNewReleases(date time.Time) ([]*Release, error)
 	FindNewReleasesForUser(userName string, date time.Time) ([]*Release, error)
 }
@@ -91,4 +92,13 @@ func (mgr *AppDatabaseMgr) FindNewReleasesForUser(userName string, date time.Tim
 		return nil, err
 	}
 	return groupReleases(releases), nil
+}
+
+func (mgr *AppDatabaseMgr) FindReleases(condition map[string]interface{}) ([]*Release, error) {
+	releases := []*Release{}
+	err := mgr.db.Where(condition).Find(&releases).Error
+	if err != nil {
+		return nil, err
+	}
+	return releases, nil
 }
