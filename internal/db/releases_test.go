@@ -208,3 +208,37 @@ func TestDB_Releases_FindReleases(t *testing.T) {
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
 }
+
+func TestDB_Releases_UpdateRelease(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	release := Release{
+		ArtistName: "skrillex",
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+	}
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&release))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "S.P.Y",
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+	}))
+
+	// action
+	release.Poster = "http://pic.jpeg"
+	err := DbMgr.UpdateRelease(&release)
+	releases, _ := DbMgr.GetAllReleases()
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, "skrillex", releases[0].ArtistName)
+	assert.Equal(t, "itunes", releases[0].StoreName)
+	assert.Equal(t, "182821355", releases[0].StoreID)
+	assert.Equal(t, "http://pic.jpeg", releases[0].Poster)
+	// another release must not change
+	assert.Equal(t, "S.P.Y", releases[1].ArtistName)
+	assert.Equal(t, "itunes", releases[1].StoreName)
+	assert.Equal(t, "213551828", releases[1].StoreID)
+}
