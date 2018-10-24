@@ -17,7 +17,7 @@ type cron struct {
 func (c *cron) Run() {
 	for {
 		if !c.IsMustFetch() {
-			time.Sleep(time.Hour)
+			time.Sleep(time.Minute * 15)
 			continue
 		}
 
