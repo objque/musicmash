@@ -40,6 +40,7 @@ type DBConfig struct {
 }
 
 type Fetching struct {
+	RefetchAfterHours   float64 `yaml:"refetch_after_hours"`
 	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
 }
 

@@ -6,6 +6,7 @@ import (
 
 const (
 	ActionFetch  = "fetch"
+	ActionReFetch  = "refetch"
 	ActionNotify = "notify"
 )
 
