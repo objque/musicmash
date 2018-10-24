@@ -132,6 +132,8 @@ func (f *Fetcher) ReFetchAndSave(wg *sync.WaitGroup) {
 			release.Poster = album.Poster
 			if err := db.DbMgr.UpdateRelease(release); err != nil {
 				log.Error(errors.Wrapf(err, "tried to update release without poster with id %s", release.StoreID))
+			} else {
+				log.Infof("poster for album with id %s from deezer was updated", release.StoreID, f.GetStoreName())
 			}
 			continue
 		}
