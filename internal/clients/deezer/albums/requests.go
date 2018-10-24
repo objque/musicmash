@@ -46,3 +46,19 @@ func GetLatestArtistAlbum(provider *deezer.Provider, artistID int) (*Album, erro
 	}
 	return latest, nil
 }
+
+func GetByID(provider *deezer.Provider, albumID int) (*Album, error) {
+	albumURL := fmt.Sprintf("%s/album/%d", provider.URL, albumID)
+	provider.WaitRateLimit()
+	resp, err := http.Get(albumURL)
+	if err != nil {
+		return nil, errors.Wrapf(err, "tried to get album with id %v", albumID)
+	}
+	defer resp.Body.Close()
+
+	album := Album{}
+	if err := json.NewDecoder(resp.Body).Decode(&album); err != nil {
+		return nil, errors.Wrapf(err, "tried to decode album with id %v", albumID)
+	}
+	return &album, nil
+}

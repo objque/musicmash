@@ -67,7 +67,6 @@ func TestClient_GetArtistAlbums(t *testing.T) {
 	assert.Equal(t, "2018-08-31", albums[0].Released.Value.Format("2006-01-02"))
 }
 
-
 func TestClient_GetLatestArtistAlbum(t *testing.T) {
 	setup()
 	defer teardown()
@@ -191,4 +190,35 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
 	assert.Equal(t, 73607432, album.ID)
 	assert.Equal(t, "Royal Beggars (Single)", album.Title)
 	assert.Equal(t, "2018-10-03", album.Released.Value.Format("2006-01-02"))
+}
+
+func TestClient_GetByID(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	mux.HandleFunc("/album/76263542", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`{
+  "id": 76263542,
+  "title": "Pandemonium 2.0",
+  "upc": "817424019736",
+  "link": "https://www.deezer.com/album/76263542",
+  "share": "https://www.deezer.com/album/76263542?utm_source=deezer&utm_content=album-76263542&utm_term=0_1540408114&utm_medium=web",
+  "cover": "https://api.deezer.com/album/76263542/image",
+  "cover_small": "https://e-cdns-images.dzcdn.net/images/cover/3f4983609cbffd22f0d134f9241ed0fb/56x56-000000-80-0-0.jpg",
+  "cover_medium": "https://e-cdns-images.dzcdn.net/images/cover/3f4983609cbffd22f0d134f9241ed0fb/250x250-000000-80-0-0.jpg",
+  "cover_big": "https://e-cdns-images.dzcdn.net/images/cover/3f4983609cbffd22f0d134f9241ed0fb/500x500-000000-80-0-0.jpg",
+  "cover_xl": "https://e-cdns-images.dzcdn.net/images/cover/3f4983609cbffd22f0d134f9241ed0fb/1000x1000-000000-80-0-0.jpg",
+  "genre_id": 152
+}`))
+	})
+
+	// action
+	album, err := GetByID(provider, 76263542)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, 76263542, album.ID)
+	assert.Equal(t, "Pandemonium 2.0", album.Title)
+	assert.NotEmpty(t, album.Poster)
 }
