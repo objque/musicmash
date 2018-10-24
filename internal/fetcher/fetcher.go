@@ -44,3 +44,25 @@ func Fetch() {
 	// run callback
 	log.Info("All stores were fetched")
 }
+
+func refetchFromServices(services []services.Service) *sync.WaitGroup {
+	wg := sync.WaitGroup{}
+	wg.Add(len(services))
+
+	// refetch from all services
+	for i := range services {
+		go services[i].ReFetchAndSave(&wg)
+	}
+
+	return &wg
+}
+
+func ReFetch() {
+	// sometimes we need to fetch some information about already saved releases again.
+	// e.g some releases from Deezer don't have a poster, but a little bit later he appears.
+
+	refetchFromServices(getServices()).Wait()
+
+	// run callback
+	log.Info("All stores were refetched")
+}

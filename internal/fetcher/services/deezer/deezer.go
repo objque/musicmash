@@ -101,3 +101,41 @@ func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup) {
 	}
 	close(_done)
 }
+
+func (f *Fetcher) ReFetchAndSave(wg *sync.WaitGroup) {
+	defer wg.Done()
+	releases, err := db.DbMgr.FindReleases(map[string]interface{}{
+		"poster":     "",
+		"store_name": f.GetStoreName(),
+	})
+	if err != nil {
+		log.Error(errors.Wrap(err, "tried to get releases for refetch from deezer"))
+		return
+	}
+
+	for _, release := range releases {
+		log.Debugf("trying to refetch %s release with id %s", f.GetStoreName(), release.StoreID)
+		albumID, err := strconv.Atoi(release.StoreID)
+		if err != nil {
+			log.Errorf("can't cast str to int: '%s'", release.StoreID)
+			continue
+		}
+
+		album, err := albums.GetByID(f.Provider, albumID)
+		if err != nil {
+			log.Error(errors.Wrapf(err, "tried get info about album %s from %s", release.StoreID, f.GetStoreName()))
+			continue
+		}
+
+		if album.Poster != "" {
+			log.Debugf("found missed album poster for release %s from %s", release.StoreID, f.GetStoreName())
+			release.Poster = album.Poster
+			if err := db.DbMgr.UpdateRelease(release); err != nil {
+				log.Error(errors.Wrapf(err, "tried to update release without poster with id %s", release.StoreID))
+			}
+			continue
+		}
+
+		log.Debugf("release with id %s from %s still exists without poster", release.StoreID, f.GetStoreName())
+	}
+}

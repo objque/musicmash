@@ -144,3 +144,34 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	assert.Equal(t, "January", releases[0].Released.Month().String())
 	assert.Equal(t, 1, releases[0].Released.Year())
 }
+
+func TestFetcher_ReFetchAndSave(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	f := Fetcher{Provider: provider, FetchWorkers: 1}
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "76263542", StoreName: f.GetStoreName()}))
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "100054", Poster: "http://pic", StoreName: f.GetStoreName()}))
+	mux.HandleFunc("/album/76263542", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(`{
+  "id": 76263542,
+  "title": "Pandemonium 2.0",
+  "cover_big": "https://e-cdns-images.dzcdn.net/1.jpeg"
+}`))
+	})
+
+	// action
+	wg := sync.WaitGroup{}
+	wg.Add(1)
+	f.ReFetchAndSave(&wg)
+	wg.Wait()
+
+	// assert
+	releases, err := db.DbMgr.GetAllReleases()
+	assert.NoError(t, err)
+	assert.Len(t, releases, 2)
+	assert.Equal(t, "https://e-cdns-images.dzcdn.net/1.jpeg", releases[0].Poster)
+	assert.Equal(t, "http://pic", releases[1].Poster)
+
+}

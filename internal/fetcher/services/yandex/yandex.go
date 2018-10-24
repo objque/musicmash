@@ -105,3 +105,5 @@ func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup) {
 	}
 	close(_done)
 }
+
+func (f *Fetcher) ReFetchAndSave(_ *sync.WaitGroup) {}
