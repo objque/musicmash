@@ -7,30 +7,9 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/objque/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
-
-func TestAPI_SubscribeUser(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// arrange
-	assert.NoError(t, db.DbMgr.EnsureUserExists("objque"))
-	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{Name: "Moderat", StoreID: 00001}))
-
-	// action
-	artists := []string{"modeRat"}
-	buffer, _ := json.Marshal(&artists)
-	resp, err := http.Post(fmt.Sprintf("%s/objque/subscriptions", server.URL), "application/json", bytes.NewReader(buffer))
-
-	// assert
-	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusAccepted)
-	body := map[string]interface{}{}
-	assert.NoError(t, json.NewDecoder(resp.Body).Decode(&body))
-	assert.Len(t, body, 1)
-}
 
 func TestAPI_SubscribeUser_UserNotFound(t *testing.T) {
 	setup()
@@ -41,7 +20,7 @@ func TestAPI_SubscribeUser_UserNotFound(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
 
 func TestAPI_UnsubscribeUser(t *testing.T) {
@@ -50,10 +29,10 @@ func TestAPI_UnsubscribeUser(t *testing.T) {
 
 	// arrange
 	assert.NoError(t, db.DbMgr.EnsureUserExists("objque"))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{UserID: "objque", ArtistName: "Skrillex"}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{UserID: "objque", ArtistName: "Calvin Risk"}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{UserID: "objque", ArtistName: "AC/DC"}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{UserID: "mike", ArtistName: "AC/DC"}))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("objque", "Skrillex"))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("objque", "Calvin Risk"))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("objque", "AC/DC"))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("mike", "AC/DC"))
 
 	// action
 	artists := []string{"Calvin Risk"}
@@ -62,7 +41,7 @@ func TestAPI_UnsubscribeUser(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
 	subs, err := db.DbMgr.FindAllUserSubscriptions("mike")
 	assert.NoError(t, err)
@@ -85,5 +64,5 @@ func TestAPI_UnsubscribeUser_UserNotFound(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }

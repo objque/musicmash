@@ -2,30 +2,38 @@ sudo: false
 language: go
 services:
 - "docker"
+cache:
+  directories:
+    - ${TRAVIS_HOME}/gopath/bin
+    - ${TRAVIS_HOME}/gopath/pkg
 go:
-- "1.10.3"
+- "1.11.1"
 jobs:
   include:
+  - stage: lint
+    script:
+      - make lint-all
   - stage: tests
     script:
     - make tests
   - stage: deploy
+    env: VERSION=stable
     script:
     - eval "$(ssh-agent -s)"
     - make add-ssh-key
-    - make build
     - make docker-build
     - make docker-push
     - make deploy
   - stage: deploy-staging
+    env: VERSION=nightly
     script:
     - eval "$(ssh-agent -s)"
     - make add-ssh-key
-    - make build
     - make docker-build
     - make docker-push
-    - make deploy-staging
+    - make deploy
 stages:
+- lint
 - tests
 - build
 - name: deploy

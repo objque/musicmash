@@ -7,7 +7,7 @@ import (
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
 	"github.com/go-chi/render"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 func getMux() *chi.Mux {
@@ -20,12 +20,12 @@ func getMux() *chi.Mux {
 	r.Use(middleware.Recoverer)
 	r.Use(render.SetContentType(render.ContentTypeJSON))
 
-	r.Get("/states/{state_id}", getState)
-	r.Post("/{user_id}/subscriptions", createSubscriptions)
+	r.Post("/{user_name}/chats", addUserChat)
 	r.Post("/users", createUser)
-	r.Post("/{user_id}/chats", addUserChat)
-	r.Delete("/{user_id}/subscriptions", deleteSubscriptions)
-	r.Get("/{user_id}/feed", getUserFeed)
+	r.Post("/{user_name}/chats", addUserChat)
+	r.Get("/{user_name}/feed", getUserFeed)
+	r.Post("/{user_name}/subscriptions", createSubscriptions)
+	r.Delete("/{user_name}/subscriptions", deleteSubscriptions)
 	return r
 }
 

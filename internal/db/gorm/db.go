@@ -5,8 +5,8 @@ import (
 	"sync/atomic"
 
 	"github.com/jinzhu/gorm"
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 var mainDB *gorm.DB
@@ -21,7 +21,7 @@ func InitFake(postCreate postCreateFunc) *gorm.DB {
 	}
 
 	mainDB = mainDB.LogMode(false)
-	mainDB.SetLogger(gorm.Logger{mainDBLogger{}})
+	mainDB.SetLogger(gorm.Logger{LogWriter: mainDBLogger{}})
 	mainDB.DB().SetMaxIdleConns(10)
 	mainDB.DB().SetMaxOpenConns(100)
 	if err = mainDB.Error; err != nil {
@@ -47,7 +47,7 @@ func InitMain(postCreate postCreateFunc) *gorm.DB {
 
 	if config.Config.DB.Log {
 		mainDB = mainDB.LogMode(true)
-		mainDB.SetLogger(gorm.Logger{mainDBLogger{}})
+		mainDB.SetLogger(gorm.Logger{LogWriter: mainDBLogger{}})
 	}
 	if err := postCreate(mainDB); err != nil {
 		panic(err)
@@ -59,5 +59,5 @@ type mainDBLogger struct {
 }
 
 func (l mainDBLogger) Println(v ...interface{}) {
-	log.Info(v)
+	log.Info(v...)
 }

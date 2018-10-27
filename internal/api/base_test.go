@@ -5,27 +5,16 @@ import (
 	"net/http"
 	"net/http/httptest"
 
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/db"
 )
 
-var server *httptest.Server
+var (
+	server *httptest.Server
+)
 
 func setup() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	server = httptest.NewServer(getMux())
-	config.Config = &config.AppConfig{
-		Store: config.Store{
-			URL:    server.URL,
-			Region: "us",
-		},
-		Tasks: config.Tasks{
-			Subscriptions: config.SubscriptionsTask{
-				FindArtistWorkers:      1,
-				SubscribeArtistWorkers: 10,
-			},
-		},
-	}
 }
 
 func teardown() {

@@ -11,14 +11,11 @@ func TestDB_Chat_EnsureExists(t *testing.T) {
 	defer teardown()
 
 	// action
-	err := DbMgr.EnsureChatExists(&Chat{
-		ID:     10000420,
-		UserID: "objque@me",
-	})
+	err := DbMgr.EnsureChatExists(&Chat{ID: 10000420, UserName: "objque@me"})
 
 	// assert
 	assert.NoError(t, err)
-	chatID, err := DbMgr.FindChatByUserID("objque@me")
+	chatID, err := DbMgr.FindChatByUserName("objque@me")
 	assert.NoError(t, err)
 	assert.Equal(t, int64(10000420), *chatID)
 }
@@ -29,13 +26,13 @@ func TestDB_Chat_GetAllChatsThatSubscribedFor(t *testing.T) {
 
 	// arrange
 	// chats
-	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 1001, UserID: "objque@me"}))
-	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 3004, UserID: "another@user"}))
-	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 5005, UserID: "friction@user"}))
+	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 1001, UserName: "objque@me"}))
+	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 3004, UserName: "another@user"}))
+	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 5005, UserName: "friction@user"}))
 	// subs
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{ArtistName: "Skrillex", UserID: "objque@me"}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{ArtistName: "Rammstein", UserID: "another@user"}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{ArtistName: "Rammstein", UserID: "objque@me"}))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "Skrillex"))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("another@user", "Rammstein"))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "Rammstein"))
 	want := []struct {
 		Artist     string
 		ChatsCount int

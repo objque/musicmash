@@ -2,24 +2,24 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
+	// load dialects
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	db "github.com/objque/musicmash/internal/db/gorm"
+	db "github.com/musicmash/musicmash/internal/db/gorm"
 )
 
 var DbMgr DataMgr
 
 type DataMgr interface {
+	StoreMgr
 	ArtistMgr
+	ArtistStoreInfoMgr
 	UserMgr
+	SubscriptionMgr
 	ReleaseMgr
 	LastActionMgr
 	ChatMgr
-	SubscriptionMgr
-	StateMgr
 	FeedMgr
-	StoreTypeMgr
-	StoreMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr

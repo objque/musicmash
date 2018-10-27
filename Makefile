@@ -4,9 +4,9 @@ clean:
 	rm bin/musicmash || true
 
 build: clean
-	CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -v -a -installsuffix cgo -gcflags "all=-trimpath=$(GOPATH)" -o bin/musicmash cmd/musicmash.go
+	GOOS=linux GOARCH=amd64 go build -v -a -installsuffix cgo -gcflags "all=-trimpath=$(GOPATH)" -o bin/musicmash cmd/musicmash.go
 
-prepare-tests:
+rgo:
 	go get -u github.com/kyoh86/richgo
 
 install:
@@ -20,21 +20,21 @@ add-ssh-key:
 	chmod 600 /tmp/travis_key
 	ssh-add /tmp/travis_key
 
-docker-build:
-	docker build -t $(REGISTRY_REPO) .
-
 docker-login:
 	docker login -u $(REGISTRY_USER) -p $(REGISTRY_PASS)
 
-docker-push: docker-login
-	docker push $(REGISTRY_REPO)
+docker-build:
+	docker build -t $(REGISTRY_REPO):$(VERSION) .
 
-docker-full:
-	make docker-build
-	make docker-push
+docker-push: docker-login
+	docker push $(REGISTRY_REPO):$(VERSION)
 
 deploy:
-	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music
+	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music-$(VERSION)
 
-deploy-staging:
-	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music-staging
+lint-all l:
+	bash ./scripts/metalinter.sh
+	bash ./scripts/critic.sh
+
+rigo:
+	make install & make rgo

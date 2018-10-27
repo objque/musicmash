@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"testing"
 
-	"github.com/objque/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -25,8 +25,8 @@ func TestAPI_Chats_Create(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusCreated)
-	chatID, err := db.DbMgr.FindChatByUserID("objque@me")
+	assert.Equal(t, http.StatusCreated, resp.StatusCode)
+	chatID, err := db.DbMgr.FindChatByUserName("objque@me")
 	assert.NoError(t, err)
 	assert.Equal(t, int64(10004), *chatID)
 }
@@ -42,5 +42,5 @@ func TestAPI_Chats_Create_UserNotFound(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }

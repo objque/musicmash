@@ -5,18 +5,16 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
-	"github.com/objque/musicmash/internal/api/validators"
-	v2 "github.com/objque/musicmash/internal/clients/itunes"
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/log"
-	tasks "github.com/objque/musicmash/internal/tasks/subscriptions"
+	"github.com/musicmash/musicmash/internal/api/validators"
+	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/log"
+	tasks "github.com/musicmash/musicmash/internal/tasks/subscriptions"
 	"github.com/pkg/errors"
 )
 
 func createSubscriptions(w http.ResponseWriter, r *http.Request) {
-	userID := chi.URLParam(r, "user_id")
-	if err := validators.IsUserExits(w, userID); err != nil {
+	userName := chi.URLParam(r, "user_name")
+	if err := validators.IsUserExits(w, userName); err != nil {
 		return
 	}
 
@@ -26,21 +24,14 @@ func createSubscriptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.Debugf("User '%s' wanna subscribe for %d artists", userID, len(userArtists))
-	provider := v2.NewProvider(config.Config.Store.URL, config.Config.Store.Token)
-	_, stateID := tasks.FindArtistsAndSubscribeUserTask(userID, userArtists, provider)
-	body := map[string]interface{}{
-		"state_id": stateID,
-	}
-	buffer, _ := json.Marshal(&body)
-
+	log.Debugf("User '%s' wanna subscriptions for %d artists", userName, len(userArtists))
+	tasks.SubscribeUserForArtists(userName, userArtists)
 	w.WriteHeader(http.StatusAccepted)
-	w.Write(buffer)
 }
 
 func deleteSubscriptions(w http.ResponseWriter, r *http.Request) {
-	userID := chi.URLParam(r, "user_id")
-	if err := validators.IsUserExits(w, userID); err != nil {
+	userName := chi.URLParam(r, "user_name")
+	if err := validators.IsUserExits(w, userName); err != nil {
 		return
 	}
 
@@ -50,8 +41,8 @@ func deleteSubscriptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := db.DbMgr.UnsubscribeUserFromArtists(userID, artists); err != nil {
-		log.Error(errors.Wrapf(err, "tried to unsubscribe user '%s' from artists '%v'", userID, artists))
+	if err := db.DbMgr.UnsubscribeUserFromArtists(userName, artists); err != nil {
+		log.Error(errors.Wrapf(err, "tried to unsubscribe user '%s' from artists '%v'", userName, artists))
 	}
 
 	w.WriteHeader(http.StatusOK)

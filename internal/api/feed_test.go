@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/objque/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/db"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -15,34 +15,28 @@ func TestAPI_Feed_Get(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	const userID = "objque@me"
-	assert.NoError(t, db.DbMgr.EnsureUserExists(userID))
+	const userName = "objque@me"
+	assert.NoError(t, db.DbMgr.EnsureUserExists(userName))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: "skrillex",
-		StoreID:    182821355,
-		Date:       time.Now().UTC().Add(-time.Hour * 24),
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: "S.P.Y",
-		StoreID:    213551828,
-		Date:       time.Now().UTC().Add(time.Hour * 24),
-	}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{
-		UserID:     userID,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{
-		UserID:     userID,
-		ArtistName: "S.P.Y",
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
 
 	// action
-	resp, err := http.Get(fmt.Sprintf("%s/%s/feed", server.URL, userID))
+	resp, err := http.Get(fmt.Sprintf("%s/%s/feed", server.URL, userName))
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func TestAPI_Feed_Get_WithQuery(t *testing.T) {
@@ -50,36 +44,31 @@ func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	const userID = "objque@me"
-	assert.NoError(t, db.DbMgr.EnsureUserExists(userID))
+	const userName = "objque@me"
+	assert.NoError(t, db.DbMgr.EnsureUserExists(userName))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: "skrillex",
-		StoreID:    182821355,
-		Date:       time.Now().UTC().Add(-time.Hour * 24),
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: "S.P.Y",
-		StoreID:    213551828,
-		Date:       time.Now().UTC().Add(time.Hour * 24),
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{
-		UserID:     userID,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(&db.Subscription{
-		UserID:     userID,
-		ArtistName: "S.P.Y",
-	}))
+	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(userName, []string{"skrillex", "S.P.Y"}))
 
 	// action
 	const layout = "2006-01-02"
 	since := time.Now().UTC().Add(-time.Hour * 24 * 2) // two days ago
-	resp, err := http.Get(fmt.Sprintf("%s/%s/feed?since=%s", server.URL, userID, since.Format(layout)))
+	resp, err := http.Get(fmt.Sprintf("%s/%s/feed?since=%s", server.URL, userName, since.Format(layout)))
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusOK)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
 func TestAPI_Feed_Get_UserNotFound(t *testing.T) {
@@ -91,5 +80,5 @@ func TestAPI_Feed_Get_UserNotFound(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }

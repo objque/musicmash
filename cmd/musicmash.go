@@ -2,17 +2,16 @@ package main
 
 import (
 	"flag"
-	"os"
 
-	"github.com/objque/musicmash/internal/api"
-	v2 "github.com/objque/musicmash/internal/clients/itunes"
-	"github.com/objque/musicmash/internal/config"
-	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/fetcher"
-	"github.com/objque/musicmash/internal/log"
-	"github.com/objque/musicmash/internal/notifier"
-	"github.com/objque/musicmash/internal/notify"
-	"github.com/objque/musicmash/internal/notify/services"
+	"github.com/musicmash/musicmash/internal/api"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/cron"
+	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/fetcher"
+	"github.com/musicmash/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/notifier"
+	"github.com/musicmash/musicmash/internal/notifier/telegram"
+	tasks "github.com/musicmash/musicmash/internal/tasks/subscriptions"
 )
 
 func init() {
@@ -28,21 +27,20 @@ func init() {
 	if *logLevel != "info" || config.Config.Log.Level == "" {
 		// Priority to command-line
 		log.ConfigureStdLogger(*logLevel)
-	} else {
+	} else if config.Config.Log.Level != "" {
 		// Priority to config
-		if config.Config.Log.Level != "" {
-			log.ConfigureStdLogger(config.Config.Log.Level)
-		}
+		log.ConfigureStdLogger(config.Config.Log.Level)
 	}
 
-	provider := v2.NewProvider(config.Config.Store.URL, config.Config.Store.Token)
+	tasks.InitWorkerPool()
 	db.DbMgr = db.NewMainDatabaseMgr()
-	notify.Service = services.New(os.Getenv("TG_TOKEN"), provider)
+	telegram.New(config.Config.Notifier.TelegramToken)
 }
 
 func main() {
-	log.Info("Running fetching...")
-	go fetcher.Run()
-	go notifier.Run()
+	log.Info("Running musicmash..")
+	go cron.Run(db.ActionReFetch, config.Config.Fetching.RefetchAfterHours, fetcher.ReFetch)
+	go cron.Run(db.ActionFetch, config.Config.Fetching.CountOfSkippedHours, fetcher.Fetch)
+	go cron.Run(db.ActionNotify, config.Config.Notifier.CountOfSkippedHours, notifier.Notify)
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }

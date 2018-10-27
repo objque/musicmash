@@ -13,55 +13,15 @@ func TestDB_Releases_EnsureExists(t *testing.T) {
 
 	// action
 	err := DbMgr.EnsureReleaseExists(&Release{
-		ArtistName: "skrillex",
-		StoreID:    182821355,
+		StoreName: "deezer",
+		StoreID:   "xyz",
 	})
 
 	// assert
 	assert.NoError(t, err)
-	release, err := DbMgr.FindRelease("skrillex", 182821355)
-	assert.NoError(t, err)
-	assert.Equal(t, "skrillex", release.ArtistName)
-	assert.Equal(t, uint64(182821355), release.StoreID)
-}
-
-func TestDB_Releases_IsExists(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// action
-	const storeID = uint64(182821355)
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
-		ArtistName: "skrillex",
-		StoreID:    storeID,
-	}))
-
-	// action and assert
-	assert.True(t, DbMgr.IsReleaseExists(storeID))
-}
-
-func TestDB_Releases_List(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// arrange
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
-		ArtistName: "skrillex",
-		StoreID:    182821355,
-	}))
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
-		ArtistName: "S.P.Y",
-		StoreID:    213551828,
-	}))
-
-	// action
 	releases, err := DbMgr.GetAllReleases()
-
-	// assert
 	assert.NoError(t, err)
-	assert.Len(t, releases, 2)
-	assert.Equal(t, "skrillex", releases[0].ArtistName)
-	assert.Equal(t, "S.P.Y", releases[1].ArtistName)
+	assert.Len(t, releases, 1)
 }
 
 func TestDB_Releases_GetReleasesForUserFilterByPeriod(t *testing.T) {
@@ -70,41 +30,31 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod(t *testing.T) {
 
 	// arrange
 	// released release
-	const userID = "objque@me"
+	const userName = "objque@me"
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "skrillex",
-		StoreID:    182821355,
-		Date:       time.Now().UTC().Add(-time.Hour * 24),
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "S.P.Y",
-		StoreID:    213551828,
-		Date:       time.Now().UTC().Add(time.Hour * 24),
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserID:     userID,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserID:     userID,
-		ArtistName: "S.P.Y",
-	}))
-	// add stores
-	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "4nDoR", 1))
-	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("yandex", "4nDoR", 1))
-	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "wC5Bh", 2))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(userName, []string{"skrillex", "S.P.Y"}))
 
 	// action
 	since := time.Now().UTC().Add(-time.Hour * 48)
 	till := time.Now().UTC()
-	releases, err := DbMgr.GetReleasesForUserFilterByPeriod(userID, since, till)
+	releases, err := DbMgr.GetReleasesForUserFilterByPeriod(userName, since, till)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "skrillex", releases[0].ArtistName)
-	assert.Len(t, releases[0].Stores, 2)
 }
 
 func TestDB_Releases_GetReleasesForUserFilterByPeriod_WithFuture(t *testing.T) {
@@ -113,41 +63,31 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod_WithFuture(t *testing.T) {
 
 	// arrange
 	// released release
-	const userID = "objque@me"
+	const userName = "objque@me"
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "skrillex",
-		StoreID:    182821355,
-		Date:       time.Now().UTC().Add(-time.Hour * 24),
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "S.P.Y",
-		StoreID:    213551828,
-		Date:       time.Now().UTC().Add(time.Hour * 24),
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserID:     userID,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserID:     userID,
-		ArtistName: "S.P.Y",
-	}))
-	// add stores
-	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "4nDoR", 1))
-	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("yandex", "4nDoR", 1))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(userName, []string{"skrillex", "S.P.Y"}))
 
 	// action
 	since := time.Now().UTC().Add(-time.Hour * 48)
 	till := time.Now().UTC().Add(time.Hour * 48)
-	releases, err := DbMgr.GetReleasesForUserFilterByPeriod(userID, since, till)
+	releases, err := DbMgr.GetReleasesForUserFilterByPeriod(userName, since, till)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, releases, 2)
 	assert.Equal(t, "skrillex", releases[0].ArtistName)
-	assert.Len(t, releases[0].Stores, 2)
-	assert.Len(t, releases[1].Stores, 0)
 }
 
 func TestDB_Releases_GetReleasesForUserSince(t *testing.T) {
@@ -156,37 +96,29 @@ func TestDB_Releases_GetReleasesForUserSince(t *testing.T) {
 
 	// arrange
 	// released release
-	const userID = "objque@me"
+	const userName = "objque@me"
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "skrillex",
-		StoreID:    182821355,
-		Date:       time.Now().UTC().Add(-time.Hour * 24),
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "S.P.Y",
-		StoreID:    213551828,
-		Date:       time.Now().UTC().Add(time.Hour * 24),
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserID:     userID,
-		ArtistName: "skrillex",
-	}))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists(&Subscription{
-		UserID:     userID,
-		ArtistName: "S.P.Y",
-	}))
-	// add stores
-	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "4nDoR", 1))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(userName, []string{"skrillex", "S.P.Y"}))
 
 	// action
-	releases, err := DbMgr.GetReleasesForUserSince(userID, time.Now())
+	releases, err := DbMgr.GetReleasesForUserSince(userName, time.Now())
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
-	assert.Len(t, releases[0].Stores, 0)
 }
 
 func TestDB_Releases_FindReleasesWithFilter(t *testing.T) {
@@ -194,24 +126,21 @@ func TestDB_Releases_FindReleasesWithFilter(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	const userID = "objque@me"
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "skrillex",
-		StoreID:    182821355,
-		Date:       time.Now().UTC().Add(time.Hour * 48),
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Released:   time.Now().UTC().Add(time.Hour * 48),
 		CreatedAt:  time.Now().UTC().Add(-time.Hour * 48),
 	}))
 	date := time.Now().UTC().Add(-time.Hour * 24)
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: "S.P.Y",
-		StoreID:    213551828,
-		Date:       time.Now().UTC().Add(time.Hour * 48),
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+		Released:   time.Now().UTC().Add(time.Hour * 48),
 		CreatedAt:  date,
 	}))
-	// add stores
-	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "4nDoR", 1))
-	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("yandex", "4nDoR", 1))
-	assert.NoError(t, DbMgr.EnsureReleaseExistsInStore("itunes", "wC5Bh", 2))
 
 	// action
 	releases, err := DbMgr.FindNewReleases(date)
@@ -220,7 +149,96 @@ func TestDB_Releases_FindReleasesWithFilter(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
+}
+
+func TestDB_Releases_FindNewReleasesForUser(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	now := time.Now().UTC()
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "skrillex",
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Released:   time.Now().UTC().Add(time.Hour * 48),
+		CreatedAt:  now.Add(-time.Hour * 48),
+	}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "S.P.Y",
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+		Released:   time.Now().UTC().Add(time.Hour * 48),
+		CreatedAt:  now.Add(time.Hour * 24),
+	}))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists("objque", []string{"skrillex", "S.P.Y"}))
+
+	// action
+	releases, err := DbMgr.FindNewReleasesForUser("objque", now)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, releases, 1)
+	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
 	assert.Len(t, releases[0].Stores, 1)
-	assert.Equal(t, releases[0].Stores[0].StoreType, "itunes")
-	assert.Equal(t, releases[0].Stores[0].StoreID, "wC5Bh")
+}
+
+func TestDB_Releases_FindReleases(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "skrillex",
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+		Poster:     "http://pic.jpeg",
+	}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "S.P.Y",
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+	}))
+
+	// action
+	releases, err := DbMgr.FindReleases(map[string]interface{}{"poster": ""})
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, releases, 1)
+	assert.Equal(t, "S.P.Y", releases[0].ArtistName)
+}
+
+func TestDB_Releases_UpdateRelease(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	release := Release{
+		ArtistName: "skrillex",
+		StoreName:  "itunes",
+		StoreID:    "182821355",
+	}
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&release))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "S.P.Y",
+		StoreName:  "itunes",
+		StoreID:    "213551828",
+	}))
+
+	// action
+	release.Poster = "http://pic.jpeg"
+	err := DbMgr.UpdateRelease(&release)
+	releases, _ := DbMgr.GetAllReleases()
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, "skrillex", releases[0].ArtistName)
+	assert.Equal(t, "itunes", releases[0].StoreName)
+	assert.Equal(t, "182821355", releases[0].StoreID)
+	assert.Equal(t, "http://pic.jpeg", releases[0].Poster)
+	// another release must not change
+	assert.Equal(t, "S.P.Y", releases[1].ArtistName)
+	assert.Equal(t, "itunes", releases[1].StoreName)
+	assert.Equal(t, "213551828", releases[1].StoreID)
 }

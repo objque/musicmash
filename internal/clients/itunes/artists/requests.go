@@ -6,18 +6,20 @@ import (
 	"net/http"
 	"net/url"
 
-	v2 "github.com/objque/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/pkg/errors"
 )
 
-func SearchArtist(provider *v2.Provider, term string) (*Artist, error) {
+func SearchArtist(provider *itunes.Provider, term string) (*Artist, error) {
 	albumsURL := fmt.Sprintf("%s/v1/catalog/us/search?types=artists&limit=1&term=%s", provider.URL, url.QueryEscape(term))
 	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
+	provider.WaitRateLimit()
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to search artist with name '%v'", term)
 	}
+	defer resp.Body.Close()
 
 	type answer struct {
 		Results struct {
@@ -31,7 +33,7 @@ func SearchArtist(provider *v2.Provider, term string) (*Artist, error) {
 		return nil, errors.Wrapf(err, "tried to decode search result for artist with name '%v'", term)
 	}
 	if len(a.Results.Data.Artists) == 0 {
-		return nil, ArtistNotFoundErr
+		return nil, ErrArtistNotFound
 	}
 	return a.Results.Data.Artists[0], nil
 }

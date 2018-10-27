@@ -7,18 +7,18 @@ import (
 type Chat struct {
 	CreatedAt time.Time
 	ID        int64  `gorm:"primary_key"`
-	UserID    string `sql:"index"`
+	UserName  string `sql:"index"`
 }
 
 type ChatMgr interface {
-	FindChatByUserID(userID string) (*int64, error)
+	FindChatByUserName(name string) (*int64, error)
 	EnsureChatExists(chat *Chat) error
 	GetAllChatsThatSubscribedFor(artistName string) ([]*Chat, error)
 }
 
-func (mgr *AppDatabaseMgr) FindChatByUserID(userID string) (*int64, error) {
+func (mgr *AppDatabaseMgr) FindChatByUserName(name string) (*int64, error) {
 	chat := Chat{}
-	if err := mgr.db.Where("user_id = ?", userID).First(&chat).Error; err != nil {
+	if err := mgr.db.Where("user_name = ?", name).First(&chat).Error; err != nil {
 		return nil, err
 	}
 
@@ -26,7 +26,7 @@ func (mgr *AppDatabaseMgr) FindChatByUserID(userID string) (*int64, error) {
 }
 
 func (mgr *AppDatabaseMgr) EnsureChatExists(chat *Chat) error {
-	_, err := mgr.FindChatByUserID(chat.UserID)
+	_, err := mgr.FindChatByUserName(chat.UserName)
 	if err != nil {
 		return mgr.db.Create(chat).Error
 	}
@@ -35,7 +35,7 @@ func (mgr *AppDatabaseMgr) EnsureChatExists(chat *Chat) error {
 
 func (mgr *AppDatabaseMgr) GetAllChatsThatSubscribedFor(artistName string) ([]*Chat, error) {
 	chats := []*Chat{}
-	sql := "select * from chats where user_id in (select user_id from subscriptions where artist_name = ?)"
+	sql := "select * from chats where user_name in (select user_name from subscriptions where artist_name = ?)"
 	if err := mgr.db.Raw(sql, artistName).Scan(&chats).Error; err != nil {
 		return nil, err
 	}

@@ -15,8 +15,8 @@ type AppConfig struct {
 	DB       DBConfig   `yaml:"db"`
 	Log      LogConfig  `yaml:"log"`
 	Fetching Fetching   `yaml:"fetching"`
-	Store    Store      `yaml:"store"`
-	Tasks    Tasks      `yaml:"tasks"`
+	Stores   []*Store   `yaml:"stores"`
+	Notifier Notifier   `yaml:"notifier"`
 }
 
 type HTTPConfig struct {
@@ -40,23 +40,22 @@ type DBConfig struct {
 }
 
 type Fetching struct {
-	Workers                    int     `yaml:"workers"`
-	CountOfSkippedHoursToFetch float64 `yaml:"count_of_skipped_hours_to_fetch"`
-}
-
-type Tasks struct {
-	Subscriptions SubscriptionsTask `yaml:"subscriptions"`
-}
-
-type SubscriptionsTask struct {
-	FindArtistWorkers      int `yaml:"find_artist_workers"`
-	SubscribeArtistWorkers int `yaml:"subscribe_artist_workers"`
+	RefetchAfterHours   float64 `yaml:"refetch_after_hours"`
+	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
 }
 
 type Store struct {
-	URL    string `yaml:"url"`
-	Region string `yaml:"region"`
-	Token  string `yaml:"token"`
+	Name         string `yaml:"type"`
+	URL          string `yaml:"url"`
+	FetchWorkers int    `yaml:"fetch_workers"`
+	Meta         Meta   `yaml:"meta"`
+}
+
+type Meta map[string]string
+
+type Notifier struct {
+	TelegramToken       string  `yaml:"telegram_token"`
+	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
 }
 
 func InitConfig(filepath string) error {
@@ -83,11 +82,11 @@ func Load(data []byte) error {
 	return nil
 }
 
-func (db *DBConfig) GetConnString() (DBType string, ConnString string) {
+func (db *DBConfig) GetConnString() (dialect, connString string) {
 	if db.DBType != "mysql" {
 		panic("Only mysql is currently supported")
 	}
-	var connString = fmt.Sprintf(
+	connString = fmt.Sprintf(
 		"%v:%v@tcp(%v)/%v?charset=utf8&parseTime=True&loc=UTC",
 		db.DBLogin,
 		db.DBPass,

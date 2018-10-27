@@ -3,10 +3,11 @@ package api
 import (
 	"encoding/json"
 	"net/http"
+	"strings"
 
 	"github.com/jinzhu/gorm"
-	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 func createUser(w http.ResponseWriter, r *http.Request) {
@@ -16,7 +17,12 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	_, err := db.DbMgr.FindUserByID(body.UserID)
+	if len(strings.TrimSpace(body.UserName)) == 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		return
+	}
+
+	_, err := db.DbMgr.FindUserByName(body.UserName)
 	// already exists
 	if err == nil {
 		log.Error(err)
@@ -30,7 +36,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := db.DbMgr.CreateUser(&db.User{ID: body.UserID}); err != nil {
+	if err := db.DbMgr.CreateUser(&db.User{Name: body.UserName}); err != nil {
 		log.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return

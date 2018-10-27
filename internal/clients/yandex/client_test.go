@@ -47,8 +47,8 @@ func TestYandexClient_Search(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, result.Artists.Items, 1)
-	assert.Equal(t, result.Artists.Items[0].ID, 817678)
-	assert.Equal(t, result.Artists.Items[0].Name, "Gorgon City")
+	assert.Equal(t, 817678, result.Artists.Items[0].ID)
+	assert.Equal(t, "Gorgon City", result.Artists.Items[0].Name)
 }
 
 func TestYandexClient_GetArtistAlbums(t *testing.T) {
@@ -84,13 +84,13 @@ func TestYandexClient_GetArtistAlbums(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, albums, 2)
 	// first album
-	assert.Equal(t, albums[0].ID, 5647716)
-	assert.Equal(t, albums[0].Title, "Escape")
-	assert.Equal(t, albums[0].ReleaseYear, 2018)
-	assert.Equal(t, albums[0].Released, "2018-08-10T00:00:00+03:00")
+	assert.Equal(t, 5647716, albums[0].ID)
+	assert.Equal(t, "Escape", albums[0].Title)
+	assert.Equal(t, 2018, albums[0].ReleaseYear)
+	assert.Equal(t, "2018-08-10 03:00:00 +0000 UTC", albums[0].Released.Value.String())
 	// second album
-	assert.Equal(t, albums[1].ID, 6564)
-	assert.Equal(t, albums[1].Title, "The system")
-	assert.Equal(t, albums[1].ReleaseYear, 2017)
-	assert.Equal(t, albums[1].Released, "2017-01-10T00:00:00+03:00")
+	assert.Equal(t, 6564, albums[1].ID)
+	assert.Equal(t, "The system", albums[1].Title)
+	assert.Equal(t, 2017, albums[1].ReleaseYear)
+	assert.Equal(t, "2017-01-10 03:00:00 +0000 UTC", albums[1].Released.Value.String())
 }

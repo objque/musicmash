@@ -1,0 +1,40 @@
+http:
+    port: 8844
+
+db:
+    dbtype:  'mysql'
+    dbhost:  'mariadb'
+    dbname:  'musicmash'
+    dblogin: 'musicmash'
+    dbpass:  'musicmash'
+    log: false
+
+log:
+    level: DEBUG
+    file: 'musicmash.log'
+    syslog_enable: false
+
+tasks:
+    subscriptions:
+        find_artist_workers: 3
+        subscribe_artist_workers: 10
+
+stores:
+    - type: yandex
+      url: "https://music.yandex.ru"
+      fetch_workers: 1
+
+    - type: itunes
+      url: "https://api.music.apple.com"
+      fetch_workers: 10
+      meta:
+        token: "kpXVCIsInR5cCI6IkpXVCIsInR5cCI6IkpXVCIsInR5cCI6I"
+        region: "us"
+
+fetching:
+  refetch_after_hours: 1
+  count_of_skipped_hours: 8
+
+notifier:
+    count_of_skipped_hours: 8
+    telegram_token: "12340255:BBBZZZJJJJJAAAEEEEE"

@@ -4,20 +4,20 @@ import (
 	"net/http"
 
 	"github.com/jinzhu/gorm"
-	"github.com/objque/musicmash/internal/db"
-	"github.com/objque/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
-func IsUserExits(w http.ResponseWriter, userID string) error {
-	_, err := db.DbMgr.FindUserByID(userID)
+func IsUserExits(w http.ResponseWriter, name string) error {
+	_, err := db.DbMgr.FindUserByName(name)
 	if err != nil {
-		statusCode := http.StatusNotFound
-		if !gorm.IsRecordNotFoundError(err) {
-			statusCode = http.StatusInternalServerError
+		if gorm.IsRecordNotFoundError(err) {
+			w.WriteHeader(http.StatusNotFound)
+			return err
 		}
 
 		log.Error(err)
-		w.WriteHeader(statusCode)
+		w.WriteHeader(http.StatusInternalServerError)
 	}
 	return err
 }

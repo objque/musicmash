@@ -10,15 +10,15 @@
   version = "v1.1.0"
 
 [[projects]]
-  digest = "1:4eda9f7bf70f5145b3b9ed3f18ac93e9b1a0e38906eb69e526380c34861e2b07"
+  digest = "1:a9fe0f8ff72c388d0128e88ce5f3c27d37dcd0950acd7cdb8323555f12463396"
   name = "github.com/go-chi/chi"
   packages = [
     ".",
     "middleware",
   ]
   pruneopts = "UT"
-  revision = "e83ac2304db3c50cf03d96a2fcd39009d458bc35"
-  version = "v3.3.2"
+  revision = "b5294d10673813fac8558e7f47242bc9e61b4c25"
+  version = "v3.3.3"
 
 [[projects]]
   digest = "1:54d7b4b9ab2bb2bae35b55eea900bc8fe15cba05a95fc78bf7fd7b82a9a07afa"
@@ -117,6 +117,17 @@
 
 [[projects]]
   branch = "master"
+  digest = "1:3e4c7966b60df887418bf1b880be9a1e6c36f97ef40491b7bad72d21a4334cd0"
+  name = "go.uber.org/ratelimit"
+  packages = [
+    ".",
+    "internal/clock",
+  ]
+  pruneopts = "UT"
+  revision = "c15da02342779cb6dc027fc95ee2277787698f36"
+
+[[projects]]
+  branch = "master"
   digest = "1:3f3a05ae0b95893d90b9b3b5afdb79a9b3d96e4e36e099d841ae602e4aca0da8"
   name = "golang.org/x/crypto"
   packages = ["ssh/terminal"]
@@ -143,12 +154,12 @@
   version = "v1.1.0"
 
 [[projects]]
-  digest = "1:6999e4e34bb73184674e844d6d1e6f48f75a30a9c86ef7663dbc7b2509962812"
+  digest = "1:51712f342cdefcad2c867f399a3ce8223675221d4386c81cfcccd8f0656e722e"
   name = "gopkg.in/telegram-bot-api.v4"
   packages = ["."]
   pruneopts = "UT"
-  revision = "0e0af0c480ea98e982d5f4d45fb39577c6ab1e3e"
-  version = "v4.6.2"
+  revision = "9860bdfd3a171ceafb6e1eafa163482a6ef92643"
+  version = "v4.6.4"
 
 [[projects]]
   digest = "1:342378ac4dcb378a5448dd723f0784ae519383532f5e70ade24132c4c8693202"
@@ -173,6 +184,7 @@
     "github.com/sirupsen/logrus",
     "github.com/sirupsen/logrus/hooks/syslog",
     "github.com/stretchr/testify/assert",
+    "go.uber.org/ratelimit",
     "gopkg.in/telegram-bot-api.v4",
     "gopkg.in/yaml.v2",
   ]

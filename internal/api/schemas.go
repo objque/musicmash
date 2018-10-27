@@ -1,7 +1,7 @@
 package api
 
 type CreateUserScheme struct {
-	UserID string `json:"user_id"`
+	UserName string `json:"user_name"`
 }
 
 type AddUserChatScheme struct {

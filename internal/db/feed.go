@@ -1,6 +1,7 @@
 package db
 
 import (
+	"strings"
 	"time"
 
 	"github.com/pkg/errors"
@@ -13,21 +14,56 @@ type Feed struct {
 }
 
 type FeedMgr interface {
-	GetUserFeedSince(userID string, date time.Time) (*Feed, error)
+	GetUserFeedSince(userName string, date time.Time) (*Feed, error)
 }
 
-func (mgr *AppDatabaseMgr) GetUserFeedSince(userID string, since time.Time) (*Feed, error) {
-	feed := &Feed{Date: since}
-	var err error
-	now := time.Now().UTC()
-	feed.Released, err = mgr.GetReleasesForUserFilterByPeriod(userID, since, now)
-	if err != nil {
-		return nil, errors.Wrapf(err, "tried to get feed for user '%s'", userID)
+func groupReleases(releases []*Release) []*Release {
+	// key: lower(title), value: Release
+	result := map[string]*Release{}
+	for _, value := range releases {
+		// some releases might have equal titles, but from different artists
+		key := strings.ToLower(value.ArtistName) + strings.ToLower(value.Title)
+		if _, ok := result[key]; !ok {
+			value.Stores = []*ReleaseStore{}
+			result[key] = value
+		}
+
+		result[key].Stores = append(result[key].Stores, &ReleaseStore{
+			value.StoreName,
+			value.StoreID,
+		})
+
+		// some releases haven't a poster, but if another
+		// grouped release has a poster we should use it.
+		if result[key].Poster == "" && value.Poster != "" {
+			result[key].Poster = value.Poster
+		}
 	}
 
-	feed.Announced, err = mgr.GetReleasesForUserSince(userID, time.Now().UTC())
+	releases = []*Release{}
+	for _, release := range result {
+		releases = append(releases, release)
+	}
+	return releases
+}
+
+func (mgr *AppDatabaseMgr) GetUserFeedSince(userName string, since time.Time) (*Feed, error) {
+	var err error
+	now := time.Now().UTC()
+	released, err := mgr.GetReleasesForUserFilterByPeriod(userName, since, now)
 	if err != nil {
-		return nil, errors.Wrapf(err, "tried to get future-feed for user '%s'", userID)
+		return nil, errors.Wrapf(err, "tried to get feed for user '%s'", userName)
+	}
+
+	future, err := mgr.GetReleasesForUserSince(userName, time.Now().UTC())
+	if err != nil {
+		return nil, errors.Wrapf(err, "tried to get future-feed for user '%s'", userName)
+	}
+
+	feed := &Feed{
+		Date:      since,
+		Announced: groupReleases(future),
+		Released:  groupReleases(released),
 	}
 	return feed, nil
 }
