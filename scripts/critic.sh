@@ -6,4 +6,4 @@ if ! which gocritic > /dev/null; then
 fi
 
 echo "==> Checking gocritic..."
-gocritic check-project --enable=all --disable importShadow,longChain -withExperimental -withOpinionated .
+gocritic check-project --enable=all --disable importShadow,longChain,structLitKeyOrder -withExperimental -withOpinionated .
