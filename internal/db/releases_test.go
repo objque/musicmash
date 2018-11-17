@@ -256,9 +256,9 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier(t *testing.T
 	assert.NoError(t, err)
 	assert.Len(t, releases, 3)
 	want := map[string]string{"Skrillex": "30001", "Architects": "30002", "The Algorithm": "30003"}
-	for i := range releases {
-		assert.Equal(t, want[releases[i].ArtistName], releases[i].StoreID)
-		assert.Len(t, releases[i].Stores, 1)
+	for _, release := range releases {
+		assert.Equal(t, want[release.ArtistName], release.StoreID)
+		assert.Len(t, release.Stores, 1)
 	}
 }
 
