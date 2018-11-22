@@ -1,8 +1,6 @@
 package notifier
 
 import (
-	"time"
-
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/notifier/telegram"
@@ -39,18 +37,13 @@ func Notify() {
 			continue
 		}
 
-		// bug: method (FindNewReleasesForUser) receives albums that were founded after not truncated date
-		// and misses releases that were announced sometime ago.
-		//
-		// also, at now we don't known which albums we sent user earlier.
-		// so we may use workaround: notify only once per day (set count_of_skipped_hours=24 in the cfg for notifier)
-		// and provide truncated date in the FindNewReleasesForUser method.
-		releases, err := db.DbMgr.FindNewReleasesForUser(user, last.Date.Truncate(time.Hour*24))
+		releases, err := db.DbMgr.FindNewReleasesForUser(user, last.Date)
 		if err != nil {
 			log.Error(errors.Wrapf(err, "tried to get feed for '%s' for notify stage", user))
 			return
 		}
 
 		notify(*chat, releases)
+		db.DbMgr.MarkReleasesAsDelivered(user, releases)
 	}
 }
