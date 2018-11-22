@@ -5,9 +5,9 @@ import (
 )
 
 const (
-	ActionFetch  = "fetch"
-	ActionReFetch  = "refetch"
-	ActionNotify = "notify"
+	ActionFetch   = "fetch"
+	ActionReFetch = "refetch"
+	ActionNotify  = "notify"
 )
 
 type LastAction struct {

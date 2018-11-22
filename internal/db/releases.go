@@ -88,7 +88,7 @@ func (mgr *AppDatabaseMgr) FindNewReleasesForUser(userName string, date time.Tim
 	releases := []*Release{}
 	const query = "select artist_name from subscriptions where user_name = ?"
 	innerQuery := mgr.db.Raw(query, userName).QueryExpr()
-	where := mgr.db.Where("artist_name in (?) and created_at >= ?", innerQuery, date)
+	where := mgr.db.Where("artist_name in (?) and (created_at >= ? or released = ?)", innerQuery, date, date)
 	if err := where.Find(&releases).Error; err != nil {
 		return nil, err
 	}
