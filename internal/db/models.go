@@ -13,6 +13,7 @@ var tables = []interface{}{
 	&LastAction{},
 	&Subscription{},
 	&Chat{},
+	&Notification{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -43,6 +44,10 @@ func CreateAll(db *gorm.DB) error {
 		},
 		Chat{}: {
 			{"user_name", "users(name)"},
+		},
+		Notification{}: {
+			{"user_name", "users(name)"},
+			{"release_id", "releases(id)"},
 		},
 	}
 
