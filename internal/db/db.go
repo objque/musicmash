@@ -20,6 +20,7 @@ type DataMgr interface {
 	LastActionMgr
 	ChatMgr
 	FeedMgr
+	NotificationMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr

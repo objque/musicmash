@@ -280,6 +280,160 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier(t *testing.T
 	}
 }
 
+func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered_WithAnotherConditions(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	const (
+		day      = time.Hour * 24
+		month    = day * 30
+		userName = "objque@me"
+	)
+	now := time.Now().UTC()
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(userName, []string{
+		"Skrillex",
+		"S.P.Y",
+		"Architects",
+		"Wildways",
+		"The Algorithm",
+	}))
+	//
+	// shouldn't be in the output
+	//
+	// the oldest album that was released
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "Wildways",
+		StoreName:  "itunes",
+		StoreID:    "10000",
+		CreatedAt:  now.Add(-month * 3),
+		Released:   now.Add(-month * 2),
+	}))
+	// announced album that was found many time ago
+	// because it was added in the past and already was notified
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "S.P.Y",
+		StoreName:  "itunes",
+		StoreID:    "10002",
+		CreatedAt:  now.Add(-month * 3),
+		Released:   now.Add(month),
+	}))
+	// announced album that was found today
+	// but user not subscribed for this artist
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "Tom Odell",
+		StoreName:  "itunes",
+		StoreID:    "10502",
+		CreatedAt:  now,
+		Released:   now.Truncate(time.Hour * 24).Add(month),
+	}))
+	// album that was found today and released today
+	// but user not subscribed for this artist
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "RITA ORA",
+		StoreName:  "itunes",
+		StoreID:    "10503",
+		CreatedAt:  now,
+		Released:   now.Truncate(time.Hour * 24),
+	}))
+	// album that was found today and released today
+	// but user already got notification
+	release := Release{
+		ArtistName: "Wildways",
+		StoreName:  "itunes",
+		StoreID:    "10723",
+		CreatedAt:  now,
+		Released:   now.Truncate(time.Hour * 24),
+	}
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&release))
+	DbMgr.MarkReleasesAsDelivered(userName, []*Release{&release})
+	//
+	// must be in the output
+	//
+	// album that was announced too many time ago and released today
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "Skrillex",
+		StoreName:  "itunes",
+		StoreID:    "30001",
+		CreatedAt:  now.Add(-month * 3),
+		Released:   now.Truncate(time.Hour * 24),
+	}))
+	// announced album that was found today
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "Architects",
+		StoreName:  "itunes",
+		StoreID:    "30002",
+		CreatedAt:  now,
+		Released:   now.Add(month),
+	}))
+	// album that was found today and released today
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "The Algorithm",
+		StoreName:  "itunes",
+		StoreID:    "30003",
+		CreatedAt:  now,
+		Released:   now.Truncate(time.Hour * 24),
+	}))
+
+	// action
+	releases, err := DbMgr.FindNewReleasesForUser(userName, now.Truncate(time.Hour*24))
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, releases, 3)
+	want := map[string]string{"Skrillex": "30001", "Architects": "30002", "The Algorithm": "30003"}
+	for _, release := range releases {
+		assert.Equal(t, want[release.ArtistName], release.StoreID)
+		assert.Len(t, release.Stores, 1)
+	}
+}
+
+func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	const (
+		day      = time.Hour * 24
+		month    = day * 30
+		userName = "objque@me"
+	)
+	now := time.Now().UTC()
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(userName, []string{
+		"Architects",
+		"The Algorithm",
+	}))
+	architectsRelease := Release{
+		ArtistName: "Architects",
+		StoreName:  "itunes",
+		StoreID:    "30002",
+		CreatedAt:  now,
+		// announced album that was found today
+		Released: now.Add(month),
+	}
+	algorithmRelease := Release{
+		ArtistName: "The Algorithm",
+		StoreName:  "itunes",
+		StoreID:    "30003",
+		CreatedAt:  now,
+		// album that was found today and released today
+		Released: now.Truncate(time.Hour * 24),
+	}
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&architectsRelease))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&algorithmRelease))
+	releases, err := DbMgr.FindNewReleasesForUser(userName, now.Truncate(time.Hour*24))
+	assert.NoError(t, err)
+	assert.Len(t, releases, 2)
+
+	// action
+	DbMgr.MarkReleasesAsDelivered(userName, []*Release{&architectsRelease, &algorithmRelease})
+	releases, err = DbMgr.FindNewReleasesForUser(userName, now.Truncate(time.Hour*24))
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, releases, 0)
+}
+
 func TestDB_Releases_FindReleases(t *testing.T) {
 	setup()
 	defer teardown()
