@@ -221,6 +221,24 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier(t *testing.T
 		CreatedAt:  now.Add(-month * 3),
 		Released:   now.Add(month),
 	}))
+	// announced album that was found today
+	// but user not subscribed for this artist
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "Tom Odell",
+		StoreName:  "itunes",
+		StoreID:    "10502",
+		CreatedAt:  now,
+		Released:   now.Truncate(time.Hour * 24).Add(month),
+	}))
+	// album that was found today and released today
+	// but user not subscribed for this artist
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		ArtistName: "RITA ORA",
+		StoreName:  "itunes",
+		StoreID:    "10503",
+		CreatedAt:  now,
+		Released:   now.Truncate(time.Hour * 24),
+	}))
 	//
 	// must be in the output
 	//
