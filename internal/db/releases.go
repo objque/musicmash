@@ -83,13 +83,15 @@ func (mgr *AppDatabaseMgr) FindNewReleases(date time.Time) ([]*Release, error) {
 }
 
 func (mgr *AppDatabaseMgr) FindNewReleasesForUser(userName string, date time.Time) ([]*Release, error) {
-	// inner query: select artist_name from subscriptions where user_name = XXX
-	// select * from releases where artist_name in (INNER) and and created_at >= ?
 	releases := []*Release{}
-	const query = "select artist_name from subscriptions where user_name = ?"
-	innerQuery := mgr.db.Raw(query, userName).QueryExpr()
-	notificationsInnerQuery := mgr.db.Raw("select release_id from notifications where user_name = ?", userName).QueryExpr()
-	where := mgr.db.Where("artist_name in (?) and (created_at >= ? or released = ?) and releases.id not in (?)", innerQuery, date, date.Truncate(time.Hour*24), notificationsInnerQuery)
+	const query = "" +
+		// releases from artists that user follow
+		"artist_name IN (SELECT artist_name FROM subscriptions WHERE user_name = ?) " +
+		// announced and fresh releases
+		"AND (created_at >= ? OR released = ?) " +
+		// not delivered releases
+		"AND releases.id NOT IN (SELECT release_id FROM notifications WHERE user_name = ?)"
+	where := mgr.db.Where(query, userName, date, date.Truncate(time.Hour*24), userName)
 	if err := where.Find(&releases).Error; err != nil {
 		return nil, err
 	}
