@@ -15,10 +15,10 @@ func newDate(year int, month time.Month, day int) time.Time {
 func TestDeezerTime_ParseLayout(t *testing.T) {
 	// arrange
 	input := map[string]time.Time{
-		`"2018-11-14"`: newDate(2018, 11, 14),
-		`"2018-11"`:    newDate(2018, 11, 01),
-		`"2018"`:       newDate(2018, 01, 01),
-		`"0000-00-00"`: newDate(0001, 01, 01),
+		`"2018-11-14"`: newDate(2018, time.November, 14),
+		`"2018-11"`:    newDate(2018, time.November, 01),
+		`"2018"`:       newDate(2018, time.January, 01),
+		`"0000-00-00"`: newDate(0001, time.January, 01),
 	}
 
 	for layout, want := range input {
