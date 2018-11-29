@@ -15,7 +15,7 @@ type Release struct {
 	ID         uint64          `json:"-"`
 	CreatedAt  time.Time       `json:"-"`
 	ArtistName string          `json:"artist_name"`
-	Title      string          `json:"title"`
+	Title      string          `json:"title" gorm:"size:1000"`
 	Poster     string          `json:"poster"`
 	Released   time.Time       `gorm:"type:datetime" json:"released"`
 	StoreName  string          `gorm:"unique_index:idx_rel_store_name_store_id" json:"-"`
