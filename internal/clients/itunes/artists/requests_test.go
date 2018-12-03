@@ -6,6 +6,7 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -50,10 +51,10 @@ func TestClient_SearchArtist(t *testing.T) {
 	})
 
 	// action
-	art, err := SearchArtist(provider, "Architects")
+	art, err := SearchArtist(provider, testutil.ArtistArchitects)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Equal(t, "182821355", art.ID)
-	assert.Equal(t, "Architects", art.Attributes.Name)
+	assert.Equal(t, testutil.ArtistArchitects, art.Attributes.Name)
 }

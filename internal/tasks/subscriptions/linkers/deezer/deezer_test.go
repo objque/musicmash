@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,7 +13,7 @@ func Test_DeezerLinker_Reserve(t *testing.T) {
 	task := NewLinker("http://url.mock")
 
 	// action
-	task.reserveArtists([]string{"skrillex", "nero"})
+	task.reserveArtists([]string{testutil.ArtistSkrillex, testutil.ArtistArchitects})
 
 	// assert
 	assert.Len(t, task.reservedArtists, 2)
@@ -21,7 +22,7 @@ func Test_DeezerLinker_Reserve(t *testing.T) {
 func Test_DeezerLinker_Free(t *testing.T) {
 	// arrange
 	task := NewLinker("http://url.mock")
-	artists := []string{"skrillex", "nero"}
+	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects}
 	task.reserveArtists(artists)
 	assert.Len(t, task.reservedArtists, 2)
 
@@ -38,9 +39,9 @@ func Test_DeezerLinker_Search_AlreadyExists(t *testing.T) {
 
 	// arrange
 	task := NewLinker("http://url.mock")
-	artists := []string{"skrillex", "nero"}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("skrillex", "deezer", "xyz"))
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("nero", "deezer", "zyx"))
+	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects}
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreDeezer, "xyz"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreDeezer, "zyx"))
 
 	// action
 	task.SearchArtists(artists)
@@ -77,10 +78,10 @@ func Test_DeezerLinker_Search(t *testing.T) {
 	})
 
 	// action
-	task.SearchArtists([]string{"architects"})
+	task.SearchArtists([]string{testutil.ArtistArchitects})
 
 	// assert
-	artists, err := db.DbMgr.GetArtistsForStore("deezer")
+	artists, err := db.DbMgr.GetArtistsForStore(testutil.StoreDeezer)
 	assert.NoError(t, err)
 	assert.Len(t, artists, 1)
 }

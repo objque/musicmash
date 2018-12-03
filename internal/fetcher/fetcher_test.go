@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -13,8 +14,8 @@ func TestFetch_FetchAndSave(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", "yandex", "10053"))
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", "itunes", "182821355"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreYandex, "10053"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreApple, "182821355"))
 	// yandex API mocks
 	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"yqandexuid": "1234276871451297001"}`))

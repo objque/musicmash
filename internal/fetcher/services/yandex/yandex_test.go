@@ -5,10 +5,12 @@ import (
 	"net/http/httptest"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/yandex"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -46,7 +48,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 		w.Write([]byte(`{
     "artist": {
         "id": 817678,
-        "name": "Gorgon City"
+        "name": "Skrillex"
     },
     "albums": [{
         "id": 5647716,
@@ -62,7 +64,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 }`))
 	})
 	f := Fetcher{API: yandex.New(server.URL), FetchWorkers: 1}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Gorgon City", f.GetStoreName(), "817678"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, f.GetStoreName(), "817678"))
 
 	// action
 	wg := sync.WaitGroup{}
@@ -76,7 +78,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "5647716", releases[0].StoreID)
 	assert.Equal(t, 18, releases[0].Released.Day())
-	assert.Equal(t, "July", releases[0].Released.Month().String())
+	assert.Equal(t, time.July, releases[0].Released.Month())
 	assert.Equal(t, 2025, releases[0].Released.Year())
 }
 
@@ -93,7 +95,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 		w.Write([]byte(`{
     "artist": {
         "id": 817678,
-        "name": "Gorgon City"
+        "name": "Skrillex"
     },
     "albums": [{
         "id": 5647716,
@@ -109,7 +111,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 }`))
 	})
 	f := Fetcher{API: yandex.New(server.URL), FetchWorkers: 1}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Gorgon City", f.GetStoreName(), "817678"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, f.GetStoreName(), "817678"))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "5647716", StoreName: f.GetStoreName()}))
 
 	// action
@@ -125,6 +127,6 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	assert.Equal(t, "5647716", releases[0].StoreID)
 	// NOTE (m.kalinin): mock was created with zero date
 	assert.Equal(t, 1, releases[0].Released.Day())
-	assert.Equal(t, "January", releases[0].Released.Month().String())
+	assert.Equal(t, time.January, releases[0].Released.Month())
 	assert.Equal(t, 1, releases[0].Released.Year())
 }

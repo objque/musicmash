@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,14 +17,14 @@ func TestAPI_Users_Create(t *testing.T) {
 	defer teardown()
 
 	// action
-	body := CreateUserScheme{UserName: "objque@me"}
+	body := CreateUserScheme{UserName: testutil.UserObjque}
 	buffer, _ := json.Marshal(&body)
 	resp, err := http.Post(fmt.Sprintf("%s/users", server.URL), "application/json", bytes.NewReader(buffer))
 
 	// assert
 	assert.NoError(t, err)
 	assert.Equal(t, resp.StatusCode, http.StatusCreated)
-	_, err = db.DbMgr.FindUserByName("objque@me")
+	_, err = db.DbMgr.FindUserByName(testutil.UserObjque)
 	assert.NoError(t, err)
 }
 
@@ -46,10 +47,10 @@ func TestAPI_Users_Create_AlreadyExists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureUserExists("objque@me"))
+	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
 
 	// action
-	body := CreateUserScheme{UserName: "objque@me"}
+	body := CreateUserScheme{UserName: testutil.UserObjque}
 	buffer, _ := json.Marshal(&body)
 	resp, err := http.Post(fmt.Sprintf("%s/users", server.URL), "application/json", bytes.NewReader(buffer))
 

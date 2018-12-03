@@ -5,10 +5,12 @@ import (
 	"net/http/httptest"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/deezer"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -41,7 +43,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 
 	// arrange
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", f.GetStoreName(), "182821355"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), "182821355"))
 	mux.HandleFunc("/artist/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
   "data": [
@@ -95,7 +97,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 
 	// arrange
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("Architects", f.GetStoreName(), "182821355"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), "182821355"))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "73607432", StoreName: f.GetStoreName()}))
 	mux.HandleFunc("/artist/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
@@ -141,7 +143,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	assert.Len(t, releases, 1)
 	assert.Equal(t, "73607432", releases[0].StoreID)
 	assert.Equal(t, 1, releases[0].Released.Day())
-	assert.Equal(t, "January", releases[0].Released.Month().String())
+	assert.Equal(t, time.January, releases[0].Released.Month())
 	assert.Equal(t, 1, releases[0].Released.Year())
 }
 
@@ -152,7 +154,7 @@ func TestFetcher_ReFetchAndSave(t *testing.T) {
 	// arrange
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "76263542", StoreName: f.GetStoreName()}))
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "100054", Poster: "http://pic", StoreName: f.GetStoreName()}))
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "100054", Poster: testutil.PosterSimple, StoreName: f.GetStoreName()}))
 	mux.HandleFunc("/album/76263542", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
   "id": 76263542,
@@ -172,6 +174,6 @@ func TestFetcher_ReFetchAndSave(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, releases, 2)
 	assert.Equal(t, "https://e-cdns-images.dzcdn.net/1.jpeg", releases[0].Poster)
-	assert.Equal(t, "http://pic", releases[1].Poster)
+	assert.Equal(t, testutil.PosterSimple, releases[1].Poster)
 
 }

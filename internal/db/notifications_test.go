@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,8 +15,8 @@ func TestDB_Notifications_MarkAndGet(t *testing.T) {
 	// arrange
 	now := time.Now().UTC()
 	release := Release{
-		ArtistName: "Architects",
-		StoreName:  "itunes",
+		ArtistName: testutil.ArtistArchitects,
+		StoreName:  testutil.StoreApple,
 		StoreID:    "30002",
 		CreatedAt:  now,
 		Released:   now.Truncate(time.Hour * 24),
@@ -23,10 +24,10 @@ func TestDB_Notifications_MarkAndGet(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&release))
 
 	// action
-	DbMgr.MarkReleasesAsDelivered("objque@me", []*Release{&release})
+	DbMgr.MarkReleasesAsDelivered(testutil.UserObjque, []*Release{&release})
 
 	// assert
-	notifications, err := DbMgr.GetNotificationsForUser("objque@me")
+	notifications, err := DbMgr.GetNotificationsForUser(testutil.UserObjque)
 	assert.NoError(t, err)
 	assert.Len(t, notifications, 1)
 }

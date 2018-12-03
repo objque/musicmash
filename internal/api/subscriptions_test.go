@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,7 +17,7 @@ func TestAPI_SubscribeUser_UserNotFound(t *testing.T) {
 	defer teardown()
 
 	// action
-	resp, err := http.Post(fmt.Sprintf("%s/objque/subscriptions", server.URL), "application/json", nil)
+	resp, err := http.Post(fmt.Sprintf("%s/%s/subscriptions", server.URL, testutil.UserObjque), "application/json", nil)
 
 	// assert
 	assert.NoError(t, err)
@@ -28,31 +29,31 @@ func TestAPI_UnsubscribeUser(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureUserExists("objque"))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("objque", "Skrillex"))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("objque", "Calvin Risk"))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("objque", "AC/DC"))
-	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists("mike", "AC/DC"))
+	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistSkrillex))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistWildways))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistArchitects))
+	assert.NoError(t, db.DbMgr.EnsureSubscriptionExists(testutil.UserBot, testutil.ArtistArchitects))
 
 	// action
-	artists := []string{"Calvin Risk"}
+	artists := []string{testutil.ArtistWildways}
 	buffer, _ := json.Marshal(&artists)
-	resp, err := httpDelete(fmt.Sprintf("%s/objque/subscriptions", server.URL), bytes.NewReader(buffer))
+	resp, err := httpDelete(fmt.Sprintf("%s/%s/subscriptions", server.URL, testutil.UserObjque), bytes.NewReader(buffer))
 
 	// assert
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 
-	subs, err := db.DbMgr.FindAllUserSubscriptions("mike")
+	subs, err := db.DbMgr.FindAllUserSubscriptions(testutil.UserBot)
 	assert.NoError(t, err)
 	assert.Len(t, subs, 1)
-	assert.Equal(t, "AC/DC", subs[0].ArtistName)
+	assert.Equal(t, testutil.ArtistArchitects, subs[0].ArtistName)
 
-	subs, err = db.DbMgr.FindAllUserSubscriptions("objque")
+	subs, err = db.DbMgr.FindAllUserSubscriptions(testutil.UserObjque)
 	assert.NoError(t, err)
 	assert.Len(t, subs, 2)
-	assert.Equal(t, "AC/DC", subs[0].ArtistName)
-	assert.Equal(t, "Skrillex", subs[1].ArtistName)
+	assert.Equal(t, testutil.ArtistArchitects, subs[0].ArtistName)
+	assert.Equal(t, testutil.ArtistSkrillex, subs[1].ArtistName)
 }
 
 func TestAPI_UnsubscribeUser_UserNotFound(t *testing.T) {
@@ -60,7 +61,7 @@ func TestAPI_UnsubscribeUser_UserNotFound(t *testing.T) {
 	defer teardown()
 
 	// action
-	resp, err := httpDelete(fmt.Sprintf("%s/objque/subscriptions", server.URL), nil)
+	resp, err := httpDelete(fmt.Sprintf("%s/%s/subscriptions", server.URL, testutil.UserObjque), nil)
 
 	// assert
 	assert.NoError(t, err)
