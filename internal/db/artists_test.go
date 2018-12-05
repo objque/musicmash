@@ -38,7 +38,7 @@ func TestDB_ArtistStoreInfo_EnsureArtistExistsInStore(t *testing.T) {
 	defer teardown()
 
 	// action
-	err := DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreDeezer, "xyz")
+	err := DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreDeezer, testutil.StoreIDA)
 
 	// assert
 	assert.NoError(t, err)
@@ -52,8 +52,8 @@ func TestDB_ArtistStoreInfo_GetArtistFromStore(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreApple, "123"))
-	assert.NoError(t, DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreApple, "345"))
+	assert.NoError(t, DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreApple, testutil.StoreIDA))
+	assert.NoError(t, DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreApple, testutil.StoreIDB))
 
 	// action
 	artists, err := DbMgr.GetArtistFromStore(testutil.ArtistSkrillex, testutil.StoreApple)

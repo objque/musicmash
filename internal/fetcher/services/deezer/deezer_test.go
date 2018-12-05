@@ -1,6 +1,7 @@
 package deezer
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -43,9 +44,10 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 
 	// arrange
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), "182821355"))
-	mux.HandleFunc("/artist/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
+	url := fmt.Sprintf("/artist/%s/albums", testutil.StoreIDA)
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "id": 1084871,
@@ -56,8 +58,8 @@ func TestFetcher_FetchAndSave(t *testing.T) {
       "type": "album"
     },
     {
-      "id": 73607432,
-      "title": "Royal Beggars (Single)",
+      "id": %d,
+      "title": "%s",
       "cover_big": "https://cdns-images.dzcdn.net/images/cover/92cd4cac9db60794c7f22d2a84e26a29/500x500-000000-80-0-0.jpg",
       "release_date": "2020-10-03",
       "explicit_lyrics": false,
@@ -73,7 +75,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
     }
   ],
   "total": 3
-}`))
+}`, testutil.StoreIDQ, testutil.ReleaseArchitectsHollyHell)))
 	})
 
 	// action
@@ -86,9 +88,9 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
-	assert.Equal(t, "73607432", releases[0].StoreID)
-	assert.Equal(t, "Royal Beggars (Single)", releases[0].Title)
-	assert.Equal(t, "2020-10-03", releases[0].Released.Format("2006-01-02"))
+	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
+	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, releases[0].Title)
+	assert.Equal(t, "2020-10-03", releases[0].Released.Format(testutil.DateYYYYHHMM))
 }
 
 func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
@@ -96,11 +98,12 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	url := fmt.Sprintf("/artist/%s/albums", testutil.StoreIDA)
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), "182821355"))
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "73607432", StoreName: f.GetStoreName()}))
-	mux.HandleFunc("/artist/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: testutil.StoreIDA, StoreName: f.GetStoreName()}))
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "id": 1084871,
@@ -111,7 +114,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
       "type": "album"
     },
     {
-      "id": 73607432,
+      "id": %s,
       "title": "Royal Beggars (Single)",
       "cover_big": "https://cdns-images.dzcdn.net/images/cover/92cd4cac9db60794c7f22d2a84e26a29/500x500-000000-80-0-0.jpg",
       "release_date": "2020-10-03",
@@ -128,7 +131,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
     }
   ],
   "total": 3
-}`))
+}`, testutil.StoreIDA)))
 	})
 
 	// action
@@ -141,7 +144,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
-	assert.Equal(t, "73607432", releases[0].StoreID)
+	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
 	assert.Equal(t, 1, releases[0].Released.Day())
 	assert.Equal(t, time.January, releases[0].Released.Month())
 	assert.Equal(t, 1, releases[0].Released.Year())
@@ -152,15 +155,16 @@ func TestFetcher_ReFetchAndSave(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	url := fmt.Sprintf("/album/%s", testutil.StoreIDA)
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "76263542", StoreName: f.GetStoreName()}))
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "100054", Poster: testutil.PosterSimple, StoreName: f.GetStoreName()}))
-	mux.HandleFunc("/album/76263542", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: testutil.StoreIDA, StoreName: f.GetStoreName()}))
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: testutil.StoreIDB, Poster: testutil.PosterSimple, StoreName: f.GetStoreName()}))
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf(`{
   "id": 76263542,
   "title": "Pandemonium 2.0",
-  "cover_big": "https://e-cdns-images.dzcdn.net/1.jpeg"
-}`))
+  "cover_big": "%s"
+}`, testutil.PosterSimple)))
 	})
 
 	// action
@@ -173,7 +177,7 @@ func TestFetcher_ReFetchAndSave(t *testing.T) {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 2)
-	assert.Equal(t, "https://e-cdns-images.dzcdn.net/1.jpeg", releases[0].Poster)
+	assert.Equal(t, testutil.PosterSimple, releases[0].Poster)
 	assert.Equal(t, testutil.PosterSimple, releases[1].Poster)
 
 }

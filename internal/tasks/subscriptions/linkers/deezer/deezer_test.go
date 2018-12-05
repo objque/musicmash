@@ -40,8 +40,8 @@ func Test_DeezerLinker_Search_AlreadyExists(t *testing.T) {
 	// arrange
 	task := NewLinker("http://url.mock")
 	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreDeezer, "xyz"))
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreDeezer, "zyx"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreDeezer, testutil.StoreIDA))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreDeezer, testutil.StoreIDB))
 
 	// action
 	task.SearchArtists(artists)

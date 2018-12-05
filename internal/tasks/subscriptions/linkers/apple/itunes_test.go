@@ -10,7 +10,7 @@ import (
 )
 
 func Test_AppleLinker_Reserve(t *testing.T) {
-	task := NewLinker("http://url.mock", "xxx")
+	task := NewLinker("http://url.mock", testutil.TokenSimple)
 
 	// action
 	task.reserveArtists([]string{testutil.ArtistSkrillex, testutil.ArtistArchitects})
@@ -21,7 +21,7 @@ func Test_AppleLinker_Reserve(t *testing.T) {
 
 func Test_AppleLinker_Free(t *testing.T) {
 	// arrange
-	task := NewLinker("http://url.mock", "xxx")
+	task := NewLinker("http://url.mock", testutil.TokenSimple)
 	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects}
 	task.reserveArtists(artists)
 	assert.Len(t, task.reservedArtists, 2)
@@ -38,10 +38,10 @@ func Test_AppleLinker_Search_AlreadyExists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	task := NewLinker("http://url.mock", "xxx")
+	task := NewLinker("http://url.mock", testutil.TokenSimple)
 	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreApple, "xyz"))
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreApple, "zyx"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreApple, testutil.StoreIDA))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreApple, testutil.StoreIDB))
 
 	// action
 	task.SearchArtists(artists)
@@ -52,7 +52,7 @@ func Test_AppleLinker_Search(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	task := NewLinker(server.URL, "xxx")
+	task := NewLinker(server.URL, testutil.TokenSimple)
 	mux.HandleFunc("/v1/catalog/us/search", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`
 {

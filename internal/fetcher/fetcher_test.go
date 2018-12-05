@@ -1,6 +1,7 @@
 package fetcher
 
 import (
+	"fmt"
 	"net/http"
 	"testing"
 
@@ -14,16 +15,16 @@ func TestFetch_FetchAndSave(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreYandex, "10053"))
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreApple, "182821355"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreYandex, testutil.StoreIDB))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreApple, testutil.StoreIDA))
 	// yandex API mocks
 	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{"yqandexuid": "1234276871451297001"}`))
 	})
 	mux.HandleFunc("/handlers/artist.jsx", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
+		w.Write([]byte(fmt.Sprintf(`{
    "artist": {
-       "id": 10053,
+       "id": %d,
        "name": "Architects"
    },
    "albums": [{
@@ -37,10 +38,11 @@ func TestFetch_FetchAndSave(t *testing.T) {
        "year": 2017,
        "releaseDate": "2012-07-13T00:00:00+03:00"
    }]
-}`))
+}`, testutil.StoreIDW)))
 	})
 	// itunes API mocks
-	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
+	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
   "data": [
     {

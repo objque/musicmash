@@ -34,14 +34,14 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSPY,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
 	assert.NoError(t, DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
@@ -66,14 +66,14 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod_WithFuture(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSPY,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
 	assert.NoError(t, DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
@@ -98,14 +98,14 @@ func TestDB_Releases_GetReleasesForUserSince(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSPY,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
 	assert.NoError(t, DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
@@ -127,7 +127,7 @@ func TestDB_Releases_FindReleasesWithFilter(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 		Released:   time.Now().UTC().Add(time.Hour * 48),
 		CreatedAt:  time.Now().UTC().Add(-time.Hour * 48),
 	}))
@@ -135,7 +135,7 @@ func TestDB_Releases_FindReleasesWithFilter(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSPY,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 		Released:   time.Now().UTC().Add(time.Hour * 48),
 		CreatedAt:  date,
 	}))
@@ -158,14 +158,14 @@ func TestDB_Releases_FindNewReleasesForUser(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 		Released:   time.Now().UTC().Add(time.Hour * 48),
 		CreatedAt:  now.Add(-time.Hour * 48),
 	}))
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSPY,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 		Released:   time.Now().UTC().Add(time.Hour * 48),
 		CreatedAt:  now.Add(time.Hour * 24),
 	}))
@@ -267,9 +267,9 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier(t *testing.T
 	assert.NoError(t, err)
 	assert.Len(t, releases, 3)
 	want := map[string]string{
-		testutil.ArtistSkrillex: "30001",
+		testutil.ArtistSkrillex:   "30001",
 		testutil.ArtistArchitects: "30002",
-		testutil.ArtistAlgorithm: "30003",
+		testutil.ArtistAlgorithm:  "30003",
 	}
 	for _, release := range releases {
 		assert.Equal(t, want[release.ArtistName], release.StoreID)
@@ -374,9 +374,9 @@ func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered_WithAnotherC
 	assert.NoError(t, err)
 	assert.Len(t, releases, 3)
 	want := map[string]string{
-		testutil.ArtistSkrillex: "30001",
+		testutil.ArtistSkrillex:   "30001",
 		testutil.ArtistArchitects: "30002",
-		testutil.ArtistAlgorithm: "30003",
+		testutil.ArtistAlgorithm:  "30003",
 	}
 	for _, release := range releases {
 		assert.Equal(t, want[release.ArtistName], release.StoreID)
@@ -433,13 +433,13 @@ func TestDB_Releases_FindReleases(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 		Poster:     testutil.PosterSimple,
 	}))
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSPY,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 	}))
 
 	// action
@@ -459,13 +459,13 @@ func TestDB_Releases_UpdateRelease(t *testing.T) {
 	release := Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 	}
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&release))
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSPY,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 	}))
 
 	// action
@@ -477,10 +477,10 @@ func TestDB_Releases_UpdateRelease(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, testutil.ArtistSkrillex, releases[0].ArtistName)
 	assert.Equal(t, testutil.StoreApple, releases[0].StoreName)
-	assert.Equal(t, "182821355", releases[0].StoreID)
+	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
 	assert.Equal(t, testutil.PosterSimple, releases[0].Poster)
 	// another release must not change
 	assert.Equal(t, testutil.ArtistSPY, releases[1].ArtistName)
 	assert.Equal(t, testutil.StoreApple, releases[1].StoreName)
-	assert.Equal(t, "213551828", releases[1].StoreID)
+	assert.Equal(t, testutil.StoreIDB, releases[1].StoreID)
 }

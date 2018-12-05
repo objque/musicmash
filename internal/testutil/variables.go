@@ -36,6 +36,15 @@ const (
 	StoreSpotify = "spotify"
 )
 
+const (
+	StoreIDA = "182821355"
+	StoreIDB = "213551828"
+	StoreIDC = "518228211"
+
+	StoreIDQ = 182821355
+	StoreIDW = 213551828
+)
+
 // Posters
 const (
 	PosterSimple = "http://pic.jpeg"
@@ -50,4 +59,9 @@ const (
 // Time layouts
 const (
 	DateYYYYHHMM = "2006-01-02"
+)
+
+// Tokens and other test credentials
+const (
+	TokenSimple = "82001a6688a941dea1d35f60a7a0f8c3"
 )

@@ -1,6 +1,7 @@
 package itunes
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"sync"
@@ -29,7 +30,7 @@ func setup() {
 			CountOfSkippedHours: 8,
 		},
 	}
-	provider = itunes.NewProvider(server.URL, "xxx")
+	provider = itunes.NewProvider(server.URL, testutil.TokenSimple)
 }
 
 func teardown() {
@@ -43,9 +44,10 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 
 	// arrange
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), "182821355"))
-	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
+	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "attributes": {
@@ -56,7 +58,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
         "name": "Daybreaker (Deluxe Edition)",
         "releaseDate": "2025-07-18"
       },
-      "id": "158365636"
+      "id": "%s"
     },
     {
       "attributes": {
@@ -67,7 +69,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
       "id": "1045635474"
     }
   ]
-}`))
+}`, testutil.StoreIDA)))
 	})
 
 	// action
@@ -80,7 +82,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
-	assert.Equal(t, "158365636", releases[0].StoreID)
+	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
 	assert.Equal(t, 18, releases[0].Released.Day())
 	assert.Equal(t, time.July, releases[0].Released.Month())
 	assert.Equal(t, 2025, releases[0].Released.Year())
@@ -92,10 +94,11 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 
 	// arrange
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), "182821355"))
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: "158365636", StoreName: f.GetStoreName()}))
-	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
+	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: testutil.StoreIDB, StoreName: f.GetStoreName()}))
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "attributes": {
@@ -106,7 +109,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
         "name": "Daybreaker (Deluxe Edition)",
         "releaseDate": "2025-07-18"
       },
-      "id": "158365636"
+      "id": "%s"
     },
     {
       "attributes": {
@@ -117,7 +120,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
       "id": "1045635474"
     }
   ]
-}`))
+}`, testutil.StoreIDB)))
 	})
 
 	// action
@@ -130,7 +133,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
-	assert.Equal(t, "158365636", releases[0].StoreID)
+	assert.Equal(t, testutil.StoreIDB, releases[0].StoreID)
 	assert.Equal(t, 1, releases[0].Released.Day())
 	assert.Equal(t, time.January, releases[0].Released.Month())
 	assert.Equal(t, 1, releases[0].Released.Year())

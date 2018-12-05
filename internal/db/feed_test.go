@@ -18,25 +18,25 @@ func TestDB_Feed_GetUserFeedSince(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
-		ArtistName: testutil.ArtistSPY,
-		Title:      "Pizza",
+		ArtistName: testutil.ArtistWildways,
+		Title:      testutil.ReleaseWildwaysTheX,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
-		ArtistName: testutil.ArtistSPY,
-		Title:      "Pizza",
+		ArtistName: testutil.ArtistWildways,
+		Title:      testutil.ReleaseWildwaysTheX,
 		StoreName:  testutil.StoreYandex,
-		StoreID:    "1067",
+		StoreID:    testutil.StoreIDC,
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
-	assert.NoError(t, DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistWildways}))
 
 	// action
 	since := time.Now().UTC().Add(-time.Hour * 48)
@@ -47,7 +47,7 @@ func TestDB_Feed_GetUserFeedSince(t *testing.T) {
 	assert.Len(t, feed.Announced, 1)
 	assert.Len(t, feed.Released, 1)
 	assert.Len(t, feed.Announced[0].Stores, 2)
-	assert.Equal(t, testutil.ArtistSPY, feed.Announced[0].ArtistName)
+	assert.Equal(t, testutil.ArtistWildways, feed.Announced[0].ArtistName)
 	assert.Equal(t, testutil.ArtistSkrillex, feed.Released[0].ArtistName)
 }
 
