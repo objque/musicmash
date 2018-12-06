@@ -12,8 +12,8 @@ import (
 )
 
 func getUserFeed(w http.ResponseWriter, r *http.Request) {
-	UserName := chi.URLParam(r, "user_name")
-	if err := validators.IsUserExits(w, UserName); err != nil {
+	userName := chi.URLParam(r, "user_name")
+	if err := validators.IsUserExits(w, userName); err != nil {
 		return
 	}
 
@@ -28,7 +28,7 @@ func getUserFeed(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	feed, err := db.DbMgr.GetUserFeedSince(UserName, weekAgo)
+	feed, err := db.DbMgr.GetUserFeedSince(userName, weekAgo)
 	if err != nil {
 		log.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
