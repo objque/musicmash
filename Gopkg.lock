@@ -37,6 +37,14 @@
   version = "v1.4.0"
 
 [[projects]]
+  digest = "1:2b418e5e28a68ccab236a22f344140cebab2d90c3a4a3f5593ecbb82cfe0e5ce"
+  name = "github.com/gorilla/feeds"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "6edcbcd2d57fd0bbd7f39947a593ed0c06648388"
+  version = "v1.1.0"
+
+[[projects]]
   digest = "1:e1d9005e1e5251df2de49f9544d844f00c25b5887b6b5bab5a9999d0283e33c1"
   name = "github.com/jinzhu/gorm"
   packages = [
@@ -176,6 +184,7 @@
     "github.com/go-chi/chi",
     "github.com/go-chi/chi/middleware",
     "github.com/go-chi/render",
+    "github.com/gorilla/feeds",
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/mysql",
     "github.com/jinzhu/gorm/dialects/sqlite",
