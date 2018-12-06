@@ -13,7 +13,7 @@ func TestFormatter_ToRss(t *testing.T) {
 	const title = "Fresh releases from musicmash.me for objque@me"
 	const link = "https://musicmash.me/news.xml"
 	const desc = "Fresh releases from your artists"
-	formatter := Formatter{Title: title, Link: link, Description: desc}
+	formatter := FeedFormatter{Title: title, Link: link, Description: desc}
 	releases := []*db.Release{
 		{StoreName: testutil.StoreDeezer, Title: testutil.ReleaseArchitectsHollyHell, ArtistName: testutil.ArtistArchitects},
 		{StoreName: testutil.StoreApple, Title: testutil.ReleaseSkrillexRecess, ArtistName: testutil.ArtistSkrillex},

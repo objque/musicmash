@@ -2,11 +2,14 @@ package api
 
 import (
 	"fmt"
+	"io/ioutil"
 	"net/http"
+	"strings"
 	"testing"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/feed"
 	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
@@ -16,6 +19,7 @@ func TestAPI_Feed_Get(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	feed.Formatter = &feed.FeedFormatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSkrillex,
@@ -37,6 +41,38 @@ func TestAPI_Feed_Get(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
+}
+
+func TestAPI_Feed_Get_Rss(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	feed.Formatter = &feed.FeedFormatter{}
+	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
+		ArtistName: testutil.ArtistSkrillex,
+		StoreName:  testutil.StoreApple,
+		StoreID:    testutil.StoreIDA,
+		Released:   time.Now().UTC().Add(-time.Hour * 24),
+	}))
+	// announced release
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
+		ArtistName: testutil.ArtistSPY,
+		StoreName:  testutil.StoreApple,
+		StoreID:    testutil.StoreIDB,
+		Released:   time.Now().UTC().Add(time.Hour * 24),
+	}))
+
+	// action
+	resp, err := http.Get(fmt.Sprintf("%s/%s/feed?format=rss", server.URL, testutil.UserObjque))
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	body, err := ioutil.ReadAll(resp.Body)
+	assert.NoError(t, err)
+	assert.True(t, strings.Contains(string(body), "</rss>"))
 }
 
 func TestAPI_Feed_Get_WithQuery(t *testing.T) {
@@ -75,6 +111,7 @@ func TestAPI_Feed_Get_UserNotFound(t *testing.T) {
 	defer teardown()
 
 	// action
+	feed.Formatter = &feed.FeedFormatter{}
 	resp, err := http.Get(fmt.Sprintf("%s/%s/feed", server.URL, testutil.UserObjque))
 
 	// assert

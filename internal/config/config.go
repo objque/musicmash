@@ -17,6 +17,7 @@ type AppConfig struct {
 	Fetching Fetching   `yaml:"fetching"`
 	Stores   []*Store   `yaml:"stores"`
 	Notifier Notifier   `yaml:"notifier"`
+	Rss      Rss        `yaml:"rss"`
 }
 
 type HTTPConfig struct {
@@ -56,6 +57,12 @@ type Meta map[string]string
 type Notifier struct {
 	TelegramToken       string  `yaml:"telegram_token"`
 	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
+}
+
+type Rss struct {
+	Title       string `yaml:"title"`
+	Link        string `yaml:"link"`
+	Description string `yaml:"description"`
 }
 
 func InitConfig(filepath string) error {

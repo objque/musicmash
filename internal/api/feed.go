@@ -1,13 +1,13 @@
 package api
 
 import (
-	"encoding/json"
 	"net/http"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi"
 	"github.com/musicmash/musicmash/internal/api/validators"
-	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/feed"
 	"github.com/musicmash/musicmash/internal/log"
 )
 
@@ -28,13 +28,25 @@ func getUserFeed(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	feed, err := db.DbMgr.GetUserFeedSince(userName, weekAgo)
+	userFeed, err := feed.GetForUser(userName, weekAgo, time.Now().UTC())
 	if err != nil {
 		log.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}
 
-	buffer, _ := json.Marshal(&feed)
-	w.Write(buffer)
+	format := r.URL.Query().Get("format")
+	var body []byte
+	switch strings.ToLower(format) {
+	case "rss":
+		body, err = feed.Formatter.ToRss(userFeed)
+	default:
+		body, err = feed.Formatter.ToJson(userFeed)
+	}
+	if err != nil {
+		log.Error(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+	w.Write(body)
 }
