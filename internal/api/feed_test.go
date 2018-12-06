@@ -20,14 +20,14 @@ func TestAPI_Feed_Get(t *testing.T) {
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSPY,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
 
@@ -44,18 +44,19 @@ func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	feed.Formatter = &feed.FeedFormatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "182821355",
+		StoreID:    testutil.StoreIDA,
 		Released:   time.Now().UTC().Add(-time.Hour * 24),
 	}))
 	// announced release
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSPY,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "213551828",
+		StoreID:    testutil.StoreIDB,
 		Released:   time.Now().UTC().Add(time.Hour * 24),
 	}))
 	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
