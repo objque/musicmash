@@ -7,7 +7,6 @@ import (
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/cron"
 	"github.com/musicmash/musicmash/internal/db"
-	"github.com/musicmash/musicmash/internal/feed"
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/notifier"
@@ -36,7 +35,6 @@ func init() {
 	tasks.InitWorkerPool()
 	db.DbMgr = db.NewMainDatabaseMgr()
 	telegram.New(config.Config.Notifier.TelegramToken)
-	feed.DefaultFormatter = feed.NewFormatter(config.Config.Rss.Title, config.Config.Rss.Link, config.Config.Rss.Description)
 }
 
 func main() {

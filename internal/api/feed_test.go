@@ -2,14 +2,11 @@ package api
 
 import (
 	"fmt"
-	"io/ioutil"
 	"net/http"
-	"strings"
 	"testing"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
-	"github.com/musicmash/musicmash/internal/feed"
 	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
@@ -19,7 +16,6 @@ func TestAPI_Feed_Get(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	feed.DefaultFormatter = &feed.Formatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
 	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
@@ -44,45 +40,11 @@ func TestAPI_Feed_Get(t *testing.T) {
 	assert.Equal(t, http.StatusOK, resp.StatusCode)
 }
 
-func TestAPI_Feed_Get_Rss(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// arrange
-	feed.DefaultFormatter = &feed.Formatter{}
-	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
-	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
-		ArtistName: testutil.ArtistSkrillex,
-		StoreName:  testutil.StoreApple,
-		StoreID:    testutil.StoreIDA,
-		Released:   time.Now().UTC().Add(-time.Hour * 24),
-	}))
-	// announced release
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
-		ArtistName: testutil.ArtistSPY,
-		StoreName:  testutil.StoreApple,
-		StoreID:    testutil.StoreIDB,
-		Released:   time.Now().UTC().Add(time.Hour * 24),
-	}))
-
-	// action
-	resp, err := http.Get(fmt.Sprintf("%s/%s/feed?format=rss", server.URL, testutil.UserObjque))
-
-	// assert
-	assert.NoError(t, err)
-	assert.Equal(t, http.StatusOK, resp.StatusCode)
-	body, err := ioutil.ReadAll(resp.Body)
-	assert.NoError(t, err)
-	assert.True(t, strings.Contains(string(body), "</rss>"))
-}
-
 func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 	setup()
 	defer teardown()
 
 	// arrange
-	feed.DefaultFormatter = &feed.Formatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
 	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
@@ -114,7 +76,6 @@ func TestAPI_Feed_Get_UserNotFound(t *testing.T) {
 	defer teardown()
 
 	// action
-	feed.DefaultFormatter = &feed.Formatter{}
 	resp, err := http.Get(fmt.Sprintf("%s/%s/feed", server.URL, testutil.UserObjque))
 
 	// assert
