@@ -15,7 +15,7 @@ func TestDB_Releases_EnsureExists(t *testing.T) {
 	// action
 	err := DbMgr.EnsureReleaseExists(&Release{
 		StoreName: testutil.StoreDeezer,
-		StoreID:   "xyz",
+		StoreID:   testutil.StoreApple,
 	})
 
 	// assert
@@ -239,7 +239,7 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier(t *testing.T
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "30001",
+		StoreID:    testutil.StoreIDA,
 		CreatedAt:  now.Add(-testutil.Month * 3),
 		Released:   now.Truncate(time.Hour * 24),
 	}))
@@ -247,7 +247,7 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier(t *testing.T
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistArchitects,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "30002",
+		StoreID:    testutil.StoreIDB,
 		CreatedAt:  now,
 		Released:   now.Add(testutil.Month),
 	}))
@@ -255,7 +255,7 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier(t *testing.T
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistAlgorithm,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "30003",
+		StoreID:    testutil.StoreIDC,
 		CreatedAt:  now,
 		Released:   now.Truncate(time.Hour * 24),
 	}))
@@ -267,9 +267,9 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier(t *testing.T
 	assert.NoError(t, err)
 	assert.Len(t, releases, 3)
 	want := map[string]string{
-		testutil.ArtistSkrillex:   "30001",
-		testutil.ArtistArchitects: "30002",
-		testutil.ArtistAlgorithm:  "30003",
+		testutil.ArtistSkrillex:   testutil.StoreIDA,
+		testutil.ArtistArchitects: testutil.StoreIDB,
+		testutil.ArtistAlgorithm:  testutil.StoreIDC,
 	}
 	for _, release := range releases {
 		assert.Equal(t, want[release.ArtistName], release.StoreID)
@@ -346,7 +346,7 @@ func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered_WithAnotherC
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "30001",
+		StoreID:    testutil.StoreIDA,
 		CreatedAt:  now.Add(-testutil.Month * 3),
 		Released:   now.Truncate(time.Hour * 24),
 	}))
@@ -354,7 +354,7 @@ func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered_WithAnotherC
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistArchitects,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "30002",
+		StoreID:    testutil.StoreIDB,
 		CreatedAt:  now,
 		Released:   now.Add(testutil.Month),
 	}))
@@ -362,7 +362,7 @@ func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered_WithAnotherC
 	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
 		ArtistName: testutil.ArtistAlgorithm,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "30003",
+		StoreID:    testutil.StoreIDC,
 		CreatedAt:  now,
 		Released:   now.Truncate(time.Hour * 24),
 	}))
@@ -374,9 +374,9 @@ func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered_WithAnotherC
 	assert.NoError(t, err)
 	assert.Len(t, releases, 3)
 	want := map[string]string{
-		testutil.ArtistSkrillex:   "30001",
-		testutil.ArtistArchitects: "30002",
-		testutil.ArtistAlgorithm:  "30003",
+		testutil.ArtistSkrillex:   testutil.StoreIDA,
+		testutil.ArtistArchitects: testutil.StoreIDB,
+		testutil.ArtistAlgorithm:  testutil.StoreIDC,
 	}
 	for _, release := range releases {
 		assert.Equal(t, want[release.ArtistName], release.StoreID)
@@ -397,7 +397,7 @@ func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered(t *testing.T
 	architectsRelease := Release{
 		ArtistName: testutil.ArtistArchitects,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "30002",
+		StoreID:    testutil.StoreIDA,
 		CreatedAt:  now,
 		// announced album that was found today
 		Released: now.Add(testutil.Month),
@@ -405,7 +405,7 @@ func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered(t *testing.T
 	algorithmRelease := Release{
 		ArtistName: testutil.ArtistAlgorithm,
 		StoreName:  testutil.StoreApple,
-		StoreID:    "30003",
+		StoreID:    testutil.StoreIDB,
 		CreatedAt:  now,
 		// album that was found today and released today
 		Released: now.Truncate(time.Hour * 24),
