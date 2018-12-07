@@ -1,8 +1,6 @@
 package db
 
-import (
-	"time"
-)
+import "time"
 
 type Chat struct {
 	CreatedAt time.Time

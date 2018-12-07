@@ -19,7 +19,7 @@ type FeedMgr interface {
 
 func groupReleases(releases []*Release) []*Release {
 	// key: lower(title), value: Release
-	result := map[string]*Release{}
+	result := make(map[string]*Release)
 	for _, value := range releases {
 		// some releases might have equal titles, but from different artists
 		key := strings.ToLower(value.ArtistName) + strings.ToLower(value.Title)

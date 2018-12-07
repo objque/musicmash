@@ -1,8 +1,6 @@
 package db
 
-import (
-	"time"
-)
+import "time"
 
 type User struct {
 	CreatedAt time.Time
@@ -27,7 +25,7 @@ func (mgr *AppDatabaseMgr) FindUserByName(id string) (*User, error) {
 }
 
 func (mgr *AppDatabaseMgr) GetAllUsers() ([]*User, error) {
-	var users = make([]*User, 0)
+	var users = []*User{}
 	return users, mgr.db.Find(&users).Error
 }
 
