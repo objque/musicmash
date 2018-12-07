@@ -19,7 +19,7 @@ func TestAPI_Feed_Get(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	feed.Formatter = &feed.FeedFormatter{}
+	feed.DefaultFormatter = &feed.Formatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSkrillex,
@@ -48,7 +48,7 @@ func TestAPI_Feed_Get_Rss(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	feed.Formatter = &feed.FeedFormatter{}
+	feed.DefaultFormatter = &feed.Formatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSkrillex,
@@ -80,7 +80,7 @@ func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	feed.Formatter = &feed.FeedFormatter{}
+	feed.DefaultFormatter = &feed.Formatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSkrillex,
@@ -111,7 +111,7 @@ func TestAPI_Feed_Get_UserNotFound(t *testing.T) {
 	defer teardown()
 
 	// action
-	feed.Formatter = &feed.FeedFormatter{}
+	feed.DefaultFormatter = &feed.Formatter{}
 	resp, err := http.Get(fmt.Sprintf("%s/%s/feed", server.URL, testutil.UserObjque))
 
 	// assert

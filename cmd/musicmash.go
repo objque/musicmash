@@ -36,7 +36,7 @@ func init() {
 	tasks.InitWorkerPool()
 	db.DbMgr = db.NewMainDatabaseMgr()
 	telegram.New(config.Config.Notifier.TelegramToken)
-	feed.Formatter = feed.NewFormatter(config.Config.Rss.Title, config.Config.Rss.Link, config.Config.Rss.Description)
+	feed.DefaultFormatter = feed.NewFormatter(config.Config.Rss.Title, config.Config.Rss.Link, config.Config.Rss.Description)
 }
 
 func main() {

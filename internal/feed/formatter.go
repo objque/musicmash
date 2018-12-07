@@ -8,16 +8,16 @@ import (
 	"github.com/musicmash/musicmash/internal/db"
 )
 
-var Formatter *FeedFormatter
+var DefaultFormatter *Formatter
 
-type FeedFormatter struct {
+type Formatter struct {
 	Title       string
 	Link        string
 	Description string
 }
 
-func NewFormatter(title, desc, link string) *FeedFormatter {
-	return &FeedFormatter{
+func NewFormatter(title, desc, link string) *Formatter {
+	return &Formatter{
 		Title:       title,
 		Description: desc,
 		Link:        link,
@@ -28,7 +28,7 @@ func makeRssDescription(release *db.Release) string {
 	return fmt.Sprintf("[%s] %s –– %s", release.StoreName, release.ArtistName, release.Title)
 }
 
-func (f *FeedFormatter) ToRawRss(releases []*db.Release) *feeds.Feed {
+func (f *Formatter) ToRawRSS(releases []*db.Release) *feeds.Feed {
 	result := &feeds.Feed{
 		Title:       f.Title,
 		Link:        &feeds.Link{Href: f.Link},
@@ -54,8 +54,8 @@ func (f *FeedFormatter) ToRawRss(releases []*db.Release) *feeds.Feed {
 	return result
 }
 
-func (f *FeedFormatter) ToRss(releases []*db.Release) ([]byte, error) {
-	result := f.ToRawRss(releases)
+func (f *Formatter) ToRSS(releases []*db.Release) ([]byte, error) {
+	result := f.ToRawRSS(releases)
 	b, err := result.ToRss()
 	if err != nil {
 		return nil, err
@@ -63,6 +63,6 @@ func (f *FeedFormatter) ToRss(releases []*db.Release) ([]byte, error) {
 	return []byte(b), nil
 }
 
-func (f *FeedFormatter) ToJson(releases []*db.Release) ([]byte, error) {
+func (f *Formatter) ToJSON(releases []*db.Release) ([]byte, error) {
 	return json.Marshal(&releases)
 }

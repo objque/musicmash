@@ -39,9 +39,9 @@ func getUserFeed(w http.ResponseWriter, r *http.Request) {
 	var body []byte
 	switch strings.ToLower(format) {
 	case "rss":
-		body, err = feed.Formatter.ToRss(userFeed)
+		body, err = feed.DefaultFormatter.ToRSS(userFeed)
 	default:
-		body, err = feed.Formatter.ToJson(userFeed)
+		body, err = feed.DefaultFormatter.ToJSON(userFeed)
 	}
 	if err != nil {
 		log.Error(err)
