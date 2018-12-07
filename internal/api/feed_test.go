@@ -21,6 +21,7 @@ func TestAPI_Feed_Get(t *testing.T) {
 	// arrange
 	feed.DefaultFormatter = &feed.Formatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
+	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
@@ -50,6 +51,7 @@ func TestAPI_Feed_Get_Rss(t *testing.T) {
 	// arrange
 	feed.DefaultFormatter = &feed.Formatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
+	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
@@ -82,6 +84,7 @@ func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 	// arrange
 	feed.DefaultFormatter = &feed.Formatter{}
 	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
+	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistName: testutil.ArtistSkrillex,
 		StoreName:  testutil.StoreApple,
