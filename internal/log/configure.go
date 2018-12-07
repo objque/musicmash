@@ -50,15 +50,13 @@ func configureFileLogger(path string) {
 	if path == "" {
 		return
 	}
-	hook := lfshook.NewHook(
-		lfshook.PathMap{
-			logrus.DebugLevel: path,
-			logrus.InfoLevel:  path,
-			logrus.ErrorLevel: path,
-			logrus.FatalLevel: path,
-			logrus.WarnLevel:  path,
-		}, nil,
-	)
+	hook := lfshook.NewHook(lfshook.PathMap{
+		logrus.DebugLevel: path,
+		logrus.InfoLevel:  path,
+		logrus.ErrorLevel: path,
+		logrus.FatalLevel: path,
+		logrus.WarnLevel:  path,
+	}, nil)
 	logger.Hooks.Add(hook)
 	Infof("Configured logging to %v.", path)
 }

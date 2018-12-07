@@ -2,8 +2,10 @@ package yandex
 
 import (
 	"net/http"
+	"strings"
 	"testing"
 
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,11 +32,11 @@ func TestYandexClient_Search(t *testing.T) {
 	// arrange
 	mux.HandleFunc("/handlers/music-search.jsx", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
-    "text": "gorgon city",
+    "text": "skrillex",
     "artists": {
         "items": [{
             "id": 817678,
-            "name": "Gorgon City"
+            "name": "Skrillex"
         }]
     }
 }`))
@@ -42,13 +44,13 @@ func TestYandexClient_Search(t *testing.T) {
 
 	// action
 	client := Client{httpClient: &http.Client{}, URL: server.URL, Session: &Session{}}
-	result, err := client.Search("gordon city")
+	result, err := client.Search(strings.ToLower(testutil.ArtistSkrillex))
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, result.Artists.Items, 1)
 	assert.Equal(t, 817678, result.Artists.Items[0].ID)
-	assert.Equal(t, "Gorgon City", result.Artists.Items[0].Name)
+	assert.Equal(t, testutil.ArtistSkrillex, result.Artists.Items[0].Name)
 }
 
 func TestYandexClient_GetArtistAlbums(t *testing.T) {

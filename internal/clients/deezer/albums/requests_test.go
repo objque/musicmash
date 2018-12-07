@@ -1,11 +1,13 @@
 package albums
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/clients/deezer"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -30,12 +32,13 @@ func TestClient_GetArtistAlbums(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/artist/13/albums", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
+	url := fmt.Sprintf("/artist/%d/albums", testutil.StoreIDQ)
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "id": 1045282092,
-      "title": "Daybreaker (Deluxe Edition)",
+      "title": "%s",
       "link": "https://www.deezer.com/album/72000342",
       "cover": "https://api.deezer.com/album/72000342/image",
       "cover_small": "https://e-cdns-images.dzcdn.net/images/cover/bf74fc764097630ba58782ae79cfbee6/56x56-000000-80-0-0.jpg",
@@ -53,18 +56,18 @@ func TestClient_GetArtistAlbums(t *testing.T) {
   ],
   "total": 57,
   "next": "https://api.deezer.com/artist/13/albums?limit=1&index=1"
-}`))
+}`, testutil.ReleaseArchitectsHollyHell)))
 	})
 
 	// action
-	albums, err := GetArtistAlbums(provider, 13)
+	albums, err := GetArtistAlbums(provider, testutil.StoreIDQ)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, albums, 1)
 	assert.Equal(t, 1045282092, albums[0].ID)
-	assert.Equal(t, "Daybreaker (Deluxe Edition)", albums[0].Title)
-	assert.Equal(t, "2018-08-31", albums[0].Released.Value.Format("2006-01-02"))
+	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, albums[0].Title)
+	assert.Equal(t, "2018-08-31", albums[0].Released.Value.Format(testutil.DateYYYYHHMM))
 }
 
 func TestClient_GetLatestArtistAlbum(t *testing.T) {
@@ -73,7 +76,7 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
 
 	// arrange
 	mux.HandleFunc("/artist/13/albums", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
+		w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "id": 1084871,
@@ -94,7 +97,7 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
     },
     {
       "id": 73607432,
-      "title": "Royal Beggars (Single)",
+      "title": "%s",
       "link": "https://www.deezer.com/album/73607432",
       "cover": "https://api.deezer.com/album/73607432/image",
       "cover_small": "https://cdns-images.dzcdn.net/images/cover/92cd4cac9db60794c7f22d2a84e26a29/56x56-000000-80-0-0.jpg",
@@ -179,7 +182,7 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
     }
   ],
   "total": 17
-}`))
+}`, testutil.ReleaseArchitectsHollyHell)))
 	})
 
 	// action
@@ -188,8 +191,8 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Equal(t, 73607432, album.ID)
-	assert.Equal(t, "Royal Beggars (Single)", album.Title)
-	assert.Equal(t, "2018-10-03", album.Released.Value.Format("2006-01-02"))
+	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, album.Title)
+	assert.Equal(t, "2018-10-03", album.Released.Value.Format(testutil.DateYYYYHHMM))
 }
 
 func TestClient_GetByID(t *testing.T) {
@@ -197,10 +200,11 @@ func TestClient_GetByID(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/album/76263542", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`{
-  "id": 76263542,
-  "title": "Pandemonium 2.0",
+	url := fmt.Sprintf("/album/%d", testutil.StoreIDQ)
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf(`{
+  "id": %d,
+  "title": "%s",
   "upc": "817424019736",
   "link": "https://www.deezer.com/album/76263542",
   "share": "https://www.deezer.com/album/76263542?utm_source=deezer&utm_content=album-76263542&utm_term=0_1540408114&utm_medium=web",
@@ -210,15 +214,15 @@ func TestClient_GetByID(t *testing.T) {
   "cover_big": "https://e-cdns-images.dzcdn.net/images/cover/3f4983609cbffd22f0d134f9241ed0fb/500x500-000000-80-0-0.jpg",
   "cover_xl": "https://e-cdns-images.dzcdn.net/images/cover/3f4983609cbffd22f0d134f9241ed0fb/1000x1000-000000-80-0-0.jpg",
   "genre_id": 152
-}`))
+}`, testutil.StoreIDQ, testutil.ReleaseArchitectsHollyHell)))
 	})
 
 	// action
-	album, err := GetByID(provider, 76263542)
+	album, err := GetByID(provider, testutil.StoreIDQ)
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, 76263542, album.ID)
-	assert.Equal(t, "Pandemonium 2.0", album.Title)
+	assert.Equal(t, testutil.StoreIDQ, album.ID)
+	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, album.Title)
 	assert.NotEmpty(t, album.Poster)
 }

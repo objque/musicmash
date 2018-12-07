@@ -6,6 +6,7 @@ import (
 
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 )
 
 var (
@@ -19,8 +20,8 @@ func setup() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
 		Stores: []*config.Store{
-			{Name: "yandex", URL: server.URL, FetchWorkers: 1},
-			{Name: "itunes", URL: server.URL, Meta: map[string]string{"token": "xxx"}, FetchWorkers: 1},
+			{Name: testutil.StoreYandex, URL: server.URL, FetchWorkers: 1},
+			{Name: testutil.StoreApple, URL: server.URL, Meta: map[string]string{"token": "xxx"}, FetchWorkers: 1},
 		},
 	}
 }

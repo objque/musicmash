@@ -1,8 +1,6 @@
 package albums
 
-import (
-	"github.com/musicmash/musicmash/internal/clients/deezer/types"
-)
+import "github.com/musicmash/musicmash/internal/clients/deezer/types"
 
 type Album struct {
 	ID       int        `json:"id"`

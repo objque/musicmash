@@ -1,11 +1,13 @@
 package albums
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +20,7 @@ var (
 func setup() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
-	provider = itunes.NewProvider(server.URL, "82001a6688a941dea1d35f60a7a0f8c3")
+	provider = itunes.NewProvider(server.URL, testutil.TokenSimple)
 }
 
 func teardown() {
@@ -30,45 +32,47 @@ func TestClient_GetArtistAlbums(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`
+	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf(`
 {
   "data": [
     {
       "attributes": {
-        "artistName": "Architects",
+        "artistName": "%s",
         "isComplete": true,
         "isSingle": false,
-        "name": "Daybreaker (Deluxe Edition)",
+        "name": "%s",
         "releaseDate": "2013-05-28"
       },
-      "id": "1045282092"
+      "id": "%s"
     },
     {
       "attributes": {
         "artistName": "Architects",
         "isComplete": true,
         "isSingle": false,
-        "name": "The Here and Now",
+        "name": "%s",
         "releaseDate": "2012-07-13"
       },
-      "id": "1045635474"
+      "id": "%s"
     }
   ]
-}
-		`))
+}`,
+			testutil.ArtistArchitects, testutil.ReleaseArchitectsHollyHell, testutil.StoreIDA,
+			testutil.ReleaseArchitectsHollyHell, testutil.StoreIDB)))
 	})
 
 	// action
-	albums, err := GetArtistAlbums(provider, 182821355)
+	albums, err := GetArtistAlbums(provider, testutil.StoreIDQ)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, albums, 2)
-	assert.Equal(t, "1045282092", albums[0].ID)
-	assert.Equal(t, "Daybreaker (Deluxe Edition)", albums[0].Attributes.Name)
-	assert.Equal(t, "1045635474", albums[1].ID)
-	assert.Equal(t, "The Here and Now", albums[1].Attributes.Name)
+	assert.Equal(t, testutil.StoreIDA, albums[0].ID)
+	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, albums[0].Attributes.Name)
+	assert.Equal(t, testutil.StoreIDB, albums[1].ID)
+	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, albums[1].Attributes.Name)
 }
 
 func TestClient_GetLatestArtistAlbum(t *testing.T) {
@@ -76,19 +80,20 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/v1/catalog/us/artists/182821355/albums", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`
+	url := fmt.Sprintf("/v1/catalog/us/artists/%d/albums", testutil.StoreIDQ)
+	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte(fmt.Sprintf(`
 {
   "data": [
     {
       "attributes": {
-        "artistName": "Architects",
+        "artistName": "%s",
         "isComplete": true,
         "isSingle": false,
-        "name": "Daybreaker (Deluxe Edition)",
+        "name": "%s",
         "releaseDate": "2013-05-28"
       },
-      "id": "1045282092"
+      "id": "%s"
     },
     {
       "attributes": {
@@ -101,15 +106,14 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
       "id": "1045635474"
     }
   ]
-}
-		`))
+}`, testutil.ArtistArchitects, testutil.ReleaseArchitectsHollyHell, testutil.StoreIDA)))
 	})
 
 	// action
-	album, err := GetLatestArtistAlbum(provider, 182821355)
+	album, err := GetLatestArtistAlbum(provider, testutil.StoreIDQ)
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, "1045282092", album.ID)
-	assert.Equal(t, "Daybreaker (Deluxe Edition)", album.Attributes.Name)
+	assert.Equal(t, testutil.StoreIDA, album.ID)
+	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, album.Attributes.Name)
 }

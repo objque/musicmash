@@ -3,6 +3,7 @@ package db
 import (
 	"testing"
 
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,11 +12,11 @@ func TestDB_Subscriptions_EnsureExists(t *testing.T) {
 	defer teardown()
 
 	// action
-	err := DbMgr.EnsureSubscriptionExists("objque@me", "skrillex")
+	err := DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistSkrillex)
 
 	// assert
 	assert.NoError(t, err)
-	assert.True(t, DbMgr.IsUserSubscribedForArtist("objque@me", "skrillex"))
+	assert.True(t, DbMgr.IsUserSubscribedForArtist(testutil.UserObjque, testutil.ArtistSkrillex))
 }
 
 func TestDB_Subscriptions_FindAll(t *testing.T) {
@@ -23,12 +24,12 @@ func TestDB_Subscriptions_FindAll(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "skrillex"))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "alvin risk"))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("jade@dynasty", "rammstein"))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistSkrillex))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistArchitects))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserBot, testutil.ArtistWildways))
 
 	// action
-	subs, err := DbMgr.FindAllUserSubscriptions("objque@me")
+	subs, err := DbMgr.FindAllUserSubscriptions(testutil.UserObjque)
 
 	// assert
 	assert.NoError(t, err)
@@ -40,15 +41,15 @@ func TestDB_Subscriptions_SubscribeUserForArtists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	artists := []string{"Skrillex", "David Guetta", "Deftones", "Depeche Mode"}
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "Skrillex"))
+	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects, testutil.ArtistWildways, testutil.ArtistSPY}
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistSkrillex))
 
 	// action
-	err := DbMgr.SubscribeUserForArtists("objque@me", artists)
+	err := DbMgr.SubscribeUserForArtists(testutil.UserObjque, artists)
 
 	// assert
 	assert.NoError(t, err)
-	subs, err := DbMgr.FindAllUserSubscriptions("objque@me")
+	subs, err := DbMgr.FindAllUserSubscriptions(testutil.UserObjque)
 	assert.NoError(t, err)
 	assert.Len(t, subs, 4)
 }
@@ -58,25 +59,25 @@ func TestDB_Subscriptions_UnsubscribeUserFromArtists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "Skrillex"))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "Calvin Risk"))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", "AC/DC"))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("mike@wels", "AC/DC"))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistSkrillex))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistWildways))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistSPY))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserBot, testutil.ArtistSPY))
 
 	// action
-	err := DbMgr.UnsubscribeUserFromArtists("objque@me", []string{"Calvin Risk"})
+	err := DbMgr.UnsubscribeUserFromArtists(testutil.UserObjque, []string{testutil.ArtistWildways})
 
 	// assert
 	assert.NoError(t, err)
 
-	subs, err := DbMgr.FindAllUserSubscriptions("mike@wels")
+	subs, err := DbMgr.FindAllUserSubscriptions(testutil.UserBot)
 	assert.NoError(t, err)
 	assert.Len(t, subs, 1)
-	assert.Equal(t, "AC/DC", subs[0].ArtistName)
+	assert.Equal(t, testutil.ArtistSPY, subs[0].ArtistName)
 
-	subs, err = DbMgr.FindAllUserSubscriptions("objque@me")
+	subs, err = DbMgr.FindAllUserSubscriptions(testutil.UserObjque)
 	assert.NoError(t, err)
 	assert.Len(t, subs, 2)
-	assert.Equal(t, "AC/DC", subs[0].ArtistName)
-	assert.Equal(t, "Skrillex", subs[1].ArtistName)
+	assert.Equal(t, testutil.ArtistSPY, subs[0].ArtistName)
+	assert.Equal(t, testutil.ArtistSkrillex, subs[1].ArtistName)
 }

@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -19,7 +20,7 @@ func Test_YandexLinker_Reserve(t *testing.T) {
 	task := NewLinker(server.URL)
 
 	// action
-	task.reserveArtists([]string{"skrillex", "nero"})
+	task.reserveArtists([]string{testutil.ArtistSkrillex, testutil.ArtistArchitects})
 
 	// assert
 	assert.Len(t, task.reservedArtists, 2)
@@ -34,7 +35,7 @@ func Test_YandexLinker_Free(t *testing.T) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
 	task := NewLinker(server.URL)
-	artists := []string{"skrillex", "nero"}
+	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects}
 	task.reserveArtists(artists)
 	assert.Len(t, task.reservedArtists, 2)
 
@@ -54,9 +55,9 @@ func Test_YandexLinker_Search_AlreadyExists(t *testing.T) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
 	task := NewLinker(server.URL)
-	artists := []string{"skrillex", "nero"}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("skrillex", "yandex", "xyz"))
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("nero", "yandex", "zyx"))
+	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects}
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreYandex, "xyz"))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreYandex, "zyx"))
 
 	// action
 	task.SearchArtists(artists)
@@ -72,11 +73,11 @@ func Test_YandexLinker_Search(t *testing.T) {
 	})
 	mux.HandleFunc("/handlers/music-search.jsx", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`{
-    "text": "gorgon city",
+    "text": "Architects",
     "artists": {
         "items": [{
             "id": 817678,
-            "name": "Gorgon City"
+            "name": "Architects"
         }]
     }
 }`))
@@ -84,10 +85,10 @@ func Test_YandexLinker_Search(t *testing.T) {
 	task := NewLinker(server.URL)
 
 	// action
-	task.SearchArtists([]string{"gorgon city"})
+	task.SearchArtists([]string{testutil.ArtistArchitects})
 
 	// assert
-	artists, err := db.DbMgr.GetArtistsForStore("yandex")
+	artists, err := db.DbMgr.GetArtistsForStore(testutil.StoreYandex)
 	assert.NoError(t, err)
 	assert.Len(t, artists, 1)
 }

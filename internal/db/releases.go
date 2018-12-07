@@ -44,7 +44,7 @@ func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {
 }
 
 func (mgr *AppDatabaseMgr) GetAllReleases() ([]*Release, error) {
-	var releases = make([]*Release, 0)
+	var releases = []*Release{}
 	return releases, mgr.db.Find(&releases).Error
 }
 

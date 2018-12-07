@@ -4,6 +4,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -12,13 +13,13 @@ func TestDB_Users_EnsureExists(t *testing.T) {
 	defer teardown()
 
 	// action
-	err := DbMgr.EnsureUserExists("objque@me")
+	err := DbMgr.EnsureUserExists(testutil.UserObjque)
 
 	// assert
 	assert.NoError(t, err)
-	user, err := DbMgr.FindUserByName("objque@me")
+	user, err := DbMgr.FindUserByName(testutil.UserObjque)
 	assert.NoError(t, err)
-	assert.Equal(t, "objque@me", user.Name)
+	assert.Equal(t, testutil.UserObjque, user.Name)
 }
 
 func TestDB_Users_List(t *testing.T) {
@@ -26,8 +27,8 @@ func TestDB_Users_List(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureUserExists("objque@me"))
-	assert.NoError(t, DbMgr.EnsureUserExists("jade@abuse"))
+	assert.NoError(t, DbMgr.EnsureUserExists(testutil.UserObjque))
+	assert.NoError(t, DbMgr.EnsureUserExists(testutil.UserBot))
 
 	// action
 	users, err := DbMgr.GetAllUsers()
@@ -35,8 +36,8 @@ func TestDB_Users_List(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, users, 2)
-	assert.Equal(t, "objque@me", users[0].Name)
-	assert.Equal(t, "jade@abuse", users[1].Name)
+	assert.Equal(t, testutil.UserObjque, users[0].Name)
+	assert.Equal(t, testutil.UserBot, users[1].Name)
 }
 
 func TestDB_Users_GetUsersWithReleases(t *testing.T) {
@@ -44,15 +45,14 @@ func TestDB_Users_GetUsersWithReleases(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	const artist = "Architects"
 	now := time.Now().UTC()
-	assert.NoError(t, DbMgr.EnsureUserExists("objque@me"))
-	assert.NoError(t, DbMgr.EnsureUserExists("jade@abuse"))
-	assert.NoError(t, DbMgr.EnsureUserExists("jake@worrow"))
-	assert.NoError(t, DbMgr.EnsureArtistExists("architects"))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", artist))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("jake@worrow", artist))
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, CreatedAt: now}))
+	assert.NoError(t, DbMgr.EnsureUserExists(testutil.UserObjque))
+	assert.NoError(t, DbMgr.EnsureUserExists(testutil.UserBot))
+	assert.NoError(t, DbMgr.EnsureUserExists(testutil.UserTest))
+	assert.NoError(t, DbMgr.EnsureArtistExists(testutil.ArtistArchitects))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistArchitects))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserTest, testutil.ArtistArchitects))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: testutil.ArtistArchitects, CreatedAt: now}))
 
 	// action
 	users, err := DbMgr.GetUsersWithReleases(now)
@@ -60,7 +60,7 @@ func TestDB_Users_GetUsersWithReleases(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, users, 2)
-	assert.EqualValues(t, []string{"jake@worrow", "objque@me"}, users)
+	assert.EqualValues(t, []string{testutil.UserObjque, testutil.UserTest}, users)
 }
 
 func TestDB_Users_GetUsersWithReleases_NoReleases_ForProvidedHour(t *testing.T) {
@@ -68,15 +68,14 @@ func TestDB_Users_GetUsersWithReleases_NoReleases_ForProvidedHour(t *testing.T) 
 	defer teardown()
 
 	// arrange
-	const artist = "Architects"
 	now := time.Now().UTC()
-	assert.NoError(t, DbMgr.EnsureUserExists("objque@me"))
-	assert.NoError(t, DbMgr.EnsureUserExists("jade@abuse"))
-	assert.NoError(t, DbMgr.EnsureUserExists("jake@worrow"))
-	assert.NoError(t, DbMgr.EnsureArtistExists("architects"))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("objque@me", artist))
-	assert.NoError(t, DbMgr.EnsureSubscriptionExists("jake@worrow", artist))
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: artist, CreatedAt: now.Add(-time.Hour)}))
+	assert.NoError(t, DbMgr.EnsureUserExists(testutil.UserObjque))
+	assert.NoError(t, DbMgr.EnsureUserExists(testutil.UserBot))
+	assert.NoError(t, DbMgr.EnsureUserExists(testutil.UserTest))
+	assert.NoError(t, DbMgr.EnsureArtistExists(testutil.ArtistArchitects))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserObjque, testutil.ArtistArchitects))
+	assert.NoError(t, DbMgr.EnsureSubscriptionExists(testutil.UserTest, testutil.ArtistArchitects))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{ArtistName: testutil.ArtistArchitects, CreatedAt: now.Add(-time.Hour)}))
 
 	// action
 	users, err := DbMgr.GetUsersWithReleases(now)

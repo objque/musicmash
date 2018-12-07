@@ -1,11 +1,13 @@
 package artists
 
 import (
+	"fmt"
 	"net/http"
 	"net/http/httptest"
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,7 +20,7 @@ var (
 func setup() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
-	provider = itunes.NewProvider(server.URL, "82001a6688a941dea1d35f60a7a0f8c3")
+	provider = itunes.NewProvider(server.URL, testutil.TokenSimple)
 }
 
 func teardown() {
@@ -31,7 +33,7 @@ func TestClient_SearchArtist(t *testing.T) {
 
 	// arrange
 	mux.HandleFunc("/v1/catalog/us/search", func(w http.ResponseWriter, r *http.Request) {
-		w.Write([]byte(`
+		w.Write([]byte(fmt.Sprintf(`
 {
   "results": {
     "artists": {
@@ -40,20 +42,19 @@ func TestClient_SearchArtist(t *testing.T) {
           "attributes": {
             "name": "Architects"
           },
-          "id": "182821355"
+          "id": "%s"
         }
       ]
     }
   }
-}
-		`))
+}`, testutil.StoreIDA)))
 	})
 
 	// action
-	art, err := SearchArtist(provider, "Architects")
+	art, err := SearchArtist(provider, testutil.ArtistArchitects)
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, "182821355", art.ID)
-	assert.Equal(t, "Architects", art.Attributes.Name)
+	assert.Equal(t, testutil.StoreIDA, art.ID)
+	assert.Equal(t, testutil.ArtistArchitects, art.Attributes.Name)
 }

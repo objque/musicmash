@@ -3,6 +3,7 @@ package db
 import (
 	"testing"
 
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -11,7 +12,7 @@ func TestDB_Artist_EnsureExists(t *testing.T) {
 	defer teardown()
 
 	// action
-	err := DbMgr.EnsureArtistExists("skrillex")
+	err := DbMgr.EnsureArtistExists(testutil.ArtistSkrillex)
 
 	// assert
 	assert.NoError(t, err)
@@ -22,7 +23,7 @@ func TestDB_Artists_GetAll(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureArtistExists("skrillex"))
+	assert.NoError(t, DbMgr.EnsureArtistExists(testutil.ArtistSkrillex))
 
 	// action
 	artists, err := DbMgr.GetAllArtists()
@@ -37,11 +38,11 @@ func TestDB_ArtistStoreInfo_EnsureArtistExistsInStore(t *testing.T) {
 	defer teardown()
 
 	// action
-	err := DbMgr.EnsureArtistExistsInStore("skrillex", "deezer", "xyz")
+	err := DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreDeezer, testutil.StoreIDA)
 
 	// assert
 	assert.NoError(t, err)
-	artists, err := DbMgr.GetArtistsForStore("deezer")
+	artists, err := DbMgr.GetArtistsForStore(testutil.StoreDeezer)
 	assert.NoError(t, err)
 	assert.Len(t, artists, 1)
 }
@@ -51,11 +52,11 @@ func TestDB_ArtistStoreInfo_GetArtistFromStore(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureArtistExistsInStore("skrillex", "itunes", "123"))
-	assert.NoError(t, DbMgr.EnsureArtistExistsInStore("skrillex", "itunes", "345"))
+	assert.NoError(t, DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreApple, testutil.StoreIDA))
+	assert.NoError(t, DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreApple, testutil.StoreIDB))
 
 	// action
-	artists, err := DbMgr.GetArtistFromStore("skrillex", "itunes")
+	artists, err := DbMgr.GetArtistFromStore(testutil.ArtistSkrillex, testutil.StoreApple)
 
 	// assert
 	assert.NoError(t, err)

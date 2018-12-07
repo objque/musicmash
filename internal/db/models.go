@@ -1,8 +1,6 @@
 package db
 
-import (
-	"github.com/jinzhu/gorm"
-)
+import "github.com/jinzhu/gorm"
 
 var tables = []interface{}{
 	&Artist{},

@@ -35,6 +35,7 @@ deploy:
 lint-all l:
 	bash ./scripts/metalinter.sh
 	bash ./scripts/critic.sh
+	bash ./scripts/consistent.sh
 
 rigo:
 	make install & make rgo

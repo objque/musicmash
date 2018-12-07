@@ -5,14 +5,15 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
 func Test_AppleLinker_Reserve(t *testing.T) {
-	task := NewLinker("http://url.mock", "xxx")
+	task := NewLinker("http://url.mock", testutil.TokenSimple)
 
 	// action
-	task.reserveArtists([]string{"skrillex", "nero"})
+	task.reserveArtists([]string{testutil.ArtistSkrillex, testutil.ArtistArchitects})
 
 	// assert
 	assert.Len(t, task.reservedArtists, 2)
@@ -20,8 +21,8 @@ func Test_AppleLinker_Reserve(t *testing.T) {
 
 func Test_AppleLinker_Free(t *testing.T) {
 	// arrange
-	task := NewLinker("http://url.mock", "xxx")
-	artists := []string{"skrillex", "nero"}
+	task := NewLinker("http://url.mock", testutil.TokenSimple)
+	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects}
 	task.reserveArtists(artists)
 	assert.Len(t, task.reservedArtists, 2)
 
@@ -37,10 +38,10 @@ func Test_AppleLinker_Search_AlreadyExists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	task := NewLinker("http://url.mock", "xxx")
-	artists := []string{"skrillex", "nero"}
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("skrillex", "itunes", "xyz"))
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore("nero", "itunes", "zyx"))
+	task := NewLinker("http://url.mock", testutil.TokenSimple)
+	artists := []string{testutil.ArtistSkrillex, testutil.ArtistArchitects}
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistSkrillex, testutil.StoreApple, testutil.StoreIDA))
+	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, testutil.StoreApple, testutil.StoreIDB))
 
 	// action
 	task.SearchArtists(artists)
@@ -51,7 +52,7 @@ func Test_AppleLinker_Search(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	task := NewLinker(server.URL, "xxx")
+	task := NewLinker(server.URL, testutil.TokenSimple)
 	mux.HandleFunc("/v1/catalog/us/search", func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(`
 {
@@ -72,10 +73,10 @@ func Test_AppleLinker_Search(t *testing.T) {
 	})
 
 	// action
-	task.SearchArtists([]string{"architects"})
+	task.SearchArtists([]string{testutil.ArtistArchitects})
 
 	// assert
-	artists, err := db.DbMgr.GetArtistsForStore("itunes")
+	artists, err := db.DbMgr.GetArtistsForStore(testutil.StoreApple)
 	assert.NoError(t, err)
 	assert.Len(t, artists, 1)
 }

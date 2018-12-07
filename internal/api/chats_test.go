@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -16,17 +17,17 @@ func TestAPI_Chats_Create(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureUserExists("objque@me"))
+	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
 
 	// action
 	body := AddUserChatScheme{ChatID: 10004}
 	buffer, _ := json.Marshal(&body)
-	resp, err := http.Post(fmt.Sprintf("%s/objque@me/chats", server.URL), "application/json", bytes.NewReader(buffer))
+	resp, err := http.Post(fmt.Sprintf("%s/%s/chats", server.URL, testutil.UserObjque), "application/json", bytes.NewReader(buffer))
 
 	// assert
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusCreated, resp.StatusCode)
-	chatID, err := db.DbMgr.FindChatByUserName("objque@me")
+	chatID, err := db.DbMgr.FindChatByUserName(testutil.UserObjque)
 	assert.NoError(t, err)
 	assert.Equal(t, int64(10004), *chatID)
 }
@@ -38,7 +39,7 @@ func TestAPI_Chats_Create_UserNotFound(t *testing.T) {
 	// action
 	body := AddUserChatScheme{ChatID: 10004}
 	buffer, _ := json.Marshal(&body)
-	resp, err := http.Post(fmt.Sprintf("%s/objque@me/chats", server.URL), "application/json", bytes.NewReader(buffer))
+	resp, err := http.Post(fmt.Sprintf("%s/%s/chats", server.URL, testutil.UserObjque), "application/json", bytes.NewReader(buffer))
 
 	// assert
 	assert.NoError(t, err)
