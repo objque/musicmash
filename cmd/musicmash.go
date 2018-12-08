@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 
+	"github.com/getsentry/raven-go"
 	"github.com/musicmash/musicmash/internal/api"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/cron"
@@ -12,32 +13,32 @@ import (
 	"github.com/musicmash/musicmash/internal/notifier"
 	"github.com/musicmash/musicmash/internal/notifier/telegram"
 	tasks "github.com/musicmash/musicmash/internal/tasks/subscriptions"
+	"github.com/pkg/errors"
 )
 
-func init() {
-	log.SetLogFormatter(&log.DefaultFormatter)
+func main() {
 	configPath := flag.String("config", "/etc/musicmash/musicmash.yaml", "Path to musicmash.yaml config")
-	logLevel := flag.String("log-level", "info", "log level {debug,info,warning,error}")
 	flag.Parse()
 
 	if err := config.InitConfig(*configPath); err != nil {
 		panic(err)
 	}
-
-	if *logLevel != "info" || config.Config.Log.Level == "" {
-		// Priority to command-line
-		log.ConfigureStdLogger(*logLevel)
-	} else if config.Config.Log.Level != "" {
-		// Priority to config
-		log.ConfigureStdLogger(config.Config.Log.Level)
+	if config.Config.Log.Level == "" {
+		config.Config.Log.Level = "info"
 	}
 
-	tasks.InitWorkerPool()
-	db.DbMgr = db.NewMainDatabaseMgr()
-	telegram.New(config.Config.Notifier.TelegramToken)
-}
+	log.SetLogFormatter(&log.DefaultFormatter)
+	log.ConfigureStdLogger(config.Config.Log.Level)
 
-func main() {
+	db.DbMgr = db.NewMainDatabaseMgr()
+	tasks.InitWorkerPool()
+	telegram.New(config.Config.Notifier.TelegramToken)
+	if config.Config.Sentry.Enabled {
+		if err := raven.SetDSN(config.Config.Sentry.Key); err != nil {
+			panic(errors.Wrap(err, "tried to setup sentry client"))
+		}
+	}
+
 	log.Info("Running musicmash..")
 	go cron.Run(db.ActionReFetch, config.Config.Fetching.RefetchAfterHours, fetcher.ReFetch)
 	go cron.Run(db.ActionFetch, config.Config.Fetching.CountOfSkippedHours, fetcher.Fetch)

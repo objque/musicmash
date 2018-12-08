@@ -2,10 +2,11 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
+	"github.com/pkg/errors"
+
 	// load dialects
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
-	db "github.com/musicmash/musicmash/internal/db/gorm"
 )
 
 var DbMgr DataMgr
@@ -27,42 +28,45 @@ type DataMgr interface {
 	Close() error
 	DropAllTables() error
 }
+
 type AppDatabaseMgr struct {
 	db *gorm.DB
 }
 
-func (mgr *AppDatabaseMgr) Close() error {
-	return mgr.db.Close()
-}
 func NewAppDatabaseMgr(db *gorm.DB) *AppDatabaseMgr {
-	return &AppDatabaseMgr{
-		db: db,
-	}
+	return &AppDatabaseMgr{db: db}
 }
 
 func NewMainDatabaseMgr() *AppDatabaseMgr {
-	return NewAppDatabaseMgr(db.InitMain(CreateAll))
+	db := InitMain()
+	if err := CreateAll(db); err != nil {
+		panic(errors.Wrap(err, "tried to create all"))
+	}
+	return NewAppDatabaseMgr(db)
 }
+
 func NewFakeDatabaseMgr() *AppDatabaseMgr {
-	return NewAppDatabaseMgr(db.InitFake(CreateTables))
+	db := InitFake()
+	if err := CreateTables(db); err != nil {
+		panic(errors.Wrap(err, "tried to create tables"))
+	}
+	return NewAppDatabaseMgr(db)
 }
 
 func (mgr *AppDatabaseMgr) Begin() *AppDatabaseMgr {
-	return &AppDatabaseMgr{
-		db: mgr.db.Begin(),
-	}
+	return &AppDatabaseMgr{db: mgr.db.Begin()}
 }
 
 func (mgr *AppDatabaseMgr) Commit() *AppDatabaseMgr {
-	return &AppDatabaseMgr{
-		db: mgr.db.Commit(),
-	}
+	return &AppDatabaseMgr{db: mgr.db.Commit()}
 }
 
 func (mgr *AppDatabaseMgr) Rollback() *AppDatabaseMgr {
-	return &AppDatabaseMgr{
-		db: mgr.db.Rollback(),
-	}
+	return &AppDatabaseMgr{db: mgr.db.Rollback()}
+}
+
+func (mgr *AppDatabaseMgr) Close() error {
+	return mgr.db.Close()
 }
 
 func (mgr *AppDatabaseMgr) DropAllTables() error {

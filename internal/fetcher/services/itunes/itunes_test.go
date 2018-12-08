@@ -46,7 +46,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
-	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
@@ -97,7 +97,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: testutil.StoreIDB, StoreName: f.GetStoreName()}))
-	mux.HandleFunc(url, func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {

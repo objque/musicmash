@@ -14,7 +14,7 @@ func Test_YandexLinker_Reserve(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
 	task := NewLinker(server.URL)
@@ -31,7 +31,7 @@ func Test_YandexLinker_Free(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
 	task := NewLinker(server.URL)
@@ -51,7 +51,7 @@ func Test_YandexLinker_Search_AlreadyExists(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
 	task := NewLinker(server.URL)
@@ -68,10 +68,10 @@ func Test_YandexLinker_Search(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
-	mux.HandleFunc("/handlers/music-search.jsx", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/handlers/music-search.jsx", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{
     "text": "Architects",
     "artists": {

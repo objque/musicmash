@@ -17,6 +17,7 @@ type AppConfig struct {
 	Fetching Fetching   `yaml:"fetching"`
 	Stores   []*Store   `yaml:"stores"`
 	Notifier Notifier   `yaml:"notifier"`
+	Sentry   Sentry     `yaml:"sentry"`
 }
 
 type HTTPConfig struct {
@@ -56,6 +57,11 @@ type Meta map[string]string
 type Notifier struct {
 	TelegramToken       string  `yaml:"telegram_token"`
 	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
+}
+
+type Sentry struct {
+	Enabled bool   `yaml:"enabled"`
+	Key     string `yaml:"key"`
 }
 
 func InitConfig(filepath string) error {
