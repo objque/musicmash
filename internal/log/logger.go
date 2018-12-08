@@ -6,6 +6,7 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/getsentry/raven-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -88,6 +89,7 @@ func Error(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
 	entry.Error(format)
+	raven.CaptureMessage(format, nil)
 }
 
 // Errorf logs a message at level Error on the standard logger.
@@ -95,6 +97,7 @@ func Errorf(format string, args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format = formatMessageWithFileInfo(format)
 	entry.Errorf(format, args...)
+	raven.CaptureMessage(fmt.Sprintf(format, args...), nil)
 }
 
 // Errorln logs a message with fields at level Debug on the standard logger.
@@ -102,12 +105,14 @@ func Errorln(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
 	entry.Errorln(format)
+	raven.CaptureMessage(format, nil)
 }
 
 // Fatalf logs a message at level Fatal on the standard logger.
 func Fatalf(format string, args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format = formatMessageWithFileInfo(format)
+	raven.CaptureMessageAndWait(fmt.Sprintf(format, args...), nil)
 	entry.Fatalf(format, args...)
 }
 
@@ -115,6 +120,7 @@ func Fatalf(format string, args ...interface{}) {
 func Panic(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
+	raven.CaptureMessageAndWait(format, nil)
 	entry.Panic(format)
 }
 

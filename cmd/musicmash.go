@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 
+	"github.com/getsentry/raven-go"
 	"github.com/musicmash/musicmash/internal/api"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/cron"
@@ -12,6 +13,7 @@ import (
 	"github.com/musicmash/musicmash/internal/notifier"
 	"github.com/musicmash/musicmash/internal/notifier/telegram"
 	tasks "github.com/musicmash/musicmash/internal/tasks/subscriptions"
+	"github.com/pkg/errors"
 )
 
 func init() {
@@ -35,6 +37,11 @@ func init() {
 	tasks.InitWorkerPool()
 	db.DbMgr = db.NewMainDatabaseMgr()
 	telegram.New(config.Config.Notifier.TelegramToken)
+	if config.Config.Sentry.Enabled {
+		if err := raven.SetDSN(config.Config.Sentry.Key); err != nil {
+			panic(errors.Wrap(err, "tried to setup sentry client"))
+		}
+	}
 }
 
 func main() {

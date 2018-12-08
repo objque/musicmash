@@ -38,3 +38,7 @@ fetching:
 notifier:
     count_of_skipped_hours: 8
     telegram_token: "12340255:BBBZZZJJJJJAAAEEEEE"
+
+sentry:
+  enabled: true
+  key: "https://xxxxx:yyyyy@sentry.io/123456"
