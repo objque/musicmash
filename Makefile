@@ -33,8 +33,7 @@ deploy:
 	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music-$(VERSION)
 
 lint-all l:
-	bash ./scripts/metalinter.sh
-	bash ./scripts/critic.sh
+	bash ./scripts/golangci-lint.sh
 	bash ./scripts/consistent.sh
 
 rigo:
