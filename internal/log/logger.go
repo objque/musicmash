@@ -22,6 +22,10 @@ func SetLogFormatter(formatter logrus.Formatter) {
 	logger.Formatter = formatter
 }
 
+func GetLogger() *logrus.Logger {
+	return logger
+}
+
 func formatMessageWithFileInfo(msg string) string {
 	res := fmt.Sprintf("[%v] %v", fileInfo(3), msg)
 	return res

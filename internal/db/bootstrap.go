@@ -15,7 +15,7 @@ func initDB(dialect, args string, logging bool) *gorm.DB {
 
 	if logging {
 		db = db.LogMode(true)
-		db.SetLogger(gorm.Logger{LogWriter: mainDBLogger{}})
+		db.SetLogger(gorm.Logger{LogWriter: log.GetLogger()})
 	}
 
 	db.DB().SetMaxIdleConns(10)
@@ -34,10 +34,3 @@ func InitMain() *gorm.DB {
 	dialect, args := config.Config.DB.GetConnString()
 	return initDB(dialect, args, config.Config.DB.Log)
 }
-
-type mainDBLogger struct{}
-
-func (l mainDBLogger) Println(v ...interface{}) {
-	log.Info(v...)
-}
-
