@@ -14,7 +14,7 @@ func TestYandexClient_Auth(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
 
@@ -30,7 +30,7 @@ func TestYandexClient_Search(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/handlers/music-search.jsx", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/handlers/music-search.jsx", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{
     "text": "skrillex",
     "artists": {
@@ -58,7 +58,7 @@ func TestYandexClient_GetArtistAlbums(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/handlers/artist.jsx", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/handlers/artist.jsx", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{
     "artist": {
         "id": 817678,

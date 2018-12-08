@@ -32,7 +32,7 @@ func TestClient_SearchArtist(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	mux.HandleFunc("/v1/catalog/us/search", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/v1/catalog/us/search", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(fmt.Sprintf(`
 {
   "results": {

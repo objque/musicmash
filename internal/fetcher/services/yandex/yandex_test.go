@@ -41,10 +41,10 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 
 	// arrange
 	// mock yandex auth
-	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
-	mux.HandleFunc("/handlers/artist.jsx", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/handlers/artist.jsx", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{
     "artist": {
         "id": 817678,
@@ -88,10 +88,10 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 
 	// arrange
 	// mock yandex auth
-	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
-	mux.HandleFunc("/handlers/artist.jsx", func(w http.ResponseWriter, r *http.Request) {
+	mux.HandleFunc("/handlers/artist.jsx", func(w http.ResponseWriter, _ *http.Request) {
 		w.Write([]byte(`{
     "artist": {
         "id": 817678,
