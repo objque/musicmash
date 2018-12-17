@@ -3,6 +3,7 @@ package albums
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 
 	"github.com/musicmash/musicmash/internal/clients/deezer"
@@ -22,8 +23,13 @@ func GetArtistAlbums(provider *deezer.Provider, artistID int) ([]*Album, error) 
 		Albums []*Album `json:"data"`
 	}
 	a := answer{}
-	if err := json.NewDecoder(resp.Body).Decode(&a); err != nil {
-		return nil, errors.Wrapf(err, "tried to decode albums for %v", artistID)
+	dec := json.NewDecoder(resp.Body)
+	if err := dec.Decode(&a); err != nil {
+		errBody, err := ioutil.ReadAll(dec.Buffered())
+		if err != nil {
+			return nil, errors.Wrapf(err, "tried to decode albums for %v", artistID)
+		}
+		return nil, errors.Wrapf(err, "tried to decode albums for %v from: %s", artistID, string(errBody))
 	}
 	return a.Albums, nil
 }
