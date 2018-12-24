@@ -67,3 +67,38 @@ func TestAPI_UnsubscribeUser_UserNotFound(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
 }
+
+func TestAPI_Subscriptions_Get_UserNotFound(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// action
+	resp, err := http.Get(fmt.Sprintf("%s/%s/subscriptions", server.URL, testutil.UserObjque))
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusNotFound, resp.StatusCode)
+}
+
+func TestAPI_Subscriptions_Get(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserObjque))
+	assert.NoError(t, db.DbMgr.EnsureUserExists(testutil.UserBot))
+	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistSkrillex, testutil.ArtistSPY}))
+	assert.NoError(t, db.DbMgr.SubscribeUserForArtists(testutil.UserBot, []string{testutil.ArtistArchitects}))
+
+	// action
+	resp, err := http.Get(fmt.Sprintf("%s/%s/subscriptions", server.URL, testutil.UserObjque))
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, http.StatusOK, resp.StatusCode)
+	subs := []*db.Subscription{}
+	assert.NoError(t, json.NewDecoder(resp.Body).Decode(&subs))
+	assert.Len(t, subs, 2)
+	assert.Equal(t, testutil.ArtistSPY, subs[0].ArtistName)
+	assert.Equal(t, testutil.ArtistSkrillex, subs[1].ArtistName)
+}
