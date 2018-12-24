@@ -47,3 +47,26 @@ func deleteSubscriptions(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 }
+
+func getUserSubscriptions(w http.ResponseWriter, r *http.Request) {
+	userName := chi.URLParam(r, "user_name")
+	if err := validators.IsUserExits(w, userName); err != nil {
+		return
+	}
+
+	subs, err := db.DbMgr.FindAllUserSubscriptions(userName)
+	if err != nil {
+		log.Error(errors.Wrapf(err, "tried to get subscriptions for '%s'", userName))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	body, err := json.Marshal(&subs)
+	if err != nil {
+		log.Error(errors.Wrapf(err, "tried to marshal subscriptions for '%s'", userName))
+		w.WriteHeader(http.StatusInternalServerError)
+		return
+	}
+
+	w.Write(body)
+}
