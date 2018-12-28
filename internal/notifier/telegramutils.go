@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
-	"gopkg.in/telegram-bot-api.v4"
+	tgbotapi "gopkg.in/telegram-bot-api.v4"
 )
 
 // TODO (m.kalinin): extract into config
