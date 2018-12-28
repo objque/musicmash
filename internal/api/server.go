@@ -27,6 +27,7 @@ func getMux() *chi.Mux {
 	r.Post("/{user_name}/subscriptions", createSubscriptions)
 	r.Delete("/{user_name}/subscriptions", deleteSubscriptions)
 	r.Get("/{user_name}/subscriptions", getUserSubscriptions)
+	r.Get("/{user_name}/artists", searchArtist)
 	return r
 }
 

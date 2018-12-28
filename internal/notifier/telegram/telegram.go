@@ -1,6 +1,6 @@
 package telegram
 
-import "gopkg.in/telegram-bot-api.v4"
+import tgbotapi "gopkg.in/telegram-bot-api.v4"
 
 var bot *tgbotapi.BotAPI
 

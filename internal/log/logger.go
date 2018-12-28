@@ -5,7 +5,7 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/getsentry/raven-go"
+	raven "github.com/getsentry/raven-go"
 	"github.com/sirupsen/logrus"
 )
 
