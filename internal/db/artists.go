@@ -8,7 +8,7 @@ import (
 )
 
 type Artist struct {
-	Name string `gorm:"primary_key"`
+	Name string `gorm:"primary_key" json:"name"`
 }
 
 type ArtistStoreInfo struct {
