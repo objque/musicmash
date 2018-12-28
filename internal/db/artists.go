@@ -1,6 +1,11 @@
 package db
 
-import "github.com/jinzhu/gorm"
+import (
+	"fmt"
+	"net/url"
+
+	"github.com/jinzhu/gorm"
+)
 
 type Artist struct {
 	Name string `gorm:"primary_key"`
@@ -15,11 +20,21 @@ type ArtistStoreInfo struct {
 type ArtistMgr interface {
 	EnsureArtistExists(name string) error
 	GetAllArtists() ([]*Artist, error)
+	SearchArtists(name string) ([]*Artist, error)
 }
 
 func (mgr *AppDatabaseMgr) GetAllArtists() ([]*Artist, error) {
 	artists := []*Artist{}
 	if err := mgr.db.Find(&artists).Error; err != nil {
+		return nil, err
+	}
+	return artists, nil
+}
+
+func (mgr *AppDatabaseMgr) SearchArtists(name string) ([]*Artist, error) {
+	artists := []*Artist{}
+	name = fmt.Sprintf("%%%s%%", url.QueryEscape(name))
+	if err := mgr.db.Where("name LIKE ?", name).Order("name").Find(&artists).Error; err != nil {
 		return nil, err
 	}
 	return artists, nil
