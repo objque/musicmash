@@ -1,9 +1,8 @@
 #!/usr/bin/env bash
 
 if ! which golangci-lint > /dev/null; then
-    version="v.1.12.3"
-    echo "==> Installing golangci-lint $(version)"
-    curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $GOPATH/bin $(version)
+    echo "==> Installing golangci-lint"
+    curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $GOPATH/bin latest
 fi
 
 echo "==> Checking golangci-ling..."
