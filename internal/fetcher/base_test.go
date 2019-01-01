@@ -19,9 +19,9 @@ func setup() {
 	server = httptest.NewServer(mux)
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
-		Stores: []*config.Store{
-			{Name: testutil.StoreYandex, URL: server.URL, FetchWorkers: 1},
-			{Name: testutil.StoreApple, URL: server.URL, Meta: map[string]string{"token": "xxx"}, FetchWorkers: 1},
+		Stores: map[string]*config.Store{
+			testutil.StoreYandex: {URL: server.URL, FetchWorkers: 1},
+			testutil.StoreApple:  {URL: server.URL, Meta: map[string]string{"token": "xxx"}, FetchWorkers: 1},
 		},
 	}
 }

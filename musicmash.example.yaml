@@ -20,11 +20,11 @@ tasks:
         subscribe_artist_workers: 10
 
 stores:
-    - type: yandex
+    yandex:
       url: "https://music.yandex.ru"
       fetch_workers: 1
 
-    - type: itunes
+    itunes:
       url: "https://api.music.apple.com"
       fetch_workers: 10
       meta:

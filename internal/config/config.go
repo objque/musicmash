@@ -11,13 +11,13 @@ import (
 var Config *AppConfig
 
 type AppConfig struct {
-	HTTP     HTTPConfig `yaml:"http"`
-	DB       DBConfig   `yaml:"db"`
-	Log      LogConfig  `yaml:"log"`
-	Fetching Fetching   `yaml:"fetching"`
-	Stores   []*Store   `yaml:"stores"`
-	Notifier Notifier   `yaml:"notifier"`
-	Sentry   Sentry     `yaml:"sentry"`
+	HTTP     HTTPConfig        `yaml:"http"`
+	DB       DBConfig          `yaml:"db"`
+	Log      LogConfig         `yaml:"log"`
+	Fetching Fetching          `yaml:"fetching"`
+	Stores   map[string]*Store `yaml:"stores"`
+	Notifier Notifier          `yaml:"notifier"`
+	Sentry   Sentry            `yaml:"sentry"`
 }
 
 type HTTPConfig struct {
@@ -46,7 +46,6 @@ type Fetching struct {
 }
 
 type Store struct {
-	Name         string `yaml:"type"`
 	URL          string `yaml:"url"`
 	FetchWorkers int    `yaml:"fetch_workers"`
 	Meta         Meta   `yaml:"meta"`

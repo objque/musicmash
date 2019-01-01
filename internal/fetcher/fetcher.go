@@ -13,8 +13,8 @@ import (
 
 func getServices() []services.Service {
 	fetchers := []services.Service{}
-	for _, store := range config.Config.Stores {
-		switch store.Name {
+	for name, store := range config.Config.Stores {
+		switch name {
 		case "itunes":
 			fetchers = append(fetchers, itunes.NewService(store.URL, store.FetchWorkers, store.Meta["token"]))
 		case "yandex":
