@@ -2,7 +2,7 @@ package db
 
 import (
 	"fmt"
-	"net/url"
+	"html"
 
 	"github.com/jinzhu/gorm"
 )
@@ -33,7 +33,7 @@ func (mgr *AppDatabaseMgr) GetAllArtists() ([]*Artist, error) {
 
 func (mgr *AppDatabaseMgr) SearchArtists(name string) ([]*Artist, error) {
 	artists := []*Artist{}
-	name = fmt.Sprintf("%%%s%%", url.QueryEscape(name))
+	name = fmt.Sprintf("%%%s%%", html.EscapeString(name))
 	if err := mgr.db.Where("name LIKE ?", name).Order("name").Find(&artists).Error; err != nil {
 		return nil, err
 	}
