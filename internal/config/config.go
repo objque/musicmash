@@ -49,6 +49,7 @@ type Store struct {
 	URL          string `yaml:"url"`
 	FetchWorkers int    `yaml:"fetch_workers"`
 	Meta         Meta   `yaml:"meta"`
+	ReleaseURL   string `yaml:"release_url"`
 }
 
 type Meta map[string]string

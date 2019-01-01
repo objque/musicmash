@@ -5,7 +5,9 @@ import (
 	"net/http"
 	"net/http/httptest"
 
+	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutil"
 )
 
 var (
@@ -15,6 +17,11 @@ var (
 func setup() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	server = httptest.NewServer(getMux())
+	config.Config = &config.AppConfig{
+		Stores: map[string]*config.Store{
+			testutil.StoreApple: {ReleaseURL: "https://itunes.apple.com/us/album/%s"},
+		},
+	}
 }
 
 func teardown() {

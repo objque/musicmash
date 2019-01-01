@@ -29,8 +29,8 @@ func groupReleases(releases []*Release) []*Release {
 		}
 
 		result[key].Stores = append(result[key].Stores, &ReleaseStore{
-			value.StoreName,
-			value.StoreID,
+			StoreName: value.StoreName,
+			StoreID:   value.StoreID,
 		})
 
 		// some releases haven't a poster, but if another
