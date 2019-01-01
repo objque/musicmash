@@ -4,25 +4,10 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
 	tgbotapi "gopkg.in/telegram-bot-api.v4"
 )
-
-// TODO (m.kalinin): extract into config
-type service struct {
-	Name string
-	URL  string
-}
-
-func (s *service) getURL(id string) string {
-	return fmt.Sprintf(s.URL, id)
-}
-
-var services = map[string]*service{
-	"yandex": {Name: "Yandex", URL: "https://music.yandex.ru/album/%s"},
-	"itunes": {Name: "Apple Music", URL: "https://itunes.apple.com/us/album/%s"},
-	"deezer": {Name: "Deezer", URL: "https://www.deezer.com/en/album/%s"},
-}
 
 func makeText(release *db.Release) string {
 	releaseDate := ""
@@ -39,8 +24,9 @@ func makeText(release *db.Release) string {
 func makeButtons(release *db.Release) *[][]tgbotapi.InlineKeyboardButton {
 	buttons := [][]tgbotapi.InlineKeyboardButton{}
 	for _, store := range release.Stores {
-		buttonLabel := fmt.Sprintf("Open in %s", services[store.StoreName].Name)
-		buttons = append(buttons, tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonURL(buttonLabel, services[store.StoreName].getURL(store.StoreID))))
+		buttonLabel := fmt.Sprintf("Open in %s", config.Config.Stores[store.StoreName].Name)
+		url := fmt.Sprintf(config.Config.Stores[store.StoreName].ReleaseURL, store.StoreURL)
+		buttons = append(buttons, tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonURL(buttonLabel, url)))
 	}
 	return &buttons
 }
