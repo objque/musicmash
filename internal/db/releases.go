@@ -7,6 +7,7 @@ import (
 
 	"github.com/jinzhu/gorm"
 	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 type ReleaseStore struct {
@@ -23,7 +24,12 @@ func (r *ReleaseStore) MarshalJSON() ([]byte, error) {
 	}{
 		StoreName: r.StoreName,
 		StoreID:   r.StoreID,
-		StoreURL:  fmt.Sprintf(config.Config.Stores[r.StoreName].ReleaseURL, r.StoreID),
+	}
+
+	if store, ok := config.Config.Stores[r.StoreName]; ok {
+		s.StoreURL = fmt.Sprintf(store.ReleaseURL, r.StoreID)
+	} else {
+		log.Warnf("release_url for '%s' missed in config. User will receive empty link", r.StoreName)
 	}
 	return json.Marshal(&s)
 }
