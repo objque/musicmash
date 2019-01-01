@@ -31,42 +31,36 @@ func formatMessageWithFileInfo(msg string) string {
 	return res
 }
 
-// Debugf logs a message at level Debug on the standard logger.
 func Debugf(format string, args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format = formatMessageWithFileInfo(format)
 	entry.Debugf(format, args...)
 }
 
-// Debugln logs a message with fields at level Debug on the standard logger.
 func Debugln(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
 	entry.Debugln(format)
 }
 
-// Infof logs a message at level Info on the standard logger.
 func Infof(format string, args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format = formatMessageWithFileInfo(format)
 	entry.Infof(format, args...)
 }
 
-// Infoln logs a message with fields at level Debug on the standard logger.
 func Infoln(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
 	entry.Infoln(format)
 }
 
-// Info logs a message with fields at level Debug on the standard logger.
 func Info(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
 	entry.Infoln(format)
 }
 
-// Error logs a message with fields at level Debug on the standard logger.
 func Error(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
@@ -74,7 +68,6 @@ func Error(args ...interface{}) {
 	raven.CaptureMessage(format, nil)
 }
 
-// Errorf logs a message at level Error on the standard logger.
 func Errorf(format string, args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format = formatMessageWithFileInfo(format)
@@ -82,7 +75,6 @@ func Errorf(format string, args ...interface{}) {
 	raven.CaptureMessage(fmt.Sprintf(format, args...), nil)
 }
 
-// Warning logs a message with fields at level Debug on the standard logger.
 func Warn(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
@@ -90,7 +82,6 @@ func Warn(args ...interface{}) {
 	raven.CaptureMessage(format, nil)
 }
 
-// Warningf logs a message at level Warning on the standard logger.
 func Warnf(format string, args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format = formatMessageWithFileInfo(format)
@@ -98,7 +89,6 @@ func Warnf(format string, args ...interface{}) {
 	raven.CaptureMessage(fmt.Sprintf(format, args...), nil)
 }
 
-// Panic logs a message at level Panic on the standard logger.
 func Panic(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
