@@ -1,14 +1,31 @@
 package db
 
 import (
+	"encoding/json"
+	"fmt"
 	"time"
 
 	"github.com/jinzhu/gorm"
+	"github.com/musicmash/musicmash/internal/config"
 )
 
 type ReleaseStore struct {
+	StoreURL  string `json:"url"`
 	StoreName string `json:"name"`
 	StoreID   string `json:"id"`
+}
+
+func (r *ReleaseStore) MarshalJSON() ([]byte, error) {
+	s := struct {
+		StoreURL  string `json:"url"`
+		StoreName string `json:"name"`
+		StoreID   string `json:"id"`
+	}{
+		StoreName: r.StoreName,
+		StoreID:   r.StoreID,
+		StoreURL:  fmt.Sprintf(config.Config.Stores[r.StoreName].ReleaseURL, r.StoreID),
+	}
+	return json.Marshal(&s)
 }
 
 type Release struct {

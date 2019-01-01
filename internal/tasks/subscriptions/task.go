@@ -25,8 +25,8 @@ func InitWorkerPool() {
 		go subscriber(subscribeJobs)
 	}
 
-	for _, store := range config.Config.Stores {
-		switch store.Name {
+	for name, store := range config.Config.Stores {
+		switch name {
 		case "itunes":
 			appleLinker = apple.NewLinker(store.URL, store.Meta["token"])
 			for w := 1; w <= 3; w++ {
