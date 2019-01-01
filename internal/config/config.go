@@ -51,6 +51,7 @@ type Store struct {
 	Meta         Meta   `yaml:"meta"`
 	ReleaseURL   string `yaml:"release_url"`
 	Name         string `yaml:"name"`
+	Fetch        bool   `json:"fetch"`
 }
 
 type Meta map[string]string

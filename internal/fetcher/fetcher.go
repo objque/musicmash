@@ -14,6 +14,11 @@ import (
 func getServices() []services.Service {
 	fetchers := []services.Service{}
 	for name, store := range config.Config.Stores {
+		// if fetching for current store is disabled
+		if !store.Fetch {
+			continue
+		}
+
 		switch name {
 		case "itunes":
 			fetchers = append(fetchers, itunes.NewService(store.URL, store.FetchWorkers, store.Meta["token"]))
