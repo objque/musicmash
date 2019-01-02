@@ -1,10 +1,13 @@
 package db
 
 import (
+	"encoding/json"
 	"fmt"
 	"html"
 
 	"github.com/jinzhu/gorm"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 type Artist struct {
@@ -12,9 +15,30 @@ type Artist struct {
 }
 
 type ArtistStoreInfo struct {
-	ArtistName string
-	StoreName  string `gorm:"unique_index:idx_art_store_name_store_id"`
-	StoreID    string `gorm:"unique_index:idx_art_store_name_store_id"`
+	ArtistName string `json:"-"`
+	StoreName  string `gorm:"unique_index:idx_art_store_name_store_id" json:"name"`
+	StoreID    string `gorm:"unique_index:idx_art_store_name_store_id" json:"id"`
+}
+
+func (r *ArtistStoreInfo) MarshalJSON() ([]byte, error) {
+	s := struct {
+		StoreURL  string `json:"url"`
+		StoreName string `json:"name"`
+		StoreID   string `json:"id"`
+	}{
+		StoreName: r.StoreName,
+		StoreID:   r.StoreID,
+	}
+
+	if store, ok := config.Config.Stores[r.StoreName]; ok {
+		s.StoreURL = fmt.Sprintf(store.ArtistURL, r.StoreID)
+		// make more presentable name (e.g iTunes), instead of system (e.g itunes)
+		s.StoreName = store.Name
+	} else {
+		log.Warnf("artist_url for '%s' missed in config. User will receive empty link", r.StoreName)
+	}
+	return json.Marshal(&s)
+}
 }
 
 type ArtistMgr interface {

@@ -50,6 +50,7 @@ type Store struct {
 	FetchWorkers int    `yaml:"fetch_workers"`
 	Meta         Meta   `yaml:"meta"`
 	ReleaseURL   string `yaml:"release_url"`
+	ArtistURL    string `yaml:"artist_url"`
 	Name         string `yaml:"name"`
 	Fetch        bool   `json:"fetch"`
 }

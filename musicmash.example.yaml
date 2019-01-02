@@ -24,6 +24,7 @@ stores:
       url: "https://music.yandex.ru"
       fetch_workers: 1
       release_url: "http://music.yandex.ru/album/%s"
+      artist_url: "http://music.yandex.ru/artist/%s"
       name: "Yandex.Music"
       fetch: false
 
@@ -34,6 +35,7 @@ stores:
       fetch: true
       # make sure that region in the url equals to meta->region
       release_url: "https://itunes.apple.com/us/album/%s"
+      artist_url: "https://itunes.apple.com/us/artist/%s"
       meta:
         token: "kpXVCIsInR5cCI6IkpXVCIsInR5cCI6IkpXVCIsInR5cCI6I"
         region: "us"
