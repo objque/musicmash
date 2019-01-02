@@ -32,8 +32,6 @@ func (r *ArtistStoreInfo) MarshalJSON() ([]byte, error) {
 
 	if store, ok := config.Config.Stores[r.StoreName]; ok {
 		s.StoreURL = fmt.Sprintf(store.ArtistURL, r.StoreID)
-		// make more presentable name (e.g iTunes), instead of system (e.g itunes)
-		s.StoreName = store.Name
 	} else {
 		log.Warnf("artist_url for '%s' missed in config. User will receive empty link", r.StoreName)
 	}
