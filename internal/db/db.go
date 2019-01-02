@@ -15,6 +15,7 @@ type DataMgr interface {
 	StoreMgr
 	ArtistMgr
 	ArtistStoreInfoMgr
+	ArtistDetailsMgr
 	UserMgr
 	SubscriptionMgr
 	ReleaseMgr

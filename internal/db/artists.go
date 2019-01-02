@@ -1,10 +1,13 @@
 package db
 
 import (
+	"encoding/json"
 	"fmt"
 	"html"
 
 	"github.com/jinzhu/gorm"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/log"
 )
 
 type Artist struct {
@@ -12,9 +15,39 @@ type Artist struct {
 }
 
 type ArtistStoreInfo struct {
-	ArtistName string
-	StoreName  string `gorm:"unique_index:idx_art_store_name_store_id"`
-	StoreID    string `gorm:"unique_index:idx_art_store_name_store_id"`
+	ArtistName string `json:"-"`
+	StoreName  string `gorm:"unique_index:idx_art_store_name_store_id" json:"name"`
+	StoreID    string `gorm:"unique_index:idx_art_store_name_store_id" json:"id"`
+}
+
+func (r *ArtistStoreInfo) MarshalJSON() ([]byte, error) {
+	s := struct {
+		StoreURL  string `json:"url"`
+		StoreName string `json:"name"`
+		StoreID   string `json:"id"`
+	}{
+		StoreName: r.StoreName,
+		StoreID:   r.StoreID,
+	}
+
+	if store, ok := config.Config.Stores[r.StoreName]; ok {
+		s.StoreURL = fmt.Sprintf(store.ArtistURL, r.StoreID)
+		// make more presentable name (e.g iTunes), instead of system (e.g itunes)
+		s.StoreName = store.Name
+	} else {
+		log.Warnf("artist_url for '%s' missed in config. User will receive empty link", r.StoreName)
+	}
+	return json.Marshal(&s)
+}
+
+type ArtistDetails struct {
+	Artist
+	Stores   []*ArtistStoreInfo     `gorm:"-" json:"stores"`
+	Releases *ArtistDetailsReleases `json:"releases"`
+}
+type ArtistDetailsReleases struct {
+	Announced []*Release `json:"announced"`
+	Recent    []*Release `json:"released"`
 }
 
 type ArtistMgr interface {
@@ -83,4 +116,40 @@ func (mgr *AppDatabaseMgr) EnsureArtistExistsInStore(artistName, storeName, stor
 		return mgr.db.Create(ArtistStoreInfo{ArtistName: artistName, StoreName: storeName, StoreID: storeID}).Error
 	}
 	return nil
+}
+
+type ArtistDetailsMgr interface {
+	GetArtistDetails(name string) (*ArtistDetails, error)
+}
+
+func (mgr *AppDatabaseMgr) GetArtistDetails(name string) (*ArtistDetails, error) {
+	artist := Artist{}
+	if err := mgr.db.Where("name = ?", name).First(&artist).Error; err != nil {
+		return nil, err
+	}
+
+	stores := []*ArtistStoreInfo{}
+	if err := mgr.db.Where("artist_name = ?", name).Find(&stores).Error; err != nil {
+		return nil, err
+	}
+
+	announced, err := mgr.FindArtistAnnouncedReleases(name)
+	if err != nil {
+		return nil, err
+	}
+
+	released, err := mgr.FindArtistRecentReleases(name)
+	if err != nil {
+		return nil, err
+	}
+
+	details := &ArtistDetails{
+		Artist: artist,
+		Stores: stores,
+		Releases: &ArtistDetailsReleases{
+			Recent:    groupReleases(released),
+			Announced: groupReleases(announced),
+		},
+	}
+	return details, nil
 }
