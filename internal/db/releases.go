@@ -56,6 +56,8 @@ type ReleaseMgr interface {
 	FindReleases(condition map[string]interface{}) ([]*Release, error)
 	FindNewReleases(date time.Time) ([]*Release, error)
 	FindNewReleasesForUser(userName string, date time.Time) ([]*Release, error)
+	FindArtistRecentReleases(artistName string) ([]*Release, error)
+	FindArtistAnnouncedReleases(artistName string) ([]*Release, error)
 	UpdateRelease(release *Release) error
 }
 
@@ -134,4 +136,22 @@ func (mgr *AppDatabaseMgr) FindReleases(condition map[string]interface{}) ([]*Re
 
 func (mgr *AppDatabaseMgr) UpdateRelease(release *Release) error {
 	return mgr.db.Save(release).Error
+}
+
+func (mgr *AppDatabaseMgr) FindArtistRecentReleases(artistName string) ([]*Release, error) {
+	releases := []*Release{}
+	err := mgr.db.Where("artist_name = ? and released <= ?", artistName, time.Now().UTC()).Find(&releases).Error
+	if err != nil {
+		return nil, err
+	}
+	return releases, nil
+}
+
+func (mgr *AppDatabaseMgr) FindArtistAnnouncedReleases(artistName string) ([]*Release, error) {
+	releases := []*Release{}
+	err := mgr.db.Where("artist_name = ? and released > ?", artistName, time.Now().UTC()).Find(&releases).Error
+	if err != nil {
+		return nil, err
+	}
+	return releases, nil
 }
