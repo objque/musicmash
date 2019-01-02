@@ -39,6 +39,15 @@ func (r *ArtistStoreInfo) MarshalJSON() ([]byte, error) {
 	}
 	return json.Marshal(&s)
 }
+
+type ArtistDetails struct {
+	Artist
+	Stores   []*ArtistStoreInfo     `gorm:"-" json:"stores"`
+	Releases *ArtistDetailsReleases `json:"releases"`
+}
+type ArtistDetailsReleases struct {
+	Announced []*Release `json:"announced"`
+	Recent    []*Release `json:"released"`
 }
 
 type ArtistMgr interface {
@@ -107,4 +116,40 @@ func (mgr *AppDatabaseMgr) EnsureArtistExistsInStore(artistName, storeName, stor
 		return mgr.db.Create(ArtistStoreInfo{ArtistName: artistName, StoreName: storeName, StoreID: storeID}).Error
 	}
 	return nil
+}
+
+type ArtistDetailsMgr interface {
+	GetArtistDetails(name string) (*ArtistDetails, error)
+}
+
+func (mgr *AppDatabaseMgr) GetArtistDetails(name string) (*ArtistDetails, error) {
+	artist := Artist{}
+	if err := mgr.db.Where("name = ?", name).First(&artist).Error; err != nil {
+		return nil, err
+	}
+
+	stores := []*ArtistStoreInfo{}
+	if err := mgr.db.Where("artist_name = ?", name).Find(&stores).Error; err != nil {
+		return nil, err
+	}
+
+	announced, err := mgr.FindArtistAnnouncedReleases(name)
+	if err != nil {
+		return nil, err
+	}
+
+	released, err := mgr.FindArtistRecentReleases(name)
+	if err != nil {
+		return nil, err
+	}
+
+	details := &ArtistDetails{
+		Artist: artist,
+		Stores: stores,
+		Releases: &ArtistDetailsReleases{
+			Recent:    groupReleases(released),
+			Announced: groupReleases(announced),
+		},
+	}
+	return details, nil
 }
