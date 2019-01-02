@@ -28,8 +28,6 @@ func (r *ReleaseStore) MarshalJSON() ([]byte, error) {
 
 	if store, ok := config.Config.Stores[r.StoreName]; ok {
 		s.StoreURL = fmt.Sprintf(store.ReleaseURL, r.StoreID)
-		// make more presentable name (e.g iTunes), instead of system (e.g itunes)
-		s.StoreName = store.Name
 	} else {
 		log.Warnf("release_url for '%s' missed in config. User will receive empty link", r.StoreName)
 	}
