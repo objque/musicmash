@@ -75,7 +75,7 @@ func (mgr *AppDatabaseMgr) GetAllReleases() ([]*Release, error) {
 
 func (mgr *AppDatabaseMgr) GetReleasesForUserFilterByPeriod(userName string, since, till time.Time) ([]*Release, error) {
 	// inner query: select artist_name from subscriptions where user_name = XXX
-	// select * from releases where artist_name in (INNER) and and released >= ? and released <= ?
+	// select * from releases where artist_name in (INNER) and released >= ? and released <= ?
 	releases := []*Release{}
 	const query = "select artist_name from subscriptions where user_name = ?"
 	innerQuery := mgr.db.Raw(query, userName).QueryExpr()
@@ -88,7 +88,7 @@ func (mgr *AppDatabaseMgr) GetReleasesForUserFilterByPeriod(userName string, sin
 
 func (mgr *AppDatabaseMgr) GetReleasesForUserSince(userName string, since time.Time) ([]*Release, error) {
 	// inner query: select artist_name from subscriptions where user_name = XXX
-	// select * from releases where artist_name in (INNER) and and released >= ?
+	// select * from releases where artist_name in (INNER) and released >= ?
 	releases := []*Release{}
 	const query = "select artist_name from subscriptions where user_name = ?"
 	innerQuery := mgr.db.Raw(query, userName).QueryExpr()
