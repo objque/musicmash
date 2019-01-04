@@ -75,12 +75,13 @@ func (mgr *AppDatabaseMgr) GetAllReleases() ([]*Release, error) {
 
 func (mgr *AppDatabaseMgr) GetReleasesForUserFilterByPeriod(userName string, since, till time.Time) ([]*Release, error) {
 	// inner query: select artist_name from subscriptions where user_name = XXX
-	// select * from releases where artist_name in (INNER) and released >= ? and released <= ?
+	// select * from releases where artist_name in (INNER) and released >= ? and released <= ? order by released desc
 	releases := []*Release{}
 	const query = "select artist_name from subscriptions where user_name = ?"
 	innerQuery := mgr.db.Raw(query, userName).QueryExpr()
 	where := mgr.db.Where("artist_name in (?) and released >= ? and released <= ?", innerQuery, since, till)
-	if err := where.Find(&releases).Error; err != nil {
+	// order by desc means first will be today releases
+	if err := where.Order("released desc").Find(&releases).Error; err != nil {
 		return nil, err
 	}
 	return releases, nil
@@ -88,12 +89,13 @@ func (mgr *AppDatabaseMgr) GetReleasesForUserFilterByPeriod(userName string, sin
 
 func (mgr *AppDatabaseMgr) GetReleasesForUserSince(userName string, since time.Time) ([]*Release, error) {
 	// inner query: select artist_name from subscriptions where user_name = XXX
-	// select * from releases where artist_name in (INNER) and released >= ?
+	// select * from releases where artist_name in (INNER) and released >= ? order by released desc
 	releases := []*Release{}
 	const query = "select artist_name from subscriptions where user_name = ?"
 	innerQuery := mgr.db.Raw(query, userName).QueryExpr()
 	where := mgr.db.Where("artist_name in (?) and released >= ?", innerQuery, since)
-	if err := where.Find(&releases).Error; err != nil {
+	// order by asc means first will be releases that will be available very soon
+	if err := where.Order("released").Find(&releases).Error; err != nil {
 		return nil, err
 	}
 	return releases, nil
