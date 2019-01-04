@@ -11,7 +11,8 @@ import (
 )
 
 type Artist struct {
-	Name string `gorm:"primary_key" json:"name"`
+	Name   string `gorm:"primary_key" json:"name"`
+	Poster string `json:"poster"`
 }
 
 type ArtistStoreInfo struct {
