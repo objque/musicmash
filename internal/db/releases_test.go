@@ -86,7 +86,8 @@ func TestDB_Releases_GetReleasesForUserFilterByPeriod_WithFuture(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, releases, 2)
-	assert.Equal(t, testutil.ArtistSkrillex, releases[0].ArtistName)
+	assert.Equal(t, testutil.ArtistSPY, releases[0].ArtistName)
+	assert.Equal(t, testutil.ArtistSkrillex, releases[1].ArtistName)
 }
 
 func TestDB_Releases_GetReleasesForUserSince(t *testing.T) {
