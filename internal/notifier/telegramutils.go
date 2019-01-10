@@ -25,7 +25,7 @@ func makeButtons(release *db.Release) *[][]tgbotapi.InlineKeyboardButton {
 	buttons := [][]tgbotapi.InlineKeyboardButton{}
 	for _, store := range release.Stores {
 		buttonLabel := fmt.Sprintf("Open in %s", config.Config.Stores[store.StoreName].Name)
-		url := fmt.Sprintf(config.Config.Stores[store.StoreName].ReleaseURL, store.StoreURL)
+		url := fmt.Sprintf(config.Config.Stores[store.StoreName].ReleaseURL, store.StoreID)
 		buttons = append(buttons, tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonURL(buttonLabel, url)))
 	}
 	return &buttons
