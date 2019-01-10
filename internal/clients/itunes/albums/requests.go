@@ -11,7 +11,7 @@ import (
 )
 
 func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, error) {
-	albumsURL := fmt.Sprintf("%s/v1/catalog/us/artists/%v/albums", provider.URL, artistID)
+	albumsURL := fmt.Sprintf("%s/v1/catalog/us/artists/%v/albums?limit=100", provider.URL, artistID)
 	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
 	provider.WaitRateLimit()
