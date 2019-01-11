@@ -6,6 +6,7 @@ import (
 
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/log"
 	tgbotapi "gopkg.in/telegram-bot-api.v4"
 )
 
@@ -24,7 +25,13 @@ func makeText(release *db.Release) string {
 func makeButtons(release *db.Release) *[][]tgbotapi.InlineKeyboardButton {
 	buttons := [][]tgbotapi.InlineKeyboardButton{}
 	for _, store := range release.Stores {
-		buttonLabel := fmt.Sprintf("Open in %s", config.Config.Stores[store.StoreName].Name)
+		storeDetails, ok := config.Config.Stores[store.StoreName]
+		if !ok {
+			log.Errorf("Can't make button for store '%s'. Is store exists in the config/stores section?", store.StoreName)
+			continue
+		}
+
+		buttonLabel := fmt.Sprintf("Open in %s", storeDetails.Name)
 		url := fmt.Sprintf(config.Config.Stores[store.StoreName].ReleaseURL, store.StoreID)
 		buttons = append(buttons, tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonURL(buttonLabel, url)))
 	}
