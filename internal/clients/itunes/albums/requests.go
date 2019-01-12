@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 
@@ -35,7 +36,17 @@ func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, erro
 		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
 	}
 
-	return data.Albums, nil
+	albums := data.Albums
+	for data.Next != "" {
+		log.Debugf("Getting next page (%s) for artist %v", data.Next, artistID)
+		data, err = getAlbums(provider, provider.URL+data.Next)
+		if err != nil {
+			return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
+		}
+		albums = append(albums, data.Albums...)
+	}
+
+	return albums, nil
 }
 
 func isLatest(album *Album) bool {
