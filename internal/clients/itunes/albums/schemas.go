@@ -18,6 +18,11 @@ const (
 	LPReleaseTypePattern     = " lp"
 )
 
+type Data struct {
+	Albums []*Album `json:"data"`
+	Next   string   `json:"next,omitempty"`
+}
+
 type Album struct {
 	ID         string          `json:"id"`
 	Attributes AlbumAttributes `json:"attributes"`

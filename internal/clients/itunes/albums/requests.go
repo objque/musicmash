@@ -21,19 +21,16 @@ func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, erro
 	}
 	defer resp.Body.Close()
 
-	type answer struct {
-		Albums []*Album `json:"data"`
-	}
-	a := answer{}
+	data := Data{}
 	dec := json.NewDecoder(resp.Body)
-	if err := dec.Decode(&a); err != nil {
+	if err := dec.Decode(&data); err != nil {
 		errBody, err := ioutil.ReadAll(dec.Buffered())
 		if err != nil {
 			return nil, errors.Wrapf(err, "tried to decode albums for %v", artistID)
 		}
 		return nil, errors.Wrapf(err, "tried to decode albums for %v from: %s", artistID, string(errBody))
 	}
-	return a.Albums, nil
+	return data.Albums, nil
 }
 
 func GetLatestArtistAlbum(provider *itunes.Provider, artistID uint64) (*Album, error) {
