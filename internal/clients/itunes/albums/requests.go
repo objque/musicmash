@@ -3,7 +3,6 @@ package albums
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -11,26 +10,31 @@ import (
 	"github.com/pkg/errors"
 )
 
-func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, error) {
-	albumsURL := fmt.Sprintf("%s/v1/catalog/us/artists/%v/albums?limit=100", provider.URL, artistID)
-	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
+func getAlbums(provider *itunes.Provider, url string) (*Data, error) {
+	req, _ := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
 	provider.WaitRateLimit()
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
 	data := Data{}
-	dec := json.NewDecoder(resp.Body)
-	if err := dec.Decode(&data); err != nil {
-		errBody, err := ioutil.ReadAll(dec.Buffered())
-		if err != nil {
-			return nil, errors.Wrapf(err, "tried to decode albums for %v", artistID)
-		}
-		return nil, errors.Wrapf(err, "tried to decode albums for %v from: %s", artistID, string(errBody))
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return nil, err
 	}
+
+	return &data, nil
+}
+
+func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, error) {
+	albumsURL := fmt.Sprintf("%s/v1/catalog/us/artists/%v/albums?limit=100", provider.URL, artistID)
+	data, err := getAlbums(provider, albumsURL)
+	if err != nil {
+		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
+	}
+
 	return data.Albums, nil
 }
 
