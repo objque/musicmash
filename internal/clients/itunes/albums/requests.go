@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/pkg/errors"
@@ -33,21 +34,25 @@ func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, erro
 	return data.Albums, nil
 }
 
-func GetLatestArtistAlbum(provider *itunes.Provider, artistID uint64) (*Album, error) {
+func isLatest(album *Album) bool {
+	now := time.Now().UTC().Truncate(time.Hour * 24)
+	yesterday := now.Add(-time.Hour * 48)
+	return album.Attributes.ReleaseDate.Value.UTC().After(yesterday)
+}
+
+func GetLatestArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, error) {
 	albums, err := GetArtistAlbums(provider, artistID)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(albums) == 0 {
-		return nil, ErrAlbumsNotFound
-	}
-
-	latest := albums[0]
-	for _, album := range albums {
-		if album.Attributes.ReleaseDate.Value.After(latest.Attributes.ReleaseDate.Value) {
-			latest = album
+	latest := []*Album{}
+	for _, release := range albums {
+		if !isLatest(release) {
+			continue
 		}
+
+		latest = append(latest, release)
 	}
-	return latest, nil
+	return latest, err
 }
