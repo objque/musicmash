@@ -9,7 +9,7 @@ import (
 
 type Notification struct {
 	ID        int `gorm:"primary_key" sql:"AUTO_INCREMENT"`
-	CreatedAt time.Time
+	Date      time.Time
 	UserName  string `gorm:"unique_index:idx_notify_user_release"`
 	ReleaseID uint64 `gorm:"unique_index:idx_notify_user_release"`
 }
@@ -29,7 +29,12 @@ func (mgr *AppDatabaseMgr) GetNotificationsForUser(userName string) ([]*Notifica
 
 func (mgr *AppDatabaseMgr) MarkReleasesAsDelivered(userName string, releases []*Release) {
 	for _, release := range releases {
-		if err := mgr.db.Create(&Notification{UserName: userName, ReleaseID: release.ID}).Error; err != nil {
+		notification := Notification{
+			UserName:  userName,
+			ReleaseID: release.ID,
+			Date:      time.Now().UTC(),
+		}
+		if err := mgr.db.Create(&notification).Error; err != nil {
 			log.Error(errors.Wrapf(err, "tried to save notification for user '%s' about release_id '%v'", userName, release.ID))
 		}
 	}
