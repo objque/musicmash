@@ -4,7 +4,6 @@ import (
 	"strconv"
 	"strings"
 	"sync"
-	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/clients/itunes/albums"
@@ -22,12 +21,6 @@ const (
 	EPReleaseType     = " - EP"
 	LPReleaseType     = " - LP"
 )
-
-func isLatest(album *albums.Album) bool {
-	now := time.Now().UTC().Truncate(time.Hour * 24)
-	yesterday := now.Add(-time.Hour * 48)
-	return album.Attributes.ReleaseDate.Value.UTC().After(yesterday)
-}
 
 type Fetcher struct {
 	Provider     *itunes.Provider
@@ -60,7 +53,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, done c
 			continue
 		}
 
-		release, err := albums.GetLatestArtistAlbum(f.Provider, artistID)
+		releases, err := albums.GetLatestArtistAlbums(f.Provider, artistID)
 		if err != nil {
 			if err == albums.ErrAlbumsNotFound {
 				log.Debugf("Artist '%s' with id %s hasn't albums", artist.ArtistName, artist.StoreID)
@@ -71,20 +64,18 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, done c
 			continue
 		}
 
-		if !isLatest(release) {
-			continue
-		}
-
-		err = db.DbMgr.EnsureReleaseExists(&db.Release{
-			StoreName:  f.GetStoreName(),
-			StoreID:    release.ID,
-			ArtistName: artist.ArtistName,
-			Title:      removeAlbumType(release.Attributes.Name),
-			Poster:     release.Attributes.Artwork.GetLink(posterWidth, posterHeight),
-			Released:   release.Attributes.ReleaseDate.Value,
-		})
-		if err != nil {
-			log.Errorf("can't save release from '%s' with id '%s': %v", f.GetStoreName(), release.ID, err)
+		for _, release := range releases {
+			err = db.DbMgr.EnsureReleaseExists(&db.Release{
+				StoreName:  f.GetStoreName(),
+				StoreID:    release.ID,
+				ArtistName: artist.ArtistName,
+				Title:      removeAlbumType(release.Attributes.Name),
+				Poster:     release.Attributes.Artwork.GetLink(posterWidth, posterHeight),
+				Released:   release.Attributes.ReleaseDate.Value,
+			})
+			if err != nil {
+				log.Errorf("can't save release from '%s' with id '%s': %v", f.GetStoreName(), release.ID, err)
+			}
 		}
 	}
 	done <- id

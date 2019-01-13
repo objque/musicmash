@@ -3,54 +3,72 @@ package albums
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
+	"github.com/musicmash/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 
-func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, error) {
-	albumsURL := fmt.Sprintf("%s/v1/catalog/us/artists/%v/albums?limit=100", provider.URL, artistID)
-	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
+func getAlbums(provider *itunes.Provider, url string) (*Data, error) {
+	req, _ := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
 	provider.WaitRateLimit()
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
+		return nil, err
 	}
 	defer resp.Body.Close()
 
-	type answer struct {
-		Albums []*Album `json:"data"`
+	data := Data{}
+	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
+		return nil, err
 	}
-	a := answer{}
-	dec := json.NewDecoder(resp.Body)
-	if err := dec.Decode(&a); err != nil {
-		errBody, err := ioutil.ReadAll(dec.Buffered())
-		if err != nil {
-			return nil, errors.Wrapf(err, "tried to decode albums for %v", artistID)
-		}
-		return nil, errors.Wrapf(err, "tried to decode albums for %v from: %s", artistID, string(errBody))
-	}
-	return a.Albums, nil
+
+	return &data, nil
 }
 
-func GetLatestArtistAlbum(provider *itunes.Provider, artistID uint64) (*Album, error) {
+func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, error) {
+	albumsURL := fmt.Sprintf("%s/v1/catalog/us/artists/%v/albums?limit=100", provider.URL, artistID)
+	data, err := getAlbums(provider, albumsURL)
+	if err != nil {
+		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
+	}
+
+	albums := data.Albums
+	for data.Next != "" {
+		log.Debugf("Getting next page (%s) for artist %v", data.Next, artistID)
+		url := fmt.Sprintf("%s%s&limit=100", provider.URL, data.Next)
+		data, err = getAlbums(provider, url)
+		if err != nil {
+			return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
+		}
+		albums = append(albums, data.Albums...)
+	}
+
+	return albums, nil
+}
+
+func isLatest(album *Album) bool {
+	now := time.Now().UTC().Truncate(time.Hour * 24)
+	yesterday := now.Add(-time.Hour * 48)
+	return album.Attributes.ReleaseDate.Value.UTC().After(yesterday)
+}
+
+func GetLatestArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, error) {
 	albums, err := GetArtistAlbums(provider, artistID)
 	if err != nil {
 		return nil, err
 	}
 
-	if len(albums) == 0 {
-		return nil, ErrAlbumsNotFound
-	}
-
-	latest := albums[0]
-	for _, album := range albums {
-		if album.Attributes.ReleaseDate.Value.After(latest.Attributes.ReleaseDate.Value) {
-			latest = album
+	latest := []*Album{}
+	for _, release := range albums {
+		if !isLatest(release) {
+			continue
 		}
+
+		latest = append(latest, release)
 	}
-	return latest, nil
+	return latest, err
 }

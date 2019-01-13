@@ -91,7 +91,17 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
         "isComplete": true,
         "isSingle": false,
         "name": "%s",
-        "releaseDate": "2013-05-28"
+        "releaseDate": "2025-05-28"
+      },
+      "id": "%s"
+    },
+    {
+      "attributes": {
+        "artistName": "Architects",
+        "isComplete": true,
+        "isSingle": false,
+        "name": "The Here and Now",
+        "releaseDate": "2020-07-13"
       },
       "id": "%s"
     },
@@ -106,14 +116,16 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
       "id": "1045635474"
     }
   ]
-}`, testutil.ArtistArchitects, testutil.ReleaseArchitectsHollyHell, testutil.StoreIDA)))
+}`, testutil.ArtistArchitects, testutil.ReleaseArchitectsHollyHell, testutil.StoreIDA, testutil.StoreIDB)))
 	})
 
 	// action
-	album, err := GetLatestArtistAlbum(provider, testutil.StoreIDQ)
+	albums, err := GetLatestArtistAlbums(provider, testutil.StoreIDQ)
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, testutil.StoreIDA, album.ID)
-	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, album.Attributes.Name)
+	assert.Len(t, albums, 2)
+	assert.Equal(t, testutil.StoreIDA, albums[0].ID)
+	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, albums[0].Attributes.Name)
+	assert.Equal(t, testutil.StoreIDB, albums[1].ID)
 }
