@@ -11,7 +11,8 @@ go:
 jobs:
   include:
   - stage: "Lint and tests"
-    script: make lint-all
+    script: bash ./scripts/consistent.sh
+  - script: bash ./scripts/golangci-lint.sh
   - script: make tests
   - stage: deploy stable build
     if: branch = master
