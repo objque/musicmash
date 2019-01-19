@@ -10,13 +10,12 @@ go:
 - "1.11.4"
 jobs:
   include:
-  - stage: lint
-    script:
-      - make lint-all
-  - stage: tests
-    script:
-    - make tests
-  - stage: deploy
+  - stage: "Lint and tests"
+    script: bash ./scripts/consistent.sh
+  - script: bash ./scripts/golangci-lint.sh
+  - script: make tests
+  - stage: deploy stable build
+    if: branch = master
     env: VERSION=stable
     script:
     - eval "$(ssh-agent -s)"
@@ -24,19 +23,12 @@ jobs:
     - make docker-build
     - make docker-push
     - make deploy
-  - stage: deploy-staging
+  - stage: deploy nightly build
+    if: branch = develop
     env: VERSION=nightly
     script:
     - eval "$(ssh-agent -s)"
     - make add-ssh-key
     - make docker-build
     - make docker-push
-    - make deploy
-stages:
-- lint
-- tests
-- build
-- name: deploy
-  if: branch = master
-- name: deploy-staging
-  if: branch = develop
+    - make deploy-staging

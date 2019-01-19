@@ -30,7 +30,10 @@ docker-push: docker-login
 	docker push $(REGISTRY_REPO):$(VERSION)
 
 deploy:
-	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music-$(VERSION)
+	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music
+
+deploy-staging:
+	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(STAGING_HOST) make run-music
 
 lint-all l:
 	bash ./scripts/golangci-lint.sh
