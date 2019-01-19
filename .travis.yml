@@ -31,7 +31,7 @@ jobs:
     - make add-ssh-key
     - make docker-build
     - make docker-push
-    - make deploy
+    - make deploy-staging
 stages:
 - lint
 - tests
