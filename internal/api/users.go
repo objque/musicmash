@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/go-chi/chi"
 	"github.com/jinzhu/gorm"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
@@ -43,4 +44,21 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.WriteHeader(http.StatusCreated)
+}
+
+func getUser(w http.ResponseWriter, r *http.Request) {
+	userName := chi.URLParam(r, "user_name")
+	_, err := db.DbMgr.FindUserByName(userName)
+	if err == nil {
+		w.WriteHeader(http.StatusOK)
+		return
+	}
+
+	if gorm.IsRecordNotFoundError(err) {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
+
+	log.Error(err)
+	w.WriteHeader(http.StatusInternalServerError)
 }

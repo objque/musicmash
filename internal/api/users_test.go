@@ -58,3 +58,28 @@ func TestAPI_Users_Create_AlreadyExists(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Equal(t, resp.StatusCode, http.StatusBadRequest)
 }
+
+func TestAPI_Users_Get(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// action
+	assert.NoError(t, db.DbMgr.EnsureUserExists("objque@me"))
+	resp, err := http.Get(fmt.Sprintf("%s/users/%s", server.URL, "objque@me"))
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, resp.StatusCode, http.StatusOK)
+}
+
+func TestAPI_Users_Get_NotFound(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// action
+	resp, err := http.Get(fmt.Sprintf("%s/users/%s", server.URL, "objque@me"))
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, resp.StatusCode, http.StatusNotFound)
+}
