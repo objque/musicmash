@@ -117,8 +117,6 @@ linters-settings:
     # which checks should be disabled; can't be combined with 'enabled-checks'; default is empty
     disabled-checks:
       - importShadow
-      - longChain
-      - structLitKeyOrder
 
 linters:
   enable-all: true
