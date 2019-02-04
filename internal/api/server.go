@@ -6,7 +6,6 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/go-chi/chi/middleware"
-	"github.com/go-chi/render"
 	"github.com/musicmash/musicmash/internal/log"
 )
 
@@ -18,7 +17,6 @@ func getMux() *chi.Mux {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
-	r.Use(render.SetContentType(render.ContentTypeJSON))
 
 	r.Post("/{user_name}/chats", addUserChat)
 	r.Post("/users", createUser)
