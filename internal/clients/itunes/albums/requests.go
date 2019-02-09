@@ -3,6 +3,7 @@ package albums
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -22,8 +23,13 @@ func getAlbums(provider *itunes.Provider, url string) (*Data, error) {
 	defer resp.Body.Close()
 
 	data := Data{}
-	if err := json.NewDecoder(resp.Body).Decode(&data); err != nil {
-		return nil, err
+	decoder := json.NewDecoder(resp.Body)
+	if err := decoder.Decode(&data); err != nil {
+		b, readerErr := ioutil.ReadAll(decoder.Buffered())
+		if readerErr != nil {
+			return nil, fmt.Errorf("can't read all body because '%v'", readerErr)
+		}
+		return nil, errors.Wrapf(err, "looking json, but got '%s'", string(b))
 	}
 
 	return &data, nil

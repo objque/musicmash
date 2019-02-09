@@ -18,7 +18,7 @@ func getUserFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	since := r.URL.Query().Get("since")
-	weekAgo := time.Now().UTC().Add(-time.Hour * 24 * 7)
+	weekAgo := time.Now().UTC().Add(-time.Hour * 24 * 7).Truncate(time.Hour * 24)
 	if since != "" {
 		var err error
 		weekAgo, err = time.Parse("2006-01-02", since)
