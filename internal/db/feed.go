@@ -1,6 +1,7 @@
 package db
 
 import (
+	"sort"
 	"strings"
 	"time"
 
@@ -44,6 +45,10 @@ func groupReleases(releases []*Release) []*Release {
 	for _, release := range result {
 		releases = append(releases, release)
 	}
+
+	sort.Slice(releases, func(i, j int) bool {
+		return releases[i].Title < releases[j].Title
+	})
 	return releases
 }
 
