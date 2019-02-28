@@ -81,7 +81,7 @@ func (mgr *AppDatabaseMgr) GetReleasesForUserFilterByPeriod(userName string, sin
 	innerQuery := mgr.db.Raw(query, userName).QueryExpr()
 	where := mgr.db.Where("artist_name in (?) and released >= ? and released <= ?", innerQuery, since, till)
 	// order by desc means first will be today releases
-	if err := where.Order("released desc").Find(&releases).Error; err != nil {
+	if err := where.Order("title").Find(&releases).Error; err != nil {
 		return nil, err
 	}
 	return releases, nil
@@ -95,7 +95,7 @@ func (mgr *AppDatabaseMgr) GetReleasesForUserSince(userName string, since time.T
 	innerQuery := mgr.db.Raw(query, userName).QueryExpr()
 	where := mgr.db.Where("artist_name in (?) and released >= ?", innerQuery, since)
 	// order by asc means first will be releases that will be available very soon
-	if err := where.Order("released").Find(&releases).Error; err != nil {
+	if err := where.Order("title").Find(&releases).Error; err != nil {
 		return nil, err
 	}
 	return releases, nil
