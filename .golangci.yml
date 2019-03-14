@@ -126,6 +126,7 @@ linters:
     - errcheck
     - lll
     - gochecknoglobals
+    - gosec
   fast: false
 
 issues:
