@@ -28,6 +28,7 @@ type DataMgr interface {
 	Rollback() *AppDatabaseMgr
 	Close() error
 	DropAllTables() error
+	Ping() error
 }
 
 type AppDatabaseMgr struct {
@@ -72,4 +73,8 @@ func (mgr *AppDatabaseMgr) Close() error {
 
 func (mgr *AppDatabaseMgr) DropAllTables() error {
 	return DropAllTables(mgr.db)
+}
+
+func (mgr *AppDatabaseMgr) Ping() error {
+	return mgr.db.Exec("select 1").Error
 }
