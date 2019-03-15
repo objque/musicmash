@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"testing"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/testutil"
@@ -20,7 +21,7 @@ var (
 func setup() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
-	provider = itunes.NewProvider(server.URL, testutil.TokenSimple)
+	provider = itunes.NewProvider(server.URL, testutil.TokenSimple, time.Minute)
 }
 
 func teardown() {

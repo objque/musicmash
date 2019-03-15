@@ -15,7 +15,7 @@ func SearchArtist(provider *itunes.Provider, term string) (*Artist, error) {
 	req, _ := http.NewRequest(http.MethodGet, albumsURL, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
 	provider.WaitRateLimit()
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := provider.HTTPClient.Do(req)
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to search artist with name '%v'", term)
 	}

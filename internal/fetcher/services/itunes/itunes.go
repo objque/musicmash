@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/clients/itunes/albums"
@@ -29,7 +30,7 @@ type Fetcher struct {
 
 func NewService(url string, fetchWorkers int, token string) *Fetcher {
 	return &Fetcher{
-		Provider:     itunes.NewProvider(url, token),
+		Provider:     itunes.NewProvider(url, token, time.Minute),
 		FetchWorkers: fetchWorkers,
 	}
 }
