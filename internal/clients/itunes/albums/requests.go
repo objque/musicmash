@@ -16,7 +16,7 @@ func getAlbums(provider *itunes.Provider, url string) (*Data, error) {
 	req, _ := http.NewRequest(http.MethodGet, url, nil)
 	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", provider.Token))
 	provider.WaitRateLimit()
-	resp, err := http.DefaultClient.Do(req)
+	resp, err := provider.HTTPClient.Do(req)
 	if err != nil {
 		return nil, err
 	}

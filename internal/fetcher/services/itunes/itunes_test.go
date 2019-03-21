@@ -30,7 +30,7 @@ func setup() {
 			CountOfSkippedHours: 8,
 		},
 	}
-	provider = itunes.NewProvider(server.URL, testutil.TokenSimple)
+	provider = itunes.NewProvider(server.URL, testutil.TokenSimple, time.Minute)
 }
 
 func teardown() {

@@ -2,6 +2,7 @@ package apple
 
 import (
 	"sync"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/clients/itunes/artists"
@@ -22,7 +23,7 @@ func NewLinker(url, token string) *Linker {
 		jobs:            make(chan []string),
 		mutex:           sync.Mutex{},
 		reservedArtists: make(map[string]int),
-		client:          itunes.NewProvider(url, token),
+		client:          itunes.NewProvider(url, token, time.Minute),
 	}
 }
 
