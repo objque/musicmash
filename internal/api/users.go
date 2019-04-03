@@ -31,7 +31,7 @@ func createUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	// err while processing query
-	if err != nil && err != gorm.ErrRecordNotFound {
+	if err != gorm.ErrRecordNotFound {
 		log.Error(err)
 		w.WriteHeader(http.StatusInternalServerError)
 		return
