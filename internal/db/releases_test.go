@@ -1,7 +1,6 @@
 package db
 
 import (
-	"strconv"
 	"testing"
 	"time"
 
@@ -296,10 +295,9 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier_UserWasNotif
 	}
 	assert.NoError(t, DbMgr.EnsureReleaseExists(release))
 	// user was notified
-	releaseID, _ := strconv.ParseUint(testutil.StoreIDA, 10, 64)
 	notification := Notification{
 		UserName:  testutil.UserObjque,
-		ReleaseID: releaseID,
+		ReleaseID: release.ID,
 		Date:      now.Add(-testutil.Month * 3),
 	}
 	assert.NoError(t, DbMgr.CreateNotification(&notification))
