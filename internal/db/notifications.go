@@ -15,8 +15,10 @@ type Notification struct {
 }
 
 type NotificationMgr interface {
+	CreateNotification(notification *Notification) error
 	GetNotificationsForUser(userName string) ([]*Notification, error)
 	MarkReleasesAsDelivered(userName string, releases []*Release)
+	IsUserAlreadyNotified(userName string, release *Release) (bool, error)
 }
 
 func (mgr *AppDatabaseMgr) GetNotificationsForUser(userName string) ([]*Notification, error) {
@@ -27,14 +29,37 @@ func (mgr *AppDatabaseMgr) GetNotificationsForUser(userName string) ([]*Notifica
 	return notifications, nil
 }
 
+func (mgr *AppDatabaseMgr) CreateNotification(notification *Notification) error {
+	return mgr.db.Create(&notification).Error
+}
+
+func (mgr *AppDatabaseMgr) IsUserAlreadyNotified(userName string, release *Release) (bool, error) {
+	count := 0
+	query := mgr.db.Table("notifications")
+	err := query.Where("user_name = ? and release_id = ?", userName, release.ID).Count(&count).Error
+	if err != nil {
+		return false, err
+	}
+	return count > 0, nil
+}
+
 func (mgr *AppDatabaseMgr) MarkReleasesAsDelivered(userName string, releases []*Release) {
 	for _, release := range releases {
+		notified, err := mgr.IsUserAlreadyNotified(userName, release)
+		if notified {
+			continue
+		}
+		if err != nil {
+			log.Error(err)
+			continue
+		}
+
 		notification := Notification{
 			UserName:  userName,
 			ReleaseID: release.ID,
 			Date:      time.Now().UTC(),
 		}
-		if err := mgr.db.Create(&notification).Error; err != nil {
+		if err := mgr.CreateNotification(&notification); err != nil {
 			log.Error(errors.Wrapf(err, "tried to save notification for user '%s' about release_id '%v'", userName, release.ID))
 		}
 	}

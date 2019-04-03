@@ -117,8 +117,13 @@ func (mgr *AppDatabaseMgr) FindNewReleasesForUser(userName string, date time.Tim
 		// announced and fresh releases
 		"AND (created_at >= ? OR released = ?) " +
 		// not delivered releases
-		"AND releases.id NOT IN (SELECT release_id FROM notifications WHERE user_name = ?)"
-	where := mgr.db.Where(query, userName, date, date.Truncate(time.Hour*24), userName)
+		"AND releases.id NOT IN (" +
+		"	SELECT release_id FROM notifications WHERE user_name = ? and date like ?" +
+		")"
+	// gorm inserts str arguments with additional quotes, so we must provide date with percentages
+	// to avoid this part of query: "and date like '%'2019-04-03'%'"
+	likeCondition := fmt.Sprintf("%%%s%%", date.Format("2006-01-02"))
+	where := mgr.db.Where(query, userName, date, date.Truncate(time.Hour*24), userName, likeCondition)
 	if err := where.Find(&releases).Error; err != nil {
 		return nil, err
 	}

@@ -1,6 +1,7 @@
 package db
 
 import (
+	"strconv"
 	"testing"
 	"time"
 
@@ -276,6 +277,43 @@ func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier(t *testing.T
 		assert.Equal(t, want[release.ArtistName], release.StoreID)
 		assert.Len(t, release.Stores, 1)
 	}
+}
+
+func TestDB_Releases_FindNewReleasesForUser_ThatWasAnnouncedEarlier_UserWasNotified(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	now := time.Now().UTC()
+	assert.NoError(t, DbMgr.SubscribeUserForArtists(testutil.UserObjque, []string{testutil.ArtistArchitects}))
+	// announced album that was found month ago
+	release := &Release{
+		ArtistName: testutil.ArtistArchitects,
+		StoreName:  testutil.StoreApple,
+		StoreID:    testutil.StoreIDA,
+		CreatedAt:  now.Add(-testutil.Month * 3),
+		Released:   now.Truncate(time.Hour * 24),
+	}
+	assert.NoError(t, DbMgr.EnsureReleaseExists(release))
+	// user was notified
+	releaseID, _ := strconv.ParseUint(testutil.StoreIDA, 10, 64)
+	notification := Notification{
+		UserName:  testutil.UserObjque,
+		ReleaseID: releaseID,
+		Date:      now.Add(-testutil.Month * 3),
+	}
+	assert.NoError(t, DbMgr.CreateNotification(&notification))
+
+	// action
+	// album released today, so we must send notification again
+	releases, err := DbMgr.FindNewReleasesForUser(testutil.UserObjque, now.Truncate(time.Hour*24))
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, releases, 1)
+	assert.Equal(t, testutil.ArtistArchitects, release.ArtistName)
+	assert.Equal(t, testutil.StoreApple, release.StoreName)
+	assert.Equal(t, testutil.StoreIDA, release.StoreID)
 }
 
 func TestDB_Releases_FindNewReleasesForUser_ExcludeAlreadyDelivered_WithAnotherConditions(t *testing.T) {
