@@ -45,9 +45,9 @@ func (c *cron) IsMustFetch() bool {
 	}
 
 	diff := calcDiffHours(last.Date)
-	log.Infof("LastAction '%s' was at '%s'. Next fetch after %v hour",
+	log.Infof("Last %s was at %s next after %v hour",
 		c.ActionName,
-		last.Date.Format("2006-01-02 15:04:05"),
+		last.Date.Format("2006-01-02T15:04:05"),
 		c.CountOfSkippedHoursToRun-diff)
 	return diff >= c.CountOfSkippedHoursToRun
 }
