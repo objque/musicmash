@@ -12,7 +12,6 @@ db:
 log:
     level: DEBUG
     file: 'musicmash.log'
-    syslog_enable: false
 
 tasks:
     subscriptions:

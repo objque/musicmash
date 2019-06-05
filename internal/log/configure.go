@@ -1,13 +1,11 @@
 package log
 
 import (
-	"log/syslog"
 	"os"
 
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
-	logrus_syslog "github.com/sirupsen/logrus/hooks/syslog"
 )
 
 const (
@@ -33,16 +31,6 @@ func ConfigureStdLogger(logLevel string) {
 
 	if path != "" {
 		configureFileLogger(path)
-	}
-
-	if config.Config.Log.SyslogEnabled {
-		hook, err := logrus_syslog.NewSyslogHook("", "", syslog.LOG_LOCAL0, "musicmash")
-
-		if err == nil {
-			logger.Hooks.Add(hook)
-		} else {
-			Errorf("Failed to configure syslog hook: %v", err)
-		}
 	}
 }
 
