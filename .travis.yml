@@ -7,7 +7,7 @@ cache:
     - ${TRAVIS_HOME}/gopath/bin
     - ${TRAVIS_HOME}/gopath/pkg
 go:
-- "1.11.4"
+  - 1.12.x
 jobs:
   include:
   - stage: "Lint and tests"
