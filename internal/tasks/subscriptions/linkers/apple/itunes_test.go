@@ -54,7 +54,7 @@ func Test_AppleLinker_Search(t *testing.T) {
 	// arrange
 	task := NewLinker(server.URL, testutil.TokenSimple)
 	mux.HandleFunc("/v1/catalog/us/search", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(`
+		_, _ = w.Write([]byte(`
 {
   "results": {
     "artists": {

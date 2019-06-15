@@ -15,7 +15,7 @@ func TestYandexClient_Auth(t *testing.T) {
 
 	// arrange
 	mux.HandleFunc("/api/v2.1/handlers/auth", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
+		_, _ = w.Write([]byte(`{"yandexuid": "1234276871451297001"}`))
 	})
 
 	// action
@@ -31,7 +31,7 @@ func TestYandexClient_Search(t *testing.T) {
 
 	// arrange
 	mux.HandleFunc("/handlers/music-search.jsx", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(`{
+		_, _ = w.Write([]byte(`{
     "text": "skrillex",
     "artists": {
         "items": [{
@@ -59,7 +59,7 @@ func TestYandexClient_GetArtistAlbums(t *testing.T) {
 
 	// arrange
 	mux.HandleFunc("/handlers/artist.jsx", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(`{
+		_, _ = w.Write([]byte(`{
     "artist": {
         "id": 817678,
         "name": "Gorgon City"

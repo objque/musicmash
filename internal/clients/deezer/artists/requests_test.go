@@ -33,7 +33,7 @@ func TestClient_SearchArtist(t *testing.T) {
 
 	// arrange
 	mux.HandleFunc("/search/artist", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(`{
+		_, _ = w.Write([]byte(`{
   "data": [
     {
       "id": 525643,

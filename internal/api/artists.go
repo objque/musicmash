@@ -32,7 +32,7 @@ func searchArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	buffer, _ := json.Marshal(&artists)
-	w.Write(buffer)
+	_, _ = w.Write(buffer)
 }
 
 func getArtistDetails(w http.ResponseWriter, r *http.Request) {
@@ -55,5 +55,5 @@ func getArtistDetails(w http.ResponseWriter, r *http.Request) {
 	}
 
 	buffer, _ := json.Marshal(&details)
-	w.Write(buffer)
+	_, _ = w.Write(buffer)
 }

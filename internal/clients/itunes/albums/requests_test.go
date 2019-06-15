@@ -35,7 +35,7 @@ func TestClient_GetArtistAlbums(t *testing.T) {
 	// arrange
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`
+		_, _ = w.Write([]byte(fmt.Sprintf(`
 {
   "data": [
     {
@@ -83,7 +83,7 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
 	// arrange
 	url := fmt.Sprintf("/v1/catalog/us/artists/%d/albums", testutil.StoreIDQ)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`
+		_, _ = w.Write([]byte(fmt.Sprintf(`
 {
   "data": [
     {
