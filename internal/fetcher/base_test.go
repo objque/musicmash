@@ -28,6 +28,6 @@ func setup() {
 
 func teardown() {
 	server.Close()
-	db.DbMgr.DropAllTables()
-	db.DbMgr.Close()
+	_ = db.DbMgr.DropAllTables()
+	_ = db.DbMgr.Close()
 }

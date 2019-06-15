@@ -26,8 +26,8 @@ func setup() {
 
 func teardown() {
 	server.Close()
-	db.DbMgr.DropAllTables()
-	db.DbMgr.Close()
+	_ = db.DbMgr.DropAllTables()
+	_ = db.DbMgr.Close()
 }
 
 func httpDelete(url string, body io.Reader) (resp *http.Response, err error) {

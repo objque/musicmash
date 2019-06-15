@@ -56,9 +56,9 @@ func subscriber(jobs <-chan job) {
 			}
 
 			for _, artist := range job.Artists {
-				db.DbMgr.EnsureArtistExists(artist)
+				_ = db.DbMgr.EnsureArtistExists(artist)
 			}
-			db.DbMgr.SubscribeUserForArtists(job.UserName, job.Artists)
+			_ = db.DbMgr.SubscribeUserForArtists(job.UserName, job.Artists)
 			linkArtists(job.Artists)
 		}
 	}

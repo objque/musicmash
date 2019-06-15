@@ -34,7 +34,7 @@ func TestClient_SearchArtist(t *testing.T) {
 
 	// arrange
 	mux.HandleFunc("/v1/catalog/us/search", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`
+		_, _ = w.Write([]byte(fmt.Sprintf(`
 {
   "results": {
     "artists": {

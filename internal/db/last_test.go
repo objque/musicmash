@@ -13,7 +13,7 @@ func TestDB_LastAction_Get(t *testing.T) {
 
 	// arrange
 	last := time.Now().UTC()
-	DbMgr.SetLastActionDate(ActionFetch, last)
+	assert.NoError(t, DbMgr.SetLastActionDate(ActionFetch, last))
 
 	// action
 	res, err := DbMgr.GetLastActionDate(ActionFetch)
@@ -39,7 +39,7 @@ func TestDB_LastAction_Update(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	DbMgr.SetLastActionDate(ActionFetch, time.Now())
+	assert.NoError(t, DbMgr.SetLastActionDate(ActionFetch, time.Now()))
 
 	// action
 	n := time.Now().UTC()

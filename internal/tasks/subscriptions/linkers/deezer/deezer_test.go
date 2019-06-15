@@ -54,7 +54,7 @@ func Test_DeezerLinker_Search(t *testing.T) {
 	// arrange
 	task := NewLinker(server.URL)
 	mux.HandleFunc("/search/artist", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(`{
+		_, _ = w.Write([]byte(`{
   "data": [
     {
       "id": 525643,

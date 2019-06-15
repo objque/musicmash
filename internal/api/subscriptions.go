@@ -68,5 +68,5 @@ func getUserSubscriptions(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Write(body)
+	_, _ = w.Write(body)
 }

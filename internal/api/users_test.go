@@ -20,6 +20,7 @@ func TestAPI_Users_Create(t *testing.T) {
 	body := CreateUserScheme{UserName: testutil.UserObjque}
 	buffer, _ := json.Marshal(&body)
 	resp, err := http.Post(fmt.Sprintf("%s/users", server.URL), "application/json", bytes.NewReader(buffer))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -36,6 +37,7 @@ func TestAPI_Users_Create_EmptyBody(t *testing.T) {
 	body := map[string]string{"user_name": ""}
 	buffer, _ := json.Marshal(&body)
 	resp, err := http.Post(fmt.Sprintf("%s/users", server.URL), "application/json", bytes.NewReader(buffer))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -53,6 +55,7 @@ func TestAPI_Users_Create_AlreadyExists(t *testing.T) {
 	body := CreateUserScheme{UserName: testutil.UserObjque}
 	buffer, _ := json.Marshal(&body)
 	resp, err := http.Post(fmt.Sprintf("%s/users", server.URL), "application/json", bytes.NewReader(buffer))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -66,6 +69,7 @@ func TestAPI_Users_Get(t *testing.T) {
 	// action
 	assert.NoError(t, db.DbMgr.EnsureUserExists("objque@me"))
 	resp, err := http.Get(fmt.Sprintf("%s/users/%s", server.URL, "objque@me"))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -78,6 +82,7 @@ func TestAPI_Users_Get_NotFound(t *testing.T) {
 
 	// action
 	resp, err := http.Get(fmt.Sprintf("%s/users/%s", server.URL, "objque@me"))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)

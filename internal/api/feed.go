@@ -36,5 +36,5 @@ func getUserFeed(w http.ResponseWriter, r *http.Request) {
 	}
 
 	buffer, _ := json.Marshal(&feed)
-	w.Write(buffer)
+	_, _ = w.Write(buffer)
 }

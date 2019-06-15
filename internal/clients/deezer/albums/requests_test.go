@@ -34,7 +34,7 @@ func TestClient_GetArtistAlbums(t *testing.T) {
 	// arrange
 	url := fmt.Sprintf("/artist/%d/albums", testutil.StoreIDQ)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`{
+		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "id": 1045282092,
@@ -76,7 +76,7 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
 
 	// arrange
 	mux.HandleFunc("/artist/13/albums", func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`{
+		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "id": 1084871,
@@ -202,7 +202,7 @@ func TestClient_GetByID(t *testing.T) {
 	// arrange
 	url := fmt.Sprintf("/album/%d", testutil.StoreIDQ)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`{
+		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "id": %d,
   "title": "%s",
   "upc": "817424019736",

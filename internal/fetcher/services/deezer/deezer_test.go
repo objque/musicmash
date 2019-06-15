@@ -34,8 +34,8 @@ func setup() {
 }
 
 func teardown() {
-	db.DbMgr.DropAllTables()
-	db.DbMgr.Close()
+	_ = db.DbMgr.DropAllTables()
+	_ = db.DbMgr.Close()
 }
 
 func TestFetcher_FetchAndSave(t *testing.T) {
@@ -47,7 +47,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	url := fmt.Sprintf("/artist/%s/albums", testutil.StoreIDA)
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`{
+		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "id": 1084871,
@@ -103,7 +103,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: testutil.StoreIDA, StoreName: f.GetStoreName()}))
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`{
+		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
       "id": 1084871,
@@ -160,7 +160,7 @@ func TestFetcher_ReFetchAndSave(t *testing.T) {
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: testutil.StoreIDA, StoreName: f.GetStoreName()}))
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: testutil.StoreIDB, Poster: testutil.PosterSimple, StoreName: f.GetStoreName()}))
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
-		w.Write([]byte(fmt.Sprintf(`{
+		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "id": 76263542,
   "title": "Pandemonium 2.0",
   "cover_big": "%s"

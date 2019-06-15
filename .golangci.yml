@@ -85,10 +85,6 @@ linters-settings:
     # with golangci-lint call it on a directory with the changed file.
     check-exported: false
   unparam:
-    # call graph construction algorithm (cha, rta). In general, use cha for libraries,
-    # and rta for programs with main packages. Default is cha.
-    algo: rta
-
     # Inspect exported functions, default is false. Set to true if no external program/library imports your code.
     # XXX: if you enable this setting, unparam will report a lot of false-positives in text editors:
     # if it's called for subdir of a project it can't find external interfaces. All text editor integrations
@@ -106,24 +102,12 @@ linters-settings:
     simple: true
     range-loops: true # Report preallocation suggestions on range loops, true by default
     for-loops: false # Report preallocation suggestions on for loops, false by default
-  gocritic:
-    # which checks should be enabled; can't be combined with 'disabled-checks';
-    # default are: [appendAssign assignOp caseOrder dupArg dupBranchBody dupCase flagDeref
-    # ifElseChain regexpMust singleCaseSwitch sloppyLen switchTrue typeSwitchVar underef
-    # unlambda unslice rangeValCopy defaultCaseOrder];
-    # all checks list: https://github.com/go-critic/checkers
-    #enabled-checks:
-    #  - rangeValCopy
-    # which checks should be disabled; can't be combined with 'enabled-checks'; default is empty
-    disabled-checks:
-      - importShadow
 
 linters:
   enable-all: true
   disable:
     # ignore not critical dupl errors until they will be fixed
     - dupl
-    - errcheck
     - lll
     - gochecknoglobals
     - gosec
@@ -135,10 +119,7 @@ issues:
   # it can be disabled by `exclude-use-default: false`. To list all
   # excluded by default patterns execute `golangci-lint run --help`
   exclude:
-    - "Errors unhandled"
     - "should use for range"
-    - "parameter skip always receives 3"
-    - "should have comment"
 
   # Maximum issues count per one linter. Set to 0 to disable. Default is 50.
   max-per-linter: 0

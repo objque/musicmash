@@ -5,6 +5,6 @@ func setup() {
 }
 
 func teardown() {
-	DbMgr.DropAllTables()
-	DbMgr.Close()
+	_ = DbMgr.DropAllTables()
+	_ = DbMgr.Close()
 }

@@ -13,8 +13,8 @@ func setup() {
 }
 
 func teardown() {
-	db.DbMgr.DropAllTables()
-	db.DbMgr.Close()
+	_ = db.DbMgr.DropAllTables()
+	_ = db.DbMgr.Close()
 }
 
 func TestCron_IsMustFetch_FirstRun(t *testing.T) {
@@ -37,7 +37,7 @@ func TestCron_IsMustFetch_ReloadApp_AfterFetching(t *testing.T) {
 	c := cron{ActionName: db.ActionFetch, CountOfSkippedHoursToRun: 8}
 
 	// arrange
-	db.DbMgr.SetLastActionDate(db.ActionFetch, time.Now().UTC())
+	assert.NoError(t, db.DbMgr.SetLastActionDate(db.ActionFetch, time.Now().UTC()))
 
 	// action
 	must := c.IsMustFetch()
@@ -53,7 +53,7 @@ func TestCron_IsMustFetch_ReloadApp_AfterOldestFetching(t *testing.T) {
 	c := cron{ActionName: db.ActionFetch}
 
 	// arrange
-	db.DbMgr.SetLastActionDate(db.ActionFetch, time.Now().UTC().Add(-time.Hour*48))
+	assert.NoError(t, db.DbMgr.SetLastActionDate(db.ActionFetch, time.Now().UTC().Add(-time.Hour*48)))
 
 	// action
 	must := c.IsMustFetch()

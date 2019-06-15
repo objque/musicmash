@@ -48,6 +48,7 @@ func TestAPI_Artists_Search(t *testing.T) {
 		for i, wantName := range item.Artists {
 			assert.Equal(t, wantName, artists[i].Name)
 		}
+		_ = resp.Body.Close()
 	}
 }
 
@@ -61,6 +62,7 @@ func TestAPI_Artists_Search_BadRequest(t *testing.T) {
 	// action
 	url := fmt.Sprintf("%s/%s/artists?name=", server.URL, testutil.UserObjque)
 	resp, err := http.Get(url)
+	defer func() { _ = resp.Body.Close() }()
 
 	// arrange
 	assert.NoError(t, err)
@@ -74,6 +76,7 @@ func TestAPI_Artists_GetDetails_ArtistNotFound(t *testing.T) {
 	// action
 	url := fmt.Sprintf("%s/%s/artists/adam tomas moran", server.URL, testutil.UserObjque)
 	resp, err := http.Get(url)
+	defer func() { _ = resp.Body.Close() }()
 
 	// arrange
 	assert.NoError(t, err)
@@ -134,6 +137,7 @@ func TestAPI_Artists_GetDetails_ArtistNotFound_NameWithSpaces(t *testing.T) {
 	// action
 	url := fmt.Sprintf("%s/%s/artists/%s", server.URL, testutil.UserObjque, testutil.ArtistSkrillex)
 	resp, err := http.Get(url)
+	defer func() { _ = resp.Body.Close() }()
 	details := db.ArtistDetails{}
 	assert.NoError(t, json.NewDecoder(resp.Body).Decode(&details))
 

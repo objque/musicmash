@@ -18,6 +18,7 @@ func TestAPI_SubscribeUser_UserNotFound(t *testing.T) {
 
 	// action
 	resp, err := http.Post(fmt.Sprintf("%s/%s/subscriptions", server.URL, testutil.UserObjque), "application/json", nil)
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -54,6 +55,7 @@ func TestAPI_UnsubscribeUser(t *testing.T) {
 	assert.Len(t, subs, 2)
 	assert.Equal(t, testutil.ArtistArchitects, subs[0].ArtistName)
 	assert.Equal(t, testutil.ArtistSkrillex, subs[1].ArtistName)
+	_ = resp.Body.Close()
 }
 
 func TestAPI_UnsubscribeUser_UserNotFound(t *testing.T) {
@@ -62,6 +64,7 @@ func TestAPI_UnsubscribeUser_UserNotFound(t *testing.T) {
 
 	// action
 	resp, err := httpDelete(fmt.Sprintf("%s/%s/subscriptions", server.URL, testutil.UserObjque), nil)
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -74,6 +77,7 @@ func TestAPI_Subscriptions_Get_UserNotFound(t *testing.T) {
 
 	// action
 	resp, err := http.Get(fmt.Sprintf("%s/%s/subscriptions", server.URL, testutil.UserObjque))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -92,6 +96,7 @@ func TestAPI_Subscriptions_Get(t *testing.T) {
 
 	// action
 	resp, err := http.Get(fmt.Sprintf("%s/%s/subscriptions", server.URL, testutil.UserObjque))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
