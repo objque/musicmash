@@ -34,6 +34,7 @@ func TestAPI_Feed_Get(t *testing.T) {
 
 	// action
 	resp, err := http.Get(fmt.Sprintf("%s/%s/feed", server.URL, testutil.UserObjque))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -65,6 +66,7 @@ func TestAPI_Feed_Get_WithQuery(t *testing.T) {
 	// action
 	since := time.Now().UTC().Add(-time.Hour * 24 * 2) // two days ago
 	resp, err := http.Get(fmt.Sprintf("%s/%s/feed?since=%s", server.URL, testutil.UserObjque, since.Format(testutil.DateYYYYHHMM)))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -77,6 +79,7 @@ func TestAPI_Feed_Get_UserNotFound(t *testing.T) {
 
 	// action
 	resp, err := http.Get(fmt.Sprintf("%s/%s/feed", server.URL, testutil.UserObjque))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)

@@ -23,6 +23,7 @@ func TestAPI_Chats_Create(t *testing.T) {
 	body := AddUserChatScheme{ChatID: 10004}
 	buffer, _ := json.Marshal(&body)
 	resp, err := http.Post(fmt.Sprintf("%s/%s/chats", server.URL, testutil.UserObjque), "application/json", bytes.NewReader(buffer))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
@@ -40,6 +41,7 @@ func TestAPI_Chats_Create_UserNotFound(t *testing.T) {
 	body := AddUserChatScheme{ChatID: 10004}
 	buffer, _ := json.Marshal(&body)
 	resp, err := http.Post(fmt.Sprintf("%s/%s/chats", server.URL, testutil.UserObjque), "application/json", bytes.NewReader(buffer))
+	defer func() { _ = resp.Body.Close() }()
 
 	// assert
 	assert.NoError(t, err)
