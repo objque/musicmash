@@ -97,12 +97,9 @@
   version = "v2.3"
 
 [[projects]]
-  digest = "1:606e395bc6f4011ae992e7ae0c613839d20ea097b8a9468e1683b22cefd8fd77"
+  digest = "1:d867dfa6751c8d7a435821ad3b736310c2ed68945d05b50fb9d23aee0540c8cc"
   name = "github.com/sirupsen/logrus"
-  packages = [
-    ".",
-    "hooks/syslog",
-  ]
+  packages = ["."]
   pruneopts = "UT"
   revision = "3e01752db0189b9157070a0e1668a620f9a85da2"
   version = "v1.0.6"
@@ -190,7 +187,6 @@
     "github.com/pkg/errors",
     "github.com/rifflock/lfshook",
     "github.com/sirupsen/logrus",
-    "github.com/sirupsen/logrus/hooks/syslog",
     "github.com/stretchr/testify/assert",
     "go.uber.org/ratelimit",
     "gopkg.in/telegram-bot-api.v4",
