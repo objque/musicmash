@@ -21,13 +21,6 @@ const (
 	ReleaseSkrillexRecess      = "Recess"
 )
 
-// Users
-const (
-	UserObjque = "objque@me"
-	UserBot    = "bot@me"
-	UserTest   = "unit@test"
-)
-
 // Music services
 const (
 	StoreApple   = "itunes"

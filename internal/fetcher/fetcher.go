@@ -7,7 +7,6 @@ import (
 	"github.com/musicmash/musicmash/internal/fetcher/services"
 	"github.com/musicmash/musicmash/internal/fetcher/services/deezer"
 	"github.com/musicmash/musicmash/internal/fetcher/services/itunes"
-	"github.com/musicmash/musicmash/internal/fetcher/services/yandex"
 	"github.com/musicmash/musicmash/internal/log"
 )
 
@@ -22,8 +21,6 @@ func getServices() []services.Service {
 		switch name {
 		case "itunes":
 			fetchers = append(fetchers, itunes.NewService(store.URL, store.FetchWorkers, store.Meta["token"]))
-		case "yandex":
-			fetchers = append(fetchers, yandex.NewService(store.URL, store.FetchWorkers))
 		case "deezer":
 			fetchers = append(fetchers, deezer.NewService(store.URL, store.FetchWorkers))
 		}

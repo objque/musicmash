@@ -10,9 +10,6 @@ import (
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
-	"github.com/musicmash/musicmash/internal/notifier"
-	"github.com/musicmash/musicmash/internal/notifier/telegram"
-	tasks "github.com/musicmash/musicmash/internal/tasks/subscriptions"
 	"github.com/pkg/errors"
 )
 
@@ -31,8 +28,6 @@ func main() {
 	log.ConfigureStdLogger(config.Config.Log.Level)
 
 	db.DbMgr = db.NewMainDatabaseMgr()
-	tasks.InitWorkerPool()
-	telegram.New(config.Config.Notifier.TelegramToken)
 	if config.Config.Sentry.Enabled {
 		if err := raven.SetDSN(config.Config.Sentry.Key); err != nil {
 			panic(errors.Wrap(err, "tried to setup sentry client"))
@@ -41,7 +36,6 @@ func main() {
 
 	log.Info("Running musicmash..")
 	go cron.Run(db.ActionFetch, config.Config.Fetching.CountOfSkippedHours, fetcher.Fetch)
-	go cron.Run(db.ActionNotify, config.Config.Notifier.CountOfSkippedHours, notifier.Notify)
 	if store, ok := config.Config.Stores["deezer"]; ok && store.Fetch {
 		go cron.Run(db.ActionReFetch, config.Config.Fetching.RefetchAfterHours, fetcher.ReFetch)
 	}
