@@ -112,6 +112,4 @@ func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup) {
 	close(_done)
 }
 
-func (f *Fetcher) ReFetchAndSave(wg *sync.WaitGroup) {
-	defer wg.Done()
 }

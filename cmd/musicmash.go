@@ -36,8 +36,5 @@ func main() {
 
 	log.Info("Running musicmash..")
 	go cron.Run(db.ActionFetch, config.Config.Fetching.CountOfSkippedHours, fetcher.Fetch)
-	if store, ok := config.Config.Stores["deezer"]; ok && store.Fetch {
-		go cron.Run(db.ActionReFetch, config.Config.Fetching.RefetchAfterHours, fetcher.ReFetch)
-	}
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }
