@@ -15,6 +15,7 @@ type AppConfig struct {
 	DB       DBConfig          `yaml:"db"`
 	Log      LogConfig         `yaml:"log"`
 	Fetching Fetching          `yaml:"fetching"`
+	Artists  string            `yaml:"artists"`
 	Stores   map[string]*Store `yaml:"stores"`
 	Sentry   Sentry            `yaml:"sentry"`
 }

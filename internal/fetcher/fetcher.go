@@ -2,11 +2,16 @@ package fetcher
 
 import (
 	"sync"
+	"time"
 
+	"github.com/musicmash/artists/pkg/api"
+	"github.com/musicmash/artists/pkg/api/artists"
+	itunes_client "github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/fetcher/services"
 	"github.com/musicmash/musicmash/internal/fetcher/services/itunes"
 	"github.com/musicmash/musicmash/internal/log"
+	"github.com/pkg/errors"
 )
 
 func getServices() []services.Service {
@@ -19,7 +24,8 @@ func getServices() []services.Service {
 
 		switch name {
 		case "itunes":
-			fetchers = append(fetchers, itunes.NewService(store.URL, store.FetchWorkers, store.Meta["token"]))
+			itunesProvider := itunes_client.NewProvider(store.URL, store.Meta["token"], time.Minute)
+			fetchers = append(fetchers, itunes.NewService(itunesProvider, store.FetchWorkers))
 		}
 	}
 	return fetchers
@@ -29,9 +35,19 @@ func fetchFromServices(services []services.Service) *sync.WaitGroup {
 	wg := sync.WaitGroup{}
 	wg.Add(len(services))
 
+	// todo: extract from here
+	provider := api.NewProvider(config.Config.Artists, 1)
+
 	// fetch from all services
-	for i := range services {
-		go services[i].FetchAndSave(&wg)
+	for _, service := range services {
+		storeArtists, err := artists.GetFromStore(provider, service.GetStoreName())
+		if err != nil {
+			log.Error(errors.Wrapf(err, "can't receive artists from store: %s", service.GetStoreName()))
+			wg.Done()
+			continue
+		}
+
+		go service.FetchAndSave(&wg, storeArtists)
 	}
 
 	return &wg

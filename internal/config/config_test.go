@@ -8,6 +8,8 @@ import (
 
 func TestConfig_Load(t *testing.T) {
 	err := Load([]byte(`
+artists: http://artists
+
 stores:
     yandex:
         url: https://music.yandex.ru
@@ -27,6 +29,8 @@ stores:
 
 	assert.NoError(t, err)
 	assert.Len(t, Config.Stores, 2)
+
+	assert.Equal(t, "http://artists", Config.Artists)
 
 	assert.Equal(t, "https://music.yandex.ru", Config.Stores["yandex"].URL)
 	assert.Equal(t, 5, Config.Stores["yandex"].FetchWorkers)

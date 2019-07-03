@@ -73,6 +73,17 @@
   version = "v1.9.0"
 
 [[projects]]
+  branch = "master"
+  digest = "1:17a7449de7ae59edfe3d949d0e42817f6f448d324fd3c646598d7a44e46e1291"
+  name = "github.com/musicmash/artists"
+  packages = [
+    "pkg/api",
+    "pkg/api/artists",
+  ]
+  pruneopts = "UT"
+  revision = "26e0089e78e53f19f8ddc642b2778cad92269de1"
+
+[[projects]]
   digest = "1:40e195917a951a8bf867cd05de2a46aaf1806c50cf92eebf4c16f78cd196f747"
   name = "github.com/pkg/errors"
   packages = ["."]
@@ -168,6 +179,8 @@
     "github.com/jinzhu/gorm",
     "github.com/jinzhu/gorm/dialects/mysql",
     "github.com/jinzhu/gorm/dialects/sqlite",
+    "github.com/musicmash/artists/pkg/api",
+    "github.com/musicmash/artists/pkg/api/artists",
     "github.com/pkg/errors",
     "github.com/rifflock/lfshook",
     "github.com/sirupsen/logrus",

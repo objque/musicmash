@@ -7,23 +7,20 @@ import (
 )
 
 type Release struct {
-	ID         uint64    `json:"-"`
-	CreatedAt  time.Time `json:"-"`
-	ArtistName string    `json:"artist_name"`
-	Title      string    `json:"title" gorm:"size:1000"`
-	Poster     string    `json:"poster"`
-	Released   time.Time `gorm:"type:datetime" json:"released"`
-	StoreName  string    `gorm:"unique_index:idx_rel_store_name_store_id" json:"-"`
-	StoreID    string    `gorm:"unique_index:idx_rel_store_name_store_id" json:"-"`
+	ID        uint64    `json:"-"`
+	CreatedAt time.Time `json:"-"`
+	ArtistID  uint64    `json:"artist_id"`
+	Title     string    `json:"title" gorm:"size:1000"`
+	Poster    string    `json:"poster"`
+	Released  time.Time `gorm:"type:datetime" json:"released"`
+	StoreName string    `gorm:"unique_index:idx_rel_store_name_store_id" json:"store_name"`
+	StoreID   string    `gorm:"unique_index:idx_rel_store_name_store_id" json:"store_id"`
 }
 
 type ReleaseMgr interface {
 	EnsureReleaseExists(release *Release) error
 	GetAllReleases() ([]*Release, error)
 	FindReleases(condition map[string]interface{}) ([]*Release, error)
-	FindNewReleases(date time.Time) ([]*Release, error)
-	FindArtistRecentReleases(artistName string) ([]*Release, error)
-	FindArtistAnnouncedReleases(artistName string) ([]*Release, error)
 	UpdateRelease(release *Release) error
 }
 
@@ -60,22 +57,4 @@ func (mgr *AppDatabaseMgr) FindReleases(condition map[string]interface{}) ([]*Re
 
 func (mgr *AppDatabaseMgr) UpdateRelease(release *Release) error {
 	return mgr.db.Save(release).Error
-}
-
-func (mgr *AppDatabaseMgr) FindArtistRecentReleases(artistName string) ([]*Release, error) {
-	releases := []*Release{}
-	err := mgr.db.Where("artist_name = ? and released <= ?", artistName, time.Now().UTC()).Find(&releases).Error
-	if err != nil {
-		return nil, err
-	}
-	return releases, nil
-}
-
-func (mgr *AppDatabaseMgr) FindArtistAnnouncedReleases(artistName string) ([]*Release, error) {
-	releases := []*Release{}
-	err := mgr.db.Where("artist_name = ? and released > ?", artistName, time.Now().UTC()).Find(&releases).Error
-	if err != nil {
-		return nil, err
-	}
-	return releases, nil
 }
