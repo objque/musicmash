@@ -3,9 +3,7 @@ FROM golang:latest as builder
 
 # Docker is copying directory contents so we need to copy them in same directories.
 WORKDIR /go/src/github.com/musicmash/musicmash
-COPY cmd cmd
-COPY internal internal
-COPY vendor vendor
+COPY . .
 
 # Build the static application binary.
 ENV CGO_ENABLED=0
