@@ -20,12 +20,7 @@ func CreateAll(db *gorm.DB) error {
 		return err
 	}
 
-	fkeys := map[interface{}][][2]string{
-		&Release{}: {
-			{"artist_name", "artists(name)"},
-			{"store_name", "stores(name)"},
-		},
-	}
+	fkeys := map[interface{}][][2]string{}
 
 	for model, foreignKey := range fkeys {
 		for _, fk := range foreignKey {
