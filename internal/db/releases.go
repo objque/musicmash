@@ -21,6 +21,7 @@ type ReleaseMgr interface {
 	EnsureReleaseExists(release *Release) error
 	GetAllReleases() ([]*Release, error)
 	FindReleases(condition map[string]interface{}) ([]*Release, error)
+	FindNewReleases(date time.Time) ([]*Release, error)
 	UpdateRelease(release *Release) error
 }
 

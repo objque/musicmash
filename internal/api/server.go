@@ -19,6 +19,10 @@ func getMux() *chi.Mux {
 	r.Use(middleware.Recoverer)
 
 	r.Get("/healthz", healthz)
+
+	r.Route("/v1", func(r chi.Router) {
+		NewReleasesController().Register(r)
+	})
 	return r
 }
 
