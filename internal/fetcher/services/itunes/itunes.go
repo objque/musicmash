@@ -72,7 +72,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *artists.StoreInfo, wg *syn
 			err = db.DbMgr.EnsureReleaseExists(&db.Release{
 				StoreName: f.GetStoreName(),
 				StoreID:   release.ID,
-				ArtistID:  artistID,
+				ArtistID:  uint64(artist.ArtistID),
 				Title:     removeAlbumType(release.Attributes.Name),
 				Poster:    release.Attributes.Artwork.GetLink(posterWidth, posterHeight),
 				Released:  release.Attributes.ReleaseDate.Value,

@@ -77,6 +77,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	wg.Add(1)
 	storeArtists := []*artists.StoreInfo{
 		{
+			ArtistID:  testutil.StoreIDQ,
 			StoreID:   testutil.StoreIDA,
 			StoreName: f.GetStoreName(),
 		},
