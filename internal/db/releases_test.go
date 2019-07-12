@@ -47,7 +47,7 @@ func TestDB_Releases_FindReleases(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
-	assert.Equal(t, uint64(testutil.StoreIDQ), releases[0].ArtistID)
+	assert.Equal(t, int64(testutil.StoreIDQ), releases[0].ArtistID)
 }
 
 func TestDB_Releases_UpdateRelease(t *testing.T) {
@@ -74,12 +74,12 @@ func TestDB_Releases_UpdateRelease(t *testing.T) {
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, uint64(testutil.StoreIDW), releases[0].ArtistID)
+	assert.Equal(t, int64(testutil.StoreIDW), releases[0].ArtistID)
 	assert.Equal(t, testutil.StoreApple, releases[0].StoreName)
 	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
 	assert.Equal(t, testutil.PosterSimple, releases[0].Poster)
 	// another release must not change
-	assert.Equal(t, uint64(testutil.StoreIDQ), releases[1].ArtistID)
+	assert.Equal(t, int64(testutil.StoreIDQ), releases[1].ArtistID)
 	assert.Equal(t, testutil.StoreApple, releases[1].StoreName)
 	assert.Equal(t, testutil.StoreIDB, releases[1].StoreID)
 }
