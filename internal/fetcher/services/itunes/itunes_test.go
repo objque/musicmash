@@ -37,6 +37,7 @@ func setup() {
 func teardown() {
 	_ = db.DbMgr.DropAllTables()
 	_ = db.DbMgr.Close()
+	server.Close()
 }
 
 func TestFetcher_FetchAndSave(t *testing.T) {
