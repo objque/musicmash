@@ -7,7 +7,7 @@ import (
 )
 
 type Release struct {
-	ID        uint64    `json:"-"`
+	ID        uint64    `json:"id"`
 	CreatedAt time.Time `json:"-"`
 	ArtistID  int64     `json:"artist_id"`
 	Title     string    `json:"title" gorm:"size:1000"`

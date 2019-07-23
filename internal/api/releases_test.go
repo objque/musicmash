@@ -16,11 +16,13 @@ func TestAPI_Releases_Get(t *testing.T) {
 
 	// arrange
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
+		ID:       testutil.StoreIDQ,
 		Title:    testutil.ArtistArchitects,
 		Released: time.Now(),
 	}))
 
 	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
+		ID:       testutil.StoreIDW,
 		Title:    testutil.ArtistArchitects,
 		Released: time.Now().UTC().AddDate(-1, 0, 0),
 	}))
@@ -33,6 +35,7 @@ func TestAPI_Releases_Get(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	assert.Equal(t, testutil.ArtistArchitects, releases[0].Title)
+	assert.Equal(t, uint64(testutil.StoreIDQ), releases[0].ID)
 }
 
 func TestAPI_Releases_Get_Empty(t *testing.T) {
