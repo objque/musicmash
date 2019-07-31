@@ -21,13 +21,6 @@ const (
 	ReleaseSkrillexRecess      = "Recess"
 )
 
-// Users
-const (
-	UserObjque = "objque@me"
-	UserBot    = "bot@me"
-	UserTest   = "unit@test"
-)
-
 // Music services
 const (
 	StoreApple   = "itunes"
@@ -37,12 +30,12 @@ const (
 )
 
 const (
-	StoreIDA = "182821355"
-	StoreIDB = "213551828"
-	StoreIDC = "518228211"
+	StoreIDA = "101021355"
+	StoreIDB = "101051828"
+	StoreIDC = "101028211"
 
-	StoreIDQ = 182821355
-	StoreIDW = 213551828
+	StoreIDQ = 202021355
+	StoreIDW = 202051828
 )
 
 // Posters

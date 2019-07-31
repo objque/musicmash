@@ -5,7 +5,6 @@ import "time"
 const (
 	ActionFetch   = "fetch"
 	ActionReFetch = "refetch"
-	ActionNotify  = "notify"
 )
 
 type LastAction struct {

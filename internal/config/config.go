@@ -15,8 +15,8 @@ type AppConfig struct {
 	DB       DBConfig          `yaml:"db"`
 	Log      LogConfig         `yaml:"log"`
 	Fetching Fetching          `yaml:"fetching"`
+	Artists  string            `yaml:"artists"`
 	Stores   map[string]*Store `yaml:"stores"`
-	Notifier Notifier          `yaml:"notifier"`
 	Sentry   Sentry            `yaml:"sentry"`
 }
 
@@ -55,11 +55,6 @@ type Store struct {
 }
 
 type Meta map[string]string
-
-type Notifier struct {
-	TelegramToken       string  `yaml:"telegram_token"`
-	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
-}
 
 type Sentry struct {
 	Enabled bool   `yaml:"enabled"`

@@ -8,6 +8,7 @@ import (
 	"testing"
 	"time"
 
+	"github.com/musicmash/artists/pkg/api/artists"
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
@@ -36,6 +37,7 @@ func setup() {
 func teardown() {
 	_ = db.DbMgr.DropAllTables()
 	_ = db.DbMgr.Close()
+	server.Close()
 }
 
 func TestFetcher_FetchAndSave(t *testing.T) {
@@ -43,9 +45,8 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	f := Fetcher{Provider: provider, FetchWorkers: 1}
+	f := Fetcher{Provider: provider, FetchWorkers: 5}
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
@@ -75,13 +76,21 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	// action
 	wg := sync.WaitGroup{}
 	wg.Add(1)
-	f.FetchAndSave(&wg)
+	storeArtists := []*artists.StoreInfo{
+		{
+			ArtistID:  testutil.StoreIDQ,
+			StoreID:   testutil.StoreIDA,
+			StoreName: f.GetStoreName(),
+		},
+	}
+	f.FetchAndSave(&wg, storeArtists)
 	wg.Wait()
 
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
+	assert.Equal(t, int64(testutil.StoreIDQ), releases[0].ArtistID)
 	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
 	assert.Equal(t, 18, releases[0].Released.Day())
 	assert.Equal(t, time.July, releases[0].Released.Month())
@@ -95,8 +104,11 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	// arrange
 	f := Fetcher{Provider: provider, FetchWorkers: 1}
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.ArtistArchitects, f.GetStoreName(), testutil.StoreIDA))
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{StoreID: testutil.StoreIDB, StoreName: f.GetStoreName()}))
+	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
+		ArtistID:  testutil.StoreIDQ,
+		StoreID:   testutil.StoreIDB,
+		StoreName: f.GetStoreName(),
+	}))
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
@@ -126,13 +138,21 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	// action
 	wg := sync.WaitGroup{}
 	wg.Add(1)
-	f.FetchAndSave(&wg)
+	storeArtists := []*artists.StoreInfo{
+		{
+			ArtistID:  testutil.StoreIDQ,
+			StoreID:   testutil.StoreIDA,
+			StoreName: f.GetStoreName(),
+		},
+	}
+	f.FetchAndSave(&wg, storeArtists)
 	wg.Wait()
 
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
+	assert.Equal(t, int64(testutil.StoreIDQ), releases[0].ArtistID)
 	assert.Equal(t, testutil.StoreIDB, releases[0].StoreID)
 	assert.Equal(t, 1, releases[0].Released.Day())
 	assert.Equal(t, time.January, releases[0].Released.Month())

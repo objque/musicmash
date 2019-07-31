@@ -33,7 +33,7 @@ func TestClient_GetArtistAlbums(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
+	url := fmt.Sprintf("/v1/catalog/us/artists/%v/albums", testutil.StoreIDQ)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`
 {

@@ -2,13 +2,16 @@ package fetcher
 
 import (
 	"sync"
+	"time"
 
+	"github.com/musicmash/artists/pkg/api"
+	"github.com/musicmash/artists/pkg/api/artists"
+	itunes_client "github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/fetcher/services"
-	"github.com/musicmash/musicmash/internal/fetcher/services/deezer"
 	"github.com/musicmash/musicmash/internal/fetcher/services/itunes"
-	"github.com/musicmash/musicmash/internal/fetcher/services/yandex"
 	"github.com/musicmash/musicmash/internal/log"
+	"github.com/pkg/errors"
 )
 
 func getServices() []services.Service {
@@ -19,13 +22,9 @@ func getServices() []services.Service {
 			continue
 		}
 
-		switch name {
-		case "itunes":
-			fetchers = append(fetchers, itunes.NewService(store.URL, store.FetchWorkers, store.Meta["token"]))
-		case "yandex":
-			fetchers = append(fetchers, yandex.NewService(store.URL, store.FetchWorkers))
-		case "deezer":
-			fetchers = append(fetchers, deezer.NewService(store.URL, store.FetchWorkers))
+		if name == "itunes" {
+			itunesProvider := itunes_client.NewProvider(store.URL, store.Meta["token"], time.Minute)
+			fetchers = append(fetchers, itunes.NewService(itunesProvider, store.FetchWorkers))
 		}
 	}
 	return fetchers
@@ -35,9 +34,19 @@ func fetchFromServices(services []services.Service) *sync.WaitGroup {
 	wg := sync.WaitGroup{}
 	wg.Add(len(services))
 
+	// todo: extract from here
+	provider := api.NewProvider(config.Config.Artists, 1)
+
 	// fetch from all services
-	for i := range services {
-		go services[i].FetchAndSave(&wg)
+	for _, service := range services {
+		storeArtists, err := artists.GetFromStore(provider, service.GetStoreName())
+		if err != nil {
+			log.Error(errors.Wrapf(err, "can't receive artists from store: %s", service.GetStoreName()))
+			wg.Done()
+			continue
+		}
+
+		go service.FetchAndSave(&wg, storeArtists)
 	}
 
 	return &wg
@@ -48,26 +57,4 @@ func Fetch() {
 
 	// run callback
 	log.Info("All stores were fetched")
-}
-
-func refetchFromServices(services []services.Service) *sync.WaitGroup {
-	wg := sync.WaitGroup{}
-	wg.Add(len(services))
-
-	// refetch from all services
-	for i := range services {
-		go services[i].ReFetchAndSave(&wg)
-	}
-
-	return &wg
-}
-
-func ReFetch() {
-	// sometimes we need to fetch some information about already saved releases again.
-	// e.g some releases from Deezer don't have a poster, but a little bit later he appears.
-
-	refetchFromServices(getServices()).Wait()
-
-	// run callback
-	log.Info("All stores were refetched")
 }
