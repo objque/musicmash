@@ -31,12 +31,12 @@ type LogConfig struct {
 }
 
 type DBConfig struct {
-	DBType  string `yaml:"dbtype"`
-	DBHost  string `yaml:"dbhost"`
-	DBName  string `yaml:"dbname"`
-	DBLogin string `yaml:"dblogin"`
-	DBPass  string `yaml:"dbpass"`
-	Log     bool   `yaml:"log"`
+	Type  string `yaml:"type"`
+	Host  string `yaml:"host"`
+	Name  string `yaml:"name"`
+	Login string `yaml:"login"`
+	Pass  string `yaml:"pass"`
+	Log   bool   `yaml:"log"`
 }
 
 type Fetching struct {
@@ -86,14 +86,14 @@ func Load(data []byte) error {
 }
 
 func (db *DBConfig) GetConnString() (dialect, connString string) {
-	if db.DBType != "mysql" {
+	if db.Type != "mysql" {
 		panic("Only mysql is currently supported")
 	}
 	connString = fmt.Sprintf(
 		"%v:%v@tcp(%v)/%v?charset=utf8&parseTime=True&loc=UTC",
-		db.DBLogin,
-		db.DBPass,
-		db.DBHost,
-		db.DBName)
-	return db.DBType, connString
+		db.Login,
+		db.Pass,
+		db.Host,
+		db.Name)
+	return db.Type, connString
 }

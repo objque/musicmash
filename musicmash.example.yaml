@@ -2,11 +2,11 @@ http:
     port: 8844
 
 db:
-    dbtype:  'mysql'
-    dbhost:  'mariadb'
-    dbname:  'musicmash'
-    dblogin: 'musicmash'
-    dbpass:  'musicmash'
+    type:  'mysql'
+    host:  'mariadb'
+    name:  'musicmash'
+    login: 'musicmash'
+    pass:  'musicmash'
     log: false
 
 log:
