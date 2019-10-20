@@ -18,6 +18,7 @@ type DataMgr interface {
 	AlbumMgr
 	ReleaseMgr
 	LastActionMgr
+	SubscriptionMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr
@@ -72,4 +73,8 @@ func (mgr *AppDatabaseMgr) DropAllTables() error {
 
 func (mgr *AppDatabaseMgr) Ping() error {
 	return mgr.db.Exec("select 1").Error
+}
+
+func (mgr *AppDatabaseMgr) GetDialectName() string {
+	return mgr.db.Dialect().GetName()
 }

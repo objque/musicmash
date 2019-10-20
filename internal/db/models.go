@@ -9,6 +9,7 @@ var tables = []interface{}{
 	Album{},
 	&Release{},
 	&LastAction{},
+	Subscription{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -30,6 +31,9 @@ func CreateAll(db *gorm.DB) error {
 			{"store_name", "stores(name)"},
 		},
 		&Album{}: {
+			{"artist_id", "artists(id)"},
+		},
+		&Subscription{}: {
 			{"artist_id", "artists(id)"},
 		},
 	}
@@ -59,6 +63,12 @@ func CreateAll(db *gorm.DB) error {
 		"idx_created_at",
 		"created_at").Error; err != nil {
 		return nil
+	}
+
+	if err := db.Debug().Model(&Subscription{}).AddUniqueIndex(
+		"idx_user_name_artist_id",
+		"user_name", "artist_id").Error; err != nil {
+		return err
 	}
 
 	return nil

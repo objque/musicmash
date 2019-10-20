@@ -29,6 +29,11 @@ const (
 	StoreSpotify = "spotify"
 )
 
+// Users
+const (
+	UserObjque = "objque@me"
+	UserBot    = "bot"
+)
 const (
 	StoreIDA = "101021355"
 	StoreIDB = "101051828"
