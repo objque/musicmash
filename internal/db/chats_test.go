@@ -26,7 +26,7 @@ func TestDB_Chat_GetAllChatsThatSubscribedFor(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 10000420, UserName:testutil.UserObjque}))
+	assert.NoError(t, DbMgr.EnsureChatExists(&Chat{ID: 10000420, UserName: testutil.UserObjque}))
 	assert.NoError(t, DbMgr.SubscribeUser(testutil.UserObjque, []int64{testutil.StoreIDQ}))
 	assert.NoError(t, DbMgr.SubscribeUser(testutil.UserBot, []int64{testutil.StoreIDW}))
 
