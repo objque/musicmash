@@ -57,7 +57,7 @@ func NotifyWithPeriod(period time.Time) {
 
 		artist, ok := artists[release.ArtistID]
 		if !ok {
-			artist, _ := db.DbMgr.GetArtistWithFullInfo(release.ArtistID)
+			artist, _ = db.DbMgr.GetArtistWithFullInfo(release.ArtistID)
 			artists[artist.ID] = artist
 		}
 		for _, chat := range chats {
