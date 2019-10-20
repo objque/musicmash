@@ -59,7 +59,7 @@ linters-settings:
     local-prefixes: github.com/org/project
   gocyclo:
     # minimal code complexity to report, 30 by default (but we recommend 10-20)
-    min-complexity: 10
+    min-complexity: 15
   maligned:
     # print struct with more effective memory layout or not, false by default
     suggest-new: true
@@ -102,6 +102,9 @@ linters-settings:
     simple: true
     range-loops: true # Report preallocation suggestions on range loops, true by default
     for-loops: false # Report preallocation suggestions on for loops, false by default
+  funlen:
+    lines: 125
+    statements: 40
 
 linters:
   enable-all: true
@@ -111,6 +114,7 @@ linters:
     - lll
     - gochecknoglobals
     - gosec
+    - wsl
   fast: false
 
 issues:
