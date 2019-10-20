@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net/http"
 	"testing"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/testutil"
@@ -50,4 +51,9 @@ func TestFetch_FetchAndSave(t *testing.T) {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
+	assert.Equal(t, int64(testutil.StoreIDW), releases[0].ArtistID)
+	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
+	assert.Equal(t, 18, releases[0].Released.Day())
+	assert.Equal(t, time.July, releases[0].Released.Month())
+	assert.Equal(t, 2025, releases[0].Released.Year())
 }
