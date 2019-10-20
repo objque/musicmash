@@ -24,7 +24,7 @@ func TestTelegramUtils_MakeText(t *testing.T) {
 	text := makeText(testutil.ArtistArchitects, &release)
 
 	// assert
-	assert.Equal(t, "New album released \n*Holly Hell*\nby Architects [‌‌](http://pic.jpeg)", text)
+	assert.Equal(t, "New album released \n*Holly Hell*\nby Architects [\u200c\u200c](http://pic.jpeg)", text)
 }
 
 func TestTelegramUtils_MakeButtons(t *testing.T) {
@@ -71,6 +71,6 @@ func TestTelegramUtils_MakeText_Announced(t *testing.T) {
 	text := makeText(testutil.ArtistArchitects, &release)
 
 	// assert
-	wantMessage := fmt.Sprintf("New album announced \n*Holly Hell*\nby Architects\nRelease date: %s [‌‌](http://pic.jpeg)", released.Format(time.RFC850))
+	wantMessage := fmt.Sprintf("New album announced \n*Holly Hell*\nby Architects\nRelease date: %s [\u200c\u200c](http://pic.jpeg)", released.Format(time.RFC850))
 	assert.Equal(t, wantMessage, text)
 }

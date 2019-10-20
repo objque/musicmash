@@ -17,7 +17,7 @@ func makeText(artistName string, release *db.Release) string {
 		releaseDate = fmt.Sprintf("\nRelease date: %s", release.Released.Format(time.RFC850))
 	}
 
-	poster := fmt.Sprintf("[‌‌](%s)", release.Poster)
+	poster := fmt.Sprintf("[\u200c\u200c](%s)", release.Poster)
 	return fmt.Sprintf("New album %s \n*%s*\nby %s%s %s", state, release.Title, artistName, releaseDate, poster)
 }
 
