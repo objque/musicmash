@@ -2,8 +2,9 @@ package main
 
 import (
 	"flag"
+	"fmt"
 
-	raven "github.com/getsentry/raven-go"
+	sentry "github.com/getsentry/sentry-go"
 	"github.com/musicmash/musicmash/internal/api"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/cron"
@@ -11,7 +12,6 @@ import (
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/notifier"
-	"github.com/pkg/errors"
 )
 
 func main() {
@@ -33,10 +33,14 @@ func main() {
 
 	db.DbMgr = db.NewMainDatabaseMgr()
 	if config.Config.Sentry.Enabled {
-		if err := raven.SetDSN(config.Config.Sentry.Key); err != nil {
-			panic(errors.Wrap(err, "tried to setup sentry client"))
+		err := sentry.Init(sentry.ClientOptions{
+			Dsn:              config.Config.Sentry.Key,
+			AttachStacktrace: true,
+			Environment:      config.Config.Sentry.Environment,
+		})
+		if err != nil {
+			fmt.Printf("Sentry initialization failed: %v\n", err)
 		}
-		raven.SetEnvironment(config.Config.Sentry.Environment)
 	}
 
 	log.Info("Running musicmash..")

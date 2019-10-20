@@ -2,14 +2,6 @@
 
 
 [[projects]]
-  digest = "1:fed1f537c2f1269fe475a8556c393fe466641682d73ef8fd0491cd3aa1e47bad"
-  name = "github.com/certifi/gocertifi"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "deb3ae2ef2610fde3330947281941c562861188b"
-  version = "2018.01.18"
-
-[[projects]]
   digest = "1:a2c1d0e43bd3baaa071d1b9ed72c27d78169b2b269f71c105ac4ba34b1be4a39"
   name = "github.com/davecgh/go-spew"
   packages = ["spew"]
@@ -18,12 +10,12 @@
   version = "v1.1.0"
 
 [[projects]]
-  digest = "1:d18f6f088d7d8365df47f49dfa24b6ff6701a941118ffda30c589d1bd954074b"
-  name = "github.com/getsentry/raven-go"
+  digest = "1:677e79698319e9718eb5fa13d55f0fd125f57b121db489ed8375f2e476cba4f4"
+  name = "github.com/getsentry/sentry-go"
   packages = ["."]
   pruneopts = "UT"
-  revision = "f04e7487e9a6b9d9837d52743fb5f40576c56411"
-  version = "v0.2.0"
+  revision = "6e30a9909361d339adf28d4211947ef408cf7726"
+  version = "v0.3.0"
 
 [[projects]]
   digest = "1:a9fe0f8ff72c388d0128e88ce5f3c27d37dcd0950acd7cdb8323555f12463396"
@@ -45,7 +37,7 @@
   version = "v1.4.0"
 
 [[projects]]
-  digest = "1:bfad9f621850e5a7eab03d648e4d26f29983f4d2a11328ec3bededbede843b71"
+  digest = "0:"
   name = "github.com/jinzhu/gorm"
   packages = [
     ".",
@@ -178,7 +170,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "github.com/getsentry/raven-go",
+    "github.com/getsentry/sentry-go",
     "github.com/go-chi/chi",
     "github.com/go-chi/chi/middleware",
     "github.com/jinzhu/gorm",
