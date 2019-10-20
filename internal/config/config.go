@@ -43,8 +43,9 @@ func New() *AppConfig {
 			},
 		},
 		Sentry: SentryConfig{
-			Enabled: false,
-			Key:     "https://uuid@sentry.io/123456",
+			Enabled:     false,
+			Key:         "https://uuid@sentry.io/123456",
+			Environment: "production",
 		},
 		Notifier: NotifierConfig{
 			TelegramToken:       "12345:xxxx_yyy_token",

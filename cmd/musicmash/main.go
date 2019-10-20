@@ -36,6 +36,7 @@ func main() {
 		if err := raven.SetDSN(config.Config.Sentry.Key); err != nil {
 			panic(errors.Wrap(err, "tried to setup sentry client"))
 		}
+		raven.SetEnvironment(config.Config.Sentry.Environment)
 	}
 
 	log.Info("Running musicmash..")

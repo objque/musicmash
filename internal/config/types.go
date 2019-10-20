@@ -52,6 +52,7 @@ type StoresConfig map[string]*StoreConfig
 type Meta map[string]string
 
 type SentryConfig struct {
-	Enabled bool   `yaml:"enabled"`
-	Key     string `yaml:"key"`
+	Enabled     bool   `yaml:"enabled"`
+	Key         string `yaml:"key"`
+	Environment string `yaml:"environment"`
 }

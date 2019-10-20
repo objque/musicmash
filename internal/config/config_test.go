@@ -40,6 +40,7 @@ stores:
 sentry:
   enabled: false
   key: https://uuid@sentry.io/123456
+  environment: production
 
 notifier:
   telegram_token: 12345:xxxx_yyy_token
