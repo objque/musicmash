@@ -72,14 +72,13 @@ func (c *AppConfig) LoadFromBytes(val []byte) error {
 }
 
 func (db *DBConfig) GetConnString() (dialect, connString string) {
-	if db.Type != "mysql" {
-		panic("Only mysql is currently supported")
+	const mysqlConnectionFormat = "%v:%v@tcp(%v)/%v?charset=utf8&parseTime=True&loc=UTC"
+	switch db.Type {
+	case "mysql":
+		return db.Type, fmt.Sprintf(mysqlConnectionFormat, db.Login, db.Pass, db.Host, db.Name)
+	case "sqlite3":
+		return db.Type, db.Host
+	default:
+		panic("Only mysql/sqlite3 is currently supported")
 	}
-	connString = fmt.Sprintf(
-		"%v:%v@tcp(%v)/%v?charset=utf8&parseTime=True&loc=UTC",
-		db.Login,
-		db.Pass,
-		db.Host,
-		db.Name)
-	return db.Type, connString
 }
