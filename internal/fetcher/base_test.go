@@ -19,8 +19,7 @@ func setup() {
 	server = httptest.NewServer(mux)
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
-		Artists: server.URL,
-		Stores: map[string]*config.Store{
+		Stores: config.StoresConfig{
 			testutil.StoreApple: {
 				Fetch:        true,
 				URL:          server.URL,

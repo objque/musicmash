@@ -18,8 +18,11 @@ func main() {
 	configPath := flag.String("config", "/etc/musicmash/musicmash.yaml", "Path to musicmash.yaml config")
 	flag.Parse()
 
-	if err := config.InitConfig(*configPath); err != nil {
-		panic(err)
+	config.Config = config.New()
+	if *configPath != "" {
+		if err := config.Config.LoadFromFile(*configPath); err != nil {
+			panic(err)
+		}
 	}
 	if config.Config.Log.Level == "" {
 		config.Config.Log.Level = "info"

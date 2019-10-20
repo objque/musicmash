@@ -26,7 +26,7 @@ func setup() {
 	server = httptest.NewServer(mux)
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
-		Fetching: config.Fetching{
+		Fetching: config.FetchingConfig{
 			CountOfSkippedHours: 8,
 		},
 	}

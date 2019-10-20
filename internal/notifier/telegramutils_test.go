@@ -37,7 +37,7 @@ func TestTelegramUtils_MakeButtons(t *testing.T) {
 		StoreID:   testutil.StoreIDA,
 	}
 	config.Config = &config.AppConfig{
-		Stores: map[string]*config.Store{
+		Stores: config.StoresConfig{
 			testutil.StoreApple: {
 				Name:       testutil.StoreApple,
 				ReleaseURL: "https://itunes.apple.com/us/album/%s",
