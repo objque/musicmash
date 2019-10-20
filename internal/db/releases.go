@@ -25,6 +25,11 @@ type ReleaseMgr interface {
 	UpdateRelease(release *Release) error
 }
 
+func (r *Release) IsComing() bool {
+	// if release day tomorrow or later, than that means coming release is here
+	return r.Released.After(time.Now().UTC().Truncate(24 * time.Hour))
+}
+
 func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {
 	res := Release{}
 	err := mgr.db.Where("store_id = ? and store_name = ?", release.StoreID, release.StoreName).First(&res).Error

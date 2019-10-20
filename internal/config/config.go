@@ -18,6 +18,7 @@ type AppConfig struct {
 	Artists  string            `yaml:"artists"`
 	Stores   map[string]*Store `yaml:"stores"`
 	Sentry   Sentry            `yaml:"sentry"`
+	Notifier Notifier          `yaml:"notifier"`
 }
 
 type HTTPConfig struct {
@@ -41,6 +42,11 @@ type DBConfig struct {
 
 type Fetching struct {
 	RefetchAfterHours   float64 `yaml:"refetch_after_hours"`
+	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
+}
+
+type Notifier struct {
+	TelegramToken       string  `yaml:"telegram_token"`
 	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
 }
 

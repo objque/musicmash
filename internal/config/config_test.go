@@ -25,6 +25,9 @@ stores:
         meta:
           token: "dd214b951ab64de0af62d53678750c90"
           region: "us"
+notifier:
+  count_of_skipped_hours: 8
+  telegram_token: "12340255:BBBZZZJJJJJAAAEEEEE"
 `))
 
 	assert.NoError(t, err)
@@ -45,4 +48,7 @@ stores:
 	assert.Equal(t, "us", Config.Stores["itunes"].Meta["region"])
 	assert.Equal(t, "Apple Music", Config.Stores["itunes"].Name)
 	assert.True(t, Config.Stores["itunes"].Fetch)
+
+	assert.Equal(t, float64(8), Config.Notifier.CountOfSkippedHours)
+	assert.Equal(t, "12340255:BBBZZZJJJJJAAAEEEEE", Config.Notifier.TelegramToken)
 }

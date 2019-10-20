@@ -10,6 +10,7 @@ import (
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/notifier"
 	"github.com/pkg/errors"
 )
 
@@ -36,5 +37,6 @@ func main() {
 
 	log.Info("Running musicmash..")
 	go cron.Run(db.ActionFetch, config.Config.Fetching.CountOfSkippedHours, fetcher.Fetch)
+	go cron.Run(db.ActionNotify, config.Config.Notifier.CountOfSkippedHours, notifier.Notify)
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }
