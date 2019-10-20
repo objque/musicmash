@@ -4,10 +4,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/musicmash/artists/pkg/api"
-	"github.com/musicmash/artists/pkg/api/artists"
 	itunes_client "github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/fetcher/services"
 	"github.com/musicmash/musicmash/internal/fetcher/services/itunes"
 	"github.com/musicmash/musicmash/internal/log"
@@ -34,12 +33,9 @@ func fetchFromServices(services []services.Service) *sync.WaitGroup {
 	wg := sync.WaitGroup{}
 	wg.Add(len(services))
 
-	// todo: extract from here
-	provider := api.NewProvider(config.Config.Artists, 1)
-
 	// fetch from all services
 	for _, service := range services {
-		storeArtists, err := artists.GetFromStore(provider, service.GetStoreName())
+		storeArtists, err := db.DbMgr.GetArtistsForStore(service.GetStoreName())
 		if err != nil {
 			log.Error(errors.Wrapf(err, "can't receive artists from store: %s", service.GetStoreName()))
 			wg.Done()

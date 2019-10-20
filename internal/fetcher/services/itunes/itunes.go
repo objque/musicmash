@@ -5,7 +5,6 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/musicmash/artists/pkg/api/artists"
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/clients/itunes/albums"
 	"github.com/musicmash/musicmash/internal/db"
@@ -46,7 +45,7 @@ func removeAlbumType(title string) string {
 	return strings.Replace(title, LPReleaseType, "", -1)
 }
 
-func (f *Fetcher) fetchWorker(id int, artists <-chan *artists.StoreInfo, wg *sync.WaitGroup) {
+func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, wg *sync.WaitGroup) {
 	for artist := range artists {
 		artistID, err := strconv.ParseUint(artist.StoreID, 10, 64)
 		if err != nil {
@@ -86,8 +85,8 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *artists.StoreInfo, wg *syn
 	log.Debugf("worker #%d finish fetching", id)
 }
 
-func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup, storeArtists []*artists.StoreInfo) {
-	jobs := make(chan *artists.StoreInfo, len(storeArtists))
+func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup, storeArtists []*db.ArtistStoreInfo) {
+	jobs := make(chan *db.ArtistStoreInfo, len(storeArtists))
 	jobsWaitGroup := sync.WaitGroup{}
 	jobsWaitGroup.Add(len(storeArtists))
 

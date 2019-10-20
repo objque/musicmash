@@ -8,7 +8,6 @@ import (
 	"testing"
 	"time"
 
-	"github.com/musicmash/artists/pkg/api/artists"
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
@@ -76,7 +75,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	// action
 	wg := sync.WaitGroup{}
 	wg.Add(1)
-	storeArtists := []*artists.StoreInfo{
+	storeArtists := []*db.ArtistStoreInfo{
 		{
 			ArtistID:  testutil.StoreIDQ,
 			StoreID:   testutil.StoreIDA,
@@ -138,7 +137,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	// action
 	wg := sync.WaitGroup{}
 	wg.Add(1)
-	storeArtists := []*artists.StoreInfo{
+	storeArtists := []*db.ArtistStoreInfo{
 		{
 			ArtistID:  testutil.StoreIDQ,
 			StoreID:   testutil.StoreIDA,
