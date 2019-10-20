@@ -27,6 +27,7 @@ type DataMgr interface {
 	Close() error
 	DropAllTables() error
 	Ping() error
+	GetDialectName() string
 }
 
 type AppDatabaseMgr struct {
