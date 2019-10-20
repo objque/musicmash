@@ -10,6 +10,8 @@ var tables = []interface{}{
 	&Release{},
 	&LastAction{},
 	Subscription{},
+	&Notification{},
+	&Chat{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -68,6 +70,18 @@ func CreateAll(db *gorm.DB) error {
 	if err := db.Debug().Model(&Subscription{}).AddUniqueIndex(
 		"idx_user_name_artist_id",
 		"user_name", "artist_id").Error; err != nil {
+		return err
+	}
+
+	if err := db.Debug().Model(&Chat{}).AddUniqueIndex(
+		"idx_chat_id_user_name",
+		"id", "user_name").Error; err != nil {
+		return err
+	}
+
+	if err := db.Debug().Model(&Notification{}).AddUniqueIndex(
+		"idx_user_name_release_id_is_coming",
+		"user_name", "release_id", "is_coming").Error; err != nil {
 		return err
 	}
 
