@@ -14,8 +14,14 @@ import (
 	"github.com/musicmash/musicmash/internal/notifier"
 )
 
+const (
+	configParamName        = "config"
+	configParamValue       = "/etc/musicmash/musicmash.yaml"
+	configParamDescription = "Path to musicmash.yaml config"
+)
+
 func main() {
-	configPath := flag.String("config", "/etc/musicmash/musicmash.yaml", "Path to musicmash.yaml config")
+	configPath := flag.String(configParamName, configParamValue, configParamDescription)
 	flag.Parse()
 
 	config.Config = config.New()
