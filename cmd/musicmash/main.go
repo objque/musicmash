@@ -16,28 +16,23 @@ import (
 	"github.com/musicmash/musicmash/internal/notifier"
 )
 
-const (
-	configParamName        = "config"
-	configParamValue       = ""
-	configParamDescription = "Path to musicmash.yaml config"
-)
-
 func main() {
-	showHelp := flag.Bool("help", false, "Show usage and exit")
-	config.Config = config.New()
-	config.Config.FlagSet()
-
-	configPath := flag.String(configParamName, configParamValue, configParamDescription)
-	flag.Parse()
+	configPath := flag.String("config", "", "Path to musicmash.yaml config")
 	if helpRequired() {
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
+
+	config.Config = config.New()
+	config.Config.FlagSet()
+	flag.Parse()
 	if *configPath != "" {
 		if err := config.Config.LoadFromFile(*configPath); err != nil {
 			panic(err)
 		}
 	}
+	// override config values
+	flag.Parse()
 	if config.Config.Log.Level == "" {
 		config.Config.Log.Level = "info"
 	}
