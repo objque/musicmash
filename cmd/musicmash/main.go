@@ -23,10 +23,11 @@ const (
 
 func main() {
 	showHelp := flag.Bool("help", false, "Show usage and exit")
+	config.Config = config.New()
+	config.Config.FlagSet()
+
 	configPath := flag.String(configParamName, configParamValue, configParamDescription)
 	flag.Parse()
-
-	config.Config = config.New()
 	if *showHelp {
 		flag.PrintDefaults()
 		os.Exit(0)

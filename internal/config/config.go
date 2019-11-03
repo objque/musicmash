@@ -1,6 +1,7 @@
 package config
 
 import (
+	"flag"
 	"fmt"
 	"io/ioutil"
 
@@ -67,6 +68,30 @@ func (c *AppConfig) LoadFromBytes(val []byte) error {
 		return err
 	}
 	return nil
+}
+
+func (c *AppConfig) FlagSet() {
+	flag.StringVar(&c.HTTP.IP, "http-ip", c.HTTP.IP, "API ip address")
+	flag.IntVar(&c.HTTP.Port, "http-port", c.HTTP.Port, "API port")
+
+	flag.StringVar(&c.DB.Type, "db-type", c.DB.Type, "Database type: mysql or sqlite3")
+	flag.StringVar(&c.DB.Host, "db-host", c.DB.Host, "Database host")
+	flag.StringVar(&c.DB.Name, "db-name", c.DB.Name, "Database name")
+	flag.StringVar(&c.DB.Login, "db-login", c.DB.Login, "Database user login")
+	flag.StringVar(&c.DB.Pass, "db-pass", c.DB.Pass, "Database user password")
+	flag.BoolVar(&c.DB.Log, "db-log", c.DB.Log, "Echo database queries")
+
+	flag.StringVar(&c.Log.Level, "log-level", c.Log.Level, "log level")
+	flag.StringVar(&c.Log.File, "log-file", c.Log.File, "path to log file")
+
+	flag.Float64Var(&c.Fetching.CountOfSkippedHours, "fetching-delay", c.Fetching.CountOfSkippedHours, "Delay between fetches")
+
+	flag.BoolVar(&c.Sentry.Enabled, "sentry", c.Sentry.Enabled, "Sentry support")
+	flag.StringVar(&c.Sentry.Key, "sentry-key", c.Sentry.Key, "Sentry dsn")
+	flag.StringVar(&c.Sentry.Environment, "sentry-environment", c.Sentry.Environment, "Sentry environment")
+
+	flag.Float64Var(&c.Notifier.CountOfSkippedHours, "notify-delay", c.Notifier.CountOfSkippedHours, "Delay between notifies")
+	flag.StringVar(&c.Notifier.TelegramToken, "notify-telegram-token", c.Notifier.TelegramToken, "Telegram bot token")
 }
 
 func (db *DBConfig) GetConnString() (dialect, connString string) {
