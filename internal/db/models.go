@@ -15,11 +15,11 @@ var tables = []interface{}{
 }
 
 func CreateTables(db *gorm.DB) error {
-	return db.AutoMigrate(tables...).Error
+	return db.Debug().AutoMigrate(tables...).Error
 }
 
 func DropAllTables(db *gorm.DB) error {
-	return db.DropTable(tables...).Error
+	return db.Debug().DropTable(tables...).Error
 }
 
 func CreateAll(db *gorm.DB) error {
