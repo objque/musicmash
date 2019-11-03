@@ -75,7 +75,7 @@ func (mgr *AppDatabaseMgr) DropAllTables() error {
 }
 
 func (mgr *AppDatabaseMgr) Ping() error {
-	return mgr.db.Exec("select 1").Error
+	return mgr.db.DB().Ping()
 }
 
 func (mgr *AppDatabaseMgr) GetDialectName() string {
