@@ -4,6 +4,7 @@ import (
 	"flag"
 	"fmt"
 	"os"
+	"strings"
 
 	sentry "github.com/getsentry/sentry-go"
 	"github.com/musicmash/musicmash/internal/api"
@@ -28,7 +29,7 @@ func main() {
 
 	configPath := flag.String(configParamName, configParamValue, configParamDescription)
 	flag.Parse()
-	if *showHelp {
+	if helpRequired() {
 		flag.PrintDefaults()
 		os.Exit(0)
 	}
@@ -60,4 +61,13 @@ func main() {
 	go cron.Run(db.ActionFetch, config.Config.Fetching.CountOfSkippedHours, fetcher.Fetch)
 	go cron.Run(db.ActionNotify, config.Config.Notifier.CountOfSkippedHours, notifier.Notify)
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
+}
+
+func helpRequired() bool {
+	for _, flag := range os.Args {
+		if strings.Contains(flag, "-help") {
+			return true
+		}
+	}
+	return false
 }
