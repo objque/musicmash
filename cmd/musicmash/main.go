@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"os"
 
 	sentry "github.com/getsentry/sentry-go"
 	"github.com/musicmash/musicmash/internal/api"
@@ -21,10 +22,15 @@ const (
 )
 
 func main() {
+	showHelp := flag.Bool("help", false, "Show usage and exit")
 	configPath := flag.String(configParamName, configParamValue, configParamDescription)
 	flag.Parse()
 
 	config.Config = config.New()
+	if *showHelp {
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
 	if *configPath != "" {
 		if err := config.Config.LoadFromFile(*configPath); err != nil {
 			panic(err)
