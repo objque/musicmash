@@ -9,6 +9,7 @@ type AppConfig struct {
 	Sentry   SentryConfig   `yaml:"sentry"`
 	Notifier NotifierConfig `yaml:"notifier"`
 }
+
 type HTTPConfig struct {
 	IP   string `yaml:"ip"`
 	Port int    `yaml:"port"`
