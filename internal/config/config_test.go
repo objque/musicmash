@@ -18,7 +18,7 @@ db:
   log: false
 
 log:
-  file: /var/log/musicmash/musicmash.log
+  file: ./musicmash.log
   level: INFO
 
 fetching:

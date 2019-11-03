@@ -22,7 +22,7 @@ func New() *AppConfig {
 			Log:  false,
 		},
 		Log: LogConfig{
-			File:  "/var/log/musicmash/musicmash.log",
+			File:  "./musicmash.log",
 			Level: "INFO",
 		},
 		Fetching: FetchingConfig{
