@@ -36,7 +36,7 @@ func (c *cron) IsMustFetch() bool {
 	last, err := db.DbMgr.GetLastActionDate(c.ActionName)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			log.Infof("LastAction for '%s' not found, next after %v hour",
+			log.Infof("Last %s is unset, next after %v hour",
 				c.ActionName, c.CountOfSkippedHoursToRun)
 			return false
 		}
