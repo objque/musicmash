@@ -13,11 +13,8 @@ http:
   port: 8844
 
 db:
-  type: mysql
-  host: 127.0.0.1
-  name: musicmash
-  login: musicmash
-  pass: musicmash
+  type: sqlite3
+  host: ./musicmash.sqlite3
   log: false
 
 log:

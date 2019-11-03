@@ -17,12 +17,9 @@ func New() *AppConfig {
 			Port: 8844,
 		},
 		DB: DBConfig{
-			Type:  "mysql",
-			Host:  "127.0.0.1",
-			Name:  "musicmash",
-			Login: "musicmash",
-			Pass:  "musicmash",
-			Log:   false,
+			Type: "sqlite3",
+			Host: "./musicmash.sqlite3",
+			Log:  false,
 		},
 		Log: LogConfig{
 			File:  "/var/log/musicmash/musicmash.log",
