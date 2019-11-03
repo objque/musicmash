@@ -46,5 +46,5 @@ func configureFileLogger(path string) {
 		logrus.WarnLevel:  path,
 	}, nil)
 	logger.Hooks.Add(hook)
-	Infof("Configured logging to %v.", path)
+	Infof("Configured logging to %v", path)
 }
