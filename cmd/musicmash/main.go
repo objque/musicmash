@@ -16,7 +16,7 @@ import (
 
 const (
 	configParamName        = "config"
-	configParamValue       = "/etc/musicmash/musicmash.yaml"
+	configParamValue       = ""
 	configParamDescription = "Path to musicmash.yaml config"
 )
 
