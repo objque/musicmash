@@ -13,12 +13,12 @@ var Config *AppConfig
 func New() *AppConfig {
 	return &AppConfig{
 		HTTP: HTTPConfig{
-			IP:   "10.0.0.240",
+			IP:   "127.0.0.1",
 			Port: 8844,
 		},
 		DB: DBConfig{
 			Type:  "mysql",
-			Host:  "10.0.0.42",
+			Host:  "127.0.0.1",
 			Name:  "musicmash",
 			Login: "musicmash",
 			Pass:  "musicmash",

@@ -9,12 +9,12 @@ import (
 var defaultConfig = `
 ---
 http:
-  ip: 10.0.0.240
+  ip: 127.0.0.1
   port: 8844
 
 db:
   type: mysql
-  host: 10.0.0.42
+  host: 127.0.0.1
   name: musicmash
   login: musicmash
   pass: musicmash
