@@ -27,7 +27,7 @@ func TestCron_IsMustFetch_FirstRun(t *testing.T) {
 	must := c.IsMustFetch()
 
 	// assert
-	assert.True(t, must)
+	assert.False(t, must)
 }
 
 func TestCron_IsMustFetch_ReloadApp_AfterFetching(t *testing.T) {
