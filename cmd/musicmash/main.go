@@ -36,6 +36,10 @@ func main() {
 	if config.Config.Log.Level == "" {
 		config.Config.Log.Level = "info"
 	}
+	if config.Config.HTTP.Port < 0 || config.Config.HTTP.Port > 65535 {
+		log.Error("Invalid port: value should be in range: 0 < value < 65535")
+		os.Exit(2)
+	}
 
 	log.SetLogFormatter(&log.DefaultFormatter)
 	log.ConfigureStdLogger(config.Config.Log.Level)
