@@ -40,7 +40,7 @@ func NewAppDatabaseMgr(db *gorm.DB) *AppDatabaseMgr {
 
 func NewMainDatabaseMgr() *AppDatabaseMgr {
 	db := InitMain()
-	if err := CreateAll(db); err != nil {
+	if err := CreateAll(db.Debug()); err != nil {
 		panic(errors.Wrap(err, "tried to create tables"))
 	}
 	return NewAppDatabaseMgr(db)

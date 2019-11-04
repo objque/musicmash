@@ -15,11 +15,11 @@ var tables = []interface{}{
 }
 
 func CreateTables(db *gorm.DB) error {
-	return db.Debug().AutoMigrate(tables...).Error
+	return db.AutoMigrate(tables...).Error
 }
 
 func DropAllTables(db *gorm.DB) error {
-	return db.Debug().DropTable(tables...).Error
+	return db.DropTable(tables...).Error
 }
 
 //revive:disable:if-return  redundant if ...; err != nil check, just return error instead
