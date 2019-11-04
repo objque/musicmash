@@ -1,3 +1,7 @@
+override RELEASE="$(git tag -l --points-at HEAD)"
+override COMMIT="$(shell git rev-parse --short HEAD)"
+override BUILD_TIME="$(shell date -u '+%Y-%m-%dT%H:%M:%S')"
+
 all:
 
 clean:
@@ -24,7 +28,11 @@ docker-login:
 	docker login -u $(REGISTRY_USER) -p $(REGISTRY_PASS)
 
 docker-build:
-	docker build -t $(REGISTRY_REPO):$(VERSION) .
+	docker build \
+		--build-arg RELEASE=${RELEASE} \
+		--build-arg COMMIT=${COMMIT} \
+		--build-arg BUILD_TIME=${BUILD_TIME} \
+		-t $(REGISTRY_REPO):$(VERSION) .
 
 docker-push: docker-login
 	docker push $(REGISTRY_REPO):$(VERSION)

@@ -14,12 +14,19 @@ import (
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/notifier"
+	"github.com/musicmash/musicmash/internal/version"
 )
 
 func main() {
 	configPath := flag.String("config", "", "Path to musicmash.yaml config")
 	if helpRequired() {
 		flag.PrintDefaults()
+		os.Exit(0)
+	}
+
+	_ = flag.Bool("version", false, "Show build info and exit")
+	if versionRequired() {
+		_, _ = fmt.Fprintln(os.Stdout, version.FullInfo)
 		os.Exit(0)
 	}
 
@@ -62,11 +69,19 @@ func main() {
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }
 
-func helpRequired() bool {
+func isArgProvided(argName string) bool {
 	for _, flag := range os.Args {
-		if strings.Contains(flag, "-help") {
+		if strings.Contains(flag, argName) {
 			return true
 		}
 	}
 	return false
+}
+
+func helpRequired() bool {
+	return isArgProvided("-help")
+}
+
+func versionRequired() bool {
+	return isArgProvided("-version")
 }
