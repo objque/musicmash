@@ -1,11 +1,15 @@
 FROM golang:latest as builder
 
-WORKDIR /go/src/github.com/musicmash/musicmash
-COPY . .
-
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
+
+WORKDIR /go/src/github.com/musicmash/musicmash
+COPY cmd cmd
+COPY internal internal
+COPY pkg pkg
+COPY vendor vendor
+
 RUN go build -v -a -installsuffix cgo -gcflags "all=-trimpath=$(GOPATH)" -o bin/musicmash ./cmd/...
 
 FROM alpine:latest
