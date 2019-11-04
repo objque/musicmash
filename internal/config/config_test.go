@@ -23,7 +23,7 @@ log:
 
 fetching:
   refetch_after_hours: 1
-  count_of_skipped_hours: 8
+  delay: 8
 
 stores:
   itunes:
@@ -41,7 +41,7 @@ sentry:
 
 notifier:
   telegram_token: 12345:xxxx_yyy_token
-  count_of_skipped_hours: 1
+  delay: 1
 `
 
 func TestConfig_Load(t *testing.T) {

@@ -57,8 +57,8 @@ func main() {
 	}
 
 	log.Info("Running musicmash..")
-	go cron.Run(db.ActionFetch, config.Config.Fetching.CountOfSkippedHours, fetcher.Fetch)
-	go cron.Run(db.ActionNotify, config.Config.Notifier.CountOfSkippedHours, notifier.Notify)
+	go cron.Run(db.ActionFetch, config.Config.Fetching.Delay, fetcher.Fetch)
+	go cron.Run(db.ActionNotify, config.Config.Notifier.Delay, notifier.Notify)
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }
 

@@ -27,7 +27,7 @@ func setup() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
 		Fetching: config.FetchingConfig{
-			CountOfSkippedHours: 8,
+			Delay: 8,
 		},
 	}
 	provider = itunes.NewProvider(server.URL, testutil.TokenSimple, time.Minute)

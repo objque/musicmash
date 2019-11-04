@@ -30,13 +30,13 @@ type DBConfig struct {
 }
 
 type FetchingConfig struct {
-	RefetchAfterHours   float64 `yaml:"refetch_after_hours"`
-	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
+	RefetchAfterHours float64 `yaml:"refetch_after_hours"`
+	Delay             float64 `yaml:"delay"`
 }
 
 type NotifierConfig struct {
-	TelegramToken       string  `yaml:"telegram_token"`
-	CountOfSkippedHours float64 `yaml:"count_of_skipped_hours"`
+	TelegramToken string  `yaml:"telegram_token"`
+	Delay         float64 `yaml:"delay"`
 }
 
 type StoreConfig struct {

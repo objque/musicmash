@@ -27,8 +27,8 @@ func New() *AppConfig {
 			Level: "INFO",
 		},
 		Fetching: FetchingConfig{
-			RefetchAfterHours:   1,
-			CountOfSkippedHours: 8,
+			RefetchAfterHours: 1,
+			Delay:             8,
 		},
 		Stores: StoresConfig{
 			"itunes": {
@@ -46,8 +46,8 @@ func New() *AppConfig {
 			Environment: "production",
 		},
 		Notifier: NotifierConfig{
-			TelegramToken:       "12345:xxxx_yyy_token",
-			CountOfSkippedHours: 1,
+			TelegramToken: "12345:xxxx_yyy_token",
+			Delay:         1,
 		},
 	}
 }
@@ -84,13 +84,13 @@ func (c *AppConfig) FlagSet() {
 	flag.StringVar(&c.Log.Level, "log-level", c.Log.Level, "log level")
 	flag.StringVar(&c.Log.File, "log-file", c.Log.File, "path to log file")
 
-	flag.Float64Var(&c.Fetching.CountOfSkippedHours, "fetching-delay", c.Fetching.CountOfSkippedHours, "Delay between fetches")
+	flag.Float64Var(&c.Fetching.Delay, "fetching-delay", c.Fetching.Delay, "Delay between fetches")
 
 	flag.BoolVar(&c.Sentry.Enabled, "sentry", c.Sentry.Enabled, "Sentry support")
 	flag.StringVar(&c.Sentry.Key, "sentry-key", c.Sentry.Key, "Sentry dsn")
 	flag.StringVar(&c.Sentry.Environment, "sentry-environment", c.Sentry.Environment, "Sentry environment")
 
-	flag.Float64Var(&c.Notifier.CountOfSkippedHours, "notify-delay", c.Notifier.CountOfSkippedHours, "Delay between notifies")
+	flag.Float64Var(&c.Notifier.Delay, "notify-delay", c.Notifier.Delay, "Delay between notifies")
 	flag.StringVar(&c.Notifier.TelegramToken, "notify-telegram-token", c.Notifier.TelegramToken, "Telegram bot token")
 }
 
