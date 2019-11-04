@@ -36,7 +36,7 @@ func (c *cron) IsMustFetch() bool {
 	last, err := db.DbMgr.GetLastActionDate(c.ActionName)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			if err := db.DbMgr.SetLastActionDate(c.ActionName, time.Now().UTC()); err != nil {
+			if err = db.DbMgr.SetLastActionDate(c.ActionName, time.Now().UTC()); err != nil {
 				log.Errorf("can't save last_action date for '%s', do it manually", c.ActionName)
 				return false
 			}
