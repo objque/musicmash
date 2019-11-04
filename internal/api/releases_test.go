@@ -50,3 +50,17 @@ func TestAPI_Releases_Get_Empty(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, releases, 0)
 }
+
+func TestAPI_Releases_Get_Internal(t *testing.T) {
+	setup()
+	_ = db.DbMgr.Close()
+	defer func() { server.Close() }()
+
+	// action
+	since := time.Now().UTC().AddDate(0, -1, 0)
+	releases, err := releases.Get(client, since)
+
+	// assert
+	assert.Error(t, err)
+	assert.Len(t, releases, 0)
+}
