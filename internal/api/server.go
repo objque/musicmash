@@ -28,6 +28,6 @@ func getMux() *chi.Mux {
 
 func ListenAndServe(ip string, port int) error {
 	addr := fmt.Sprintf("%s:%d", ip, port)
-	log.Infof("Listening API on '%s'", addr)
+	log.Infof("Listening API on %s", addr)
 	return http.ListenAndServe(addr, getMux())
 }

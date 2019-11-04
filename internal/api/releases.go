@@ -39,8 +39,8 @@ func (c *ReleasesController) getReleases(w http.ResponseWriter, r *http.Request)
 	date, err := time.Parse(dateLayout, since)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
-		log.Debugf("can't parse provided since argument '%s' as '%s'", since, dateLayout)
-		WriteError(w, fmt.Errorf("since argument '%s' does not match '%s' layout", since, dateLayout))
+		log.Debugf("can't parse provided since argument %s as %s", since, dateLayout)
+		WriteError(w, fmt.Errorf("since argument %s does not match %s layout", since, dateLayout))
 		return
 	}
 

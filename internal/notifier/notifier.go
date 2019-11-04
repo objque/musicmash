@@ -33,7 +33,7 @@ func markReleaseAsDeliveredTo(userName string, releaseID uint64, isComing bool) 
 func NotifyWithPeriod(period time.Time) {
 	releases, err := db.DbMgr.FindNewReleases(period)
 	if err != nil {
-		log.Error(errors.Wrapf(err, "tried to notify users, but can't get new releases for date '%v'", period))
+		log.Error(errors.Wrapf(err, "tried to notify users, but can't get new releases for date %v", period))
 		return
 	}
 
@@ -42,7 +42,7 @@ func NotifyWithPeriod(period time.Time) {
 		chats, err := db.DbMgr.GetAllChatsThatSubscribedFor(release.ArtistID)
 		switch err {
 		case gorm.ErrRecordNotFound:
-			log.Debugf("No one subscribed for '%s'", release.ArtistID)
+			log.Debugf("No one subscribed for %s", release.ArtistID)
 			continue
 		case nil:
 			break
@@ -64,7 +64,7 @@ func NotifyWithPeriod(period time.Time) {
 			_, err := db.DbMgr.IsUserNotified(chat.UserName, release.ID, release.IsComing())
 			switch err {
 			case nil:
-				log.Debugln(fmt.Sprintf("user '%s' already notified about '%d'", chat.UserName, release.ID))
+				log.Debugln(fmt.Sprintf("user %s already notified about %v", chat.UserName, release.ID))
 				continue
 			case gorm.ErrRecordNotFound:
 				break
@@ -74,7 +74,7 @@ func NotifyWithPeriod(period time.Time) {
 			}
 
 			if err := telegram.SendMessage(makeMessage(artist.Name, release)); err != nil {
-				log.Error(errors.Wrapf(err, "tried to send message into telegram chat with id '%d'", chat.ID))
+				log.Error(errors.Wrapf(err, "tried to send message into telegram chat with id %v", chat.ID))
 				continue
 			}
 			_ = markReleaseAsDeliveredTo(chat.UserName, release.ID, release.IsComing())

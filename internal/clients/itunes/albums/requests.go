@@ -27,9 +27,9 @@ func getAlbums(provider *itunes.Provider, url string) (*Data, error) {
 	if err := decoder.Decode(&data); err != nil {
 		b, readerErr := ioutil.ReadAll(decoder.Buffered())
 		if readerErr != nil {
-			return nil, fmt.Errorf("can't read all body because '%v'", readerErr)
+			return nil, fmt.Errorf("can't read all body because %v", readerErr)
 		}
-		return nil, errors.Wrapf(err, "looking json, but got '%s'", string(b))
+		return nil, errors.Wrapf(err, "looking json, but got %s", string(b))
 	}
 
 	return &data, nil

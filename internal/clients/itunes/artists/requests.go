@@ -17,7 +17,7 @@ func SearchArtist(provider *itunes.Provider, term string) (*Artist, error) {
 	provider.WaitRateLimit()
 	resp, err := provider.HTTPClient.Do(req)
 	if err != nil {
-		return nil, errors.Wrapf(err, "tried to search artist with name '%v'", term)
+		return nil, errors.Wrapf(err, "tried to search artist with name %v", term)
 	}
 	defer resp.Body.Close()
 
@@ -30,7 +30,7 @@ func SearchArtist(provider *itunes.Provider, term string) (*Artist, error) {
 	}
 	a := answer{}
 	if err := json.NewDecoder(resp.Body).Decode(&a); err != nil {
-		return nil, errors.Wrapf(err, "tried to decode search result for artist with name '%v'", term)
+		return nil, errors.Wrapf(err, "tried to decode search result for artist with name %v", term)
 	}
 	if len(a.Results.Data.Artists) == 0 {
 		return nil, ErrArtistNotFound

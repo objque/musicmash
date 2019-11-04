@@ -22,12 +22,12 @@ func (c *cron) Run() {
 		}
 
 		now := time.Now().UTC()
-		log.Infof("Start %sing stage for '%s'...", c.ActionName, now.String())
+		log.Infof("Start %sing stage for %s...", c.ActionName, now.String())
 		c.Action()
-		log.Infof("Finish %sing stage '%s'...", c.ActionName, time.Now().UTC().String())
-		log.Infof("Elapsed time '%s' for %s", time.Now().UTC().Sub(now).String(), c.ActionName)
+		log.Infof("Finish %sing stage %s...", c.ActionName, time.Now().UTC().String())
+		log.Infof("Elapsed time %s for %s", time.Now().UTC().Sub(now).String(), c.ActionName)
 		if err := db.DbMgr.SetLastActionDate(c.ActionName, now); err != nil {
-			log.Errorf("can't save last_action date for '%s'", c.ActionName)
+			log.Errorf("can't save last_action date for %s", c.ActionName)
 		}
 	}
 }
@@ -37,7 +37,7 @@ func (c *cron) IsMustFetch() bool {
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
 			if err = db.DbMgr.SetLastActionDate(c.ActionName, time.Now().UTC()); err != nil {
-				log.Errorf("can't save last_action date for '%s', do it manually", c.ActionName)
+				log.Errorf("can't save last_action date for %s, do it manually", c.ActionName)
 				return false
 			}
 

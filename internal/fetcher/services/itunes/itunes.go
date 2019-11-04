@@ -49,7 +49,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, wg *sy
 	for artist := range artists {
 		artistID, err := strconv.ParseUint(artist.StoreID, 10, 64)
 		if err != nil {
-			log.Errorf("can't parse uint64 from '%s'", artist.StoreID)
+			log.Errorf("can't parse uint64 from %s", artist.StoreID)
 			wg.Done()
 			continue
 		}
@@ -77,7 +77,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.ArtistStoreInfo, wg *sy
 				Released:  release.Attributes.ReleaseDate.Value,
 			})
 			if err != nil {
-				log.Errorf("can't save release from '%s' with id '%s': %v", f.GetStoreName(), release.ID, err)
+				log.Errorf("can't save release from %s with id %s: %v", f.GetStoreName(), release.ID, err)
 			}
 		}
 		wg.Done()

@@ -15,7 +15,7 @@ func SearchArtist(provider *deezer.Provider, term string) (*Artist, error) {
 	provider.WaitRateLimit()
 	resp, err := http.Get(searchURL)
 	if err != nil {
-		return nil, errors.Wrapf(err, "tried to search artist with name '%v'", term)
+		return nil, errors.Wrapf(err, "tried to search artist with name %v", term)
 	}
 	defer resp.Body.Close()
 
