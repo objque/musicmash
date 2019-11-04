@@ -18,12 +18,6 @@ import (
 )
 
 func main() {
-	configPath := flag.String("config", "", "Path to musicmash.yaml config")
-	if helpRequired() {
-		flag.PrintDefaults()
-		os.Exit(0)
-	}
-
 	_ = flag.Bool("version", false, "Show build info and exit")
 	if versionRequired() {
 		_, _ = fmt.Fprintln(os.Stdout, version.FullInfo)
@@ -32,6 +26,13 @@ func main() {
 
 	config.Config = config.New()
 	config.Config.FlagSet()
+	configPath := flag.String("config", "", "Path to musicmash.yaml config")
+	_ = flag.Bool("help", false, "Show this message and exit")
+	if helpRequired() {
+		flag.PrintDefaults()
+		os.Exit(0)
+	}
+
 	flag.Parse()
 	if *configPath != "" {
 		if err := config.Config.LoadFromFile(*configPath); err != nil {
