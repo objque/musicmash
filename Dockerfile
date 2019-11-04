@@ -14,11 +14,14 @@ RUN go build -v -a \
     -installsuffix cgo \
     -gcflags "all=-trimpath=$(GOPATH)" \
     -ldflags '-linkmode external -extldflags "-static"' \
-    -o bin/musicmash ./cmd/...
+    -o /usr/local/bin/musicmash ./cmd/...
 
 FROM alpine:latest
 
-WORKDIR /root/
-COPY --from=builder /go/src/github.com/musicmash/musicmash/bin .
+RUN addgroup -S musicmash && adduser -S musicmash -G musicmash
+USER musicmash
+WORKDIR /home/musicmash
 
-ENTRYPOINT ["./musicmash"]
+COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmash /usr/local/bin/musicmash
+
+ENTRYPOINT ["musicmash"]
