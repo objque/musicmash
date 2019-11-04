@@ -37,7 +37,7 @@
   version = "v1.4.0"
 
 [[projects]]
-  digest = "0:"
+  digest = "1:bfad9f621850e5a7eab03d648e4d26f29983f4d2a11328ec3bededbede843b71"
   name = "github.com/jinzhu/gorm"
   packages = [
     ".",
