@@ -22,6 +22,7 @@ func DropAllTables(db *gorm.DB) error {
 	return db.Debug().DropTable(tables...).Error
 }
 
+//revive:disable:if-return  redundant if ...; err != nil check, just return error instead
 func CreateAll(db *gorm.DB) error {
 	if err := CreateTables(db); err != nil {
 		return err

@@ -36,6 +36,7 @@ deploy-staging:
 	ssh -o "StrictHostKeyChecking no" $(STAGING_USER)@$(STAGING_HOST) make run-music
 
 lint-all l:
+	bash ./scripts/revive.sh
 	bash ./scripts/golangci-lint.sh
 	bash ./scripts/consistent.sh
 
