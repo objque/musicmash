@@ -36,7 +36,12 @@ func (c *cron) IsMustFetch() bool {
 	last, err := db.DbMgr.GetLastActionDate(c.ActionName)
 	if err != nil {
 		if err == gorm.ErrRecordNotFound {
-			log.Infof("Last %s is unset, next after %v hour",
+			if err := db.DbMgr.SetLastActionDate(c.ActionName, time.Now().UTC()); err != nil {
+				log.Errorf("can't save last_action date for '%s', do it manually", c.ActionName)
+				return false
+			}
+
+			log.Infof("Last %s set as now(). Next in %v hour",
 				c.ActionName, c.CountOfSkippedHoursToRun)
 			return false
 		}
@@ -46,7 +51,7 @@ func (c *cron) IsMustFetch() bool {
 	}
 
 	diff := calcDiffHours(last.Date)
-	log.Infof("Last %s was at %s next after %v hour",
+	log.Infof("Last %s was at %s. Next in %v hour",
 		c.ActionName,
 		last.Date.Format("2006-01-02T15:04:05"),
 		c.CountOfSkippedHoursToRun-diff)
