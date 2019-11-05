@@ -12,6 +12,5 @@ var (
 
 	FullInfo = fmt.Sprintf(
 		"Build info: commit: %s, build time: %s, release: %s",
-		Commit, BuildTime, Release,
-	)
+		Commit, BuildTime, Release)
 )
