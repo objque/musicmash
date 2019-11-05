@@ -21,6 +21,7 @@ func getMux() *chi.Mux {
 	r.Get("/healthz", healthz)
 
 	r.Route("/v1", func(r chi.Router) {
+		NewArtistsController().Register(r)
 		NewReleasesController().Register(r)
 	})
 	return r
