@@ -1,6 +1,7 @@
 package notifier
 
 import (
+	"strconv"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
@@ -42,7 +43,14 @@ func NotifyWithPeriod(period time.Time) {
 
 	for _, notification := range notifications {
 		notification.Release.ID = notification.ReleaseID
-		if err := telegram.SendMessage(makeMessage(notification.Name, &notification.Release)); err != nil {
+		message := makeMessage(notification.Name, &notification.Release)
+		message.ChatID, err = strconv.ParseInt(notification.Data, 10, 64)
+		if err != nil {
+			log.Warnf("user_name (%s) has broken %s data: '%v'",
+				notification.UserName, notification.Service, notification.Data)
+			continue
+		}
+		if err := telegram.SendMessage(message); err != nil {
 			log.Error(errors.Wrapf(err, "tried to send message into telegram chat with id %v", notification.ReleaseID))
 			continue
 		}
