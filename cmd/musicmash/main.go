@@ -14,6 +14,7 @@ import (
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/notifier"
+	"github.com/musicmash/musicmash/internal/notifier/telegram"
 	"github.com/musicmash/musicmash/internal/version"
 )
 
@@ -51,6 +52,8 @@ func main() {
 
 	log.SetLogFormatter(&log.DefaultFormatter)
 	log.ConfigureStdLogger(config.Config.Log.Level)
+
+	telegram.New(config.Config.Notifier.TelegramToken)
 
 	db.DbMgr = db.NewMainDatabaseMgr()
 	if config.Config.Sentry.Enabled {
