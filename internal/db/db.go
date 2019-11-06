@@ -19,7 +19,6 @@ type DataMgr interface {
 	ReleaseMgr
 	LastActionMgr
 	SubscriptionMgr
-	ChatMgr
 	NotificationMgr
 	NotificationServiceMgr
 	NotificationSettingsMgr

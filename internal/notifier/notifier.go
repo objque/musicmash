@@ -1,10 +1,8 @@
 package notifier
 
 import (
-	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/notifier/telegram"
@@ -31,53 +29,24 @@ func markReleaseAsDeliveredTo(userName string, releaseID uint64, isComing bool) 
 }
 
 func NotifyWithPeriod(period time.Time) {
-	releases, err := db.DbMgr.FindNewReleases(period)
+	notifications, err := db.DbMgr.FindNotReceivedNotifications()
 	if err != nil {
 		log.Error(errors.Wrapf(err, "tried to notify users, but can't get new releases for date %v", period))
 		return
 	}
 
-	artists := map[int64]*db.Artist{}
-	for _, release := range releases {
-		chats, err := db.DbMgr.GetAllChatsThatSubscribedFor(release.ArtistID)
-		switch err {
-		case gorm.ErrRecordNotFound:
-			log.Debugf("No one subscribed for %s", release.ArtistID)
-			continue
-		case nil:
-			break
-		default:
-			log.Error(err)
+	if len(notifications) == 0 {
+		log.Info("Not delivered notifications not found")
+		return
+	}
+
+	for _, notification := range notifications {
+		notification.Release.ID = notification.ReleaseID
+		if err := telegram.SendMessage(makeMessage(notification.Name, &notification.Release)); err != nil {
+			log.Error(errors.Wrapf(err, "tried to send message into telegram chat with id %v", notification.ReleaseID))
 			continue
 		}
 
-		if len(chats) == 0 {
-			continue
-		}
-
-		artist, ok := artists[release.ArtistID]
-		if !ok {
-			artist, _ = db.DbMgr.GetArtistWithFullInfo(release.ArtistID)
-			artists[artist.ID] = artist
-		}
-		for _, chat := range chats {
-			_, err := db.DbMgr.IsUserNotified(chat.UserName, release.ID, release.IsComing())
-			switch err {
-			case nil:
-				log.Debugln(fmt.Sprintf("user %s already notified about %v", chat.UserName, release.ID))
-				continue
-			case gorm.ErrRecordNotFound:
-				break
-			default:
-				log.Error(err)
-				continue
-			}
-
-			if err := telegram.SendMessage(makeMessage(artist.Name, release)); err != nil {
-				log.Error(errors.Wrapf(err, "tried to send message into telegram chat with id %v", chat.ID))
-				continue
-			}
-			_ = markReleaseAsDeliveredTo(chat.UserName, release.ID, release.IsComing())
-		}
+		_ = markReleaseAsDeliveredTo(notification.UserName, notification.ReleaseID, notification.IsComing())
 	}
 }
