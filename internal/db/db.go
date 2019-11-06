@@ -23,6 +23,7 @@ type DataMgr interface {
 	NotificationMgr
 	NotificationServiceMgr
 	NotificationSettingsMgr
+	InternalNotificationMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr
