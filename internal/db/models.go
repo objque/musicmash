@@ -11,6 +11,7 @@ var tables = []interface{}{
 	&LastAction{},
 	Subscription{},
 	&Notification{},
+	&NotificationService{},
 	&Chat{},
 }
 
