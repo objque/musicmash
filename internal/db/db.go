@@ -22,6 +22,7 @@ type DataMgr interface {
 	ChatMgr
 	NotificationMgr
 	NotificationServiceMgr
+	NotificationSettingsMgr
 	Begin() *AppDatabaseMgr
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr

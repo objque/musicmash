@@ -13,6 +13,7 @@ var tables = []interface{}{
 	&Notification{},
 	&NotificationService{},
 	&Chat{},
+	&NotificationSettings{},
 }
 
 func CreateTables(db *gorm.DB) error {
@@ -39,6 +40,9 @@ func CreateAll(db *gorm.DB) error {
 		},
 		&Subscription{}: {
 			{"artist_id", "artists(id)"},
+		},
+		&NotificationSettings{}: {
+			{"service", "notification_services(id)"},
 		},
 	}
 
@@ -86,6 +90,12 @@ func CreateAll(db *gorm.DB) error {
 	if err := db.Debug().Model(&Notification{}).AddUniqueIndex(
 		"idx_user_name_release_id_is_coming",
 		"user_name", "release_id", "is_coming").Error; err != nil {
+		return err
+	}
+
+	if err := db.Debug().Model(&NotificationSettings{}).AddUniqueIndex(
+		"idx_user_name_service",
+		"user_name", "service").Error; err != nil {
 		return err
 	}
 
