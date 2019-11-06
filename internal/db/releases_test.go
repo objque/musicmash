@@ -2,6 +2,7 @@ package db
 
 import (
 	"testing"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
@@ -48,6 +49,34 @@ func TestDB_Releases_FindReleases(t *testing.T) {
 	assert.NoError(t, err)
 	assert.Len(t, releases, 1)
 	assert.Equal(t, int64(testutil.StoreIDQ), releases[0].ArtistID)
+}
+
+func TestDB_Releases_FindArtistsWithNewReleases(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		CreatedAt: time.Now().UTC(),
+		ArtistID:  testutil.StoreIDW,
+		StoreName: testutil.StoreApple,
+		StoreID:   testutil.StoreIDA,
+		Poster:    testutil.PosterSimple,
+	}))
+	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+		CreatedAt: time.Now().UTC().AddDate(0, -1, 0),
+		ArtistID:  testutil.StoreIDQ,
+		StoreName: testutil.StoreApple,
+		StoreID:   testutil.StoreIDB,
+	}))
+
+	// action
+	artists, err := DbMgr.FindArtistsWithNewReleases(time.Now().UTC().Add(-time.Hour))
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, artists, 1)
+	assert.Equal(t, int64(testutil.StoreIDW), artists[0])
 }
 
 func TestDB_Releases_UpdateRelease(t *testing.T) {
