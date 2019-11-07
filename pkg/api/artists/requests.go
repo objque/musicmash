@@ -54,7 +54,7 @@ func Create(provider *api.Provider, artist *Artist) error {
 	return json.NewDecoder(resp.Body).Decode(&artist)
 }
 
-func Associate(provider *api.Provider, info *ArtistStoreInfo) error {
+func Associate(provider *api.Provider, info *Association) error {
 	url := fmt.Sprintf("%s/artists/associate", provider.URL)
 	b, _ := json.Marshal(&info)
 	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(b))

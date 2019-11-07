@@ -65,40 +65,6 @@ func TestDB_Artists_Search(t *testing.T) {
 	}
 }
 
-func TestDB_ArtistStoreInfo_EnsureArtistExistsInStore(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// arrange
-	assert.NoError(t, DbMgr.EnsureStoreExists(testutil.StoreDeezer))
-
-	// action
-	err := DbMgr.EnsureArtistExistsInStore(testutil.StoreIDQ, testutil.StoreDeezer, testutil.StoreIDA)
-
-	// assert
-	assert.NoError(t, err)
-	artists, err := DbMgr.GetArtistsForStore(testutil.StoreDeezer)
-	assert.NoError(t, err)
-	assert.Len(t, artists, 1)
-}
-
-func TestDB_ArtistStoreInfo_GetArtistFromStore(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// arrange
-	assert.NoError(t, DbMgr.EnsureStoreExists(testutil.StoreApple))
-	assert.NoError(t, DbMgr.EnsureArtistExistsInStore(testutil.StoreIDQ, testutil.StoreApple, testutil.StoreIDA))
-	assert.NoError(t, DbMgr.EnsureArtistExistsInStore(testutil.StoreIDQ, testutil.StoreApple, testutil.StoreIDB))
-
-	// action
-	artists, err := DbMgr.GetArtistFromStore(testutil.StoreIDQ, testutil.StoreApple)
-
-	// assert
-	assert.NoError(t, err)
-	assert.Len(t, artists, 2)
-}
-
 func TestDB_Artists_Validate(t *testing.T) {
 	setup()
 	defer teardown()

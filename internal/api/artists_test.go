@@ -73,7 +73,7 @@ func TestAPI_Artists_Associate(t *testing.T) {
 	assert.NoError(t, db.DbMgr.EnsureStoreExists(testutil.StoreApple))
 
 	// action
-	info := &artists.ArtistStoreInfo{ArtistID: 1, StoreName: testutil.StoreApple, StoreID: testutil.StoreIDA}
+	info := &artists.Association{ArtistID: 1, StoreName: testutil.StoreApple, StoreID: testutil.StoreIDA}
 	err := artists.Associate(client, info)
 
 	// assert
@@ -91,7 +91,7 @@ func TestAPI_Artists_Associate_ArtistNotFound(t *testing.T) {
 	assert.NoError(t, db.DbMgr.EnsureStoreExists(testutil.StoreApple))
 
 	// action
-	info := &artists.ArtistStoreInfo{ArtistID: 1, StoreName: testutil.StoreApple, StoreID: testutil.StoreIDA}
+	info := &artists.Association{ArtistID: 1, StoreName: testutil.StoreApple, StoreID: testutil.StoreIDA}
 	err := artists.Associate(client, info)
 
 	// assert
@@ -105,10 +105,10 @@ func TestAPI_Artists_Associate_AlreadyAssociated(t *testing.T) {
 	// arrange
 	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{Name: testutil.ArtistArchitects}))
 	assert.NoError(t, db.DbMgr.EnsureStoreExists(testutil.StoreApple))
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(1, testutil.StoreApple, testutil.StoreIDA))
+	assert.NoError(t, db.DbMgr.EnsureAssociationExists(1, testutil.StoreApple, testutil.StoreIDA))
 
 	// action
-	info := &artists.ArtistStoreInfo{ArtistID: 1, StoreName: testutil.StoreApple, StoreID: testutil.StoreIDA}
+	info := &artists.Association{ArtistID: 1, StoreName: testutil.StoreApple, StoreID: testutil.StoreIDA}
 	err := artists.Associate(client, info)
 
 	// assert
@@ -123,7 +123,7 @@ func TestAPI_Artists_Associate_StoreNotFound(t *testing.T) {
 	defer teardown()
 
 	// action
-	info := &artists.ArtistStoreInfo{ArtistID: 1, StoreName: testutil.StoreApple, StoreID: testutil.StoreIDA}
+	info := &artists.Association{ArtistID: 1, StoreName: testutil.StoreApple, StoreID: testutil.StoreIDA}
 	err := artists.Associate(client, info)
 
 	// assert

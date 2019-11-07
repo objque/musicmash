@@ -58,7 +58,7 @@ func (c *ArtistsController) addArtist(w http.ResponseWriter, r *http.Request) {
 }
 
 func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Request) {
-	info := db.ArtistStoreInfo{}
+	info := db.Association{}
 	err := json.NewDecoder(r.Body).Decode(&info)
 	if err != nil {
 		WriteError(w, errors.New("invalid body"))
@@ -70,7 +70,7 @@ func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	if exist := db.DbMgr.IsArtistExistsInStore(info.StoreID, info.StoreName); exist {
+	if exist := db.DbMgr.IsAssociationExists(info.StoreID, info.StoreName); exist {
 		WriteError(w, errors.New("artist already associated"))
 		return
 	}
@@ -87,7 +87,7 @@ func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	err = db.DbMgr.EnsureArtistExistsInStore(info.ArtistID, info.StoreName, info.StoreID)
+	err = db.DbMgr.EnsureAssociationExists(info.ArtistID, info.StoreName, info.StoreID)
 	if err != nil {
 		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)

@@ -7,6 +7,6 @@ import (
 )
 
 type Service interface {
-	FetchAndSave(done *sync.WaitGroup, artists []*db.ArtistStoreInfo)
+	FetchAndSave(done *sync.WaitGroup, artists []*db.Association)
 	GetStoreName() string
 }

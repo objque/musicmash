@@ -75,7 +75,7 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 	// action
 	wg := sync.WaitGroup{}
 	wg.Add(1)
-	storeArtists := []*db.ArtistStoreInfo{
+	storeArtists := []*db.Association{
 		{
 			ArtistID:  testutil.StoreIDQ,
 			StoreID:   testutil.StoreIDA,
@@ -137,7 +137,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	// action
 	wg := sync.WaitGroup{}
 	wg.Add(1)
-	storeArtists := []*db.ArtistStoreInfo{
+	storeArtists := []*db.Association{
 		{
 			ArtistID:  testutil.StoreIDQ,
 			StoreID:   testutil.StoreIDA,

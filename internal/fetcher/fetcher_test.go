@@ -16,7 +16,7 @@ func TestFetch_FetchAndSave(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureArtistExistsInStore(testutil.StoreIDW, testutil.StoreApple, testutil.StoreIDA))
+	assert.NoError(t, db.DbMgr.EnsureAssociationExists(testutil.StoreIDW, testutil.StoreApple, testutil.StoreIDA))
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{

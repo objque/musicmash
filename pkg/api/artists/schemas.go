@@ -8,7 +8,7 @@ type Artist struct {
 	Followers  uint   `json:"followers"`
 }
 
-type ArtistStoreInfo struct {
+type Association struct {
 	ArtistID  int64  `json:"artist_id"`
 	StoreName string `json:"name"`
 	StoreID   string `json:"id"`

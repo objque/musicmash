@@ -13,7 +13,7 @@ var DbMgr DataMgr
 
 type DataMgr interface {
 	ArtistMgr
-	ArtistStoreInfoMgr
+	AssociationMgr
 	StoreMgr
 	AlbumMgr
 	ReleaseMgr

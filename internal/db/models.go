@@ -4,7 +4,7 @@ import "github.com/jinzhu/gorm"
 
 var tables = []interface{}{
 	Artist{},
-	ArtistStoreInfo{},
+	Association{},
 	Store{},
 	Album{},
 	&Release{},
@@ -30,7 +30,7 @@ func CreateAll(db *gorm.DB) error {
 	}
 
 	fkeys := map[interface{}][][2]string{
-		&ArtistStoreInfo{}: {
+		&Association{}: {
 			{"artist_id", "artists(id)"},
 			{"store_name", "stores(name)"},
 		},
@@ -62,7 +62,7 @@ func CreateAll(db *gorm.DB) error {
 		return err
 	}
 
-	if err := db.Debug().Model(&ArtistStoreInfo{}).AddUniqueIndex(
+	if err := db.Debug().Model(&Association{}).AddUniqueIndex(
 		"idx_art_store_name_id",
 		"artist_id", "store_name", "store_id").Error; err != nil {
 		return err
