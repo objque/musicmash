@@ -22,8 +22,6 @@ type ReleaseMgr interface {
 	GetAllReleases() ([]*Release, error)
 	FindReleases(condition map[string]interface{}) ([]*Release, error)
 	FindNewReleases(date time.Time) ([]*Release, error)
-	FindArtistsWithNewReleases(date time.Time) ([]int64, error)
-	UpdateRelease(release *Release) error
 }
 
 func (r *Release) IsComing() bool {
@@ -53,15 +51,6 @@ func (mgr *AppDatabaseMgr) FindNewReleases(date time.Time) ([]*Release, error) {
 	return releases, nil
 }
 
-func (mgr *AppDatabaseMgr) FindArtistsWithNewReleases(date time.Time) ([]int64, error) {
-	ids := []int64{}
-	const query = "select artist_id from releases where created_at >= ? group by artist_id"
-	if err := mgr.db.Raw(query, date).Pluck("artist_id", &ids).Error; err != nil {
-		return nil, err
-	}
-	return ids, nil
-}
-
 func (mgr *AppDatabaseMgr) FindReleases(condition map[string]interface{}) ([]*Release, error) {
 	releases := []*Release{}
 	err := mgr.db.Where(condition).Find(&releases).Error
@@ -69,8 +58,4 @@ func (mgr *AppDatabaseMgr) FindReleases(condition map[string]interface{}) ([]*Re
 		return nil, err
 	}
 	return releases, nil
-}
-
-func (mgr *AppDatabaseMgr) UpdateRelease(release *Release) error {
-	return mgr.db.Save(release).Error
 }

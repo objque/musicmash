@@ -65,28 +65,6 @@ func TestDB_Artists_Search(t *testing.T) {
 	}
 }
 
-func TestDB_Artists_Validate(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// arrange
-	artists := []int64{1, 5, 10, 420, 69, 333, 999}
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 1, Name: testutil.ArtistSkrillex, Followers: 100}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 2, Name: testutil.ArtistArchitects, Followers: 250}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 3, Name: testutil.ArtistSPY}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 4, Name: testutil.ArtistWildways, Followers: 50}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 5, Name: testutil.ArtistRitaOra, Followers: 90}))
-
-	// action
-	artists, err := DbMgr.ValidateArtists(artists)
-
-	// assert
-	assert.NoError(t, err)
-	assert.Len(t, artists, 2)
-	assert.Equal(t, int64(1), artists[0])
-	assert.Equal(t, int64(5), artists[1])
-}
-
 func TestDB_Artists_GetWithFullInfo(t *testing.T) {
 	setup()
 	defer teardown()
