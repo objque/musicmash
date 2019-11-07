@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
 
 	"github.com/go-chi/chi"
 	"github.com/jinzhu/gorm"
@@ -26,6 +27,7 @@ func (c *ArtistsController) Register(router chi.Router) {
 		r.Post("/", c.addArtist)
 		r.Post("/associate", c.associateArtist)
 		r.Get("/", c.searchArtist)
+		r.Get("/{id}", c.getArtist)
 	})
 }
 
@@ -115,6 +117,36 @@ func (c *ArtistsController) searchArtist(w http.ResponseWriter, r *http.Request)
 	}
 
 	buffer, err := json.Marshal(&artists)
+	if err != nil {
+		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		log.Error(err)
+		return
+	}
+
+	w.Header().Set("content-type", "application/json")
+	_, _ = w.Write(buffer)
+}
+
+func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(chi.URLParam(r, "id"), 10, 64)
+	if err != nil {
+		WriteError(w, errors.New("wrong id"))
+		return
+	}
+
+	artist, err := db.DbMgr.GetArtistWithFullInfo(id)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			WriteError(w, errors.New("wrong id"))
+			return
+		}
+
+		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		log.Error(err)
+		return
+	}
+
+	buffer, err := json.Marshal(&artist)
 	if err != nil {
 		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)

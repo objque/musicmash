@@ -129,3 +129,31 @@ func TestAPI_Artists_Associate_StoreNotFound(t *testing.T) {
 	// assert
 	assert.Error(t, err)
 }
+
+func TestAPI_Artists_GetByID(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{Name: testutil.ArtistArchitects}))
+
+	// action
+	artist, err := artists.Get(client, 1)
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), artist.ID)
+	assert.Equal(t, testutil.ArtistArchitects, artist.Name)
+}
+
+func TestAPI_Artists_GetByID_NotFound(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// action
+	artist, err := artists.Get(client, 1)
+
+	// assert
+	assert.Error(t, err)
+	assert.Nil(t, artist)
+}

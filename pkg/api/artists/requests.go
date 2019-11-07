@@ -74,3 +74,27 @@ func Associate(provider *api.Provider, info *Association) error {
 
 	return json.NewDecoder(resp.Body).Decode(&info)
 }
+
+func Get(provider *api.Provider, id int64) (*Artist, error) {
+	url := fmt.Sprintf("%s/artists/%d", provider.URL, id)
+	request, err := http.NewRequest(http.MethodGet, url, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	resp, err := provider.Client.Do(request)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode >= http.StatusBadRequest {
+		return nil, api.ExtractError(resp.Body)
+	}
+
+	artist := Artist{}
+	if err := json.NewDecoder(resp.Body).Decode(&artist); err != nil {
+		return nil, err
+	}
+	return &artist, nil
+}
