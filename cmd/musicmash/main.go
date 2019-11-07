@@ -53,8 +53,6 @@ func main() {
 	log.SetLogFormatter(&log.DefaultFormatter)
 	log.ConfigureStdLogger(config.Config.Log.Level)
 
-	telegram.New(config.Config.Notifier.TelegramToken)
-
 	db.DbMgr = db.NewMainDatabaseMgr()
 	if config.Config.Sentry.Enabled {
 		err := sentry.Init(sentry.ClientOptions{
@@ -65,6 +63,12 @@ func main() {
 		if err != nil {
 			fmt.Printf("Sentry initialization failed: %v\n", err)
 		}
+	}
+
+	telegram.New(config.Config.Notifier.TelegramToken)
+	if err := db.DbMgr.EnsureNotificationServiceExists("telegram"); err != nil {
+		log.Error(err)
+		os.Exit(2)
 	}
 
 	log.Info("Running musicmash..")
