@@ -105,7 +105,7 @@ func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Reque
 func (c *ArtistsController) searchArtist(w http.ResponseWriter, r *http.Request) {
 	name := r.URL.Query().Get("name")
 	if len(name) == 0 {
-		WriteError(w, errors.New("name didn't provided"))
+		WriteError(w, errors.New("query argument name didn't provided"))
 		return
 	}
 
