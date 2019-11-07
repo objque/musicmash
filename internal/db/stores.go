@@ -6,12 +6,13 @@ import (
 )
 
 type Store struct {
-	Name string `gorm:"primary_key"`
+	Name string `gorm:"primary_key" json:"name"`
 }
 
 type StoreMgr interface {
 	IsStoreExists(name string) bool
 	EnsureStoreExists(name string) error
+	GetAllStores() ([]*Store, error)
 }
 
 func (mgr *AppDatabaseMgr) IsStoreExists(name string) bool {
@@ -32,4 +33,13 @@ func (mgr *AppDatabaseMgr) EnsureStoreExists(name string) error {
 		return mgr.db.Create(&Store{Name: name}).Error
 	}
 	return nil
+}
+
+func (mgr *AppDatabaseMgr) GetAllStores() ([]*Store, error) {
+	stores := []*Store{}
+	err := mgr.db.Find(&stores).Error
+	if err != nil {
+		return nil, err
+	}
+	return stores, nil
 }

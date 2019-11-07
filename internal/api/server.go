@@ -23,6 +23,7 @@ func getMux() *chi.Mux {
 	r.Route("/v1", func(r chi.Router) {
 		NewArtistsController().Register(r)
 		NewReleasesController().Register(r)
+		NewStoresController().Register(r)
 	})
 	return r
 }

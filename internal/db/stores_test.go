@@ -24,3 +24,21 @@ func TestDB_StoreType_NotExists(t *testing.T) {
 
 	assert.False(t, DbMgr.IsStoreExists(testutil.StoreDeezer))
 }
+
+func TestDB_StoreType_GetAll(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, DbMgr.EnsureStoreExists(testutil.StoreDeezer))
+	assert.NoError(t, DbMgr.EnsureStoreExists(testutil.StoreApple))
+
+	// action
+	stores, err := DbMgr.GetAllStores()
+
+	// assert
+	assert.NoError(t, err)
+	assert.Len(t, stores, 2)
+	assert.Equal(t, testutil.StoreDeezer, stores[0].Name)
+	assert.Equal(t, testutil.StoreApple, stores[1].Name)
+}
