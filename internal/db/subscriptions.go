@@ -2,7 +2,7 @@ package db
 
 type Subscription struct {
 	ID       uint64 `json:"-"         gorm:"primary_key"     sql:"AUTO_INCREMENT"`
-	UserName string `json:"user_name" gorm:"unique_index:idx_user_name_artist_id"`
+	UserName string `json:"-"         gorm:"unique_index:idx_user_name_artist_id"`
 	ArtistID int64  `json:"artist_id" gorm:"unique_index:idx_user_name_artist_id"`
 }
 
