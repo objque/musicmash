@@ -42,24 +42,14 @@ func (mgr *AppDatabaseMgr) GetSimpleUserSubscriptions(userName string) ([]int64,
 }
 
 func (mgr *AppDatabaseMgr) SubscribeUser(userName string, artists []int64) error {
-	var q = "insert ignore into subscriptions (user_name, artist_id) values (?, ?)"
-	if mgr.GetDialectName() == "sqlite3" {
-		q = "insert or ignore into subscriptions (user_name, artist_id) values (?, ?)"
-	}
+	const query = `
+insert into subscriptions (user_name, artist_id)
+select ? as user_name, id as artist_id from artists
+where
+    artist_id in (?) and
+    artist_id not in (select artist_id from subscriptions where user_name = ?)`
 
-	query, err := mgr.db.DB().Prepare(q)
-	if err != nil {
-		return err
-	}
-
-	for _, artistID := range artists {
-		_, err := query.Exec(userName, artistID)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return mgr.db.Exec(query, userName, artists, userName).Error
 }
 
 func (mgr *AppDatabaseMgr) UnSubscribeUser(userName string, artists []int64) error {

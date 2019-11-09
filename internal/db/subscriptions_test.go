@@ -12,6 +12,7 @@ func TestDB_Subscriptions_SubscribeAndGetUser(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: testutil.StoreIDQ}))
 	assert.NoError(t, DbMgr.SubscribeUser(testutil.UserObjque, []int64{testutil.StoreIDQ}))
 
 	// action
@@ -29,6 +30,8 @@ func TestDB_Subscriptions_SubscribeAndGetArtists(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: testutil.StoreIDQ}))
+	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: testutil.StoreIDW}))
 	assert.NoError(t, DbMgr.SubscribeUser(testutil.UserBot, []int64{testutil.StoreIDW}))
 	assert.NoError(t, DbMgr.SubscribeUser(testutil.UserObjque, []int64{testutil.StoreIDQ, testutil.StoreIDW}))
 
@@ -49,6 +52,7 @@ func TestDB_Subscriptions_Get_ForAnotherUser(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: testutil.StoreIDQ}))
 	assert.NoError(t, DbMgr.SubscribeUser(testutil.UserObjque, []int64{testutil.StoreIDQ}))
 
 	// action
@@ -64,6 +68,7 @@ func TestDB_Subscriptions_SubscribeAndGetSimple(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: testutil.StoreIDQ}))
 	assert.NoError(t, DbMgr.SubscribeUser(testutil.UserObjque, []int64{testutil.StoreIDQ}))
 
 	// action
@@ -80,6 +85,7 @@ func TestDB_Subscriptions_Get_ForAnotherUserSimple(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: testutil.StoreIDQ}))
 	assert.NoError(t, DbMgr.SubscribeUser(testutil.UserObjque, []int64{testutil.StoreIDQ}))
 
 	// action
@@ -95,6 +101,7 @@ func TestDB_Subscriptions_UnSubscribe(t *testing.T) {
 	defer teardown()
 
 	// arrange
+	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: testutil.StoreIDQ}))
 	assert.NoError(t, DbMgr.SubscribeUser(testutil.UserObjque, []int64{testutil.StoreIDQ}))
 	subs, err := DbMgr.GetUserSubscriptions(testutil.UserObjque)
 	assert.NoError(t, err)
