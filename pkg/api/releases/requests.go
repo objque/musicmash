@@ -20,7 +20,7 @@ func Get(provider *api.Provider, since time.Time) ([]*Release, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		return nil, api.ExtractError(resp.Body)

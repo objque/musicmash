@@ -20,7 +20,7 @@ func Search(provider *api.Provider, name string) ([]*Artist, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		return nil, api.ExtractError(resp.Body)
@@ -45,7 +45,7 @@ func Create(provider *api.Provider, artist *Artist) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		return api.ExtractError(resp.Body)
@@ -66,7 +66,7 @@ func Associate(provider *api.Provider, info *Association) error {
 	if err != nil {
 		return err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		return api.ExtractError(resp.Body)
@@ -86,7 +86,7 @@ func Get(provider *api.Provider, id int64) (*Artist, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	if resp.StatusCode >= http.StatusBadRequest {
 		return nil, api.ExtractError(resp.Body)
