@@ -2,7 +2,7 @@
 
 if ! which revive > /dev/null; then
     echo "==> Installing revive"
-    go get -u github.com/mgechev/revive
+    go install github.com/mgechev/revive
 fi
 
 echo "==> Checking revive..."
