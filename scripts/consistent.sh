@@ -2,7 +2,7 @@
 
 if ! which go-consistent > /dev/null; then
     echo "==> Installing go-consistent..."
-    go install github.com/Quasilyte/go-consistent
+    go install github.com/quasilyte/go-consistent
 fi
 
 echo "==> Checking go-consistent..."
