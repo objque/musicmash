@@ -38,7 +38,7 @@ func main() {
 	flag.Parse()
 	if *configPath != "" {
 		if err := config.Config.LoadFromFile(*configPath); err != nil {
-			panic(err)
+			exitWithError(err)
 		}
 	}
 	// override config values
@@ -47,8 +47,7 @@ func main() {
 		config.Config.Log.Level = "info"
 	}
 	if config.Config.HTTP.Port < 0 || config.Config.HTTP.Port > 65535 {
-		log.Error("Invalid port: value should be in range: 0 < value < 65535")
-		os.Exit(2)
+		exitWithError(errors.New("Invalid port: value should be in range: 0 < value < 65535"))
 	}
 
 	log.SetLogFormatter(&log.DefaultFormatter)
@@ -62,7 +61,7 @@ func main() {
 			Environment:      config.Config.Sentry.Environment,
 		})
 		if err != nil {
-			fmt.Printf("Sentry initialization failed: %v\n", err)
+			exitWithError(errors.Wrap(err, "Sentry initialization failed"))
 		}
 	}
 
@@ -72,12 +71,10 @@ func main() {
 	}
 	if config.Config.Notifier.Enabled {
 		if err := telegram.New(config.Config.Notifier.TelegramToken); err != nil {
-			log.Error(errors.Wrap(err, "Can't setup telegram client"))
-			os.Exit(2)
+			exitWithError(errors.New("Can't setup telegram client"))
 		}
 		if err := db.DbMgr.EnsureNotificationServiceExists("telegram"); err != nil {
-			log.Error(err)
-			os.Exit(2)
+			exitWithError(err)
 		}
 		go cron.Run(db.ActionNotify, config.Config.Notifier.Delay, notifier.Notify)
 	}
@@ -99,4 +96,9 @@ func helpRequired() bool {
 
 func versionRequired() bool {
 	return isArgProvided("-version")
+}
+
+func exitWithError(err error) {
+	log.Error(err)
+	os.Exit(2)
 }

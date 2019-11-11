@@ -57,7 +57,6 @@ func New() *AppConfig {
 func (c *AppConfig) LoadFromFile(configPath string) error {
 	b, err := ioutil.ReadFile(configPath)
 	if err != nil {
-		log.Error(err)
 		return err
 	}
 
