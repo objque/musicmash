@@ -65,15 +65,18 @@ func main() {
 		}
 	}
 
-	telegram.New(config.Config.Notifier.TelegramToken)
-	if err := db.DbMgr.EnsureNotificationServiceExists("telegram"); err != nil {
-		log.Error(err)
-		os.Exit(2)
-	}
-
 	log.Info("Running musicmash..")
-	go cron.Run(db.ActionFetch, config.Config.Fetching.Delay, fetcher.Fetch)
-	go cron.Run(db.ActionNotify, config.Config.Notifier.Delay, notifier.Notify)
+	if config.Config.Fetching.Enabled {
+		go cron.Run(db.ActionFetch, config.Config.Fetching.Delay, fetcher.Fetch)
+	}
+	if config.Config.Notifier.Enabled {
+		telegram.New(config.Config.Notifier.TelegramToken)
+		if err := db.DbMgr.EnsureNotificationServiceExists("telegram"); err != nil {
+			log.Error(err)
+			os.Exit(2)
+		}
+		go cron.Run(db.ActionNotify, config.Config.Notifier.Delay, notifier.Notify)
+	}
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }
 

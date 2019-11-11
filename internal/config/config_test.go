@@ -22,6 +22,7 @@ log:
   level: INFO
 
 fetching:
+  enabled: true
   refetch_after_hours: 1
   delay: 8
 
@@ -40,6 +41,7 @@ sentry:
   environment: production
 
 notifier:
+  enabled: true
   telegram_token: 12345:xxxx_yyy_token
   delay: 1
 `

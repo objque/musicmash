@@ -27,6 +27,7 @@ func New() *AppConfig {
 			Level: "INFO",
 		},
 		Fetching: FetchingConfig{
+			Enabled:           true,
 			RefetchAfterHours: 1,
 			Delay:             8,
 		},
@@ -46,6 +47,7 @@ func New() *AppConfig {
 			Environment: "production",
 		},
 		Notifier: NotifierConfig{
+			Enabled:       true,
 			TelegramToken: "12345:xxxx_yyy_token",
 			Delay:         1,
 		},
@@ -84,12 +86,14 @@ func (c *AppConfig) FlagSet() {
 	flag.StringVar(&c.Log.Level, "log-level", c.Log.Level, "log level")
 	flag.StringVar(&c.Log.File, "log-file", c.Log.File, "path to log file")
 
+	flag.BoolVar(&c.Fetching.Enabled, "fetching-enabled", c.Fetching.Enabled, "Is fetcher enabled")
 	flag.Float64Var(&c.Fetching.Delay, "fetching-delay", c.Fetching.Delay, "Delay between fetches")
 
 	flag.BoolVar(&c.Sentry.Enabled, "sentry", c.Sentry.Enabled, "Sentry support")
 	flag.StringVar(&c.Sentry.Key, "sentry-key", c.Sentry.Key, "Sentry dsn")
 	flag.StringVar(&c.Sentry.Environment, "sentry-environment", c.Sentry.Environment, "Sentry environment")
 
+	flag.BoolVar(&c.Notifier.Enabled, "notify-enabled", c.Notifier.Enabled, "Is notifier enabled")
 	flag.Float64Var(&c.Notifier.Delay, "notify-delay", c.Notifier.Delay, "Delay between notifies")
 	flag.StringVar(&c.Notifier.TelegramToken, "notify-telegram-token", c.Notifier.TelegramToken, "Telegram bot token")
 }

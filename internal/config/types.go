@@ -30,11 +30,13 @@ type DBConfig struct {
 }
 
 type FetchingConfig struct {
+	Enabled           bool    `yaml:"enabled"`
 	RefetchAfterHours float64 `yaml:"refetch_after_hours"`
 	Delay             float64 `yaml:"delay"`
 }
 
 type NotifierConfig struct {
+	Enabled       bool    `yaml:"enabled"`
 	TelegramToken string  `yaml:"telegram_token"`
 	Delay         float64 `yaml:"delay"`
 }
