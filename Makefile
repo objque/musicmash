@@ -8,7 +8,7 @@ clean:
 	rm bin/musicmash || true
 
 build: clean
-go build -mod=vendor -o bin/musicmash ./cmd/...
+	go build -mod=vendor -o bin/musicmash ./cmd/...
 
 rgo:
 	go get -u github.com/kyoh86/richgo
