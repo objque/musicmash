@@ -16,6 +16,7 @@ import (
 	"github.com/musicmash/musicmash/internal/notifier"
 	"github.com/musicmash/musicmash/internal/notifier/telegram"
 	"github.com/musicmash/musicmash/internal/version"
+	"github.com/pkg/errors"
 )
 
 func main() {
@@ -70,7 +71,10 @@ func main() {
 		go cron.Run(db.ActionFetch, config.Config.Fetching.Delay, fetcher.Fetch)
 	}
 	if config.Config.Notifier.Enabled {
-		telegram.New(config.Config.Notifier.TelegramToken)
+		if err := telegram.New(config.Config.Notifier.TelegramToken); err != nil {
+			log.Error(errors.Wrap(err, "Can't setup telegram client"))
+			os.Exit(2)
+		}
 		if err := db.DbMgr.EnsureNotificationServiceExists("telegram"); err != nil {
 			log.Error(err)
 			os.Exit(2)

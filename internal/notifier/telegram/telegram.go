@@ -4,12 +4,10 @@ import tgbotapi "gopkg.in/telegram-bot-api.v4"
 
 var bot *tgbotapi.BotAPI
 
-func New(token string) {
+func New(token string) error {
 	var err error
 	bot, err = tgbotapi.NewBotAPI(token)
-	if err != nil {
-		panic(err)
-	}
+	return err
 }
 
 func SendMessage(message tgbotapi.Chattable) error {
