@@ -31,7 +31,6 @@ stores:
     url: https://api.music.apple.com
     fetch_workers: 5
     release_url: https://itunes.apple.com/us/album/%s
-    artist_url: https://itunes.apple.com/us/artist/%s
     name: Apple Music
     fetch: true
 

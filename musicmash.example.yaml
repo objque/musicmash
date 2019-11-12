@@ -26,7 +26,6 @@ stores:
     fetch_workers: 5
     meta: {}
     release_url: https://itunes.apple.com/us/album/%s
-    artist_url: https://itunes.apple.com/us/artist/%s
     name: Apple Music
     fetch: true
 
