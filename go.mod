@@ -3,7 +3,7 @@ module github.com/musicmash/musicmash
 go 1.13
 
 require (
-	github.com/getsentry/sentry-go v0.3.0
+	github.com/getsentry/sentry-go v0.3.1
 	github.com/go-chi/chi v3.3.3+incompatible
 	github.com/jinzhu/gorm v1.9.11
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
@@ -15,5 +15,5 @@ require (
 	go.uber.org/ratelimit v0.0.0-20180316092928-c15da0234277
 	golang.org/x/sys v0.0.0-20191110163157-d32e6e3b99c4 // indirect
 	gopkg.in/telegram-bot-api.v4 v4.6.4
-	gopkg.in/yaml.v2 v2.2.2
+	gopkg.in/yaml.v2 v2.2.4
 )

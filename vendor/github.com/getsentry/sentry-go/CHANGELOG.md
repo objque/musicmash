@@ -4,6 +4,14 @@
 
 - "I am running away from my responsibilities. And it feels good." – Michael Scott, Season 4, "Money"
 
+## v0.3.1
+
+- feat: Send extra information exposed by the Go runtime (#76)
+- fix: Handle new lines in module integration (#65)
+- fix: Make sure that cache is locked when updating for contextifyFramesIntegration
+- ref: Update Iris integration and example to version 12
+- misc: Remove indirect dependencies in order to move them to separate go.mod files
+
 ## v0.3.0
 
 - feat: Retry event marshalling without contextual data if the first pass fails
@@ -36,7 +44,7 @@ It's not done through major version update, as we are still in `0.x` stage.
 - feat: Move frames context reading into `contextifyFramesIntegration` (#28)
 
 _NOTE:_
-In case of any performance isues due to source contexts IO, you can let us know and turn off the integration in the meantime with:
+In case of any performance issues due to source contexts IO, you can let us know and turn off the integration in the meantime with:
 
 ```go
 sentry.Init(sentry.ClientOptions{

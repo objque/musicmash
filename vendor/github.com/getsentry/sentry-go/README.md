@@ -9,6 +9,7 @@
 
 [![Build Status](https://travis-ci.com/getsentry/sentry-go.svg?branch=master)](https://travis-ci.com/getsentry/sentry-go)
 [![Go Report Card](https://goreportcard.com/badge/github.com/getsentry/sentry-go)](https://goreportcard.com/report/github.com/getsentry/sentry-go)
+[![Discord](https://img.shields.io/discord/621778831602221064)](https://discord.gg/Ww9hbqr)
 
 `sentry-go` provides a Sentry client implementation for the Go programming language. This is the next line of the Go SDK for [Sentry](https://sentry.io/), intended to replace the `raven-go` package.
 
@@ -34,7 +35,7 @@ $ go get github.com/getsentry/sentry-go
 Or, if you are already using Go Modules, specify a version number as well:
 
 ```bash
-$ go get github.com/getsentry/sentry-go@v0.1.0
+$ go get github.com/getsentry/sentry-go@v0.3.0
 ```
 
 ## Configuration
@@ -105,4 +106,4 @@ Licensed under the BSD license, see `LICENSE`
 
 Want to join our Sentry's `community-golang` channel, get involved and help us improve the SDK?
 
-Do not hesistate to shoot me up an email at [kamil@sentry.io](mailto:kamil@sentry.io) for Slack invite!
+Do not hesitate to shoot me up an email at [kamil@sentry.io](mailto:kamil@sentry.io) for Slack invite!
