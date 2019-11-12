@@ -4,7 +4,7 @@ go 1.13
 
 require (
 	github.com/getsentry/sentry-go v0.3.1
-	github.com/go-chi/chi v3.3.3+incompatible
+	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/jinzhu/gorm v1.9.11
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
 	github.com/pkg/errors v0.8.1
