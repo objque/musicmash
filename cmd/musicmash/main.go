@@ -40,9 +40,12 @@ func main() {
 		if err := config.Config.LoadFromFile(*configPath); err != nil {
 			exitWithError(err)
 		}
+
+		// set not provided flags as config values
+		config.Config.FlagReload()
+		// override config values with provided flags
+		flag.Parse()
 	}
-	// override config values
-	flag.Parse()
 	if config.Config.Log.Level == "" {
 		config.Config.Log.Level = "info"
 	}

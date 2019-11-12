@@ -97,6 +97,31 @@ func (c *AppConfig) FlagSet() {
 	flag.StringVar(&c.Notifier.TelegramToken, "notifier-telegram-token", c.Notifier.TelegramToken, "Telegram bot token")
 }
 
+func (c *AppConfig) FlagReload() {
+	_ = flag.Set("http-port", fmt.Sprintf("%d", c.HTTP.Port))
+
+	_ = flag.Set("db-type", c.DB.Type)
+	_ = flag.Set("db-host", c.DB.Host)
+	_ = flag.Set("db-name", c.DB.Name)
+	_ = flag.Set("db-login", c.DB.Login)
+	_ = flag.Set("db-pass", c.DB.Pass)
+	_ = flag.Set("db-log", fmt.Sprintf("%t", c.DB.Log))
+
+	_ = flag.Set("log-level", c.Log.Level)
+	_ = flag.Set("log-file", c.Log.File)
+
+	_ = flag.Set("fetcher-enabled", fmt.Sprintf("%t", c.Fetching.Enabled))
+	_ = flag.Set("fetcher-delay", fmt.Sprintf("%v", c.Fetching.Delay))
+
+	_ = flag.Set("sentry", fmt.Sprintf("%t", c.Sentry.Enabled))
+	_ = flag.Set("sentry-key", c.Sentry.Key)
+	_ = flag.Set("sentry-environment", c.Sentry.Environment)
+
+	_ = flag.Set("notifier-enabled", fmt.Sprintf("%t", c.Notifier.Enabled))
+	_ = flag.Set("notifier-delay", fmt.Sprintf("%v", c.Notifier.Delay))
+	_ = flag.Set("notifier-telegram-token", c.Notifier.TelegramToken)
+}
+
 func (db *DBConfig) GetConnString() (dialect, connString string) {
 	const mysqlConnectionFormat = "%v:%v@tcp(%v)/%v?charset=utf8&parseTime=True&loc=UTC"
 	switch db.Type {
