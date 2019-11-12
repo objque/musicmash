@@ -4,7 +4,7 @@ type AppConfig struct {
 	HTTP     HTTPConfig     `yaml:"http"`
 	DB       DBConfig       `yaml:"db"`
 	Log      LogConfig      `yaml:"log"`
-	Fetching FetchingConfig `yaml:"fetching"`
+	Fetcher  FetcherConfig  `yaml:"fetcher"`
 	Stores   StoresConfig   `yaml:"stores"`
 	Sentry   SentryConfig   `yaml:"sentry"`
 	Notifier NotifierConfig `yaml:"notifier"`
@@ -29,7 +29,7 @@ type DBConfig struct {
 	Log   bool   `yaml:"log"`
 }
 
-type FetchingConfig struct {
+type FetcherConfig struct {
 	Enabled           bool    `yaml:"enabled"`
 	RefetchAfterHours float64 `yaml:"refetch_after_hours"`
 	Delay             float64 `yaml:"delay"`

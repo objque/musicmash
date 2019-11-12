@@ -26,7 +26,7 @@ func setup() {
 	server = httptest.NewServer(mux)
 	db.DbMgr = db.NewFakeDatabaseMgr()
 	config.Config = &config.AppConfig{
-		Fetching: config.FetchingConfig{
+		Fetcher: config.FetcherConfig{
 			Delay: 8,
 		},
 	}

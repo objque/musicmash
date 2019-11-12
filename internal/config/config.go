@@ -26,7 +26,7 @@ func New() *AppConfig {
 			File:  "./musicmash.log",
 			Level: "INFO",
 		},
-		Fetching: FetchingConfig{
+		Fetcher: FetcherConfig{
 			Enabled:           true,
 			RefetchAfterHours: 1,
 			Delay:             8,
@@ -85,8 +85,8 @@ func (c *AppConfig) FlagSet() {
 	flag.StringVar(&c.Log.Level, "log-level", c.Log.Level, "log level")
 	flag.StringVar(&c.Log.File, "log-file", c.Log.File, "path to log file")
 
-	flag.BoolVar(&c.Fetching.Enabled, "fetcher-enabled", c.Fetching.Enabled, "Is fetcher enabled")
-	flag.Float64Var(&c.Fetching.Delay, "fetcher-delay", c.Fetching.Delay, "Delay between fetches")
+	flag.BoolVar(&c.Fetcher.Enabled, "fetcher-enabled", c.Fetcher.Enabled, "Is fetcher enabled")
+	flag.Float64Var(&c.Fetcher.Delay, "fetcher-delay", c.Fetcher.Delay, "Delay between fetches")
 
 	flag.BoolVar(&c.Sentry.Enabled, "sentry", c.Sentry.Enabled, "Sentry support")
 	flag.StringVar(&c.Sentry.Key, "sentry-key", c.Sentry.Key, "Sentry dsn")
@@ -110,8 +110,8 @@ func (c *AppConfig) FlagReload() {
 	_ = flag.Set("log-level", c.Log.Level)
 	_ = flag.Set("log-file", c.Log.File)
 
-	_ = flag.Set("fetcher-enabled", fmt.Sprintf("%t", c.Fetching.Enabled))
-	_ = flag.Set("fetcher-delay", fmt.Sprintf("%v", c.Fetching.Delay))
+	_ = flag.Set("fetcher-enabled", fmt.Sprintf("%t", c.Fetcher.Enabled))
+	_ = flag.Set("fetcher-delay", fmt.Sprintf("%v", c.Fetcher.Delay))
 
 	_ = flag.Set("sentry", fmt.Sprintf("%t", c.Sentry.Enabled))
 	_ = flag.Set("sentry-key", c.Sentry.Key)

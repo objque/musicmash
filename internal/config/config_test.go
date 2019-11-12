@@ -21,7 +21,7 @@ log:
   file: ./musicmash.log
   level: INFO
 
-fetching:
+fetcher:
   enabled: true
   refetch_after_hours: 1
   delay: 8

@@ -69,8 +69,8 @@ func main() {
 	}
 
 	log.Info("Running musicmash..")
-	if config.Config.Fetching.Enabled {
-		go cron.Run(db.ActionFetch, config.Config.Fetching.Delay, fetcher.Fetch)
+	if config.Config.Fetcher.Enabled {
+		go cron.Run(db.ActionFetch, config.Config.Fetcher.Delay, fetcher.Fetch)
 	}
 	if config.Config.Notifier.Enabled {
 		if err := telegram.New(config.Config.Notifier.TelegramToken); err != nil {
