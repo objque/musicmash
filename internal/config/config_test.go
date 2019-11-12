@@ -41,7 +41,6 @@ sentry:
 
 notifier:
   enabled: true
-  telegram_token: 12345:xxxx_yyy_token
   delay: 1
 `
 

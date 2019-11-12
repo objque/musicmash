@@ -81,6 +81,9 @@ func main() {
 		if config.Config.Notifier.Delay <= 0 {
 			exitWithError(errors.New("Invalid notifier delay: value should be greater than zero"))
 		}
+		if len(config.Config.Notifier.TelegramToken) == 0 {
+			exitWithError(errors.New("Telegram token is unset, but notifier is enabled"))
+		}
 		if err := telegram.New(config.Config.Notifier.TelegramToken); err != nil {
 			exitWithError(errors.Wrap(err, "Can't setup telegram client"))
 		}

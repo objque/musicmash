@@ -47,7 +47,6 @@ func New() *AppConfig {
 		},
 		Notifier: NotifierConfig{
 			Enabled:       true,
-			TelegramToken: "12345:xxxx_yyy_token",
 			Delay:         1,
 		},
 	}
