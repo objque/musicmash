@@ -20,7 +20,7 @@ func getAlbums(provider *itunes.Provider, url string) (*Data, error) {
 	if err != nil {
 		return nil, err
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	data := Data{}
 	decoder := json.NewDecoder(resp.Body)

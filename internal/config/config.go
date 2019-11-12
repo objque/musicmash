@@ -46,8 +46,8 @@ func New() *AppConfig {
 			Environment: "production",
 		},
 		Notifier: NotifierConfig{
-			Enabled:       true,
-			Delay:         1,
+			Enabled: true,
+			Delay:   1,
 		},
 	}
 }

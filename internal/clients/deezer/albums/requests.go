@@ -17,7 +17,7 @@ func GetArtistAlbums(provider *deezer.Provider, artistID int) ([]*Album, error) 
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to get albums for %v", artistID)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	type answer struct {
 		Albums []*Album `json:"data"`
@@ -60,7 +60,7 @@ func GetByID(provider *deezer.Provider, albumID int) (*Album, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to get album with id %v", albumID)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	album := Album{}
 	if err := json.NewDecoder(resp.Body).Decode(&album); err != nil {

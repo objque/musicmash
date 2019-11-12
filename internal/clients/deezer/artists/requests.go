@@ -17,7 +17,7 @@ func SearchArtist(provider *deezer.Provider, term string) (*Artist, error) {
 	if err != nil {
 		return nil, errors.Wrapf(err, "tried to search artist with name %v", term)
 	}
-	defer resp.Body.Close()
+	defer func() { _ = resp.Body.Close() }()
 
 	type answer struct {
 		Artists []*Artist `json:"data"`

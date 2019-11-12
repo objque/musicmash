@@ -47,9 +47,10 @@ func CreateAll(db *gorm.DB) error {
 
 	if db.Dialect().GetName() != "sqlite3" {
 		for model, foreignKey := range fkeys {
-			for _, fk := range foreignKey {
-				if err := db.Debug().Model(model).AddForeignKey(
-					fk[0], fk[1], "RESTRICT", "RESTRICT").Error; err != nil {
+			for index := range foreignKey {
+				err := db.Debug().Model(model).AddForeignKey(
+					foreignKey[index][0], foreignKey[index][1], "RESTRICT", "RESTRICT").Error
+				if err != nil {
 					return err
 				}
 			}
