@@ -55,6 +55,8 @@ func main() {
 
 	log.SetLogFormatter(&log.DefaultFormatter)
 	log.ConfigureStdLogger(config.Config.Log.Level)
+	log.Debugf("CLI Args: %v", os.Args[1:])
+	log.Debugf("Application configuration: \n%s", config.Config.Dump())
 
 	db.DbMgr = db.NewMainDatabaseMgr()
 	if config.Config.Sentry.Enabled {

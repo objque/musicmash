@@ -121,6 +121,11 @@ func (c *AppConfig) FlagReload() {
 	_ = flag.Set("notifier-telegram-token", c.Notifier.TelegramToken)
 }
 
+func (c *AppConfig) Dump() string {
+	b, _ := yaml.Marshal(c)
+	return string(b)
+}
+
 func (db *DBConfig) GetConnString() (dialect, connString string) {
 	const mysqlConnectionFormat = "%v:%v@tcp(%v)/%v?charset=utf8&parseTime=True&loc=UTC"
 	switch db.Type {
