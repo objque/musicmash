@@ -88,7 +88,7 @@ func (c *AppConfig) FlagSet() {
 	flag.BoolVar(&c.Fetcher.Enabled, "fetcher-enabled", c.Fetcher.Enabled, "Is fetcher enabled")
 	flag.Float64Var(&c.Fetcher.Delay, "fetcher-delay", c.Fetcher.Delay, "Delay between fetches")
 
-	flag.BoolVar(&c.Sentry.Enabled, "sentry", c.Sentry.Enabled, "Sentry support")
+	flag.BoolVar(&c.Sentry.Enabled, "sentry-enabled", c.Sentry.Enabled, "Is Sentry enabled")
 	flag.StringVar(&c.Sentry.Key, "sentry-key", c.Sentry.Key, "Sentry dsn")
 	flag.StringVar(&c.Sentry.Environment, "sentry-environment", c.Sentry.Environment, "Sentry environment")
 
