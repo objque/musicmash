@@ -82,7 +82,7 @@ func main() {
 			exitWithError(errors.New("Invalid notifier delay: value should be greater than zero"))
 		}
 		if err := telegram.New(config.Config.Notifier.TelegramToken); err != nil {
-			exitWithError(errors.New("Can't setup telegram client"))
+			exitWithError(errors.Wrap(err, "Can't setup telegram client"))
 		}
 		if err := db.DbMgr.EnsureNotificationServiceExists("telegram"); err != nil {
 			exitWithError(err)
