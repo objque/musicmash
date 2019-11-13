@@ -7,6 +7,8 @@ github.com/go-chi/chi
 github.com/go-chi/chi/middleware
 # github.com/go-sql-driver/mysql v1.4.1
 github.com/go-sql-driver/mysql
+# github.com/inconshreveable/mousetrap v1.0.0
+github.com/inconshreveable/mousetrap
 # github.com/jinzhu/gorm v1.9.11
 github.com/jinzhu/gorm
 github.com/jinzhu/gorm/dialects/mysql
@@ -25,6 +27,10 @@ github.com/pmezard/go-difflib/difflib
 github.com/rifflock/lfshook
 # github.com/sirupsen/logrus v1.4.2
 github.com/sirupsen/logrus
+# github.com/spf13/cobra v0.0.5
+github.com/spf13/cobra
+# github.com/spf13/pflag v1.0.3
+github.com/spf13/pflag
 # github.com/stretchr/testify v1.4.0
 github.com/stretchr/testify/assert
 # github.com/technoweenie/multipartstreamer v1.0.1

@@ -10,6 +10,7 @@ require (
 	github.com/pkg/errors v0.8.1
 	github.com/rifflock/lfshook v0.0.0-20180227222202-bf539943797a
 	github.com/sirupsen/logrus v1.4.2
+	github.com/spf13/cobra v0.0.5
 	github.com/stretchr/testify v1.4.0
 	github.com/technoweenie/multipartstreamer v1.0.1 // indirect
 	go.uber.org/ratelimit v0.0.0-20180316092928-c15da0234277
