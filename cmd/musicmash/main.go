@@ -54,7 +54,7 @@ func main() {
 	}
 
 	log.SetLogFormatter(&log.DefaultFormatter)
-	log.ConfigureStdLogger(config.Config.Log.Level)
+	log.ConfigureStdLogger(config.Config.Log.Level, config.Config.Log.File)
 	log.Debugf("CLI Args: %v", os.Args[1:])
 	log.Debugf("Application configuration: \n%s", config.Config.Dump())
 

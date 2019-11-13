@@ -3,7 +3,6 @@ package log
 import (
 	"os"
 
-	"github.com/musicmash/musicmash/internal/config"
 	"github.com/rifflock/lfshook"
 	"github.com/sirupsen/logrus"
 )
@@ -14,7 +13,7 @@ const (
 
 var DefaultFormatter = logrus.TextFormatter{FullTimestamp: true, TimestampFormat: timeFormat}
 
-func ConfigureStdLogger(logLevel string) {
+func ConfigureStdLogger(logLevel, logPath string) {
 	Infof("Logging level set as %s", logLevel)
 
 	lvl, err := logrus.ParseLevel(logLevel)
@@ -27,10 +26,8 @@ func ConfigureStdLogger(logLevel string) {
 	logger.Level = lvl
 	logger.Out = os.Stdout
 
-	path := config.Config.Log.File
-
-	if path != "" {
-		configureFileLogger(path)
+	if logPath != "" {
+		configureFileLogger(logPath)
 	}
 }
 
