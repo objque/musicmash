@@ -25,11 +25,21 @@ func main() {
 					exitWithError(err)
 				}
 			}
+
+			// prioritise cli flags
+			if ip, _ := cmd.Flags().GetString("http-ip"); ip != "" {
+				config.Config.HTTP.IP = ip
+			}
+			if port, _ := cmd.Flags().GetInt("http-port"); port != 0 {
+				config.Config.HTTP.Port = port
+			}
 		},
 	}
 	commands.AddCommands(rootCmd)
 
 	rootCmd.PersistentFlags().String("config", "", "Path to musicmash.yaml")
+	rootCmd.PersistentFlags().String("http-ip", "", "API ip address")
+	rootCmd.PersistentFlags().Int("http-port", 0, "API port")
 	rootCmd.PersistentFlags().String("log-level", "info", "Path to musicmash.yaml")
 	rootCmd.PersistentFlags().String("log-path", "", "Path to file for output logs")
 	_ = rootCmd.Execute()
