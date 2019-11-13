@@ -80,8 +80,8 @@ func (c *AppConfig) FlagSet() {
 	flag.StringVar(&c.DB.Pass, "db-pass", c.DB.Pass, "Database user password")
 	flag.BoolVar(&c.DB.Log, "db-log", c.DB.Log, "Echo database queries")
 
-	flag.StringVar(&c.Log.Level, "log-level", c.Log.Level, "log level")
-	flag.StringVar(&c.Log.File, "log-file", c.Log.File, "path to log file")
+	flag.StringVar(&c.Log.Level, "log-level", c.Log.Level, "Log level")
+	flag.StringVar(&c.Log.File, "log-file", c.Log.File, "Path to log file")
 
 	flag.BoolVar(&c.Fetcher.Enabled, "fetcher-enabled", c.Fetcher.Enabled, "Is fetcher enabled")
 	flag.Float64Var(&c.Fetcher.Delay, "fetcher-delay", c.Fetcher.Delay, "Delay between fetches")
