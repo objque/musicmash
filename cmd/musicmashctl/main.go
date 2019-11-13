@@ -1,14 +1,41 @@
 package main
 
 import (
+	"os"
+
 	"github.com/musicmash/musicmash/internal/command/commands"
+	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/log"
 	"github.com/spf13/cobra"
 )
 
 func main() {
 	var rootCmd = &cobra.Command{
 		Use: "musicmash",
+		PersistentPreRun: func(cmd *cobra.Command, args []string) {
+			logLevel, _ := cmd.Flags().GetString("log-level")
+			logPath, _ := cmd.Flags().GetString("log-path")
+			log.SetLogFormatter(&log.DefaultFormatter)
+			log.ConfigureStdLogger(logLevel, logPath)
+
+			config.Config = config.New()
+			configPath, _ := cmd.Flags().GetString("config")
+			if configPath != "" {
+				if err := config.Config.LoadFromFile(configPath); err != nil {
+					exitWithError(err)
+				}
+			}
+		},
 	}
 	commands.AddCommands(rootCmd)
+
+	rootCmd.PersistentFlags().String("config", "", "Path to musicmash.yaml")
+	rootCmd.PersistentFlags().String("log-level", "info", "Path to musicmash.yaml")
+	rootCmd.PersistentFlags().String("log-path", "", "Path to file for output logs")
 	_ = rootCmd.Execute()
+}
+
+func exitWithError(err error) {
+	log.Error(err)
+	os.Exit(2)
 }
