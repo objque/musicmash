@@ -14,8 +14,6 @@ const (
 var DefaultFormatter = logrus.TextFormatter{FullTimestamp: true, TimestampFormat: timeFormat}
 
 func ConfigureStdLogger(logLevel, logPath string) {
-	Infof("Logging level set as %s", logLevel)
-
 	lvl, err := logrus.ParseLevel(logLevel)
 	if err != nil {
 		Errorf("Cannot parse loglevel %v: %v, setting default loglevel INFO.", logLevel, err)
@@ -24,6 +22,7 @@ func ConfigureStdLogger(logLevel, logPath string) {
 
 	logrus.SetLevel(lvl)
 	logger.Level = lvl
+	Debugf("Logging level set as %s", logLevel)
 	logger.Out = os.Stdout
 
 	if logPath != "" {
