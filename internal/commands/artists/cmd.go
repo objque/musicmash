@@ -1,8 +1,6 @@
 package artists
 
-import (
-	"github.com/spf13/cobra"
-)
+import "github.com/spf13/cobra"
 
 func NewArtistCommand() *cobra.Command {
 	cmd := &cobra.Command{

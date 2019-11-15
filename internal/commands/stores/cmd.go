@@ -1,8 +1,6 @@
 package stores
 
-import (
-	"github.com/spf13/cobra"
-)
+import "github.com/spf13/cobra"
 
 func NewStoreCommand() *cobra.Command {
 	cmd := &cobra.Command{

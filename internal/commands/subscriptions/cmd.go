@@ -1,8 +1,6 @@
 package subscriptions
 
-import (
-	"github.com/spf13/cobra"
-)
+import "github.com/spf13/cobra"
 
 func NewSubscriptionCommand() *cobra.Command {
 	cmd := &cobra.Command{

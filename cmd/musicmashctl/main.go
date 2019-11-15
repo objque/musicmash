@@ -29,7 +29,7 @@ func main() {
 				}
 			}
 
-			// prioritise cli flags
+			// prioritize cli flags
 			if ip, _ := cmd.Flags().GetString("http-ip"); ip != "" {
 				config.Config.HTTP.IP = ip
 			}

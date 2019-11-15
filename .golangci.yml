@@ -256,6 +256,10 @@ issues:
       linters:
         - gocyclo
         - gocognit
+    - path: cmd/musicmashctl/main.go
+      linters:
+        - gocyclo
+        - gocognit
     - path: _test\.go
       linters:
         - funlen
