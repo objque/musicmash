@@ -137,7 +137,7 @@ func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
 	artist, err := db.DbMgr.GetArtistWithFullInfo(id)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
-			WriteError(w, errors.New("wrong id"))
+			WriteError(w, errors.New("artist not found"))
 			return
 		}
 
