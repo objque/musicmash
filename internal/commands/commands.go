@@ -1,9 +1,9 @@
 package commands
 
 import (
-	"github.com/musicmash/musicmash/internal/command/artists"
-	"github.com/musicmash/musicmash/internal/command/stores"
-	"github.com/musicmash/musicmash/internal/command/subscriptions"
+	"github.com/musicmash/musicmash/internal/commands/artists"
+	"github.com/musicmash/musicmash/internal/commands/stores"
+	"github.com/musicmash/musicmash/internal/commands/subscriptions"
 	"github.com/spf13/cobra"
 )
 

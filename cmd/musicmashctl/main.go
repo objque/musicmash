@@ -3,7 +3,7 @@ package main
 import (
 	"os"
 
-	"github.com/musicmash/musicmash/internal/command/commands"
+	"github.com/musicmash/musicmash/internal/commands"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/spf13/cobra"
