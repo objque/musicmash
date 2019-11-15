@@ -11,7 +11,7 @@ import (
 
 func main() {
 	var rootCmd = &cobra.Command{
-		Use: "musicmash",
+		Use: "musicmashctl",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
 			logLevel, _ := cmd.Flags().GetString("log-level")
 			logPath, _ := cmd.Flags().GetString("log-path")
