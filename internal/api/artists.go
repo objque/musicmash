@@ -72,7 +72,7 @@ func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	if exist := db.DbMgr.IsAssociationExists(info.StoreID, info.StoreName); exist {
+	if exist := db.DbMgr.IsAssociationExists(info.StoreName, info.StoreID); exist {
 		WriteError(w, errors.New("artist already associated"))
 		return
 	}

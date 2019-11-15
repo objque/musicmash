@@ -112,10 +112,7 @@ func TestAPI_Artists_Associate_AlreadyAssociated(t *testing.T) {
 	err := artists.Associate(client, info)
 
 	// assert
-	assert.NoError(t, err)
-	assert.Equal(t, testutil.StoreIDA, info.StoreID)
-	assert.Equal(t, testutil.StoreApple, info.StoreName)
-	assert.Equal(t, int64(1), info.ArtistID)
+	assert.Error(t, err)
 }
 
 func TestAPI_Artists_Associate_StoreNotFound(t *testing.T) {
