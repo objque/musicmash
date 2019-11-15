@@ -13,7 +13,10 @@ func main() {
 	var rootCmd = &cobra.Command{
 		Use: "musicmashctl",
 		PersistentPreRun: func(cmd *cobra.Command, args []string) {
-			logLevel, _ := cmd.Flags().GetString("log-level")
+			logLevel := "info"
+			if isDebugMode, _ := cmd.Flags().GetBool("debug"); isDebugMode {
+				logLevel = "debug"
+			}
 			logPath, _ := cmd.Flags().GetString("log-path")
 			log.SetLogFormatter(&log.DefaultFormatter)
 			log.ConfigureStdLogger(logLevel, logPath)
@@ -40,7 +43,7 @@ func main() {
 	rootCmd.PersistentFlags().String("config", "", "Path to musicmash.yaml")
 	rootCmd.PersistentFlags().String("http-ip", "", "API ip address")
 	rootCmd.PersistentFlags().Int("http-port", 0, "API port")
-	rootCmd.PersistentFlags().String("log-level", "info", "Path to musicmash.yaml")
+	rootCmd.PersistentFlags().Bool("debug", false, "Set log-level as debug")
 	rootCmd.PersistentFlags().String("log-path", "", "Path to file for output logs")
 	_ = rootCmd.Execute()
 }
