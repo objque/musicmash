@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"os"
 
+	"github.com/musicmash/musicmash/internal/commands/subscriptions/render"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/pkg/api"
 	"github.com/musicmash/musicmash/pkg/api/subscriptions"
@@ -28,13 +29,7 @@ func NewListCommand() *cobra.Command {
 				os.Exit(0)
 			}
 
-
-			fmt.Print("Artists: ")
-			for _, subscription := range result {
-				fmt.Print(fmt.Sprintf("%v ", subscription.ArtistID))
-			}
-			fmt.Println()
-			return nil
+			return render.Subscriptions(result)
 		},
 	}
 	return cmd

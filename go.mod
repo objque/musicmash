@@ -7,6 +7,7 @@ require (
 	github.com/go-chi/chi v4.0.2+incompatible
 	github.com/jinzhu/gorm v1.9.11
 	github.com/konsorten/go-windows-terminal-sequences v1.0.2 // indirect
+	github.com/olekukonko/tablewriter v0.0.2
 	github.com/pkg/errors v0.8.1
 	github.com/rifflock/lfshook v0.0.0-20180227222202-bf539943797a
 	github.com/sirupsen/logrus v1.4.2

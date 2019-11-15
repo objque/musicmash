@@ -3,6 +3,7 @@ package artists
 import (
 	"fmt"
 
+	"github.com/musicmash/musicmash/internal/commands/artists/render"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/pkg/api"
 	"github.com/musicmash/musicmash/pkg/api/artists"
@@ -24,9 +25,7 @@ func NewCreateCommand() *cobra.Command {
 				return err
 			}
 
-			fmt.Println("id\tname")
-			fmt.Println(fmt.Sprintf("%d\t%v", artist.ID, artist.Name))
-			return nil
+			return render.Artist(&artist)
 		},
 	}
 

@@ -3,6 +3,7 @@ package stores
 import (
 	"fmt"
 
+	"github.com/musicmash/musicmash/internal/commands/stores/render"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/pkg/api"
 	"github.com/musicmash/musicmash/pkg/api/stores"
@@ -22,8 +23,7 @@ func NewCreateCommand() *cobra.Command {
 				return err
 			}
 
-			fmt.Println(fmt.Sprintf("Store has been created: %s", store.Name))
-			return nil
+			return render.Store(store)
 		},
 	}
 	return cmd
