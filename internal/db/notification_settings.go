@@ -1,7 +1,5 @@
 package db
 
-import "errors"
-
 type NotificationSettings struct {
 	ID       int    `json:"-"      gorm:"primary_key" sql:"AUTO_INCREMENT"`
 	UserName string `json:"-"`
@@ -50,7 +48,7 @@ func (mgr *AppDatabaseMgr) UpdateNotificationSettings(settings *NotificationSett
 		return err
 	}
 	if len(existing) == 0 {
-		return errors.New("notification settings doesn't exist")
+		return ErrNotificationSettingsNotFound
 	}
 
 	const query = "update notification_settings set data = ? where user_name = ? and service = ?"
