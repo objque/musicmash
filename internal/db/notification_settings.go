@@ -11,6 +11,7 @@ type NotificationSettings struct {
 
 type NotificationSettingsMgr interface {
 	FindNotificationSettings(userName string) ([]*NotificationSettings, error)
+	FindNotificationSettingsForService(userName, service string) ([]*NotificationSettings, error)
 	EnsureNotificationSettingsExists(settings *NotificationSettings) error
 	UpdateNotificationSettings(settings *NotificationSettings) error
 }
@@ -23,8 +24,16 @@ func (mgr *AppDatabaseMgr) FindNotificationSettings(userName string) ([]*Notific
 	return settings, nil
 }
 
+func (mgr *AppDatabaseMgr) FindNotificationSettingsForService(userName, service string) ([]*NotificationSettings, error) {
+	settings := []*NotificationSettings{}
+	if err := mgr.db.Where("user_name = ? and service = ?", userName, service).Find(&settings).Error; err != nil {
+		return nil, err
+	}
+	return settings, nil
+}
+
 func (mgr *AppDatabaseMgr) EnsureNotificationSettingsExists(settings *NotificationSettings) error {
-	userSettings, err := mgr.FindNotificationSettings(settings.UserName)
+	userSettings, err := mgr.FindNotificationSettingsForService(settings.UserName, settings.Service)
 	if err != nil {
 		return err
 	}
