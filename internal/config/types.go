@@ -48,7 +48,7 @@ type StoreConfig struct {
 	Meta         Meta   `yaml:"meta"`
 	ReleaseURL   string `yaml:"release_url"`
 	Name         string `yaml:"name"`
-	Fetch        bool   `json:"fetch"`
+	Fetch        bool   `yaml:"fetch"`
 }
 type StoresConfig map[string]*StoreConfig
 
@@ -61,7 +61,7 @@ type SentryConfig struct {
 }
 
 type ProxyConfig struct {
-	Enabled  bool   `yaml:"enable"`
+	Enabled  bool   `yaml:"enabled"`
 	Type     string `yaml:"type"`
 	Host     string `yaml:"host"`
 	UserName string `yaml:"user_name"`
