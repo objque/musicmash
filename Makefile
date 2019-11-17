@@ -52,6 +52,6 @@ lint-all l:
 rigo:
 	make install & make rgo
 
-build-arm7:
+build-arm7: clean
 	# you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7
 	env GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=arm-linux-gnueabi-gcc go build -v -o ./bin/musicmash ./cmd/musicmash/...
