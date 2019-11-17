@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"net/http"
 	"os"
 	"strings"
 
@@ -84,7 +85,7 @@ func main() {
 		if len(config.Config.Notifier.TelegramToken) == 0 {
 			exitWithError(errors.New("Telegram token is unset, but notifier is enabled"))
 		}
-		if err := telegram.New(config.Config.Notifier.TelegramToken); err != nil {
+		if err := telegram.NewWithClient(config.Config.Notifier.TelegramToken, mustGetHttpClient()); err != nil {
 			exitWithError(errors.Wrap(err, "Can't setup telegram client"))
 		}
 		if err := db.DbMgr.EnsureNotificationServiceExists("telegram"); err != nil {
@@ -93,6 +94,18 @@ func main() {
 		go cron.Run(db.ActionNotify, config.Config.Notifier.Delay, notifier.Notify)
 	}
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
+}
+
+func mustGetHttpClient() *http.Client {
+	if !config.Config.Proxy.Enabled {
+		return &http.Client{}
+	}
+
+	transport, err := config.Config.Proxy.GetHTTPTransport()
+	if err != nil {
+		exitWithError(err)
+	}
+	return &http.Client{Transport: transport}
 }
 
 func isArgProvided(argName string) bool {

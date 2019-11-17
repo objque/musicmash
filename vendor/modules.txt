@@ -32,6 +32,9 @@ github.com/technoweenie/multipartstreamer
 # go.uber.org/ratelimit v0.0.0-20180316092928-c15da0234277
 go.uber.org/ratelimit
 go.uber.org/ratelimit/internal/clock
+# golang.org/x/net v0.0.0-20190827160401-ba9fcec4b297
+golang.org/x/net/internal/socks
+golang.org/x/net/proxy
 # golang.org/x/sys v0.0.0-20191110163157-d32e6e3b99c4
 golang.org/x/sys/unix
 # google.golang.org/appengine v1.4.0

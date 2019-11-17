@@ -37,3 +37,10 @@ notifier:
   enabled: true
   telegram_token: 12345:xxxx_yyy_token
   delay: 1 # hours
+
+proxy:
+  enabled: false
+  type: socks5
+  host: example.com
+  user_name: musicmash
+  password: 1s9J-9j2sa-Zkks

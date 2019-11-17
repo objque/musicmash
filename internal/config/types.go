@@ -8,6 +8,7 @@ type AppConfig struct {
 	Stores   StoresConfig   `yaml:"stores"`
 	Sentry   SentryConfig   `yaml:"sentry"`
 	Notifier NotifierConfig `yaml:"notifier"`
+	Proxy    ProxyConfig    `yaml:"proxy"`
 }
 
 type HTTPConfig struct {
@@ -57,4 +58,12 @@ type SentryConfig struct {
 	Enabled     bool   `yaml:"enabled"`
 	Key         string `yaml:"key"`
 	Environment string `yaml:"environment"`
+}
+
+type ProxyConfig struct {
+	Enabled  bool   `yaml:"enable"`
+	Type     string `yaml:"type"`
+	Host     string `yaml:"host"`
+	UserName string `yaml:"user_name"`
+	Password string `yaml:"password"`
 }

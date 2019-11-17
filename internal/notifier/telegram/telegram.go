@@ -1,12 +1,16 @@
 package telegram
 
-import tgbotapi "gopkg.in/telegram-bot-api.v4"
+import (
+	"net/http"
+
+	tgbotapi "gopkg.in/telegram-bot-api.v4"
+)
 
 var bot *tgbotapi.BotAPI
 
-func New(token string) error {
+func NewWithClient(token string, client *http.Client) error {
 	var err error
-	bot, err = tgbotapi.NewBotAPI(token)
+	bot, err = tgbotapi.NewBotAPIWithClient(token, client)
 	return err
 }
 
