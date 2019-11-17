@@ -33,7 +33,7 @@ func NewListCommand() *cobra.Command {
 			}
 
 			if len(result) == 0 {
-				fmt.Println(fmt.Printf("No releases were found since %s", since))
+				fmt.Println(fmt.Sprintf("No releases were found since %s", since))
 				return nil
 			}
 
