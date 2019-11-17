@@ -9,16 +9,16 @@ clean:
 	rm bin/musicmash || true
 
 build: clean
-	go build -mod=vendor -o bin/musicmash ./cmd/...
+	go build -o bin/musicmash ./cmd/...
 
 rgo:
 	go get -u github.com/kyoh86/richgo
 
 install:
-	go install -mod=vendor -v ./cmd/...
+	go install -v ./cmd/...
 
 t tests: install
-	go test -mod=vendor -v ./internal/...
+	go test -v ./internal/...
 
 add-ssh-key:
 	openssl aes-256-cbc -K $(encrypted_a4311917bb34_key) -iv $(encrypted_a4311917bb34_iv) -in travis_key.enc -out /tmp/travis_key -d

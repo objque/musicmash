@@ -16,7 +16,6 @@ COPY pkg pkg
 COPY vendor vendor
 
 RUN go build -v -a \
-    -mod=vendor \
     -installsuffix cgo \
     -gcflags "all=-trimpath=$(GOPATH)" \
     -ldflags '-linkmode external -extldflags "-static" -s -w \
