@@ -22,7 +22,8 @@ RUN go build -v -a \
        -X ${PROJECT}/version.Release=${RELEASE} \
        -X ${PROJECT}/version.Commit=${COMMIT} \
        -X ${PROJECT}/version.BuildTime=${BUILD_TIME}"' \
-    -o /usr/local/bin/musicmash ./cmd/...
+    -o /usr/local/bin/musicmash ./cmd/musicmash/...
+RUN go build -v -o /usr/local/bin/musicmashctl ./cmd/musicmashctl/...
 
 FROM alpine:latest
 
@@ -31,5 +32,6 @@ USER musicmash
 WORKDIR /home/musicmash
 
 COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmash /usr/local/bin/musicmash
+COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmashctl /usr/local/bin/musicmashctl
 
 ENTRYPOINT ["musicmash"]
