@@ -127,7 +127,7 @@ func TestAPI_Artists_Associate_StoreNotFound(t *testing.T) {
 	assert.Error(t, err)
 }
 
-func TestAPI_Artists_GetByID(t *testing.T) {
+func TestAPI_Artists_Get(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -144,7 +144,7 @@ func TestAPI_Artists_GetByID(t *testing.T) {
 	assert.Empty(t, artist.Albums)
 }
 
-func TestAPI_Artists_GetByIDWithAlbums(t *testing.T) {
+func TestAPI_Artists_GetWithAlbums(t *testing.T) {
 	setup()
 	defer teardown()
 
@@ -163,7 +163,7 @@ func TestAPI_Artists_GetByIDWithAlbums(t *testing.T) {
 	assert.Equal(t, testutil.ReleaseAlgorithmFloatingIP, artist.Albums[0].Name)
 }
 
-func TestAPI_Artists_GetByID_NotFound(t *testing.T) {
+func TestAPI_Artists_Get_NotFound(t *testing.T) {
 	setup()
 	defer teardown()
 
