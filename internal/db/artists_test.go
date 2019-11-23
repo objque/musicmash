@@ -85,30 +85,3 @@ func TestDB_Artists_GetWithFullInfo(t *testing.T) {
 	assert.Equal(t, testutil.ArtistSkrillex, artist.Name)
 	assert.Equal(t, uint(100), artist.Followers)
 }
-
-func TestDB_Artists_GetArtistsWithFullInfo(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// arrange
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 1, Name: testutil.ArtistSkrillex, Followers: 100}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 2, Name: testutil.ArtistArchitects, Followers: 250}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 3, Name: testutil.ArtistSPY}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 4, Name: testutil.ArtistWildways, Followers: 50}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 5, Name: testutil.ArtistRitaOra, Followers: 90}))
-
-	// action
-	artists, err := DbMgr.GetArtistsWithFullInfo([]int64{1, 5})
-
-	// assert
-	assert.NoError(t, err)
-	assert.Len(t, artists, 2)
-
-	assert.Equal(t, int64(1), artists[0].ID)
-	assert.Equal(t, testutil.ArtistSkrillex, artists[0].Name)
-	assert.Equal(t, uint(100), artists[0].Followers)
-
-	assert.Equal(t, int64(5), artists[1].ID)
-	assert.Equal(t, testutil.ArtistRitaOra, artists[1].Name)
-	assert.Equal(t, uint(90), artists[1].Followers)
-}
