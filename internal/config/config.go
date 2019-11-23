@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"strconv"
 
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/proxy"
@@ -120,23 +121,23 @@ func (c *AppConfig) FlagReload() {
 	_ = flag.Set("db-name", c.DB.Name)
 	_ = flag.Set("db-login", c.DB.Login)
 	_ = flag.Set("db-pass", c.DB.Pass)
-	_ = flag.Set("db-log", fmt.Sprintf("%t", c.DB.Log))
+	_ = flag.Set("db-log", strconv.FormatBool(c.DB.Log))
 
 	_ = flag.Set("log-level", c.Log.Level)
 	_ = flag.Set("log-file", c.Log.File)
 
-	_ = flag.Set("fetcher-enabled", fmt.Sprintf("%t", c.Fetcher.Enabled))
+	_ = flag.Set("fetcher-enabled", strconv.FormatBool(c.Fetcher.Enabled))
 	_ = flag.Set("fetcher-delay", fmt.Sprintf("%v", c.Fetcher.Delay))
 
-	_ = flag.Set("sentry", fmt.Sprintf("%t", c.Sentry.Enabled))
+	_ = flag.Set("sentry", strconv.FormatBool(c.Sentry.Enabled))
 	_ = flag.Set("sentry-key", c.Sentry.Key)
 	_ = flag.Set("sentry-environment", c.Sentry.Environment)
 
-	_ = flag.Set("notifier-enabled", fmt.Sprintf("%t", c.Notifier.Enabled))
+	_ = flag.Set("notifier-enabled", strconv.FormatBool(c.Notifier.Enabled))
 	_ = flag.Set("notifier-delay", fmt.Sprintf("%v", c.Notifier.Delay))
 	_ = flag.Set("notifier-telegram-token", c.Notifier.TelegramToken)
 
-	_ = flag.Set("proxy-enabled", fmt.Sprintf("%t", c.Proxy.Enabled))
+	_ = flag.Set("proxy-enabled", strconv.FormatBool(c.Proxy.Enabled))
 	_ = flag.Set("proxy-type", c.Proxy.Type)
 	_ = flag.Set("proxy-host", c.Proxy.Host)
 	_ = flag.Set("proxy-username", c.Proxy.UserName)
