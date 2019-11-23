@@ -10,7 +10,6 @@ func NewStoreCommand() *cobra.Command {
 	}
 	cmd.AddCommand(
 		NewListCommand(),
-		NewCreateCommand(),
 	)
 	return cmd
 }

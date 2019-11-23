@@ -9,10 +9,6 @@ import (
 
 var headers = []string{"name"}
 
-func Store(store *stores.Store) error {
-	return Stores([]*stores.Store{store})
-}
-
 func Stores(stores []*stores.Store) error {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(headers)
