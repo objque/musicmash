@@ -146,6 +146,16 @@ func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	includeAlbums, _ := strconv.ParseBool(r.URL.Query().Get("withAlbums"))
+	if includeAlbums {
+		artist.Albums, err = db.DbMgr.GetAlbums(id)
+		if err != nil {
+			WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+			log.Error(err)
+			return
+		}
+	}
+
 	buffer, err := json.Marshal(&artist)
 	if err != nil {
 		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))

@@ -14,8 +14,9 @@ import (
 )
 
 func NewShowCommand() *cobra.Command {
+	opts := artists.GetOptions{}
 	cmd := &cobra.Command{
-		Use:          "show <artist_id>",
+		Use:          "show [OPTIONS] <artist_id>",
 		Short:        "Show artist info",
 		Args:         cobra.ExactArgs(1),
 		SilenceUsage: true,
@@ -27,14 +28,22 @@ func NewShowCommand() *cobra.Command {
 				os.Exit(2)
 			}
 
-			artist, err := artists.Get(api.NewProvider(url, 1), id)
+			artist, err := artists.Get(api.NewProvider(url, 1), id, &opts)
 			if err != nil {
 				return err
 			}
 
-			return render.Artist(artist)
+			if err = render.Artist(artist); err != nil {
+				return err
+			}
+			if opts.WithAlbums {
+				return render.Albums(artist.Albums)
+			}
+			return nil
 		},
 	}
 
+	flags := cmd.Flags()
+	flags.BoolVarP(&opts.WithAlbums, "with-albums", "A", false, "Include artist albums")
 	return cmd
 }

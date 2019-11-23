@@ -6,14 +6,15 @@ import (
 )
 
 type Album struct {
-	ID       uint64 `json:"id"        gorm:"primary_key"   sql:"AUTO_INCREMENT"`
-	ArtistID int64  `json:"artist_id" gorm:"unique_index:idx_album_art_id_name"`
-	Name     string `json:"name"      gorm:"unique_index:idx_album_art_id_name"`
+	ID       uint64 `json:"id"   gorm:"primary_key"   sql:"AUTO_INCREMENT"`
+	ArtistID int64  `json:"-"    gorm:"unique_index:idx_album_art_id_name"`
+	Name     string `json:"name" gorm:"unique_index:idx_album_art_id_name"`
 }
 
 type AlbumMgr interface {
 	IsAlbumExists(album *Album) bool
 	EnsureAlbumExists(album *Album) error
+	GetAlbums(artistID int64) ([]*Album, error)
 }
 
 func (mgr *AppDatabaseMgr) IsAlbumExists(album *Album) bool {
@@ -33,4 +34,13 @@ func (mgr *AppDatabaseMgr) EnsureAlbumExists(album *Album) error {
 		return mgr.db.Create(album).Error
 	}
 	return nil
+}
+
+func (mgr *AppDatabaseMgr) GetAlbums(artistID int64) ([]*Album, error) {
+	albums := []*Album{}
+	err := mgr.db.Where("artist_id = ?", artistID).Find(&albums).Error
+	if err != nil {
+		return nil, err
+	}
+	return albums, nil
 }

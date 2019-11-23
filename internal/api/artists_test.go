@@ -135,12 +135,32 @@ func TestAPI_Artists_GetByID(t *testing.T) {
 	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{Name: testutil.ArtistArchitects}))
 
 	// action
-	artist, err := artists.Get(client, 1)
+	artist, err := artists.Get(client, 1, nil)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Equal(t, int64(1), artist.ID)
 	assert.Equal(t, testutil.ArtistArchitects, artist.Name)
+	assert.Empty(t, artist.Albums)
+}
+
+func TestAPI_Artists_GetByIDWithAlbums(t *testing.T) {
+	setup()
+	defer teardown()
+
+	// arrange
+	assert.NoError(t, db.DbMgr.EnsureArtistExists(&db.Artist{Name: testutil.ArtistArchitects}))
+	assert.NoError(t, db.DbMgr.EnsureAlbumExists(&db.Album{ArtistID: 1, Name: testutil.ReleaseAlgorithmFloatingIP}))
+
+	// action
+	artist, err := artists.Get(client, 1, &artists.GetOptions{WithAlbums: true})
+
+	// assert
+	assert.NoError(t, err)
+	assert.Equal(t, int64(1), artist.ID)
+	assert.Equal(t, testutil.ArtistArchitects, artist.Name)
+	assert.Len(t, artist.Albums, 1)
+	assert.Equal(t, testutil.ReleaseAlgorithmFloatingIP, artist.Albums[0].Name)
 }
 
 func TestAPI_Artists_GetByID_NotFound(t *testing.T) {
@@ -148,7 +168,7 @@ func TestAPI_Artists_GetByID_NotFound(t *testing.T) {
 	defer teardown()
 
 	// action
-	artist, err := artists.Get(client, 1)
+	artist, err := artists.Get(client, 1, nil)
 
 	// assert
 	assert.Error(t, err)

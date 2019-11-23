@@ -6,11 +6,12 @@ import (
 )
 
 type Artist struct {
-	ID         int64  `json:"id"        sql:"AUTO_INCREMENT" gorm:"primary_key"`
-	Name       string `json:"name"`
-	Poster     string `json:"poster"`
-	Popularity int    `json:"popularity"`
-	Followers  uint   `json:"followers"`
+	ID         int64    `json:"id"               gorm:"primary_key" sql:"AUTO_INCREMENT"`
+	Name       string   `json:"name"`
+	Poster     string   `json:"poster"`
+	Popularity int      `json:"popularity"`
+	Followers  uint     `json:"followers"`
+	Albums     []*Album `json:"albums,omitempty" gorm:"-"`
 }
 
 type ArtistMgr interface {
