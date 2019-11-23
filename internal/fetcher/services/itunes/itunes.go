@@ -68,16 +68,22 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.W
 		}
 
 		for _, release := range releases {
+			title := removeAlbumType(release.Attributes.Name)
 			err = db.DbMgr.EnsureReleaseExists(&db.Release{
 				StoreName: f.GetStoreName(),
 				StoreID:   release.ID,
 				ArtistID:  artist.ArtistID,
-				Title:     removeAlbumType(release.Attributes.Name),
+				Title:     title,
 				Poster:    release.Attributes.Artwork.GetLink(posterWidth, posterHeight),
 				Released:  release.Attributes.ReleaseDate.Value,
 			})
 			if err != nil {
 				log.Errorf("can't save release from %s with id %s: %v", f.GetStoreName(), release.ID, err)
+			}
+
+			err = db.DbMgr.EnsureAlbumExists(&db.Album{ArtistID: artist.ArtistID, Name: title})
+			if err != nil {
+				log.Errorf("can't add new album %s to artist: %v", release.ID, err)
 			}
 		}
 		wg.Done()
