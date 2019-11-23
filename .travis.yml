@@ -12,7 +12,6 @@ jobs:
   include:
   - stage: "Lint and tests"
     script: bash ./scripts/revive.sh
-  - script: bash ./scripts/consistent.sh
   - script: bash ./scripts/golangci-lint.sh
   - script: make tests
   - stage: deploy stable build

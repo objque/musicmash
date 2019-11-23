@@ -44,7 +44,6 @@ deploy-staging:
 lint-all l:
 	bash ./scripts/revive.sh
 	bash ./scripts/golangci-lint.sh
-	bash ./scripts/consistent.sh
 
 build-arm7: clean
 	# you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7
