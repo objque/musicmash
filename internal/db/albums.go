@@ -18,7 +18,7 @@ type AlbumMgr interface {
 }
 
 func (mgr *AppDatabaseMgr) IsAlbumExists(album *Album) bool {
-	if err := mgr.db.Where("name = ?", album.Name).First(&album).Error; err != nil {
+	if err := mgr.db.Where("artist_id = ? and name = ?", album.ArtistID, album.Name).First(&album).Error; err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			return false
 		}
