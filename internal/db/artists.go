@@ -18,7 +18,7 @@ type ArtistMgr interface {
 	EnsureArtistExists(artist *Artist) error
 	GetAllArtists() ([]*Artist, error)
 	SearchArtists(name string) ([]*Artist, error)
-	GetArtistWithFullInfo(id int64) (*Artist, error)
+	GetArtist(id int64) (*Artist, error)
 }
 
 func (mgr *AppDatabaseMgr) GetAllArtists() ([]*Artist, error) {
@@ -43,7 +43,7 @@ func (mgr *AppDatabaseMgr) EnsureArtistExists(artist *Artist) error {
 	return mgr.db.Create(artist).Error
 }
 
-func (mgr *AppDatabaseMgr) GetArtistWithFullInfo(id int64) (*Artist, error) {
+func (mgr *AppDatabaseMgr) GetArtist(id int64) (*Artist, error) {
 	artist := Artist{}
 	if err := mgr.db.First(&artist, id).Error; err != nil {
 		return nil, err

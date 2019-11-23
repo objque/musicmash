@@ -77,7 +77,7 @@ func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	_, err = db.DbMgr.GetArtistWithFullInfo(info.ArtistID)
+	_, err = db.DbMgr.GetArtist(info.ArtistID)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			WriteError(w, errors.New("artist not found"))
@@ -134,7 +134,7 @@ func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	artist, err := db.DbMgr.GetArtistWithFullInfo(id)
+	artist, err := db.DbMgr.GetArtist(id)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			WriteError(w, errors.New("artist not found"))

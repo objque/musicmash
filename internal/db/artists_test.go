@@ -77,7 +77,7 @@ func TestDB_Artists_GetWithFullInfo(t *testing.T) {
 	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 5, Name: testutil.ArtistRitaOra, Followers: 90}))
 
 	// action
-	artist, err := DbMgr.GetArtistWithFullInfo(1)
+	artist, err := DbMgr.GetArtist(1)
 
 	// assert
 	assert.NoError(t, err)
