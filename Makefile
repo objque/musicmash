@@ -11,9 +11,6 @@ clean:
 build: clean
 	go build -o bin/musicmash ./cmd/...
 
-rgo:
-	go get -u github.com/kyoh86/richgo
-
 install:
 	go install -v ./cmd/...
 
@@ -48,9 +45,6 @@ lint-all l:
 	bash ./scripts/revive.sh
 	bash ./scripts/golangci-lint.sh
 	bash ./scripts/consistent.sh
-
-rigo:
-	make install & make rgo
 
 build-arm7: clean
 	# you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7
