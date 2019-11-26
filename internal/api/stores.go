@@ -29,7 +29,7 @@ func (s *StoresController) Register(router chi.Router) {
 func (s *StoresController) listStores(w http.ResponseWriter, _ *http.Request) {
 	stores, err := db.DbMgr.GetAllStores()
 	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)
 		return
 	}

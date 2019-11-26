@@ -32,41 +32,41 @@ func (s *NotificationSettingsController) Register(router chi.Router) {
 func (s *NotificationSettingsController) addNotificationSettings(w http.ResponseWriter, r *http.Request) {
 	userName, err := GetUser(r)
 	if err != nil {
-		WriteError(w, err)
+		httputils.WriteError(w, err)
 		return
 	}
 
 	settings := db.NotificationSettings{}
 	err = json.NewDecoder(r.Body).Decode(&settings)
 	if err != nil {
-		WriteError(w, errors.New("invalid body"))
+		httputils.WriteError(w, errors.New("invalid body"))
 		return
 	}
 
 	if settings.Service == "" {
-		WriteError(w, errors.New("service didn't provided"))
+		httputils.WriteError(w, errors.New("service didn't provided"))
 		return
 	}
 	if settings.Data == "" {
-		WriteError(w, errors.New("service data didn't provided"))
+		httputils.WriteError(w, errors.New("service data didn't provided"))
 		return
 	}
 
 	dbSettings, err := db.DbMgr.FindNotificationSettingsForService(userName, settings.Service)
 	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)
 		return
 	}
 	if len(dbSettings) > 0 {
-		WriteError(w, errors.New("user already has settings for this service"))
+		httputils.WriteError(w, errors.New("user already has settings for this service"))
 		return
 	}
 
 	settings.UserName = userName
 	err = db.DbMgr.EnsureNotificationSettingsExists(&settings)
 	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)
 		return
 	}
@@ -77,23 +77,23 @@ func (s *NotificationSettingsController) addNotificationSettings(w http.Response
 func (s *NotificationSettingsController) updateNotificationSettings(w http.ResponseWriter, r *http.Request) {
 	userName, err := GetUser(r)
 	if err != nil {
-		WriteError(w, err)
+		httputils.WriteError(w, err)
 		return
 	}
 
 	settings := db.NotificationSettings{}
 	err = json.NewDecoder(r.Body).Decode(&settings)
 	if err != nil {
-		WriteError(w, errors.New("invalid body"))
+		httputils.WriteError(w, errors.New("invalid body"))
 		return
 	}
 
 	if settings.Service == "" {
-		WriteError(w, errors.New("service didn't provided"))
+		httputils.WriteError(w, errors.New("service didn't provided"))
 		return
 	}
 	if settings.Data == "" {
-		WriteError(w, errors.New("service data didn't provided"))
+		httputils.WriteError(w, errors.New("service data didn't provided"))
 		return
 	}
 
@@ -101,11 +101,11 @@ func (s *NotificationSettingsController) updateNotificationSettings(w http.Respo
 	err = db.DbMgr.UpdateNotificationSettings(&settings)
 	if err != nil {
 		if err == db.ErrNotificationSettingsNotFound {
-			WriteError(w, err)
+			httputils.WriteError(w, err)
 			return
 		}
 
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)
 		return
 	}
@@ -116,13 +116,13 @@ func (s *NotificationSettingsController) updateNotificationSettings(w http.Respo
 func (s *NotificationSettingsController) listNotificationSettings(w http.ResponseWriter, r *http.Request) {
 	userName, err := GetUser(r)
 	if err != nil {
-		WriteError(w, err)
+		httputils.WriteError(w, err)
 		return
 	}
 
 	settings, err := db.DbMgr.FindNotificationSettings(userName)
 	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)
 		return
 	}

@@ -32,25 +32,25 @@ func (c *SubscriptionsController) Register(router chi.Router) {
 func (c *SubscriptionsController) createSubscriptions(w http.ResponseWriter, r *http.Request) {
 	userName, err := GetUser(r)
 	if err != nil {
-		WriteError(w, err)
+		httputils.WriteError(w, err)
 		return
 	}
 
 	artists := []int64{}
 	err = json.NewDecoder(r.Body).Decode(&artists)
 	if err != nil {
-		WriteError(w, errors.New("invalid body"))
+		httputils.WriteError(w, errors.New("invalid body"))
 		return
 	}
 
 	if len(artists) == 0 {
-		WriteError(w, errors.New("artists weren't provided"))
+		httputils.WriteError(w, errors.New("artists weren't provided"))
 		return
 	}
 
 	err = db.DbMgr.SubscribeUser(userName, artists)
 	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)
 		return
 	}
@@ -61,13 +61,13 @@ func (c *SubscriptionsController) createSubscriptions(w http.ResponseWriter, r *
 func (c *SubscriptionsController) listSubscriptions(w http.ResponseWriter, r *http.Request) {
 	userName, err := GetUser(r)
 	if err != nil {
-		WriteError(w, err)
+		httputils.WriteError(w, err)
 		return
 	}
 
 	subs, err := db.DbMgr.GetUserSubscriptions(userName)
 	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)
 		return
 	}
@@ -78,25 +78,25 @@ func (c *SubscriptionsController) listSubscriptions(w http.ResponseWriter, r *ht
 func (c *SubscriptionsController) deleteSubscriptions(w http.ResponseWriter, r *http.Request) {
 	userName, err := GetUser(r)
 	if err != nil {
-		WriteError(w, err)
+		httputils.WriteError(w, err)
 		return
 	}
 
 	artists := []int64{}
 	err = json.NewDecoder(r.Body).Decode(&artists)
 	if err != nil {
-		WriteError(w, errors.New("invalid body"))
+		httputils.WriteError(w, errors.New("invalid body"))
 		return
 	}
 
 	if len(artists) == 0 {
-		WriteError(w, errors.New("artists weren't provided"))
+		httputils.WriteError(w, errors.New("artists weren't provided"))
 		return
 	}
 
 	err = db.DbMgr.UnSubscribeUser(userName, artists)
 	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)
 		return
 	}

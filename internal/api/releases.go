@@ -32,7 +32,7 @@ func (c *ReleasesController) Register(router chi.Router) {
 func (c *ReleasesController) getReleases(w http.ResponseWriter, r *http.Request) {
 	since := r.URL.Query().Get("since")
 	if len(since) == 0 {
-		WriteError(w, errors.New("since argument didn't provided"))
+		httputils.WriteError(w, errors.New("since argument didn't provided"))
 		return
 	}
 
@@ -40,13 +40,13 @@ func (c *ReleasesController) getReleases(w http.ResponseWriter, r *http.Request)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		log.Debugf("can't parse provided since argument %s as %s", since, dateLayout)
-		WriteError(w, fmt.Errorf("since argument %s does not match %s layout", since, dateLayout))
+		httputils.WriteError(w, fmt.Errorf("since argument %s does not match %s layout", since, dateLayout))
 		return
 	}
 
 	releases, err := db.DbMgr.FindNewReleases(date)
 	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
 		log.Error(err)
 		return
 	}
