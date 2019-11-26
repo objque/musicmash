@@ -1,11 +1,11 @@
 package api
 
 import (
-	"encoding/json"
 	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/musicmash/musicmash/internal/api/httputils"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 )
@@ -34,13 +34,5 @@ func (s *StoresController) listStores(w http.ResponseWriter, _ *http.Request) {
 		return
 	}
 
-	buffer, err := json.Marshal(&stores)
-	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
-		log.Error(err)
-		return
-	}
-
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(buffer)
+	_ = httputils.WriteJSON(w, http.StatusOK, &stores)
 }

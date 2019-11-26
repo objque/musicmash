@@ -8,6 +8,7 @@ import (
 
 	"github.com/go-chi/chi"
 	"github.com/jinzhu/gorm"
+	"github.com/musicmash/musicmash/internal/api/httputils"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 )
@@ -53,10 +54,7 @@ func (c *ArtistsController) addArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	b, _ := json.Marshal(&artist)
-	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(b)
+	_ = httputils.WriteJSON(w, http.StatusCreated, &artist)
 }
 
 func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Request) {
@@ -96,10 +94,7 @@ func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	b, _ := json.Marshal(&info)
-	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(b)
+	_ = httputils.WriteJSON(w, http.StatusCreated, &info)
 }
 
 func (c *ArtistsController) searchArtist(w http.ResponseWriter, r *http.Request) {
@@ -116,15 +111,7 @@ func (c *ArtistsController) searchArtist(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	buffer, err := json.Marshal(&artists)
-	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
-		log.Error(err)
-		return
-	}
-
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(buffer)
+	_ = httputils.WriteJSON(w, http.StatusOK, &artists)
 }
 
 func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
@@ -156,13 +143,5 @@ func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 
-	buffer, err := json.Marshal(&artist)
-	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
-		log.Error(err)
-		return
-	}
-
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(buffer)
+	_ = httputils.WriteJSON(w, http.StatusOK, &artist)
 }

@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/musicmash/musicmash/internal/api/httputils"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 )
@@ -71,10 +72,7 @@ func (c *SubscriptionsController) listSubscriptions(w http.ResponseWriter, r *ht
 		return
 	}
 
-	b, _ := json.Marshal(&subs)
-	w.WriteHeader(http.StatusOK)
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(b)
+	_ = httputils.WriteJSON(w, http.StatusOK, &subs)
 }
 
 func (c *SubscriptionsController) deleteSubscriptions(w http.ResponseWriter, r *http.Request) {

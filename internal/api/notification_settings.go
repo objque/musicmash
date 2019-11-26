@@ -6,6 +6,7 @@ import (
 	"net/http"
 
 	"github.com/go-chi/chi"
+	"github.com/musicmash/musicmash/internal/api/httputils"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 )
@@ -70,10 +71,7 @@ func (s *NotificationSettingsController) addNotificationSettings(w http.Response
 		return
 	}
 
-	b, _ := json.Marshal(&settings)
-	w.WriteHeader(http.StatusCreated)
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(b)
+	_ = httputils.WriteJSON(w, http.StatusCreated, &settings)
 }
 
 func (s *NotificationSettingsController) updateNotificationSettings(w http.ResponseWriter, r *http.Request) {
@@ -112,9 +110,7 @@ func (s *NotificationSettingsController) updateNotificationSettings(w http.Respo
 		return
 	}
 
-	b, _ := json.Marshal(&settings)
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(b)
+	_ = httputils.WriteJSON(w, http.StatusOK, &settings)
 }
 
 func (s *NotificationSettingsController) listNotificationSettings(w http.ResponseWriter, r *http.Request) {
@@ -131,13 +127,5 @@ func (s *NotificationSettingsController) listNotificationSettings(w http.Respons
 		return
 	}
 
-	buffer, err := json.Marshal(&settings)
-	if err != nil {
-		WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
-		log.Error(err)
-		return
-	}
-
-	w.Header().Set("content-type", "application/json")
-	_, _ = w.Write(buffer)
+	_ = httputils.WriteJSON(w, http.StatusOK, &settings)
 }
