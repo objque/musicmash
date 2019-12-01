@@ -3,7 +3,6 @@ package fetcher
 import (
 	"fmt"
 	"net/http"
-	"testing"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
@@ -11,14 +10,11 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestFetch_FetchAndSave(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testFetcherSuite) TestFetchAndSave() {
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureAssociationExists(testutil.StoreIDW, testutil.StoreApple, testutil.StoreIDA))
+	assert.NoError(t.T(), db.DbMgr.EnsureAssociationExists(testutil.StoreIDW, testutil.StoreApple, testutil.StoreIDA))
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
-	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
+	t.mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
 		  "data": [
 			{
@@ -49,11 +45,11 @@ func TestFetch_FetchAndSave(t *testing.T) {
 
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()
-	assert.NoError(t, err)
-	assert.Len(t, releases, 1)
-	assert.Equal(t, int64(testutil.StoreIDW), releases[0].ArtistID)
-	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
-	assert.Equal(t, 18, releases[0].Released.Day())
-	assert.Equal(t, time.July, releases[0].Released.Month())
-	assert.Equal(t, 2025, releases[0].Released.Year())
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
+	assert.Equal(t.T(), int64(testutil.StoreIDW), releases[0].ArtistID)
+	assert.Equal(t.T(), testutil.StoreIDA, releases[0].StoreID)
+	assert.Equal(t.T(), 18, releases[0].Released.Day())
+	assert.Equal(t.T(), time.July, releases[0].Released.Month())
+	assert.Equal(t.T(), 2025, releases[0].Released.Year())
 }

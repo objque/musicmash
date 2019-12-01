@@ -3,26 +3,28 @@ package fetcher
 import (
 	"net/http"
 	"net/http/httptest"
+	"testing"
 
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/testutil"
+	"github.com/stretchr/testify/suite"
 )
 
-var (
+type testFetcherSuite struct {
+	suite.Suite
 	server *httptest.Server
 	mux    *http.ServeMux
-)
+}
 
-func setup() {
-	mux = http.NewServeMux()
-	server = httptest.NewServer(mux)
-	db.DbMgr = db.NewFakeDatabaseMgr()
+func (t *testFetcherSuite) SetupSuite() {
+	t.mux = http.NewServeMux()
+	t.server = httptest.NewServer(t.mux)
 	config.Config = &config.AppConfig{
 		Stores: config.StoresConfig{
 			testutil.StoreApple: {
 				Fetch:        true,
-				URL:          server.URL,
+				URL:          t.server.URL,
 				Meta:         map[string]string{"token": "xxx"},
 				FetchWorkers: 5,
 			},
@@ -30,8 +32,19 @@ func setup() {
 	}
 }
 
-func teardown() {
-	server.Close()
+func (t *testFetcherSuite) SetupTest() {
+	db.DbMgr = db.NewFakeDatabaseMgr()
+}
+
+func (t *testFetcherSuite) TearDownTest() {
 	_ = db.DbMgr.DropAllTables()
 	_ = db.DbMgr.Close()
+}
+
+func (t *testFetcherSuite) TearDownSuite() {
+	t.server.Close()
+}
+
+func TestFetcherSuite(t *testing.T) {
+	suite.Run(t, new(testFetcherSuite))
 }

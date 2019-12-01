@@ -1,16 +1,11 @@
 package db
 
 import (
-	"testing"
-
 	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_NotificationSettings_EnsureExists(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestNotificationSettings_EnsureExists() {
 	// action
 	err := DbMgr.EnsureNotificationSettingsExists(&NotificationSettings{
 		UserName: testutil.UserObjque,
@@ -19,26 +14,23 @@ func TestDB_NotificationSettings_EnsureExists(t *testing.T) {
 	})
 
 	// assert
-	assert.NoError(t, err)
+	assert.NoError(t.T(), err)
 	settings, err := DbMgr.FindNotificationSettings(testutil.UserObjque)
-	assert.NoError(t, err)
-	assert.Len(t, settings, 1)
-	assert.Equal(t, testutil.UserObjque, settings[0].UserName)
-	assert.Equal(t, "email", settings[0].Service)
-	assert.Equal(t, "email@test.io", settings[0].Data)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), settings, 1)
+	assert.Equal(t.T(), testutil.UserObjque, settings[0].UserName)
+	assert.Equal(t.T(), "email", settings[0].Service)
+	assert.Equal(t.T(), "email@test.io", settings[0].Data)
 }
 
-func TestDB_NotificationSettings_Update(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestNotificationSettings_Update() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureNotificationSettingsExists(&NotificationSettings{
+	assert.NoError(t.T(), DbMgr.EnsureNotificationSettingsExists(&NotificationSettings{
 		UserName: testutil.UserObjque,
 		Service:  "email",
 		Data:     "email@test.io",
 	}))
-	assert.NoError(t, DbMgr.EnsureNotificationSettingsExists(&NotificationSettings{
+	assert.NoError(t.T(), DbMgr.EnsureNotificationSettingsExists(&NotificationSettings{
 		UserName: testutil.UserBot,
 		Service:  "email",
 		Data:     "email@test.io",
@@ -52,11 +44,11 @@ func TestDB_NotificationSettings_Update(t *testing.T) {
 	})
 
 	// assert
-	assert.NoError(t, err)
+	assert.NoError(t.T(), err)
 	settings, err := DbMgr.FindNotificationSettings(testutil.UserObjque)
-	assert.NoError(t, err)
-	assert.Len(t, settings, 1)
-	assert.Equal(t, testutil.UserObjque, settings[0].UserName)
-	assert.Equal(t, "email", settings[0].Service)
-	assert.Equal(t, "objque@test.io", settings[0].Data)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), settings, 1)
+	assert.Equal(t.T(), testutil.UserObjque, settings[0].UserName)
+	assert.Equal(t.T(), "email", settings[0].Service)
+	assert.Equal(t.T(), "objque@test.io", settings[0].Data)
 }

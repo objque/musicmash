@@ -1,48 +1,37 @@
 package db
 
 import (
-	"testing"
-
 	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_Artist_EnsureExists(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestArtist_EnsureExists() {
 	// action
 	err := DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistSkrillex})
 
 	// assert
-	assert.NoError(t, err)
+	assert.NoError(t.T(), err)
 }
 
-func TestDB_Artists_GetAll(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestArtists_GetAll() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistSkrillex}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistSkrillex}))
 
 	// action
 	artists, err := DbMgr.GetAllArtists()
 
 	// assert
-	assert.NoError(t, err)
-	assert.Len(t, artists, 1)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), artists, 1)
 }
 
-func TestDB_Artists_Search(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestArtists_Search() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistSkrillex, Followers: 100}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistArchitects, Followers: 250}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistSPY}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistWildways, Followers: 50}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistRitaOra, Followers: 90}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistSkrillex, Followers: 100}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistArchitects, Followers: 250}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistSPY}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistWildways, Followers: 50}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: testutil.ArtistRitaOra, Followers: 90}))
 	want := []struct {
 		SearchText string
 		Artists    []string
@@ -57,31 +46,28 @@ func TestDB_Artists_Search(t *testing.T) {
 		artists, err := DbMgr.SearchArtists(item.SearchText)
 
 		// assert
-		assert.NoError(t, err)
-		assert.Len(t, artists, len(item.Artists))
+		assert.NoError(t.T(), err)
+		assert.Len(t.T(), artists, len(item.Artists))
 		for i, wantName := range item.Artists {
-			assert.Equal(t, wantName, artists[i].Name)
+			assert.Equal(t.T(), wantName, artists[i].Name)
 		}
 	}
 }
 
-func TestDB_Artists_GetWithFullInfo(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestArtists_GetWithFullInfo() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 1, Name: testutil.ArtistSkrillex, Followers: 100}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 2, Name: testutil.ArtistArchitects, Followers: 250}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 3, Name: testutil.ArtistSPY}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 4, Name: testutil.ArtistWildways, Followers: 50}))
-	assert.NoError(t, DbMgr.EnsureArtistExists(&Artist{ID: 5, Name: testutil.ArtistRitaOra, Followers: 90}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 1, Name: testutil.ArtistSkrillex, Followers: 100}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 2, Name: testutil.ArtistArchitects, Followers: 250}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 3, Name: testutil.ArtistSPY}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 4, Name: testutil.ArtistWildways, Followers: 50}))
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 5, Name: testutil.ArtistRitaOra, Followers: 90}))
 
 	// action
 	artist, err := DbMgr.GetArtist(1)
 
 	// assert
-	assert.NoError(t, err)
-	assert.Equal(t, int64(1), artist.ID)
-	assert.Equal(t, testutil.ArtistSkrillex, artist.Name)
-	assert.Equal(t, uint(100), artist.Followers)
+	assert.NoError(t.T(), err)
+	assert.Equal(t.T(), int64(1), artist.ID)
+	assert.Equal(t.T(), testutil.ArtistSkrillex, artist.Name)
+	assert.Equal(t.T(), uint(100), artist.Followers)
 }

@@ -1,7 +1,6 @@
 package api
 
 import (
-	"testing"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
@@ -10,18 +9,15 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAPI_Releases_Get(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testApiSuite) TestReleases_Get() {
 	// arrange
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
+	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
 		ID:       testutil.StoreIDQ,
 		Title:    testutil.ArtistArchitects,
 		Released: time.Now(),
 	}))
 
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
+	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
 		ID:       testutil.StoreIDW,
 		Title:    testutil.ArtistArchitects,
 		Released: time.Now().UTC().AddDate(-1, 0, 0),
@@ -29,38 +25,34 @@ func TestAPI_Releases_Get(t *testing.T) {
 
 	// action
 	since := time.Now().UTC().AddDate(0, -1, 0)
-	releases, err := releases.Get(client, since)
+	releases, err := releases.Get(t.client, since)
 
 	// assert
-	assert.NoError(t, err)
-	assert.Len(t, releases, 1)
-	assert.Equal(t, testutil.ArtistArchitects, releases[0].Title)
-	assert.Equal(t, uint64(testutil.StoreIDQ), releases[0].ID)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
+	assert.Equal(t.T(), testutil.ArtistArchitects, releases[0].Title)
+	assert.Equal(t.T(), uint64(testutil.StoreIDQ), releases[0].ID)
 }
 
-func TestAPI_Releases_Get_Empty(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testApiSuite) TestReleases_Get_Empty() {
 	// action
 	since := time.Now().UTC().AddDate(0, -1, 0)
-	releases, err := releases.Get(client, since)
+	releases, err := releases.Get(t.client, since)
 
 	// assert
-	assert.NoError(t, err)
-	assert.Len(t, releases, 0)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 0)
 }
 
-func TestAPI_Releases_Get_Internal(t *testing.T) {
-	setup()
+func (t *testApiSuite) TestReleases_Get_Internal() {
+	// arrange
 	_ = db.DbMgr.Close()
-	defer func() { server.Close() }()
 
 	// action
 	since := time.Now().UTC().AddDate(0, -1, 0)
-	releases, err := releases.Get(client, since)
+	releases, err := releases.Get(t.client, since)
 
 	// assert
-	assert.Error(t, err)
-	assert.Len(t, releases, 0)
+	assert.Error(t.T(), err)
+	assert.Len(t.T(), releases, 0)
 }

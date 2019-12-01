@@ -3,50 +3,19 @@ package itunes
 import (
 	"fmt"
 	"net/http"
-	"net/http/httptest"
 	"sync"
-	"testing"
 	"time"
 
-	"github.com/musicmash/musicmash/internal/clients/itunes"
-	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
-var (
-	server   *httptest.Server
-	mux      *http.ServeMux
-	provider *itunes.Provider
-)
-
-func setup() {
-	mux = http.NewServeMux()
-	server = httptest.NewServer(mux)
-	db.DbMgr = db.NewFakeDatabaseMgr()
-	config.Config = &config.AppConfig{
-		Fetcher: config.FetcherConfig{
-			Delay: 8,
-		},
-	}
-	provider = itunes.NewProvider(server.URL, testutil.TokenSimple, time.Minute)
-}
-
-func teardown() {
-	_ = db.DbMgr.DropAllTables()
-	_ = db.DbMgr.Close()
-	server.Close()
-}
-
-func TestFetcher_FetchAndSave(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testAppleMusicClientSuite) TestFetchAndSave() {
 	// arrange
-	f := Fetcher{Provider: provider, FetchWorkers: 5}
+	f := Fetcher{Provider: t.provider, FetchWorkers: 5}
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
-	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
+	t.mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
@@ -87,28 +56,25 @@ func TestFetcher_FetchAndSave(t *testing.T) {
 
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()
-	assert.NoError(t, err)
-	assert.Len(t, releases, 1)
-	assert.Equal(t, int64(testutil.StoreIDQ), releases[0].ArtistID)
-	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
-	assert.Equal(t, 18, releases[0].Released.Day())
-	assert.Equal(t, time.July, releases[0].Released.Month())
-	assert.Equal(t, 2025, releases[0].Released.Year())
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
+	assert.Equal(t.T(), int64(testutil.StoreIDQ), releases[0].ArtistID)
+	assert.Equal(t.T(), testutil.StoreIDA, releases[0].StoreID)
+	assert.Equal(t.T(), 18, releases[0].Released.Day())
+	assert.Equal(t.T(), time.July, releases[0].Released.Month())
+	assert.Equal(t.T(), 2025, releases[0].Released.Year())
 }
 
-func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testAppleMusicClientSuite) TestFetchAndSave_AlreadyExists() {
 	// arrange
-	f := Fetcher{Provider: provider, FetchWorkers: 1}
-	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
-	assert.NoError(t, db.DbMgr.EnsureReleaseExists(&db.Release{
+	f := Fetcher{Provider: t.provider, FetchWorkers: 1}
+	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDB)
+	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistID:  testutil.StoreIDQ,
 		StoreID:   testutil.StoreIDB,
 		StoreName: f.GetStoreName(),
 	}))
-	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
+	t.mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
     {
@@ -140,7 +106,7 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 	storeArtists := []*db.Association{
 		{
 			ArtistID:  testutil.StoreIDQ,
-			StoreID:   testutil.StoreIDA,
+			StoreID:   testutil.StoreIDB,
 			StoreName: f.GetStoreName(),
 		},
 	}
@@ -149,11 +115,11 @@ func TestFetcher_FetchAndSave_AlreadyExists(t *testing.T) {
 
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()
-	assert.NoError(t, err)
-	assert.Len(t, releases, 1)
-	assert.Equal(t, int64(testutil.StoreIDQ), releases[0].ArtistID)
-	assert.Equal(t, testutil.StoreIDB, releases[0].StoreID)
-	assert.Equal(t, 1, releases[0].Released.Day())
-	assert.Equal(t, time.January, releases[0].Released.Month())
-	assert.Equal(t, 1, releases[0].Released.Year())
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
+	assert.Equal(t.T(), int64(testutil.StoreIDQ), releases[0].ArtistID)
+	assert.Equal(t.T(), testutil.StoreIDB, releases[0].StoreID)
+	assert.Equal(t.T(), 1, releases[0].Released.Day())
+	assert.Equal(t.T(), time.January, releases[0].Released.Month())
+	assert.Equal(t.T(), 1, releases[0].Released.Year())
 }

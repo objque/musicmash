@@ -1,44 +1,33 @@
 package db
 
 import (
-	"testing"
-
 	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_StoreType(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestStoreType() {
 	// action
-	assert.NoError(t, DbMgr.EnsureStoreExists(testutil.StoreDeezer))
+	assert.NoError(t.T(), DbMgr.EnsureStoreExists(testutil.StoreDeezer))
 
 	// assert
-	assert.True(t, DbMgr.IsStoreExists(testutil.StoreDeezer))
+	assert.True(t.T(), DbMgr.IsStoreExists(testutil.StoreDeezer))
 }
 
-func TestDB_StoreType_NotExists(t *testing.T) {
-	setup()
-	defer teardown()
-
-	assert.False(t, DbMgr.IsStoreExists(testutil.StoreDeezer))
+func (t *testDBSuite) TestStoreType_NotExists() {
+	assert.False(t.T(), DbMgr.IsStoreExists(testutil.StoreDeezer))
 }
 
-func TestDB_StoreType_GetAll(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestStoreType_GetAll() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureStoreExists(testutil.StoreDeezer))
-	assert.NoError(t, DbMgr.EnsureStoreExists(testutil.StoreApple))
+	assert.NoError(t.T(), DbMgr.EnsureStoreExists(testutil.StoreDeezer))
+	assert.NoError(t.T(), DbMgr.EnsureStoreExists(testutil.StoreApple))
 
 	// action
 	stores, err := DbMgr.GetAllStores()
 
 	// assert
-	assert.NoError(t, err)
-	assert.Len(t, stores, 2)
-	assert.Equal(t, testutil.StoreDeezer, stores[0].Name)
-	assert.Equal(t, testutil.StoreApple, stores[1].Name)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), stores, 2)
+	assert.Equal(t.T(), testutil.StoreDeezer, stores[0].Name)
+	assert.Equal(t.T(), testutil.StoreApple, stores[1].Name)
 }

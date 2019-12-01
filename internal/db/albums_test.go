@@ -1,66 +1,52 @@
 package db
 
 import (
-	"testing"
-
 	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_Albums_IsAlbumExists(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestAlbums_IsAlbumExists() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureAlbumExists(&Album{ArtistID: 1, Name: testutil.ArtistAlgorithm}))
+	assert.NoError(t.T(), DbMgr.EnsureAlbumExists(&Album{ArtistID: 1, Name: testutil.ArtistAlgorithm}))
 
 	// action
 	exists := DbMgr.IsAlbumExists(&Album{ArtistID: 1, Name: testutil.ArtistAlgorithm})
 
 	// assert
-	assert.True(t, exists)
+	assert.True(t.T(), exists)
 }
-func TestDB_Albums_IsAlbumExists_NotExists(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestAlbums_IsAlbumExists_NotExists() {
 	// action
 	exists := DbMgr.IsAlbumExists(&Album{ArtistID: 1, Name: testutil.ArtistAlgorithm})
 
 	// assert
-	assert.False(t, exists)
+	assert.False(t.T(), exists)
 }
 
-func TestDB_Albums_GetAlbums(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestAlbums_GetAlbums() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureAlbumExists(&Album{ArtistID: 1, Name: testutil.ReleaseWildwaysTheX}))
-	assert.NoError(t, DbMgr.EnsureAlbumExists(&Album{ArtistID: 2, Name: testutil.ReleaseArchitectsHollyHell}))
+	assert.NoError(t.T(), DbMgr.EnsureAlbumExists(&Album{ArtistID: 1, Name: testutil.ReleaseWildwaysTheX}))
+	assert.NoError(t.T(), DbMgr.EnsureAlbumExists(&Album{ArtistID: 2, Name: testutil.ReleaseArchitectsHollyHell}))
 
 	// action
 	albums, err := DbMgr.GetAlbums(1)
 
 	// assert
-	assert.NoError(t, err)
-	assert.Len(t, albums, 1)
-	assert.Equal(t, testutil.ReleaseWildwaysTheX, albums[0].Name)
-	assert.Equal(t, uint64(1), albums[0].ID)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), albums, 1)
+	assert.Equal(t.T(), testutil.ReleaseWildwaysTheX, albums[0].Name)
+	assert.Equal(t.T(), uint64(1), albums[0].ID)
 }
 
-func TestDB_Albums_GetAlbums_Empty(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestAlbums_GetAlbums_Empty() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureAlbumExists(&Album{ArtistID: 1, Name: testutil.ReleaseArchitectsHollyHell}))
-	assert.NoError(t, DbMgr.EnsureAlbumExists(&Album{ArtistID: 2, Name: testutil.ReleaseWildwaysTheX}))
+	assert.NoError(t.T(), DbMgr.EnsureAlbumExists(&Album{ArtistID: 1, Name: testutil.ReleaseArchitectsHollyHell}))
+	assert.NoError(t.T(), DbMgr.EnsureAlbumExists(&Album{ArtistID: 2, Name: testutil.ReleaseWildwaysTheX}))
 
 	// action
 	albums, err := DbMgr.GetAlbums(3)
 
 	// assert
-	assert.NoError(t, err)
-	assert.Empty(t, albums)
+	assert.NoError(t.T(), err)
+	assert.Empty(t.T(), albums)
 }

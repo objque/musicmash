@@ -1,16 +1,11 @@
 package db
 
 import (
-	"testing"
-
 	"github.com/musicmash/musicmash/internal/testutil"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_Releases_EnsureExists(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestReleases_EnsureExists() {
 	// action
 	err := DbMgr.EnsureReleaseExists(&Release{
 		StoreName: testutil.StoreDeezer,
@@ -18,24 +13,21 @@ func TestDB_Releases_EnsureExists(t *testing.T) {
 	})
 
 	// assert
-	assert.NoError(t, err)
+	assert.NoError(t.T(), err)
 	releases, err := DbMgr.GetAllReleases()
-	assert.NoError(t, err)
-	assert.Len(t, releases, 1)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
 }
 
-func TestDB_Releases_FindReleases(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestReleases_FindReleases() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
 		ArtistID:  testutil.StoreIDW,
 		StoreName: testutil.StoreApple,
 		StoreID:   testutil.StoreIDA,
 		Poster:    testutil.PosterSimple,
 	}))
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
+	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
 		ArtistID:  testutil.StoreIDQ,
 		StoreName: testutil.StoreApple,
 		StoreID:   testutil.StoreIDB,
@@ -45,7 +37,7 @@ func TestDB_Releases_FindReleases(t *testing.T) {
 	releases, err := DbMgr.FindReleases(map[string]interface{}{"poster": ""})
 
 	// assert
-	assert.NoError(t, err)
-	assert.Len(t, releases, 1)
-	assert.Equal(t, int64(testutil.StoreIDQ), releases[0].ArtistID)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
+	assert.Equal(t.T(), int64(testutil.StoreIDQ), releases[0].ArtistID)
 }

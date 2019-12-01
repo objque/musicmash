@@ -1,25 +1,17 @@
 package db
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_NotificationService_Exists(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestNotificationService_Exists() {
 	// action
-	assert.NoError(t, DbMgr.EnsureNotificationServiceExists("email"))
+	assert.NoError(t.T(), DbMgr.EnsureNotificationServiceExists("email"))
 
 	// assert
-	assert.True(t, DbMgr.IsNotificationServiceExists("email"))
+	assert.True(t.T(), DbMgr.IsNotificationServiceExists("email"))
 }
 
-func TestDB_NotificationService_NotExists(t *testing.T) {
-	setup()
-	defer teardown()
-
-	assert.False(t, DbMgr.IsNotificationServiceExists("email"))
+func (t *testDBSuite) TestNotificationService_NotExists() {
+	assert.False(t.T(), DbMgr.IsNotificationServiceExists("email"))
 }

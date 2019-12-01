@@ -1,29 +1,25 @@
 package db
 
 import (
-	"testing"
-
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_Ping_OK(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestPing_OK() {
 	// action
 	err := DbMgr.Ping()
 
 	// assert
-	assert.NoError(t, err)
+	assert.NoError(t.T(), err)
 }
 
-func TestDB_Ping_Error(t *testing.T) {
-	setup()
-	teardown()
+func (t *testDBSuite) TestPing_Error() {
+	// arrange
+	// close connection manually to get internal error
+	DbMgr.Close()
 
 	// action
 	err := DbMgr.Ping()
 
 	// assert
-	assert.Error(t, err)
+	assert.Error(t.T(), err)
 }
