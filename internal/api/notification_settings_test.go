@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testApiSuite) TestNotificationSettings_Create() {
+func (t *testAPISuite) TestNotificationSettings_Create() {
 	// action
 	err := notifysettings.Create(t.client, testutil.UserObjque, &notifysettings.Settings{
 		Service: "telegram",
@@ -23,7 +23,7 @@ func (t *testApiSuite) TestNotificationSettings_Create() {
 	assert.Equal(t.T(), "chat-id-here", settings[0].Data)
 }
 
-func (t *testApiSuite) TestNotificationSettings_Create_AlreadyExists() {
+func (t *testAPISuite) TestNotificationSettings_Create_AlreadyExists() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
 		UserName: testutil.UserObjque,
@@ -41,7 +41,7 @@ func (t *testApiSuite) TestNotificationSettings_Create_AlreadyExists() {
 	assert.Error(t.T(), err)
 }
 
-func (t *testApiSuite) TestNotificationSettings_Update() {
+func (t *testAPISuite) TestNotificationSettings_Update() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
 		UserName: testutil.UserObjque,

@@ -9,30 +9,30 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type testApiSuite struct {
+type testAPISuite struct {
 	suite.Suite
 	server *httptest.Server
 	client *api.Provider
 }
 
-func (t *testApiSuite) SetupSuite() {
+func (t *testAPISuite) SetupSuite() {
 	t.server = httptest.NewServer(getMux())
 	t.client = api.NewProvider(t.server.URL, 1)
 }
 
-func (t *testApiSuite) SetupTest() {
+func (t *testAPISuite) SetupTest() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
 }
 
-func (t *testApiSuite) TearDownTest() {
+func (t *testAPISuite) TearDownTest() {
 	_ = db.DbMgr.DropAllTables()
 	_ = db.DbMgr.Close()
 }
 
-func (t *testApiSuite) TearDownSuite() {
+func (t *testAPISuite) TearDownSuite() {
 	t.server.Close()
 }
 
 func TestAPISuite(t *testing.T) {
-	suite.Run(t, new(testApiSuite))
+	suite.Run(t, new(testAPISuite))
 }

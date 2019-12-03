@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testApiSuite) TestStores_List() {
+func (t *testAPISuite) TestStores_List() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(testutil.StoreApple))
 

@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testApiSuite) TestSubscriptions_Create() {
+func (t *testAPISuite) TestSubscriptions_Create() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: testutil.StoreIDQ}))
 
@@ -24,7 +24,7 @@ func (t *testApiSuite) TestSubscriptions_Create() {
 	assert.Equal(t.T(), int64(testutil.StoreIDQ), subs[0].ArtistID)
 }
 
-func (t *testApiSuite) TestSubscriptions_List() {
+func (t *testAPISuite) TestSubscriptions_List() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: testutil.StoreIDQ}))
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: testutil.StoreIDW}))

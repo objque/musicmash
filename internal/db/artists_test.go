@@ -41,14 +41,14 @@ func (t *testDBSuite) TestArtists_Search() {
 		{SearchText: "a", Artists: []string{testutil.ArtistArchitects, testutil.ArtistRitaOra, testutil.ArtistWildways}},
 	}
 
-	for _, item := range want {
+	for i := range want {
 		// action
-		artists, err := DbMgr.SearchArtists(item.SearchText)
+		artists, err := DbMgr.SearchArtists(want[i].SearchText)
 
 		// assert
 		assert.NoError(t.T(), err)
-		assert.Len(t.T(), artists, len(item.Artists))
-		for i, wantName := range item.Artists {
+		assert.Len(t.T(), artists, len(want[i].Artists))
+		for i, wantName := range want[i].Artists {
 			assert.Equal(t.T(), wantName, artists[i].Name)
 		}
 	}

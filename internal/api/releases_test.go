@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testApiSuite) TestReleases_Get() {
+func (t *testAPISuite) TestReleases_Get() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
 		ID:       testutil.StoreIDQ,
@@ -34,7 +34,7 @@ func (t *testApiSuite) TestReleases_Get() {
 	assert.Equal(t.T(), uint64(testutil.StoreIDQ), releases[0].ID)
 }
 
-func (t *testApiSuite) TestReleases_Get_Empty() {
+func (t *testAPISuite) TestReleases_Get_Empty() {
 	// action
 	since := time.Now().UTC().AddDate(0, -1, 0)
 	releases, err := releases.Get(t.client, since)
@@ -44,7 +44,7 @@ func (t *testApiSuite) TestReleases_Get_Empty() {
 	assert.Len(t.T(), releases, 0)
 }
 
-func (t *testApiSuite) TestReleases_Get_Internal() {
+func (t *testAPISuite) TestReleases_Get_Internal() {
 	// arrange
 	_ = db.DbMgr.Close()
 

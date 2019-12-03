@@ -7,7 +7,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testApiSuite) TestArtists_Search() {
+func (t *testAPISuite) TestArtists_Search() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: testutil.ArtistArchitects}))
 
@@ -20,7 +20,7 @@ func (t *testApiSuite) TestArtists_Search() {
 	assert.Equal(t.T(), testutil.ArtistArchitects, releases[0].Name)
 }
 
-func (t *testApiSuite) TestArtists_Search_Empty() {
+func (t *testAPISuite) TestArtists_Search_Empty() {
 	// action
 	releases, err := artists.Search(t.client, "arch")
 
@@ -29,7 +29,7 @@ func (t *testApiSuite) TestArtists_Search_Empty() {
 	assert.Len(t.T(), releases, 0)
 }
 
-func (t *testApiSuite) TestArtists_Search_Internal() {
+func (t *testAPISuite) TestArtists_Search_Internal() {
 	// arrange
 	// close connection manually to get internal error
 	assert.NoError(t.T(), db.DbMgr.Close())
@@ -42,7 +42,7 @@ func (t *testApiSuite) TestArtists_Search_Internal() {
 	assert.Len(t.T(), releases, 0)
 }
 
-func (t *testApiSuite) TestArtists_Create() {
+func (t *testAPISuite) TestArtists_Create() {
 	// action
 	artist := &artists.Artist{Name: testutil.ArtistArchitects}
 	err := artists.Create(t.client, artist)
@@ -53,7 +53,7 @@ func (t *testApiSuite) TestArtists_Create() {
 	assert.Equal(t.T(), int64(1), artist.ID)
 }
 
-func (t *testApiSuite) TestArtists_Associate() {
+func (t *testAPISuite) TestArtists_Associate() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: testutil.ArtistArchitects}))
 	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(testutil.StoreApple))
@@ -69,7 +69,7 @@ func (t *testApiSuite) TestArtists_Associate() {
 	assert.Equal(t.T(), int64(1), info.ArtistID)
 }
 
-func (t *testApiSuite) TestArtists_Associate_ArtistNotFound() {
+func (t *testAPISuite) TestArtists_Associate_ArtistNotFound() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(testutil.StoreApple))
 
@@ -81,7 +81,7 @@ func (t *testApiSuite) TestArtists_Associate_ArtistNotFound() {
 	assert.Error(t.T(), err)
 }
 
-func (t *testApiSuite) TestArtists_Associate_AlreadyAssociated() {
+func (t *testAPISuite) TestArtists_Associate_AlreadyAssociated() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: testutil.ArtistArchitects}))
 	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(testutil.StoreApple))
@@ -95,7 +95,7 @@ func (t *testApiSuite) TestArtists_Associate_AlreadyAssociated() {
 	assert.Error(t.T(), err)
 }
 
-func (t *testApiSuite) TestArtists_Associate_StoreNotFound() {
+func (t *testAPISuite) TestArtists_Associate_StoreNotFound() {
 	// action
 	info := &artists.Association{ArtistID: 1, StoreName: testutil.StoreApple, StoreID: testutil.StoreIDA}
 	err := artists.Associate(t.client, info)
@@ -104,7 +104,7 @@ func (t *testApiSuite) TestArtists_Associate_StoreNotFound() {
 	assert.Error(t.T(), err)
 }
 
-func (t *testApiSuite) TestArtists_Get() {
+func (t *testAPISuite) TestArtists_Get() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: testutil.ArtistArchitects}))
 
@@ -118,7 +118,7 @@ func (t *testApiSuite) TestArtists_Get() {
 	assert.Empty(t.T(), artist.Albums)
 }
 
-func (t *testApiSuite) TestArtists_GetWithAlbums() {
+func (t *testAPISuite) TestArtists_GetWithAlbums() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: testutil.ArtistArchitects}))
 	assert.NoError(t.T(), db.DbMgr.EnsureAlbumExists(&db.Album{ArtistID: 1, Name: testutil.ReleaseAlgorithmFloatingIP}))
@@ -134,7 +134,7 @@ func (t *testApiSuite) TestArtists_GetWithAlbums() {
 	assert.Equal(t.T(), testutil.ReleaseAlgorithmFloatingIP, artist.Albums[0].Name)
 }
 
-func (t *testApiSuite) TestArtists_Get_NotFound() {
+func (t *testAPISuite) TestArtists_Get_NotFound() {
 	// action
 	artist, err := artists.Get(t.client, 1, nil)
 

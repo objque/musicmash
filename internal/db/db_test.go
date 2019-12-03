@@ -15,7 +15,7 @@ func (t *testDBSuite) TestPing_OK() {
 func (t *testDBSuite) TestPing_Error() {
 	// arrange
 	// close connection manually to get internal error
-	DbMgr.Close()
+	assert.NoError(t.T(), DbMgr.Close())
 
 	// action
 	err := DbMgr.Ping()
