@@ -29,10 +29,11 @@ func (mgr *AppDatabaseMgr) IsStoreExists(name string) bool {
 }
 
 func (mgr *AppDatabaseMgr) EnsureStoreExists(name string) error {
-	if !mgr.IsStoreExists(name) {
-		return mgr.db.Create(&Store{Name: name}).Error
+	if mgr.IsStoreExists(name) {
+		return nil
 	}
-	return nil
+	return mgr.db.Create(&Store{Name: name}).Error
+
 }
 
 func (mgr *AppDatabaseMgr) GetAllStores() ([]*Store, error) {
