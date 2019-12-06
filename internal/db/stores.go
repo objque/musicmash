@@ -33,7 +33,6 @@ func (mgr *AppDatabaseMgr) EnsureStoreExists(name string) error {
 		return nil
 	}
 	return mgr.db.Create(&Store{Name: name}).Error
-
 }
 
 func (mgr *AppDatabaseMgr) GetAllStores() ([]*Store, error) {
