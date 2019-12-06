@@ -40,7 +40,11 @@ func (mgr *AppDatabaseMgr) SearchArtists(name string) ([]*Artist, error) {
 }
 
 func (mgr *AppDatabaseMgr) EnsureArtistExists(artist *Artist) error {
-	return mgr.db.Create(artist).Error
+	_, err := mgr.GetArtist(artist.ID)
+	if err != nil {
+		return mgr.db.Create(artist).Error
+	}
+	return nil
 }
 
 func (mgr *AppDatabaseMgr) GetArtist(id int64) (*Artist, error) {
