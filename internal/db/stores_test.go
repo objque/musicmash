@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testDBSuite) TestStoreType() {
+func (t *testDBSuite) TestStores_EnsureExists() {
 	// action
 	assert.NoError(t.T(), DbMgr.EnsureStoreExists(testutil.StoreDeezer))
 
@@ -13,11 +13,11 @@ func (t *testDBSuite) TestStoreType() {
 	assert.True(t.T(), DbMgr.IsStoreExists(testutil.StoreDeezer))
 }
 
-func (t *testDBSuite) TestStoreType_NotExists() {
+func (t *testDBSuite) TestStores_NotExists() {
 	assert.False(t.T(), DbMgr.IsStoreExists(testutil.StoreDeezer))
 }
 
-func (t *testDBSuite) TestStoreType_GetAll() {
+func (t *testDBSuite) TestStores_GetAll() {
 	// arrange
 	assert.NoError(t.T(), DbMgr.EnsureStoreExists(testutil.StoreDeezer))
 	assert.NoError(t.T(), DbMgr.EnsureStoreExists(testutil.StoreApple))
