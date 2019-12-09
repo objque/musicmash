@@ -3,10 +3,10 @@ package db
 import "github.com/jinzhu/gorm"
 
 var tables = []interface{}{
-	Artist{},
-	Association{},
-	Store{},
-	Album{},
+	&Artist{},
+	&Association{},
+	&Store{},
+	&Album{},
 	&Release{},
 	&LastAction{},
 	&Subscription{},
