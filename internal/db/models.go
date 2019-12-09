@@ -9,7 +9,7 @@ var tables = []interface{}{
 	Album{},
 	&Release{},
 	&LastAction{},
-	Subscription{},
+	&Subscription{},
 	&Notification{},
 	&NotificationService{},
 	&NotificationSettings{},
