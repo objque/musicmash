@@ -1,17 +1,25 @@
 package db
 
+import "time"
+
 type Subscription struct {
-	ID       uint64 `json:"-"         gorm:"primary_key"     sql:"AUTO_INCREMENT"`
-	UserName string `json:"-"         gorm:"unique_index:idx_user_name_artist_id"`
-	ArtistID int64  `json:"artist_id" gorm:"unique_index:idx_user_name_artist_id"`
+	ID        uint64    `json:"-"         gorm:"primary_key"     sql:"AUTO_INCREMENT"`
+	CreatedAt time.Time `json:"-"`
+	UserName  string    `json:"-"         gorm:"unique_index:idx_user_name_artist_id"`
+	ArtistID  int64     `json:"artist_id" gorm:"unique_index:idx_user_name_artist_id"`
 }
 
 type SubscriptionMgr interface {
 	GetSimpleUserSubscriptions(userName string) ([]int64, error)
 	GetUserSubscriptions(userName string) ([]*Subscription, error)
 	GetArtistsSubscriptions(artists []int64) ([]*Subscription, error)
+	CreateSubscription(subscription *Subscription) error
 	SubscribeUser(userName string, artists []int64) error
 	UnSubscribeUser(userName string, artists []int64) error
+}
+
+func (mgr *AppDatabaseMgr) CreateSubscription(subscription *Subscription) error {
+	return mgr.db.Create(&subscription).Error
 }
 
 func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string) ([]*Subscription, error) {

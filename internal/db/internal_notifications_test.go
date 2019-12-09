@@ -17,8 +17,16 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	// create artist
 	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: testutil.StoreIDQ, Name: testutil.ArtistArchitects}))
 	// subscribe users
-	assert.NoError(t.T(), DbMgr.SubscribeUser(testutil.UserObjque, []int64{testutil.StoreIDQ}))
-	assert.NoError(t.T(), DbMgr.SubscribeUser(testutil.UserBot, []int64{testutil.StoreIDQ}))
+	assert.NoError(t.T(), DbMgr.CreateSubscription(&Subscription{
+		CreatedAt: time.Now().UTC().AddDate(-1, 0, 0),
+		UserName:  testutil.UserObjque,
+		ArtistID:  testutil.StoreIDQ,
+	}))
+	assert.NoError(t.T(), DbMgr.CreateSubscription(&Subscription{
+		CreatedAt: time.Now().UTC().AddDate(-1, 0, 0),
+		UserName:  testutil.UserBot,
+		ArtistID:  testutil.StoreIDQ,
+	}))
 	// fill contacts
 	assert.NoError(t.T(), DbMgr.EnsureNotificationServiceExists(notificationService))
 	assert.NoError(t.T(), DbMgr.EnsureNotificationSettingsExists(&NotificationSettings{
@@ -98,4 +106,48 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 		assert.Equal(t.T(), testutil.StoreApple, notification.StoreName)
 		assert.Contains(t.T(), notification.StoreID, "have-to-be-in-output")
 	}
+}
+
+func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
+	// user should not receive notifications about releases
+	// which released before he subscribed for an artist
+
+	// arrange
+	// create artist
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: testutil.StoreIDQ, Name: testutil.ArtistArchitects}))
+	// subscribe users
+	assert.NoError(t.T(), DbMgr.CreateSubscription(&Subscription{
+		// by default created_at is now()
+		UserName: testutil.UserObjque,
+		ArtistID: testutil.StoreIDQ,
+	}))
+	// fill releases
+	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
+		ArtistID:  testutil.StoreIDQ,
+		Title:     testutil.ReleaseArchitectsHollyHell,
+		Released:  time.Now().UTC().AddDate(0, 0, -15),
+		StoreName: testutil.StoreApple,
+		StoreID:   "this-oldest-release-wont-be-in-output",
+	}))
+	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
+		ArtistID:  testutil.StoreIDQ,
+		Title:     testutil.ArtistAlgorithm,
+		Released:  time.Now().UTC().AddDate(1, 0, 0),
+		StoreName: testutil.StoreApple,
+		StoreID:   "this-future-release-have-to-be-in-output",
+	}))
+
+	// action
+	notifications, err := DbMgr.FindNotReceivedNotifications()
+
+	// assert
+	assert.NoError(t.T(), err)
+	// user subscribed now(), so:
+	// should receive notification about future release
+	// shouldn't receive notification about old release
+	assert.Len(t.T(), notifications, 1)
+	assert.Equal(t.T(), int64(testutil.StoreIDQ), notifications[0].ArtistID)
+	assert.Equal(t.T(), testutil.ArtistAlgorithm, notifications[0].Title)
+	assert.Equal(t.T(), testutil.StoreApple, notifications[0].StoreName)
+	assert.Contains(t.T(), notifications[0].StoreID, "this-future-release-have-to-be-in-output")
 }
