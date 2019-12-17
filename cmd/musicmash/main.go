@@ -112,8 +112,8 @@ func mustGetHTTPClient() *http.Client {
 }
 
 func isArgProvided(argName string) bool {
-	for _, flag := range os.Args {
-		if strings.Contains(flag, argName) {
+	for _, arg := range os.Args {
+		if strings.Contains(arg, argName) {
 			return true
 		}
 	}
