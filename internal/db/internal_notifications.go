@@ -6,6 +6,7 @@ type InternalNotification struct {
 	Artist
 	Release
 	NotificationSettings
+	ArtistName    string
 	ReleaseID     uint64
 	ReleasePoster string
 }
@@ -19,7 +20,7 @@ func (mgr *AppDatabaseMgr) FindNotReceivedNotifications() ([]*InternalNotificati
 	const query = `
 SELECT releases.id as release_id,
        releases.artist_id,
-       artists.name,
+       artists.name as artist_name,
        releases.title,
        releases.released,
        releases.store_id,

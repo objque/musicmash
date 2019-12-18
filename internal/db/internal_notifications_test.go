@@ -100,7 +100,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	assert.Len(t.T(), notifications, 4)
 	for _, notification := range notifications {
 		assert.Equal(t.T(), int64(testutil.StoreIDQ), notification.ArtistID)
-		assert.Equal(t.T(), testutil.ArtistArchitects, notification.Name)
+		assert.Equal(t.T(), testutil.ArtistArchitects, notification.ArtistName)
 		assert.Equal(t.T(), notificationService, notification.Service)
 		assert.Equal(t.T(), notificationData, notification.Data)
 		assert.Equal(t.T(), testutil.StoreApple, notification.StoreName)
@@ -148,6 +148,7 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 	// shouldn't receive notification about old release
 	assert.Len(t.T(), notifications, 1)
 	assert.Equal(t.T(), int64(testutil.StoreIDQ), notifications[0].ArtistID)
+	assert.Equal(t.T(), testutil.ArtistArchitects, notifications[0].ArtistName)
 	assert.Equal(t.T(), testutil.ArtistAlgorithm, notifications[0].Title)
 	assert.Equal(t.T(), testutil.StoreApple, notifications[0].StoreName)
 	assert.Equal(t.T(), testutil.PosterSimple, notifications[0].ReleasePoster)
