@@ -7,6 +7,7 @@ all:
 
 clean:
 	rm bin/musicmash || true
+	rm bin/musicmashctl || true
 
 build: clean
 	go build -o bin/musicmash ./cmd/...
