@@ -11,16 +11,15 @@ import (
 )
 
 func NewCreateCommand() *cobra.Command {
-	var userName string
+	setting := notifysettings.Settings{}
 	cmd := &cobra.Command{
-		Use:          "create [OPTIONS] <service> <data>",
+		Use:          "create [OPTIONS] <username>",
 		Short:        "Create new notifications settings",
-		Args:         cobra.ExactArgs(2),
+		Args:         cobra.ExactArgs(1),
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			url := fmt.Sprintf("http://%v:%v", config.Config.HTTP.IP, config.Config.HTTP.Port)
-			setting := notifysettings.Settings{Service: args[0], Data: args[1]}
-			err := notifysettings.Create(api.NewProvider(url, 1), userName, &setting)
+			err := notifysettings.Create(api.NewProvider(url, 1), args[0], &setting)
 			if err != nil {
 				return err
 			}
@@ -30,7 +29,8 @@ func NewCreateCommand() *cobra.Command {
 	}
 
 	flags := cmd.Flags()
-	flags.StringVar(&userName, "username", "", "Username which will store this settings")
-	_ = cmd.MarkFlagRequired("username")
+	flags.StringVar(&setting.Service, "service", "telegram", "Service which will be used for notifications")
+	flags.StringVar(&setting.Data, "data", "", "Data for notifier. e.g chat_id for telegram")
+	_ = cmd.MarkFlagRequired("data")
 	return cmd
 }
