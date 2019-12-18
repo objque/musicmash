@@ -6,7 +6,8 @@ type InternalNotification struct {
 	Artist
 	Release
 	NotificationSettings
-	ReleaseID uint64
+	ReleaseID     uint64
+	ReleasePoster string
 }
 
 type InternalNotificationMgr interface {
@@ -23,7 +24,7 @@ SELECT releases.id as release_id,
        releases.released,
        releases.store_id,
        releases.store_name,
-       releases.poster,
+       releases.poster as release_poster,
        subscriptions.user_name,
        notification_settings.service,
        notification_settings.data

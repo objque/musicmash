@@ -135,6 +135,7 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 		Released:  time.Now().UTC().AddDate(1, 0, 0),
 		StoreName: testutil.StoreApple,
 		StoreID:   "this-future-release-have-to-be-in-output",
+		Poster:    testutil.PosterSimple,
 	}))
 
 	// action
@@ -149,5 +150,6 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 	assert.Equal(t.T(), int64(testutil.StoreIDQ), notifications[0].ArtistID)
 	assert.Equal(t.T(), testutil.ArtistAlgorithm, notifications[0].Title)
 	assert.Equal(t.T(), testutil.StoreApple, notifications[0].StoreName)
+	assert.Equal(t.T(), testutil.PosterSimple, notifications[0].ReleasePoster)
 	assert.Contains(t.T(), notifications[0].StoreID, "this-future-release-have-to-be-in-output")
 }
