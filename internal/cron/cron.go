@@ -23,9 +23,9 @@ func (c *cron) Run() {
 		}
 
 		now := time.Now().UTC()
-		log.Infof("Start %sing stage for %s...", c.ActionName, now.String())
+		log.Infof("Start %sing stage", c.ActionName)
 		c.Action()
-		log.Infof("Finish %sing stage %s...", c.ActionName, time.Now().UTC().String())
+		log.Infof("Finish %sing stage", c.ActionName)
 		log.Infof("%sing stage elapsed %s", strings.Title(c.ActionName), time.Now().UTC().Sub(now).String())
 		if err := db.DbMgr.SetLastActionDate(c.ActionName, now); err != nil {
 			log.Errorf("can't save last_action date for %s: %v", c.ActionName, err)
