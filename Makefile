@@ -45,8 +45,12 @@ lint-all l:
 	bash ./scripts/revive.sh
 	bash ./scripts/golangci-lint.sh
 
+install-arm7-deps iarm7:
+	apt update && apt install -y gcc-arm-linux-gnueabi/stable
+
 build-arm7: clean
-	# you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7
+	# you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7:
+	# make iarm
 	env GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=arm-linux-gnueabi-gcc go build -v -o ./bin/musicmash ./cmd/musicmash/...
 	env GOOS=linux GOARCH=arm GOARM=7 go build -v -o ./bin/musicmashctl ./cmd/musicmashctl/...
 
