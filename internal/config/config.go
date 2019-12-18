@@ -32,9 +32,8 @@ func New() *AppConfig {
 			Level: "INFO",
 		},
 		Fetcher: FetcherConfig{
-			Enabled:           true,
-			RefetchAfterHours: 1,
-			Delay:             8,
+			Enabled: true,
+			Delay:   8,
 		},
 		Stores: StoresConfig{
 			"itunes": {

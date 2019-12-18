@@ -31,9 +31,8 @@ type DBConfig struct {
 }
 
 type FetcherConfig struct {
-	Enabled           bool    `yaml:"enabled"`
-	RefetchAfterHours float64 `yaml:"refetch_after_hours"`
-	Delay             float64 `yaml:"delay"`
+	Enabled bool    `yaml:"enabled"`
+	Delay   float64 `yaml:"delay"`
 }
 
 type NotifierConfig struct {

@@ -17,7 +17,6 @@ log:
 
 fetcher:
   enabled: true
-  refetch_after_hours: 1
   delay: 8 # hours
 
 stores:
