@@ -17,7 +17,6 @@ func (t *testDBSuite) SetupTest() {
 }
 
 func (t *testDBSuite) TearDownTest() {
-	_ = DbMgr.DropAllTables()
 	_ = DbMgr.Close()
 }
 

@@ -18,7 +18,6 @@ func (t *testCronSuite) SetupTest() {
 }
 
 func (t *testCronSuite) TearDownTest() {
-	_ = db.DbMgr.DropAllTables()
 	_ = db.DbMgr.Close()
 }
 

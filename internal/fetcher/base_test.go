@@ -39,7 +39,6 @@ func (t *testFetcherSuite) SetupTest() {
 }
 
 func (t *testFetcherSuite) TearDownTest() {
-	_ = db.DbMgr.DropAllTables()
 	_ = db.DbMgr.Close()
 }
 

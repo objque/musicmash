@@ -38,7 +38,6 @@ func (t *testAppleMusicClientSuite) SetupTest() {
 }
 
 func (t *testAppleMusicClientSuite) TearDownTest() {
-	_ = db.DbMgr.DropAllTables()
 	_ = db.DbMgr.Close()
 }
 

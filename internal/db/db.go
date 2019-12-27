@@ -28,7 +28,6 @@ type DataMgr interface {
 	Commit() *AppDatabaseMgr
 	Rollback() *AppDatabaseMgr
 	Close() error
-	DropAllTables() error
 	Ping() error
 	GetDialectName() string
 	ApplyMigrations(pathToMigrations string) error
@@ -66,10 +65,6 @@ func (mgr *AppDatabaseMgr) Rollback() *AppDatabaseMgr {
 
 func (mgr *AppDatabaseMgr) Close() error {
 	return mgr.db.Close()
-}
-
-func (mgr *AppDatabaseMgr) DropAllTables() error {
-	return DropAllTables(mgr.db)
 }
 
 func (mgr *AppDatabaseMgr) Ping() error {
