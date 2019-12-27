@@ -6,6 +6,7 @@ import (
 
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/pkg/api"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -22,6 +23,7 @@ func (t *testAPISuite) SetupSuite() {
 
 func (t *testAPISuite) SetupTest() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
+	assert.NoError(t.T(), db.DbMgr.ApplyMigrations("../../migrations/sqlite3"))
 }
 
 func (t *testAPISuite) TearDownTest() {

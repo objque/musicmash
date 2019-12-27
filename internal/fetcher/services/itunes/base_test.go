@@ -10,6 +10,7 @@ import (
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/testutils/vars"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -33,6 +34,7 @@ func (t *testAppleMusicClientSuite) SetupSuite() {
 
 func (t *testAppleMusicClientSuite) SetupTest() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
+	assert.NoError(t.T(), db.DbMgr.ApplyMigrations("../../../../migrations/sqlite3"))
 }
 
 func (t *testAppleMusicClientSuite) TearDownTest() {

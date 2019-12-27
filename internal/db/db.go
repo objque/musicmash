@@ -2,7 +2,8 @@ package db
 
 import (
 	"github.com/jinzhu/gorm"
-	"github.com/pkg/errors"
+	"github.com/musicmash/musicmash/internal/log"
+	migrate "github.com/rubenv/sql-migrate"
 
 	// load dialects
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -30,6 +31,7 @@ type DataMgr interface {
 	DropAllTables() error
 	Ping() error
 	GetDialectName() string
+	ApplyMigrations(pathToMigrations string) error
 }
 
 type AppDatabaseMgr struct {
@@ -42,17 +44,11 @@ func NewAppDatabaseMgr(db *gorm.DB) *AppDatabaseMgr {
 
 func NewMainDatabaseMgr() *AppDatabaseMgr {
 	db := InitMain()
-	if err := CreateAll(db.Debug()); err != nil {
-		panic(errors.Wrap(err, "tried to create tables"))
-	}
 	return NewAppDatabaseMgr(db)
 }
 
 func NewFakeDatabaseMgr() *AppDatabaseMgr {
 	db := InitFake()
-	if err := CreateTables(db); err != nil {
-		panic(errors.Wrap(err, "tried to create tables"))
-	}
 	return NewAppDatabaseMgr(db)
 }
 
@@ -82,4 +78,15 @@ func (mgr *AppDatabaseMgr) Ping() error {
 
 func (mgr *AppDatabaseMgr) GetDialectName() string {
 	return mgr.db.Dialect().GetName()
+}
+
+func (mgr *AppDatabaseMgr) ApplyMigrations(pathToMigrations string) error {
+	migrations := &migrate.FileMigrationSource{Dir: pathToMigrations}
+	n, err := migrate.Exec(mgr.db.DB(), mgr.GetDialectName(), migrations, migrate.Up)
+	if err != nil {
+		return err
+	}
+
+	log.Infof("Applied %d migrations!\n", n)
+	return nil
 }

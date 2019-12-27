@@ -3,6 +3,7 @@ package db
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -12,6 +13,7 @@ type testDBSuite struct {
 
 func (t *testDBSuite) SetupTest() {
 	DbMgr = NewFakeDatabaseMgr()
+	assert.NoError(t.T(), DbMgr.ApplyMigrations("../../migrations/sqlite3"))
 }
 
 func (t *testDBSuite) TearDownTest() {

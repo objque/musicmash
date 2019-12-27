@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -13,6 +14,7 @@ type testCronSuite struct {
 
 func (t *testCronSuite) SetupTest() {
 	db.DbMgr = db.NewFakeDatabaseMgr()
+	assert.NoError(t.T(), db.DbMgr.ApplyMigrations("../../migrations/sqlite3"))
 }
 
 func (t *testCronSuite) TearDownTest() {

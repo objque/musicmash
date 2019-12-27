@@ -1,0 +1,4 @@
+development:
+    dialect: sqlite3
+    datasource: musicmash.sqlite3
+    dir: migrations/sqlite3
