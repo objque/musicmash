@@ -4,10 +4,8 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutils/suite"
 	"github.com/musicmash/musicmash/pkg/api"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 )
 
 type testAPISuite struct {
@@ -17,17 +15,17 @@ type testAPISuite struct {
 }
 
 func (t *testAPISuite) SetupSuite() {
+	t.Suite.SetupTest()
 	t.server = httptest.NewServer(getMux())
 	t.client = api.NewProvider(t.server.URL, 1)
 }
 
 func (t *testAPISuite) SetupTest() {
-	db.DbMgr = db.NewFakeDatabaseMgr()
-	assert.NoError(t.T(), db.DbMgr.ApplyMigrations("../../migrations/sqlite3"))
+	t.Suite.SetupTest()
 }
 
 func (t *testAPISuite) TearDownTest() {
-	_ = db.DbMgr.Close()
+	t.Suite.TearDownTest()
 }
 
 func (t *testAPISuite) TearDownSuite() {

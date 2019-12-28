@@ -8,10 +8,8 @@ import (
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/config"
-	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutils/suite"
 	"github.com/musicmash/musicmash/internal/testutils/vars"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 )
 
 type testAppleMusicClientSuite struct {
@@ -33,12 +31,11 @@ func (t *testAppleMusicClientSuite) SetupSuite() {
 }
 
 func (t *testAppleMusicClientSuite) SetupTest() {
-	db.DbMgr = db.NewFakeDatabaseMgr()
-	assert.NoError(t.T(), db.DbMgr.ApplyMigrations("../../../../migrations/sqlite3"))
+	t.Suite.SetupTest()
 }
 
 func (t *testAppleMusicClientSuite) TearDownTest() {
-	_ = db.DbMgr.Close()
+	t.Suite.TearDownTest()
 }
 
 func (t *testAppleMusicClientSuite) TearDownSuite() {

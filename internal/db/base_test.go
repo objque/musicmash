@@ -13,7 +13,7 @@ type testDBSuite struct {
 
 func (t *testDBSuite) SetupTest() {
 	DbMgr = NewFakeDatabaseMgr()
-	assert.NoError(t.T(), DbMgr.ApplyMigrations("../../migrations/sqlite3"))
+	assert.NoError(t.T(), DbMgr.ApplyMigrations(GetPathToMigrationsDir()))
 }
 
 func (t *testDBSuite) TearDownTest() {

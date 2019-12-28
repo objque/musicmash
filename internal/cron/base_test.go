@@ -3,9 +3,7 @@ package cron
 import (
 	"testing"
 
-	"github.com/musicmash/musicmash/internal/db"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
+	"github.com/musicmash/musicmash/internal/testutils/suite"
 )
 
 type testCronSuite struct {
@@ -13,12 +11,11 @@ type testCronSuite struct {
 }
 
 func (t *testCronSuite) SetupTest() {
-	db.DbMgr = db.NewFakeDatabaseMgr()
-	assert.NoError(t.T(), db.DbMgr.ApplyMigrations("../../migrations/sqlite3"))
+	t.Suite.SetupTest()
 }
 
 func (t *testCronSuite) TearDownTest() {
-	_ = db.DbMgr.Close()
+	t.Suite.TearDownTest()
 }
 
 func TestCronSuite(t *testing.T) {

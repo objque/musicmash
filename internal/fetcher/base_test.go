@@ -6,10 +6,8 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/config"
-	"github.com/musicmash/musicmash/internal/db"
+	"github.com/musicmash/musicmash/internal/testutils/suite"
 	"github.com/musicmash/musicmash/internal/testutils/vars"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/suite"
 )
 
 type testFetcherSuite struct {
@@ -34,12 +32,11 @@ func (t *testFetcherSuite) SetupSuite() {
 }
 
 func (t *testFetcherSuite) SetupTest() {
-	db.DbMgr = db.NewFakeDatabaseMgr()
-	assert.NoError(t.T(), db.DbMgr.ApplyMigrations("../../migrations/sqlite3"))
+	t.Suite.SetupTest()
 }
 
 func (t *testFetcherSuite) TearDownTest() {
-	_ = db.DbMgr.Close()
+	t.Suite.TearDownTest()
 }
 
 func (t *testFetcherSuite) TearDownSuite() {
