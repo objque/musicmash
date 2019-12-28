@@ -7,21 +7,21 @@ import (
 
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
-	"github.com/musicmash/musicmash/internal/testutils"
+	"github.com/musicmash/musicmash/internal/testutils/vars"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestTelegramUtils_MakeText(t *testing.T) {
 	// arrange
 	release := db.Release{
-		StoreName: testutils.StoreApple,
-		Title:     testutils.ReleaseArchitectsHollyHell,
+		StoreName: vars.StoreApple,
+		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  time.Now().UTC().Truncate(time.Hour).Add(-time.Hour),
-		Poster:    testutils.PosterSimple,
+		Poster:    vars.PosterSimple,
 	}
 
 	// action
-	text := makeText(testutils.ArtistArchitects, &release)
+	text := makeText(vars.ArtistArchitects, &release)
 
 	// assert
 	assert.Equal(t, "New album released \n*Holly Hell*\nby Architects [\u200c\u200c](http://pic.jpeg)", text)
@@ -30,16 +30,16 @@ func TestTelegramUtils_MakeText(t *testing.T) {
 func TestTelegramUtils_MakeButtons(t *testing.T) {
 	// arrange
 	release := db.Release{
-		StoreName: testutils.StoreApple,
-		Title:     testutils.ReleaseArchitectsHollyHell,
+		StoreName: vars.StoreApple,
+		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  time.Now().UTC().Truncate(time.Hour).Add(-time.Hour),
-		Poster:    testutils.PosterSimple,
-		StoreID:   testutils.StoreIDA,
+		Poster:    vars.PosterSimple,
+		StoreID:   vars.StoreIDA,
 	}
 	config.Config = &config.AppConfig{
 		Stores: config.StoresConfig{
-			testutils.StoreApple: {
-				Name:       testutils.StoreApple,
+			vars.StoreApple: {
+				Name:       vars.StoreApple,
 				ReleaseURL: "https://itunes.apple.com/us/album/%s",
 			},
 		},
@@ -50,9 +50,9 @@ func TestTelegramUtils_MakeButtons(t *testing.T) {
 
 	// assert
 	assert.Len(t, *buttons, 1)
-	const wantText = "Listen on " + testutils.StoreApple
+	const wantText = "Listen on " + vars.StoreApple
 	assert.Equal(t, wantText, (*buttons)[0][0].Text)
-	const wantURL = "https://itunes.apple.com/us/album/" + testutils.StoreIDA
+	const wantURL = "https://itunes.apple.com/us/album/" + vars.StoreIDA
 	assert.NotNil(t, (*buttons)[0][0].URL)
 	assert.Equal(t, wantURL, *(*buttons)[0][0].URL)
 }
@@ -61,14 +61,14 @@ func TestTelegramUtils_MakeText_Announced(t *testing.T) {
 	// arrange
 	released := time.Now().UTC().Truncate(time.Hour).Add(time.Hour * 48)
 	release := db.Release{
-		StoreName: testutils.StoreApple,
-		Title:     testutils.ReleaseArchitectsHollyHell,
+		StoreName: vars.StoreApple,
+		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  released,
-		Poster:    testutils.PosterSimple,
+		Poster:    vars.PosterSimple,
 	}
 
 	// action
-	text := makeText(testutils.ArtistArchitects, &release)
+	text := makeText(vars.ArtistArchitects, &release)
 
 	// assert
 	wantMessage := fmt.Sprintf("New album announced \n*Holly Hell*\nby Architects\nRelease date: %s [\u200c\u200c](http://pic.jpeg)", released.Format(time.RFC850))

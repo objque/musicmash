@@ -9,7 +9,7 @@ import (
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
-	"github.com/musicmash/musicmash/internal/testutils"
+	"github.com/musicmash/musicmash/internal/testutils/vars"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -23,7 +23,7 @@ type testAppleMusicClientSuite struct {
 func (t *testAppleMusicClientSuite) SetupSuite() {
 	t.mux = http.NewServeMux()
 	t.server = httptest.NewServer(t.mux)
-	t.provider = itunes.NewProvider(t.server.URL, testutils.TokenSimple, time.Minute)
+	t.provider = itunes.NewProvider(t.server.URL, vars.TokenSimple, time.Minute)
 	config.Config = &config.AppConfig{
 		Fetcher: config.FetcherConfig{
 			Delay: 8,

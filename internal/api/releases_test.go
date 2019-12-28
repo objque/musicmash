@@ -4,7 +4,7 @@ import (
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
-	"github.com/musicmash/musicmash/internal/testutils"
+	"github.com/musicmash/musicmash/internal/testutils/vars"
 	"github.com/musicmash/musicmash/pkg/api/releases"
 	"github.com/stretchr/testify/assert"
 )
@@ -12,14 +12,14 @@ import (
 func (t *testAPISuite) TestReleases_Get() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
-		ID:       testutils.StoreIDQ,
-		Title:    testutils.ArtistArchitects,
+		ID:       vars.StoreIDQ,
+		Title:    vars.ArtistArchitects,
 		Released: time.Now(),
 	}))
 
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
-		ID:       testutils.StoreIDW,
-		Title:    testutils.ArtistArchitects,
+		ID:       vars.StoreIDW,
+		Title:    vars.ArtistArchitects,
 		Released: time.Now().UTC().AddDate(-1, 0, 0),
 	}))
 
@@ -30,8 +30,8 @@ func (t *testAPISuite) TestReleases_Get() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
-	assert.Equal(t.T(), testutils.ArtistArchitects, releases[0].Title)
-	assert.Equal(t.T(), uint64(testutils.StoreIDQ), releases[0].ID)
+	assert.Equal(t.T(), vars.ArtistArchitects, releases[0].Title)
+	assert.Equal(t.T(), uint64(vars.StoreIDQ), releases[0].ID)
 }
 
 func (t *testAPISuite) TestReleases_Get_Empty() {

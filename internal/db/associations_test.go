@@ -1,32 +1,32 @@
 package db
 
 import (
-	"github.com/musicmash/musicmash/internal/testutils"
+	"github.com/musicmash/musicmash/internal/testutils/vars"
 	"github.com/stretchr/testify/assert"
 )
 
 func (t *testDBSuite) TestAssociations_EnsureArtistExistsInStore() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureStoreExists(testutils.StoreDeezer))
+	assert.NoError(t.T(), DbMgr.EnsureStoreExists(vars.StoreDeezer))
 
 	// action
-	err := DbMgr.EnsureAssociationExists(testutils.StoreIDQ, testutils.StoreDeezer, testutils.StoreIDA)
+	err := DbMgr.EnsureAssociationExists(vars.StoreIDQ, vars.StoreDeezer, vars.StoreIDA)
 
 	// assert
 	assert.NoError(t.T(), err)
-	artists, err := DbMgr.GetAllAssociationsFromStore(testutils.StoreDeezer)
+	artists, err := DbMgr.GetAllAssociationsFromStore(vars.StoreDeezer)
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), artists, 1)
 }
 
 func (t *testDBSuite) TestAssociations_GetArtistFromStore() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureStoreExists(testutils.StoreApple))
-	assert.NoError(t.T(), DbMgr.EnsureAssociationExists(testutils.StoreIDQ, testutils.StoreApple, testutils.StoreIDA))
-	assert.NoError(t.T(), DbMgr.EnsureAssociationExists(testutils.StoreIDQ, testutils.StoreApple, testutils.StoreIDB))
+	assert.NoError(t.T(), DbMgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), DbMgr.EnsureAssociationExists(vars.StoreIDQ, vars.StoreApple, vars.StoreIDA))
+	assert.NoError(t.T(), DbMgr.EnsureAssociationExists(vars.StoreIDQ, vars.StoreApple, vars.StoreIDB))
 
 	// action
-	artists, err := DbMgr.GetAssociationFromStore(testutils.StoreIDQ, testutils.StoreApple)
+	artists, err := DbMgr.GetAssociationFromStore(vars.StoreIDQ, vars.StoreApple)
 
 	// assert
 	assert.NoError(t.T(), err)
