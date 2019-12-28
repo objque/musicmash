@@ -16,6 +16,8 @@ db:
   type: sqlite3
   host: ./musicmash.sqlite3
   log: false
+  auto_migrate: false
+  migrations_dir: ./migrations/sqlite3
 
 log:
   file: ./musicmash.log

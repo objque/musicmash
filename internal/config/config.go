@@ -23,9 +23,11 @@ func New() *AppConfig {
 			Port: 8844,
 		},
 		DB: DBConfig{
-			Type: "sqlite3",
-			Host: "./musicmash.sqlite3",
-			Log:  false,
+			Type:          "sqlite3",
+			Host:          "./musicmash.sqlite3",
+			Log:           false,
+			AutoMigrate:   false,
+			MigrationsDir: "./migrations/sqlite3",
 		},
 		Log: LogConfig{
 			File:  "./musicmash.log",
@@ -90,6 +92,10 @@ func (c *AppConfig) FlagSet() {
 	flag.StringVar(&c.DB.Login, "db-login", c.DB.Login, "Database user login")
 	flag.StringVar(&c.DB.Pass, "db-pass", c.DB.Pass, "Database user password")
 	flag.BoolVar(&c.DB.Log, "db-log", c.DB.Log, "Echo database queries")
+	flag.BoolVar(&c.DB.AutoMigrate, "db-auto-migrate", c.DB.AutoMigrate,
+		"Apply migrations before start the service. Error will rise if path is empty or doesn't exist")
+	flag.StringVar(&c.DB.MigrationsDir, "db-migrations-dir", c.DB.MigrationsDir,
+		"Absolute or relative path to the migrations dir")
 
 	flag.StringVar(&c.Log.Level, "log-level", c.Log.Level, "Log level")
 	flag.StringVar(&c.Log.File, "log-file", c.Log.File, "Path to log file")
@@ -121,6 +127,8 @@ func (c *AppConfig) FlagReload() {
 	_ = flag.Set("db-login", c.DB.Login)
 	_ = flag.Set("db-pass", c.DB.Pass)
 	_ = flag.Set("db-log", strconv.FormatBool(c.DB.Log))
+	_ = flag.Set("db-auto-migrate", strconv.FormatBool(c.DB.AutoMigrate))
+	_ = flag.Set("db-migrations-dir", c.DB.MigrationsDir)
 
 	_ = flag.Set("log-level", c.Log.Level)
 	_ = flag.Set("log-file", c.Log.File)

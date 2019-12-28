@@ -60,6 +60,16 @@ func main() {
 	log.Debugf("Application configuration: \n%s", config.Config.Dump())
 
 	db.DbMgr = db.NewMainDatabaseMgr()
+	if config.Config.DB.AutoMigrate {
+		if config.Config.DB.MigrationsDir == "" {
+			exitWithError(errors.New("Auto-migrations is enabled, but path to folder is empty"))
+		}
+
+		if err := db.DbMgr.ApplyMigrations(config.Config.DB.MigrationsDir); err != nil {
+			exitWithError(err)
+		}
+	}
+
 	if config.Config.Sentry.Enabled {
 		err := sentry.Init(sentry.ClientOptions{
 			Dsn:              config.Config.Sentry.Key,

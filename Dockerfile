@@ -10,6 +10,7 @@ ARG BUILD_TIME=unset
 ENV PROJECT=/go/src/github.com/musicmash/musicmash/internal
 
 WORKDIR /go/src/github.com/musicmash/musicmash
+COPY migrations /etc/musicmash/migrations
 COPY cmd cmd
 COPY internal internal
 COPY pkg pkg
@@ -31,7 +32,9 @@ RUN addgroup -S musicmash && adduser -S musicmash -G musicmash
 USER musicmash
 WORKDIR /home/musicmash
 
+COPY --from=builder --chown=musicmash:musicmash /etc/musicmash/migrations /etc/musicmash/migrations
 COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmash /usr/local/bin/musicmash
 COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmashctl /usr/local/bin/musicmashctl
 
 ENTRYPOINT ["/usr/local/bin/musicmash"]
+CMD ["-db-auto-migrate=true", "-db-migrations-dir=/etc/musicmash/migrations/sqlite3"]

@@ -10,6 +10,8 @@ db:
   login: musicmash
   pass: musicmash
   log: false
+  auto_migrate: false
+  migrations_dir: ./migrations
 
 log:
   file: /var/log/musicmash/musicmash.log

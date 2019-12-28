@@ -22,12 +22,14 @@ type LogConfig struct {
 }
 
 type DBConfig struct {
-	Type  string `yaml:"type"`
-	Host  string `yaml:"host"`
-	Name  string `yaml:"name"`
-	Login string `yaml:"login"`
-	Pass  string `yaml:"pass"`
-	Log   bool   `yaml:"log"`
+	Type          string `yaml:"type"`
+	Host          string `yaml:"host"`
+	Name          string `yaml:"name"`
+	Login         string `yaml:"login"`
+	Pass          string `yaml:"pass"`
+	Log           bool   `yaml:"log"`
+	AutoMigrate   bool   `yaml:"auto_migrate"`
+	MigrationsDir string `yaml:"migrations_dir"`
 }
 
 type FetcherConfig struct {
