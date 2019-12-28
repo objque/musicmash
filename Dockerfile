@@ -34,4 +34,4 @@ WORKDIR /home/musicmash
 COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmash /usr/local/bin/musicmash
 COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmashctl /usr/local/bin/musicmashctl
 
-ENTRYPOINT ["musicmash"]
+ENTRYPOINT ["/usr/local/bin/musicmash"]
