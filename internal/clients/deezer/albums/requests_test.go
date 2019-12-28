@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/clients/deezer"
-	"github.com/musicmash/musicmash/internal/testutil"
+	"github.com/musicmash/musicmash/internal/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -32,7 +32,7 @@ func TestClient_GetArtistAlbums(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	url := fmt.Sprintf("/artist/%d/albums", testutil.StoreIDQ)
+	url := fmt.Sprintf("/artist/%d/albums", testutils.StoreIDQ)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
@@ -56,18 +56,18 @@ func TestClient_GetArtistAlbums(t *testing.T) {
   ],
   "total": 57,
   "next": "https://api.deezer.com/artist/13/albums?limit=1&index=1"
-}`, testutil.ReleaseArchitectsHollyHell)))
+}`, testutils.ReleaseArchitectsHollyHell)))
 	})
 
 	// action
-	albums, err := GetArtistAlbums(provider, testutil.StoreIDQ)
+	albums, err := GetArtistAlbums(provider, testutils.StoreIDQ)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, albums, 1)
 	assert.Equal(t, 1045282092, albums[0].ID)
-	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, albums[0].Title)
-	assert.Equal(t, "2018-08-31", albums[0].Released.Value.Format(testutil.DateYYYYHHMM))
+	assert.Equal(t, testutils.ReleaseArchitectsHollyHell, albums[0].Title)
+	assert.Equal(t, "2018-08-31", albums[0].Released.Value.Format(testutils.DateYYYYHHMM))
 }
 
 func TestClient_GetLatestArtistAlbum(t *testing.T) {
@@ -182,7 +182,7 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
     }
   ],
   "total": 17
-}`, testutil.ReleaseArchitectsHollyHell)))
+}`, testutils.ReleaseArchitectsHollyHell)))
 	})
 
 	// action
@@ -191,8 +191,8 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
 	// assert
 	assert.NoError(t, err)
 	assert.Equal(t, 73607432, album.ID)
-	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, album.Title)
-	assert.Equal(t, "2018-10-03", album.Released.Value.Format(testutil.DateYYYYHHMM))
+	assert.Equal(t, testutils.ReleaseArchitectsHollyHell, album.Title)
+	assert.Equal(t, "2018-10-03", album.Released.Value.Format(testutils.DateYYYYHHMM))
 }
 
 func TestClient_GetByID(t *testing.T) {
@@ -200,7 +200,7 @@ func TestClient_GetByID(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	url := fmt.Sprintf("/album/%d", testutil.StoreIDQ)
+	url := fmt.Sprintf("/album/%d", testutils.StoreIDQ)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "id": %d,
@@ -214,15 +214,15 @@ func TestClient_GetByID(t *testing.T) {
   "cover_big": "https://e-cdns-images.dzcdn.net/images/cover/3f4983609cbffd22f0d134f9241ed0fb/500x500-000000-80-0-0.jpg",
   "cover_xl": "https://e-cdns-images.dzcdn.net/images/cover/3f4983609cbffd22f0d134f9241ed0fb/1000x1000-000000-80-0-0.jpg",
   "genre_id": 152
-}`, testutil.StoreIDQ, testutil.ReleaseArchitectsHollyHell)))
+}`, testutils.StoreIDQ, testutils.ReleaseArchitectsHollyHell)))
 	})
 
 	// action
-	album, err := GetByID(provider, testutil.StoreIDQ)
+	album, err := GetByID(provider, testutils.StoreIDQ)
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, testutil.StoreIDQ, album.ID)
-	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, album.Title)
+	assert.Equal(t, testutils.StoreIDQ, album.ID)
+	assert.Equal(t, testutils.ReleaseArchitectsHollyHell, album.Title)
 	assert.NotEmpty(t, album.Poster)
 }

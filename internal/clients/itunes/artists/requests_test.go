@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
-	"github.com/musicmash/musicmash/internal/testutil"
+	"github.com/musicmash/musicmash/internal/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +21,7 @@ var (
 func setup() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
-	provider = itunes.NewProvider(server.URL, testutil.TokenSimple, time.Minute)
+	provider = itunes.NewProvider(server.URL, testutils.TokenSimple, time.Minute)
 }
 
 func teardown() {
@@ -48,14 +48,14 @@ func TestClient_SearchArtist(t *testing.T) {
       ]
     }
   }
-}`, testutil.StoreIDA)))
+}`, testutils.StoreIDA)))
 	})
 
 	// action
-	art, err := SearchArtist(provider, testutil.ArtistArchitects)
+	art, err := SearchArtist(provider, testutils.ArtistArchitects)
 
 	// assert
 	assert.NoError(t, err)
-	assert.Equal(t, testutil.StoreIDA, art.ID)
-	assert.Equal(t, testutil.ArtistArchitects, art.Attributes.Name)
+	assert.Equal(t, testutils.StoreIDA, art.ID)
+	assert.Equal(t, testutils.ArtistArchitects, art.Attributes.Name)
 }

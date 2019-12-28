@@ -7,7 +7,7 @@ import (
 
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/internal/db"
-	"github.com/musicmash/musicmash/internal/testutil"
+	"github.com/musicmash/musicmash/internal/testutils"
 	"github.com/stretchr/testify/suite"
 )
 
@@ -22,7 +22,7 @@ func (t *testFetcherSuite) SetupSuite() {
 	t.server = httptest.NewServer(t.mux)
 	config.Config = &config.AppConfig{
 		Stores: config.StoresConfig{
-			testutil.StoreApple: {
+			testutils.StoreApple: {
 				Fetch:        true,
 				URL:          t.server.URL,
 				Meta:         map[string]string{"token": "xxx"},

@@ -6,14 +6,14 @@ import (
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
-	"github.com/musicmash/musicmash/internal/testutil"
+	"github.com/musicmash/musicmash/internal/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
 func (t *testFetcherSuite) TestFetchAndSave() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureAssociationExists(testutil.StoreIDW, testutil.StoreApple, testutil.StoreIDA))
-	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
+	assert.NoError(t.T(), db.DbMgr.EnsureAssociationExists(testutils.StoreIDW, testutils.StoreApple, testutils.StoreIDA))
+	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutils.StoreIDA)
 	t.mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
 		  "data": [
@@ -37,7 +37,7 @@ func (t *testFetcherSuite) TestFetchAndSave() {
 			  "id": "1045635474"
 			}
 		  ]
-		}`, testutil.StoreIDA)))
+		}`, testutils.StoreIDA)))
 	})
 
 	// action
@@ -47,8 +47,8 @@ func (t *testFetcherSuite) TestFetchAndSave() {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
-	assert.Equal(t.T(), int64(testutil.StoreIDW), releases[0].ArtistID)
-	assert.Equal(t.T(), testutil.StoreIDA, releases[0].StoreID)
+	assert.Equal(t.T(), int64(testutils.StoreIDW), releases[0].ArtistID)
+	assert.Equal(t.T(), testutils.StoreIDA, releases[0].StoreID)
 	assert.Equal(t.T(), 18, releases[0].Released.Day())
 	assert.Equal(t.T(), time.July, releases[0].Released.Month())
 	assert.Equal(t.T(), 2025, releases[0].Released.Year())

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
-	"github.com/musicmash/musicmash/internal/testutil"
+	"github.com/musicmash/musicmash/internal/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -21,7 +21,7 @@ var (
 func setup() {
 	mux = http.NewServeMux()
 	server = httptest.NewServer(mux)
-	provider = itunes.NewProvider(server.URL, testutil.TokenSimple, time.Minute)
+	provider = itunes.NewProvider(server.URL, testutils.TokenSimple, time.Minute)
 }
 
 func teardown() {
@@ -33,7 +33,7 @@ func TestClient_GetArtistAlbums(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	url := fmt.Sprintf("/v1/catalog/us/artists/%v/albums", testutil.StoreIDQ)
+	url := fmt.Sprintf("/v1/catalog/us/artists/%v/albums", testutils.StoreIDQ)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`
 {
@@ -60,20 +60,20 @@ func TestClient_GetArtistAlbums(t *testing.T) {
     }
   ]
 }`,
-			testutil.ArtistArchitects, testutil.ReleaseArchitectsHollyHell, testutil.StoreIDA,
-			testutil.ReleaseArchitectsHollyHell, testutil.StoreIDB)))
+			testutils.ArtistArchitects, testutils.ReleaseArchitectsHollyHell, testutils.StoreIDA,
+			testutils.ReleaseArchitectsHollyHell, testutils.StoreIDB)))
 	})
 
 	// action
-	albums, err := GetArtistAlbums(provider, testutil.StoreIDQ)
+	albums, err := GetArtistAlbums(provider, testutils.StoreIDQ)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, albums, 2)
-	assert.Equal(t, testutil.StoreIDA, albums[0].ID)
-	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, albums[0].Attributes.Name)
-	assert.Equal(t, testutil.StoreIDB, albums[1].ID)
-	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, albums[1].Attributes.Name)
+	assert.Equal(t, testutils.StoreIDA, albums[0].ID)
+	assert.Equal(t, testutils.ReleaseArchitectsHollyHell, albums[0].Attributes.Name)
+	assert.Equal(t, testutils.StoreIDB, albums[1].ID)
+	assert.Equal(t, testutils.ReleaseArchitectsHollyHell, albums[1].Attributes.Name)
 }
 
 func TestClient_GetLatestArtistAlbum(t *testing.T) {
@@ -81,7 +81,7 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
 	defer teardown()
 
 	// arrange
-	url := fmt.Sprintf("/v1/catalog/us/artists/%d/albums", testutil.StoreIDQ)
+	url := fmt.Sprintf("/v1/catalog/us/artists/%d/albums", testutils.StoreIDQ)
 	mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`
 {
@@ -117,16 +117,16 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
       "id": "1045635474"
     }
   ]
-}`, testutil.ArtistArchitects, testutil.ReleaseArchitectsHollyHell, testutil.StoreIDA, testutil.StoreIDB)))
+}`, testutils.ArtistArchitects, testutils.ReleaseArchitectsHollyHell, testutils.StoreIDA, testutils.StoreIDB)))
 	})
 
 	// action
-	albums, err := GetLatestArtistAlbums(provider, testutil.StoreIDQ)
+	albums, err := GetLatestArtistAlbums(provider, testutils.StoreIDQ)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Len(t, albums, 2)
-	assert.Equal(t, testutil.StoreIDA, albums[0].ID)
-	assert.Equal(t, testutil.ReleaseArchitectsHollyHell, albums[0].Attributes.Name)
-	assert.Equal(t, testutil.StoreIDB, albums[1].ID)
+	assert.Equal(t, testutils.StoreIDA, albums[0].ID)
+	assert.Equal(t, testutils.ReleaseArchitectsHollyHell, albums[0].Attributes.Name)
+	assert.Equal(t, testutils.StoreIDB, albums[1].ID)
 }

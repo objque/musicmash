@@ -5,7 +5,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"github.com/musicmash/musicmash/internal/testutil"
+	"github.com/musicmash/musicmash/internal/testutils"
 
 	"github.com/musicmash/musicmash/internal/clients/deezer"
 	"github.com/stretchr/testify/assert"
@@ -57,10 +57,10 @@ func TestClient_SearchArtist(t *testing.T) {
 	})
 
 	// action
-	art, err := SearchArtist(provider, testutil.ArtistSkrillex)
+	art, err := SearchArtist(provider, testutils.ArtistSkrillex)
 
 	// assert
 	assert.NoError(t, err)
 	assert.Equal(t, 525643, art.ID)
-	assert.Equal(t, testutil.ArtistSkrillex, art.Name)
+	assert.Equal(t, testutils.ArtistSkrillex, art.Name)
 }

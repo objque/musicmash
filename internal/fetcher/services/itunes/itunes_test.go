@@ -7,14 +7,14 @@ import (
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
-	"github.com/musicmash/musicmash/internal/testutil"
+	"github.com/musicmash/musicmash/internal/testutils"
 	"github.com/stretchr/testify/assert"
 )
 
 func (t *testAppleMusicClientSuite) TestFetchAndSave() {
 	// arrange
 	f := Fetcher{Provider: t.provider, FetchWorkers: 5}
-	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDA)
+	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutils.StoreIDA)
 	t.mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
   "data": [
@@ -38,7 +38,7 @@ func (t *testAppleMusicClientSuite) TestFetchAndSave() {
       "id": "1045635474"
     }
   ]
-}`, testutil.StoreIDA)))
+}`, testutils.StoreIDA)))
 	})
 
 	// action
@@ -46,8 +46,8 @@ func (t *testAppleMusicClientSuite) TestFetchAndSave() {
 	wg.Add(1)
 	storeArtists := []*db.Association{
 		{
-			ArtistID:  testutil.StoreIDQ,
-			StoreID:   testutil.StoreIDA,
+			ArtistID:  testutils.StoreIDQ,
+			StoreID:   testutils.StoreIDA,
 			StoreName: f.GetStoreName(),
 		},
 	}
@@ -58,8 +58,8 @@ func (t *testAppleMusicClientSuite) TestFetchAndSave() {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
-	assert.Equal(t.T(), int64(testutil.StoreIDQ), releases[0].ArtistID)
-	assert.Equal(t.T(), testutil.StoreIDA, releases[0].StoreID)
+	assert.Equal(t.T(), int64(testutils.StoreIDQ), releases[0].ArtistID)
+	assert.Equal(t.T(), testutils.StoreIDA, releases[0].StoreID)
 	assert.Equal(t.T(), 18, releases[0].Released.Day())
 	assert.Equal(t.T(), time.July, releases[0].Released.Month())
 	assert.Equal(t.T(), 2025, releases[0].Released.Year())
@@ -68,10 +68,10 @@ func (t *testAppleMusicClientSuite) TestFetchAndSave() {
 func (t *testAppleMusicClientSuite) TestFetchAndSave_AlreadyExists() {
 	// arrange
 	f := Fetcher{Provider: t.provider, FetchWorkers: 1}
-	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutil.StoreIDB)
+	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", testutils.StoreIDB)
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
-		ArtistID:  testutil.StoreIDQ,
-		StoreID:   testutil.StoreIDB,
+		ArtistID:  testutils.StoreIDQ,
+		StoreID:   testutils.StoreIDB,
 		StoreName: f.GetStoreName(),
 	}))
 	t.mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
@@ -97,7 +97,7 @@ func (t *testAppleMusicClientSuite) TestFetchAndSave_AlreadyExists() {
       "id": "1045635474"
     }
   ]
-}`, testutil.StoreIDB)))
+}`, testutils.StoreIDB)))
 	})
 
 	// action
@@ -105,8 +105,8 @@ func (t *testAppleMusicClientSuite) TestFetchAndSave_AlreadyExists() {
 	wg.Add(1)
 	storeArtists := []*db.Association{
 		{
-			ArtistID:  testutil.StoreIDQ,
-			StoreID:   testutil.StoreIDB,
+			ArtistID:  testutils.StoreIDQ,
+			StoreID:   testutils.StoreIDB,
 			StoreName: f.GetStoreName(),
 		},
 	}
@@ -117,8 +117,8 @@ func (t *testAppleMusicClientSuite) TestFetchAndSave_AlreadyExists() {
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
-	assert.Equal(t.T(), int64(testutil.StoreIDQ), releases[0].ArtistID)
-	assert.Equal(t.T(), testutil.StoreIDB, releases[0].StoreID)
+	assert.Equal(t.T(), int64(testutils.StoreIDQ), releases[0].ArtistID)
+	assert.Equal(t.T(), testutils.StoreIDB, releases[0].StoreID)
 	assert.Equal(t.T(), 1, releases[0].Released.Day())
 	assert.Equal(t.T(), time.January, releases[0].Released.Month())
 	assert.Equal(t.T(), 1, releases[0].Released.Year())
