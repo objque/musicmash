@@ -20,14 +20,6 @@ func (t *testAPISuite) SetupSuite() {
 	t.client = api.NewProvider(t.server.URL, 1)
 }
 
-func (t *testAPISuite) SetupTest() {
-	t.Suite.SetupTest()
-}
-
-func (t *testAPISuite) TearDownTest() {
-	t.Suite.TearDownTest()
-}
-
 func (t *testAPISuite) TearDownSuite() {
 	t.server.Close()
 }

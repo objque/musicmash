@@ -10,14 +10,6 @@ type testCronSuite struct {
 	suite.Suite
 }
 
-func (t *testCronSuite) SetupTest() {
-	t.Suite.SetupTest()
-}
-
-func (t *testCronSuite) TearDownTest() {
-	t.Suite.TearDownTest()
-}
-
 func TestCronSuite(t *testing.T) {
 	suite.Run(t, new(testCronSuite))
 }

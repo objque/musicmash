@@ -31,14 +31,6 @@ func (t *testFetcherSuite) SetupSuite() {
 	}
 }
 
-func (t *testFetcherSuite) SetupTest() {
-	t.Suite.SetupTest()
-}
-
-func (t *testFetcherSuite) TearDownTest() {
-	t.Suite.TearDownTest()
-}
-
 func (t *testFetcherSuite) TearDownSuite() {
 	t.server.Close()
 }

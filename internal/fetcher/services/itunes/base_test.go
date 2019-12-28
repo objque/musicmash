@@ -30,14 +30,6 @@ func (t *testAppleMusicClientSuite) SetupSuite() {
 	}
 }
 
-func (t *testAppleMusicClientSuite) SetupTest() {
-	t.Suite.SetupTest()
-}
-
-func (t *testAppleMusicClientSuite) TearDownTest() {
-	t.Suite.TearDownTest()
-}
-
 func (t *testAppleMusicClientSuite) TearDownSuite() {
 	t.server.Close()
 }
