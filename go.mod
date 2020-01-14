@@ -26,4 +26,5 @@ require (
 	golang.org/x/tools v0.0.0-20191218184116-bc4a8d394683 // indirect
 	gopkg.in/telegram-bot-api.v4 v4.6.4
 	gopkg.in/yaml.v2 v2.2.7
+	moul.io/http2curl v1.0.0
 )

@@ -6,6 +6,8 @@ import (
 	"net/http"
 
 	"github.com/musicmash/musicmash/pkg/api"
+	log "github.com/sirupsen/logrus"
+	"moul.io/http2curl"
 )
 
 func List(provider *api.Provider) ([]*Store, error) {
@@ -14,6 +16,9 @@ func List(provider *api.Provider) ([]*Store, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	command, _ := http2curl.GetCurlCommand(request)
+	log.Debug(command)
 
 	resp, err := provider.Client.Do(request)
 	if err != nil {

@@ -7,6 +7,8 @@ import (
 	"net/http"
 
 	"github.com/musicmash/musicmash/pkg/api"
+	log "github.com/sirupsen/logrus"
+	"moul.io/http2curl"
 )
 
 func List(provider *api.Provider, userName string) ([]*Subscription, error) {
@@ -16,6 +18,9 @@ func List(provider *api.Provider, userName string) ([]*Subscription, error) {
 		return nil, err
 	}
 	request.Header.Add("x-user-name", userName)
+
+	command, _ := http2curl.GetCurlCommand(request)
+	log.Debug(command)
 
 	resp, err := provider.Client.Do(request)
 	if err != nil {
@@ -43,6 +48,9 @@ func Create(provider *api.Provider, userName string, artists []int64) error {
 	}
 	request.Header.Add("x-user-name", userName)
 
+	command, _ := http2curl.GetCurlCommand(request)
+	log.Debug(command)
+
 	resp, err := provider.Client.Do(request)
 	if err != nil {
 		return err
@@ -63,6 +71,9 @@ func Delete(provider *api.Provider, userName string, artists []int64) error {
 		return err
 	}
 	request.Header.Add("x-user-name", userName)
+
+	command, _ := http2curl.GetCurlCommand(request)
+	log.Debug(command)
 
 	resp, err := provider.Client.Do(request)
 	if err != nil {

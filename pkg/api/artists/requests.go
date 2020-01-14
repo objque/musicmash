@@ -8,6 +8,8 @@ import (
 	"net/url"
 
 	"github.com/musicmash/musicmash/pkg/api"
+	log "github.com/sirupsen/logrus"
+	"moul.io/http2curl"
 )
 
 func Search(provider *api.Provider, name string) ([]*Artist, error) {
@@ -16,6 +18,9 @@ func Search(provider *api.Provider, name string) ([]*Artist, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	command, _ := http2curl.GetCurlCommand(request)
+	log.Debug(command)
 
 	resp, err := provider.Client.Do(request)
 	if err != nil {
@@ -42,6 +47,9 @@ func Create(provider *api.Provider, artist *Artist) error {
 		return err
 	}
 
+	command, _ := http2curl.GetCurlCommand(request)
+	log.Debug(command)
+
 	resp, err := provider.Client.Do(request)
 	if err != nil {
 		return err
@@ -63,6 +71,9 @@ func Associate(provider *api.Provider, info *Association) error {
 		return err
 	}
 
+	command, _ := http2curl.GetCurlCommand(request)
+	log.Debug(command)
+
 	resp, err := provider.Client.Do(request)
 	if err != nil {
 		return err
@@ -78,11 +89,13 @@ func Associate(provider *api.Provider, info *Association) error {
 
 func Get(provider *api.Provider, id int64, _ *GetOptions) (*Artist, error) {
 	url := fmt.Sprintf("%s/artists/%d", provider.URL, id)
-
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		return nil, err
 	}
+
+	command, _ := http2curl.GetCurlCommand(request)
+	log.Debug(command)
 
 	resp, err := provider.Client.Do(request)
 	if err != nil {
@@ -107,6 +120,9 @@ func GetReleases(provider *api.Provider, id int64) ([]*Release, error) {
 	if err != nil {
 		return nil, err
 	}
+
+	command, _ := http2curl.GetCurlCommand(request)
+	log.Debug(command)
 
 	resp, err := provider.Client.Do(request)
 	if err != nil {
