@@ -47,9 +47,6 @@ lint-all l:
 	bash ./scripts/revive.sh
 	bash ./scripts/golangci-lint.sh
 
-install-arm7-deps iarm7:
-	apt update && apt install -y gcc-arm-linux-gnueabi/stable
-
 build-arm7: clean
 	if ! which arm-linux-gnueabi-gcc > /dev/null; then \
 		echo "you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7:"; \
