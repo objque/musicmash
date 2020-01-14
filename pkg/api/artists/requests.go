@@ -5,13 +5,14 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/musicmash/musicmash/pkg/api"
 )
 
 func Search(provider *api.Provider, name string) ([]*Artist, error) {
-	url := fmt.Sprintf("%s/artists?name=%s", provider.URL, name)
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	searchURL := fmt.Sprintf("%s/artists?name=%s", provider.URL, url.QueryEscape(name))
+	request, err := http.NewRequest(http.MethodGet, searchURL, nil)
 	if err != nil {
 		return nil, err
 	}
