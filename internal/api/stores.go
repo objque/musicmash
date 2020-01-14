@@ -1,7 +1,6 @@
 package api
 
 import (
-	"errors"
 	"net/http"
 
 	"github.com/go-chi/chi"
@@ -29,7 +28,7 @@ func (s *StoresController) Register(router chi.Router) {
 func (s *StoresController) listStores(w http.ResponseWriter, _ *http.Request) {
 	stores, err := db.DbMgr.GetAllStores()
 	if err != nil {
-		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteInternalError(w)
 		log.Error(err)
 		return
 	}

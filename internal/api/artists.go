@@ -50,7 +50,7 @@ func (c *ArtistsController) addArtist(w http.ResponseWriter, r *http.Request) {
 
 	err = db.DbMgr.EnsureArtistExists(&artist)
 	if err != nil {
-		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteInternalError(w)
 		log.Error(err)
 		return
 	}
@@ -83,14 +83,14 @@ func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Reque
 			return
 		}
 
-		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteInternalError(w)
 		log.Error(err)
 		return
 	}
 
 	err = db.DbMgr.EnsureAssociationExists(info.ArtistID, info.StoreName, info.StoreID)
 	if err != nil {
-		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteInternalError(w)
 		log.Error(err)
 		return
 	}
@@ -107,7 +107,7 @@ func (c *ArtistsController) searchArtist(w http.ResponseWriter, r *http.Request)
 
 	artists, err := db.DbMgr.SearchArtists(name)
 	if err != nil {
-		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteInternalError(w)
 		log.Error(err)
 		return
 	}
@@ -129,7 +129,7 @@ func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 
-		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteInternalError(w)
 		log.Error(err)
 		return
 	}
@@ -151,14 +151,14 @@ func (c *ArtistsController) getReleasesBy(w http.ResponseWriter, r *http.Request
 			return
 		}
 
-		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteInternalError(w)
 		log.Error(err)
 		return
 	}
 
 	releases, err := db.DbMgr.GetArtistInternalReleases(id)
 	if err != nil {
-		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		httputils.WriteInternalError(w)
 		log.Error(err)
 		return
 	}
