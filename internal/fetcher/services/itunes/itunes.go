@@ -45,6 +45,7 @@ func removeAlbumType(title string) string {
 	return strings.Replace(title, LPReleaseType, "", -1)
 }
 
+//nolint:gocognit
 func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.WaitGroup) {
 	for artist := range artists {
 		artistID, err := strconv.ParseUint(artist.StoreID, 10, 64)
