@@ -24,13 +24,13 @@ func New() *AppConfig {
 		},
 		DB: DBConfig{
 			Type:          "sqlite3",
-			Host:          "./musicmash.sqlite3",
+			Host:          "musicmash.sqlite3",
 			Log:           false,
 			AutoMigrate:   false,
-			MigrationsDir: "./migrations/sqlite3",
+			MigrationsDir: "migrations/sqlite3",
 		},
 		Log: LogConfig{
-			File:  "./musicmash.log",
+			File:  "musicmash.log",
 			Level: "INFO",
 		},
 		Fetcher: FetcherConfig{
