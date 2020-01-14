@@ -17,6 +17,7 @@ type DataMgr interface {
 	AssociationMgr
 	StoreMgr
 	ReleaseMgr
+	InternalReleaseMgr
 	LastActionMgr
 	SubscriptionMgr
 	NotificationMgr

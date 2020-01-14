@@ -1,6 +1,7 @@
 package vars
 
 const (
-	StoreApple  = "itunes"
-	StoreDeezer = "deezer"
+	StoreApple   = "itunes"
+	StoreDeezer  = "deezer"
+	StoreSpotify = "spotify"
 )
