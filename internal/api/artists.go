@@ -29,6 +29,7 @@ func (c *ArtistsController) Register(router chi.Router) {
 		r.Post("/associate", c.associateArtist)
 		r.Get("/", c.searchArtist)
 		r.Get("/{id}", c.getArtist)
+		r.Get("/{artist_id}/releases", c.getReleasesBy)
 	})
 }
 
@@ -134,4 +135,33 @@ func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = httputils.WriteJSON(w, http.StatusOK, &artist)
+}
+
+func (c *ArtistsController) getReleasesBy(w http.ResponseWriter, r *http.Request) {
+	id, err := strconv.ParseInt(chi.URLParam(r, "artist_id"), 10, 64)
+	if err != nil {
+		httputils.WriteError(w, errors.New("wrong id"))
+		return
+	}
+
+	_, err = db.DbMgr.GetArtist(id)
+	if err != nil {
+		if gorm.IsRecordNotFoundError(err) {
+			httputils.WriteError(w, errors.New("artist not found"))
+			return
+		}
+
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		log.Error(err)
+		return
+	}
+
+	releases, err := db.DbMgr.GetArtistInternalReleases(id)
+	if err != nil {
+		httputils.WriteErrorWithCode(w, http.StatusInternalServerError, errors.New("internal"))
+		log.Error(err)
+		return
+	}
+
+	_ = httputils.WriteJSON(w, http.StatusOK, &releases)
 }

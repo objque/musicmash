@@ -9,7 +9,7 @@ func NewReleaseCommand() *cobra.Command {
 		Args:  cobra.NoArgs,
 	}
 	cmd.AddCommand(
-		NewListCommand(),
+		NewByCommand(),
 	)
 	return cmd
 }
