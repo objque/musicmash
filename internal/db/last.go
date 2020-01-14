@@ -8,7 +8,7 @@ const (
 )
 
 type LastAction struct {
-	ID     int `gorm:"primary_key" sql:"AUTO_INCREMENT"`
+	ID     int
 	Date   time.Time
 	Action string
 }

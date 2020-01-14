@@ -6,7 +6,7 @@ import (
 )
 
 type Store struct {
-	Name string `gorm:"primary_key" json:"name"`
+	Name string `json:"name"`
 }
 
 type StoreMgr interface {

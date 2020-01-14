@@ -3,11 +3,11 @@ package db
 import "time"
 
 type Notification struct {
-	ID        int `gorm:"primary_key" sql:"AUTO_INCREMENT"`
+	ID        int
 	Date      time.Time
-	UserName  string `gorm:"unique_index:idx_user_name_release_id_is_coming"`
-	ReleaseID uint64 `gorm:"unique_index:idx_user_name_release_id_is_coming"`
-	IsComing  bool   `gorm:"unique_index:idx_user_name_release_id_is_coming;default:0"`
+	UserName  string
+	ReleaseID uint64
+	IsComing  bool
 }
 
 type NotificationMgr interface {

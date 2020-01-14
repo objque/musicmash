@@ -6,7 +6,7 @@ import (
 )
 
 type NotificationService struct {
-	ID string `gorm:"primary_key"`
+	ID string
 }
 
 type NotificationServiceMgr interface {

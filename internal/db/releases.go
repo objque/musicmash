@@ -10,11 +10,11 @@ type Release struct {
 	ID        uint64    `json:"id"`
 	CreatedAt time.Time `json:"-"`
 	ArtistID  int64     `json:"artist_id"`
-	Title     string    `json:"title" gorm:"size:1000"`
+	Title     string    `json:"title"`
 	Poster    string    `json:"poster"`
-	Released  time.Time `gorm:"type:datetime" json:"released"`
-	StoreName string    `gorm:"unique_index:idx_rel_store_name_store_id" json:"store_name"`
-	StoreID   string    `gorm:"unique_index:idx_rel_store_name_store_id" json:"store_id"`
+	Released  time.Time
+	StoreName string
+	StoreID   string
 }
 
 type ReleaseMgr interface {

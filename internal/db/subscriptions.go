@@ -3,10 +3,10 @@ package db
 import "time"
 
 type Subscription struct {
-	ID        uint64    `json:"-"         gorm:"primary_key"     sql:"AUTO_INCREMENT"`
+	ID        uint64    `json:"-"`
 	CreatedAt time.Time `json:"-"`
-	UserName  string    `json:"-"         gorm:"unique_index:idx_user_name_artist_id"`
-	ArtistID  int64     `json:"artist_id" gorm:"unique_index:idx_user_name_artist_id"`
+	UserName  string    `json:"-"`
+	ArtistID  int64     `json:"artist_id"`
 }
 
 type SubscriptionMgr interface {

@@ -1,7 +1,7 @@
 package db
 
 type NotificationSettings struct {
-	ID       int    `json:"-"      gorm:"primary_key" sql:"AUTO_INCREMENT"`
+	ID       int    `json:"-"`
 	UserName string `json:"-"`
 	Service  string `json:"service"`
 	Data     string `json:"data"`
