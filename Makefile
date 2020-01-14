@@ -51,8 +51,12 @@ install-arm7-deps iarm7:
 	apt update && apt install -y gcc-arm-linux-gnueabi/stable
 
 build-arm7: clean
-	# you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7:
-	# make iarm
+	if ! which arm-linux-gnueabi-gcc > /dev/null; then \
+		echo "you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7:"; \
+		echo "\n  apt update && apt install -y gcc-arm-linux-gnueabi/stable\n"; \
+		exit 1; \
+	fi
+
 	env GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=arm-linux-gnueabi-gcc go build -ldflags="-s -w" -v -o ./bin/musicmash ./cmd/musicmash/...
 	env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -v -o ./bin/musicmashctl ./cmd/musicmashctl/...
 
