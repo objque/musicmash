@@ -42,11 +42,15 @@ func (c *ArtistsController) addArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// do not allow override ID
+	if artist.ID != 0 {
+		httputils.WriteError(w, errors.New("artist id should be empty"))
+		return
+	}
+
 	if artist.Name == "" {
 		httputils.WriteError(w, errors.New("artist name didn't provided"))
 		return
 	}
-	artist.ID = 0
 
 	err = db.DbMgr.EnsureArtistExists(&artist)
 	if err != nil {
