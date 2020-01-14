@@ -75,13 +75,8 @@ func Associate(provider *api.Provider, info *Association) error {
 	return json.NewDecoder(resp.Body).Decode(&info)
 }
 
-func Get(provider *api.Provider, id int64, options *GetOptions) (*Artist, error) {
+func Get(provider *api.Provider, id int64, _ *GetOptions) (*Artist, error) {
 	url := fmt.Sprintf("%s/artists/%d", provider.URL, id)
-	if options != nil {
-		if options.WithAlbums {
-			url = fmt.Sprintf("%v?withAlbums=%t", url, options.WithAlbums)
-		}
-	}
 
 	request, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {

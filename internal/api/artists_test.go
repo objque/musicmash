@@ -115,23 +115,6 @@ func (t *testAPISuite) TestArtists_Get() {
 	assert.NoError(t.T(), err)
 	assert.Equal(t.T(), int64(1), artist.ID)
 	assert.Equal(t.T(), vars.ArtistArchitects, artist.Name)
-	assert.Empty(t.T(), artist.Albums)
-}
-
-func (t *testAPISuite) TestArtists_GetWithAlbums() {
-	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
-	assert.NoError(t.T(), db.DbMgr.EnsureAlbumExists(&db.Album{ArtistID: 1, Name: vars.ReleaseAlgorithmFloatingIP}))
-
-	// action
-	artist, err := artists.Get(t.client, 1, &artists.GetOptions{WithAlbums: true})
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Equal(t.T(), int64(1), artist.ID)
-	assert.Equal(t.T(), vars.ArtistArchitects, artist.Name)
-	assert.Len(t.T(), artist.Albums, 1)
-	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, artist.Albums[0].Name)
 }
 
 func (t *testAPISuite) TestArtists_Get_NotFound() {

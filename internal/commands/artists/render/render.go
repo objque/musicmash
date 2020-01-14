@@ -8,10 +8,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-var (
-	artistHeaders = []string{"id", "name", "poster", "followers", "popularity"}
-	albumHeaders  = []string{"id", "name"}
-)
+var artistHeaders = []string{"id", "name", "poster", "followers", "popularity"}
 
 func Artist(artist *artists.Artist) error {
 	return Artists([]*artists.Artist{artist})
@@ -28,21 +25,6 @@ func Artists(artists []*artists.Artist) error {
 			artists[i].Poster,
 			fmt.Sprintf("%v", artists[i].Followers),
 			fmt.Sprintf("%v", artists[i].Popularity),
-		})
-	}
-	table.Render()
-	return nil
-}
-
-func Albums(albums []*artists.Album) error {
-	_, _ = fmt.Fprintln(os.Stdout, "Albums:")
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader(albumHeaders)
-	table.SetAutoFormatHeaders(false)
-	for i := range albums {
-		table.Append([]string{
-			fmt.Sprintf("%v", albums[i].ID),
-			albums[i].Name,
 		})
 	}
 	table.Render()

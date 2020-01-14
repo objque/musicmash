@@ -16,7 +16,6 @@ type DataMgr interface {
 	ArtistMgr
 	AssociationMgr
 	StoreMgr
-	AlbumMgr
 	ReleaseMgr
 	LastActionMgr
 	SubscriptionMgr
