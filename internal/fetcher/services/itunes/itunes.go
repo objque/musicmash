@@ -69,6 +69,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.W
 			continue
 		}
 
+		log.Debugf("Saving %d releases by %d", len(releases), artistID)
 		tx := db.DbMgr.Begin()
 		for _, release := range releases {
 			title := removeAlbumType(release.Attributes.Name)
@@ -86,6 +87,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.W
 		}
 		tx.Commit()
 		wg.Done()
+		log.Debugf("Finish saving releases by %d", artistID)
 	}
 	log.Infof("Worker #%d is finished", id)
 }

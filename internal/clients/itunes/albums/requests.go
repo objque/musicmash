@@ -36,6 +36,7 @@ func getAlbums(provider *itunes.Provider, url string) (*Data, error) {
 }
 
 func GetArtistAlbums(provider *itunes.Provider, artistID uint64) ([]*Album, error) {
+	log.Debugf("Getting albums by %d", artistID)
 	albumsURL := fmt.Sprintf("%s/v1/catalog/us/artists/%v/albums?limit=100", provider.URL, artistID)
 	data, err := getAlbums(provider, albumsURL)
 	if err != nil {
