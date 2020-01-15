@@ -47,6 +47,7 @@ func removeAlbumType(title string) string {
 
 //nolint:gocognit
 func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.WaitGroup) {
+	log.Infof("Worker #%d is running", id)
 	for artist := range artists {
 		artistID, err := strconv.ParseUint(artist.StoreID, 10, 64)
 		if err != nil {
@@ -86,7 +87,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.W
 		tx.Commit()
 		wg.Done()
 	}
-	log.Debugf("worker #%d finish fetching", id)
+	log.Infof("Worker #%d is finished", id)
 }
 
 func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup, storeArtists []*db.Association) {
