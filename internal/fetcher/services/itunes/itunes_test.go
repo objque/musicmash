@@ -13,7 +13,7 @@ import (
 
 func (t *testAppleMusicClientSuite) TestFetchAndSave() {
 	// arrange
-	f := Fetcher{Provider: t.provider, FetchWorkers: 5}
+	f := NewService(t.provider, 5, 1)
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", vars.StoreIDA)
 	t.mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
@@ -67,7 +67,7 @@ func (t *testAppleMusicClientSuite) TestFetchAndSave() {
 
 func (t *testAppleMusicClientSuite) TestFetchAndSave_AlreadyExists() {
 	// arrange
-	f := Fetcher{Provider: t.provider, FetchWorkers: 1}
+	f := NewService(t.provider, 1, 1)
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", vars.StoreIDB)
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistID:  vars.StoreIDQ,

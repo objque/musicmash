@@ -23,7 +23,7 @@ func getServices() []services.Service {
 
 		if name == "itunes" {
 			itunesProvider := itunes_client.NewProvider(store.URL, store.Meta["token"], time.Minute)
-			fetchers = append(fetchers, itunes.NewService(itunesProvider, store.FetchWorkers))
+			fetchers = append(fetchers, itunes.NewService(itunesProvider, store.FetchWorkers, store.SaveWorkers))
 		}
 	}
 	return fetchers

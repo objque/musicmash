@@ -46,6 +46,7 @@ type NotifierConfig struct {
 type StoreConfig struct {
 	URL          string `yaml:"url"`
 	FetchWorkers int    `yaml:"fetch_workers"`
+	SaveWorkers  int    `yaml:"save_workers"`
 	Meta         Meta   `yaml:"meta"`
 	ReleaseURL   string `yaml:"release_url"`
 	Name         string `yaml:"name"`

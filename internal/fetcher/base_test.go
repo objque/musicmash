@@ -26,6 +26,7 @@ func (t *testFetcherSuite) SetupSuite() {
 				URL:          t.server.URL,
 				Meta:         map[string]string{"token": "xxx"},
 				FetchWorkers: 5,
+				SaveWorkers:  1,
 			},
 		},
 	}

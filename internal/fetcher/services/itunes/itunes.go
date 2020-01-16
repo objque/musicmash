@@ -25,12 +25,14 @@ const (
 type Fetcher struct {
 	Provider     *itunes.Provider
 	FetchWorkers int
+	SaveWorkers  int
 }
 
-func NewService(provider *itunes.Provider, fetchWorkers int) *Fetcher {
+func NewService(provider *itunes.Provider, fetchWorkers, saveWorkers int) *Fetcher {
 	return &Fetcher{
 		Provider:     provider,
 		FetchWorkers: fetchWorkers,
+		SaveWorkers:  saveWorkers,
 	}
 }
 
@@ -45,8 +47,13 @@ func removeAlbumType(title string) string {
 	return strings.Replace(title, LPReleaseType, "", -1)
 }
 
+type batch struct {
+	ArtistID int64
+	Releases []*albums.Album
+}
+
 //nolint:gocognit
-func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.WaitGroup) {
+func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, releases chan<- *batch, wg *sync.WaitGroup) {
 	log.Infof("Worker #%d is running", id)
 	for artist := range artists {
 		artistID, err := strconv.ParseUint(artist.StoreID, 10, 64)
@@ -56,7 +63,7 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.W
 			continue
 		}
 
-		releases, err := albums.GetLatestArtistAlbums(f.Provider, artistID)
+		latestAlbums, err := albums.GetLatestArtistAlbums(f.Provider, artistID)
 		if err != nil {
 			if err == albums.ErrAlbumsNotFound {
 				log.Debugf("Artist with id %s hasn't albums", artist.StoreID)
@@ -68,15 +75,21 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.W
 			wg.Done()
 			continue
 		}
+		releases <- &batch{ArtistID: artist.ArtistID, Releases: latestAlbums}
+	}
+	log.Infof("Fetch worker #%d is finished", id)
+}
 
-		log.Debugf("Saving %d releases by %d", len(releases), artistID)
+func (f *Fetcher) saveWorker(id int, releases <-chan *batch, wg *sync.WaitGroup) {
+	for batch := range releases {
+		log.Debugf("Saving %d releases by %d", len(batch.Releases), batch.ArtistID)
 		tx := db.DbMgr.Begin()
-		for _, release := range releases {
+		for _, release := range batch.Releases {
 			title := removeAlbumType(release.Attributes.Name)
-			err = tx.EnsureReleaseExists(&db.Release{
+			err := tx.EnsureReleaseExists(&db.Release{
 				StoreName: f.GetStoreName(),
 				StoreID:   release.ID,
-				ArtistID:  artist.ArtistID,
+				ArtistID:  batch.ArtistID,
 				Title:     title,
 				Poster:    release.Attributes.Artwork.GetLink(posterWidth, posterHeight),
 				Released:  release.Attributes.ReleaseDate.Value,
@@ -87,19 +100,24 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, wg *sync.W
 		}
 		tx.Commit()
 		wg.Done()
-		log.Debugf("Finish saving releases by %d", artistID)
+		log.Debugf("Finish saving releases by %d", batch.ArtistID)
 	}
-	log.Infof("Worker #%d is finished", id)
+	log.Infof("Save worker #%d is finished", id)
 }
 
 func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup, storeArtists []*db.Association) {
 	jobs := make(chan *db.Association, len(storeArtists))
 	jobsWaitGroup := sync.WaitGroup{}
 	jobsWaitGroup.Add(len(storeArtists))
+	releases := make(chan *batch, 250)
+
+	for w := 1; w <= f.SaveWorkers; w++ {
+		go f.saveWorker(w, releases, &jobsWaitGroup)
+	}
 
 	// Starts up X workers, initially blocked because there are no jobs yet.
 	for w := 1; w <= f.FetchWorkers; w++ {
-		go f.fetchWorker(w, jobs, &jobsWaitGroup)
+		go f.fetchWorker(w, jobs, releases, &jobsWaitGroup)
 	}
 
 	// Here we send `jobs` and then `close` that
@@ -110,5 +128,6 @@ func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup, storeArtists []*db.Associatio
 
 	jobsWaitGroup.Wait()
 	close(jobs)
+	close(releases)
 	wg.Done()
 }
