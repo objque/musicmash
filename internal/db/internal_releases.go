@@ -17,14 +17,9 @@ type InternalRelease struct {
 
 type InternalReleaseMgr interface {
 	GetArtistInternalReleases(id int64) ([]*InternalRelease, error)
-	GetArtistsInternalReleases(ids []int64) ([]*InternalRelease, error)
 }
 
 func (mgr *AppDatabaseMgr) GetArtistInternalReleases(id int64) ([]*InternalRelease, error) {
-	return mgr.GetArtistsInternalReleases([]int64{id})
-}
-
-func (mgr *AppDatabaseMgr) GetArtistsInternalReleases(ids []int64) ([]*InternalRelease, error) {
 	const query = `
 SELECT releases.id,
        releases.artist_id,
@@ -50,12 +45,12 @@ LEFT JOIN releases AS deezer ON (
    releases.title     = deezer.title     AND
    deezer.store_name  = 'deezer'
 )
-WHERE releases.artist_id in (?)
+WHERE releases.artist_id = ?
 GROUP BY releases.title
 ORDER BY releases.released DESC
 `
 	releases := []*InternalRelease{}
-	err := mgr.db.Raw(query, ids).Scan(&releases).Error
+	err := mgr.db.Raw(query, id).Scan(&releases).Error
 	if err != nil {
 		return nil, err
 	}
