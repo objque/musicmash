@@ -125,9 +125,9 @@ func (f *Fetcher) FetchAndSave(wg *sync.WaitGroup, storeArtists []*db.Associatio
 	for _, artist := range storeArtists {
 		jobs <- artist
 	}
+	close(jobs)
 
 	jobsWaitGroup.Wait()
-	close(jobs)
 	close(releases)
 	wg.Done()
 }
