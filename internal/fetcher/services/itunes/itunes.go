@@ -65,13 +65,13 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, releases c
 
 		latestAlbums, err := albums.GetLatestArtistAlbums(f.Provider, artistID)
 		if err != nil {
-			if err == albums.ErrAlbumsNotFound {
-				log.Debugf("Artist with id %s hasn't albums", artist.StoreID)
-				wg.Done()
-				continue
-			}
-
 			log.Error(errors.Wrapf(err, "tried to get albums for artist with id %s", artist.StoreID))
+			wg.Done()
+			continue
+		}
+
+		if len(latestAlbums) == 0 {
+			log.Debugf("Artist with id %s hasn't latest albums", artist.StoreID)
 			wg.Done()
 			continue
 		}
