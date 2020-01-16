@@ -17,6 +17,7 @@ type InternalRelease struct {
 
 type InternalReleaseMgr interface {
 	GetArtistInternalReleases(id int64) ([]*InternalRelease, error)
+	GetUserInternalReleases(userName string, since, till *time.Time) ([]*InternalRelease, error)
 }
 
 func (mgr *AppDatabaseMgr) GetArtistInternalReleases(id int64) ([]*InternalRelease, error) {
@@ -51,6 +52,49 @@ ORDER BY releases.released DESC
 `
 	releases := []*InternalRelease{}
 	err := mgr.db.Raw(query, id).Scan(&releases).Error
+	if err != nil {
+		return nil, err
+	}
+	return releases, nil
+}
+
+func (mgr *AppDatabaseMgr) GetUserInternalReleases(userName string, since, till *time.Time) ([]*InternalRelease, error) {
+	const query = `
+SELECT releases.id,
+       releases.artist_id,
+	   releases.released,
+	   releases.poster,
+	   releases.title,
+	   itunes.store_id  AS itunes_id,
+	   spotify.store_id AS spotify_id,
+	   deezer.store_id  AS deezer_id
+FROM releases AS releases
+LEFT JOIN releases AS itunes ON (
+   releases.artist_id = itunes.artist_id AND
+   releases.title     = itunes.title     AND
+   itunes.store_name  = 'itunes'
+)
+LEFT JOIN releases AS spotify ON (
+   releases.artist_id = spotify.artist_id AND
+   releases.title     = spotify.title     AND
+   spotify.store_name = 'spotify'
+)
+LEFT JOIN releases AS deezer ON (
+   releases.artist_id = deezer.artist_id AND
+   releases.title     = deezer.title     AND
+   deezer.store_name  = 'deezer'
+)
+WHERE releases.artist_id IN (
+   SELECT artist_id FROM subscriptions 
+   WHERE user_name = ?
+) AND (
+   releases.released >= ? AND releases.released < ?
+)
+GROUP BY releases.artist_id, releases.title
+ORDER BY releases.released DESC
+`
+	releases := []*InternalRelease{}
+	err := mgr.db.Raw(query, userName, since.Format("2006-01-02"), till.Format("2006-01-02")).Scan(&releases).Error
 	if err != nil {
 		return nil, err
 	}

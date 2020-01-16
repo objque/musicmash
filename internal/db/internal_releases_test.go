@@ -57,3 +57,24 @@ func (t *testDBSuite) TestInternalReleases_GetArtist() {
 	expected = &InternalRelease{ID: 8, ArtistID: artistID, Title: vars.ReleaseRitaOraLouder, Poster: vars.PosterGiant, Released: r, DeezerID: "8000", SpotifyID: "9000"}
 	assert.Equal(t.T(), expected, releases[3])
 }
+
+func (t *testDBSuite) TestInternalReleases_GetForUser() {
+	// arrange
+	const artistID = 666
+	r := time.Now().UTC().Truncate(time.Hour)
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: artistID}))
+	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{artistID}))
+	t.setupInternalReleases(artistID, r)
+
+	// action
+	since := r.AddDate(0, -1, -3)
+	till := r.AddDate(0, -1, 3)
+	releases, err := DbMgr.GetUserInternalReleases(vars.UserObjque, &since, &till)
+
+	// assert
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
+	r = r.AddDate(0, -1, -1)
+	expected := &InternalRelease{ID: 7, ArtistID: artistID, Title: vars.ReleaseWildwaysTheX, Poster: vars.PosterMiddle, Released: r, ItunesID: "7000"}
+	assert.Equal(t.T(), expected, releases[0])
+}
