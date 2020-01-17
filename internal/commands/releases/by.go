@@ -13,6 +13,7 @@ import (
 )
 
 func NewByCommand() *cobra.Command {
+	var showNames bool
 	cmd := &cobra.Command{
 		Use:          "by <artist_id>",
 		Short:        "List releases from the artist",
@@ -36,9 +37,12 @@ func NewByCommand() *cobra.Command {
 				return nil
 			}
 
-			return render.Releases(result)
+			return render.Releases(result, showNames)
 		},
 	}
+
+	flags := cmd.Flags()
+	flags.BoolVar(&showNames, "names", true, "Replace artist_id with artist_name")
 
 	return cmd
 }
