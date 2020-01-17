@@ -24,9 +24,10 @@ func processDate(value string) *time.Time {
 
 func NewForCommand() *cobra.Command {
 	var (
-		since     string
-		till      string
-		showNames bool
+		since      string
+		till       string
+		showNames  bool
+		showPoster bool
 	)
 	cmd := &cobra.Command{
 		Use:          "show",
@@ -45,7 +46,7 @@ func NewForCommand() *cobra.Command {
 			if err != nil {
 				return err
 			}
-			return render.Releases(result, showNames)
+			return render.Releases(result, showNames, showPoster)
 		},
 	}
 
@@ -53,6 +54,7 @@ func NewForCommand() *cobra.Command {
 	flags.StringVar(&since, "since", now.BeginningOfWeek().Format(layout), "Start date of feed. Format: yyyy-dd-mm")
 	flags.StringVar(&till, "till", "", "End date of feed. Format: yyyy-dd-mm")
 	flags.BoolVar(&showNames, "names", true, "Replace artist_id with artist_name")
+	flags.BoolVar(&showPoster, "show-poster", false, "Show poster column")
 
 	return cmd
 }

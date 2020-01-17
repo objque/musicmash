@@ -10,15 +10,27 @@ import (
 
 var headers = []string{"id", "poster", "released", "artist_id", "title", "itunes_id", "spotify_id", "deezer_id"}
 
-func Releases(releases []*releases.Release, showName bool) error {
+func Releases(releases []*releases.Release, showName, showPoster bool) error {
 	table := tablewriter.NewWriter(os.Stdout)
 	if showName {
 		headers[3] = "artist_name"
 	}
+	if !showPoster {
+		// cut id
+		headers = headers[1:]
+		// replace poster with id
+		headers[0] = "id"
+	}
 	table.SetHeader(headers)
 	table.SetAutoFormatHeaders(false)
 	for i := range releases {
-		row := []string{fmt.Sprint(releases[i].ID), releases[i].Poster, releases[i].Released.Format("2006-01-02")}
+		row := []string{fmt.Sprint(releases[i].ID)}
+
+		if showPoster {
+			row = append(row, fmt.Sprint(releases[i].Poster))
+		}
+
+		row = append(row, releases[i].Released.Format("2006-01-02"))
 
 		if showName {
 			row = append(row, fmt.Sprint(releases[i].ArtistName))
