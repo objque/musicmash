@@ -5,14 +5,15 @@ import (
 )
 
 type InternalRelease struct {
-	ID        uint64    `json:"id"`
-	ArtistID  int64     `json:"artist_id"`
-	Released  time.Time `json:"released"`
-	Poster    string    `json:"poster"`
-	Title     string    `json:"title"`
-	ItunesID  string    `json:"itunes_id"`
-	SpotifyID string    `json:"spotify_id"`
-	DeezerID  string    `json:"deezer_id"`
+	ID         uint64    `json:"id"`
+	ArtistID   int64     `json:"artist_id"`
+	ArtistName string    `json:"artist_name"`
+	Released   time.Time `json:"released"`
+	Poster     string    `json:"poster"`
+	Title      string    `json:"title"`
+	ItunesID   string    `json:"itunes_id"`
+	SpotifyID  string    `json:"spotify_id"`
+	DeezerID   string    `json:"deezer_id"`
 }
 
 type InternalReleaseMgr interface {
@@ -24,6 +25,7 @@ func (mgr *AppDatabaseMgr) GetArtistInternalReleases(id int64) ([]*InternalRelea
 	const query = `
 SELECT releases.id,
        releases.artist_id,
+       artists.name AS artist_name,
 	   releases.released,
 	   releases.poster,
 	   releases.title,
@@ -31,6 +33,9 @@ SELECT releases.id,
 	   spotify.store_id AS spotify_id,
 	   deezer.store_id  AS deezer_id
 FROM releases AS releases
+LEFT JOIN artists ON (
+   releases.artist_id = artists.id
+)
 LEFT JOIN releases AS itunes ON (
    releases.artist_id = itunes.artist_id AND
    releases.title     = itunes.title     AND
@@ -62,6 +67,7 @@ func (mgr *AppDatabaseMgr) GetUserInternalReleases(userName string, since, till 
 	const query = `
 SELECT releases.id,
        releases.artist_id,
+       artists.name AS artist_name,
 	   releases.released,
 	   releases.poster,
 	   releases.title,
@@ -69,6 +75,9 @@ SELECT releases.id,
 	   spotify.store_id AS spotify_id,
 	   deezer.store_id  AS deezer_id
 FROM releases AS releases
+LEFT JOIN artists ON (
+   releases.artist_id = artists.id
+)
 LEFT JOIN releases AS itunes ON (
    releases.artist_id = itunes.artist_id AND
    releases.title     = itunes.title     AND

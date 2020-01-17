@@ -16,7 +16,7 @@ func (t *testAPISuite) fillRelease(release *db.Release) {
 func (t *testAPISuite) TestReleases_Get() {
 	// arrange
 	r := time.Now().UTC()
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
 	assert.NoError(t.T(), db.DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000"})
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000"})
@@ -39,13 +39,15 @@ func (t *testAPISuite) TestReleases_Get() {
 		assert.NoError(t.T(), err)
 		assert.Len(t.T(), feed, 1)
 		expected := &releases.Release{
-			ID: 1, ArtistID: vars.StoreIDQ,
-			Title:     vars.ReleaseAlgorithmFloatingIP,
-			Poster:    vars.PosterSimple,
-			Released:  r,
-			ItunesID:  "1000",
-			DeezerID:  "2000",
-			SpotifyID: "3000",
+			ID:         1,
+			ArtistID:   vars.StoreIDQ,
+			ArtistName: vars.ArtistAlgorithm,
+			Title:      vars.ReleaseAlgorithmFloatingIP,
+			Poster:     vars.PosterSimple,
+			Released:   r,
+			ItunesID:   "1000",
+			DeezerID:   "2000",
+			SpotifyID:  "3000",
 		}
 		assert.Equal(t.T(), expected, feed[0])
 	}
@@ -54,7 +56,7 @@ func (t *testAPISuite) TestReleases_Get() {
 func (t *testAPISuite) TestReleases_Get_EmptyForPeriod() {
 	// arrange
 	r := time.Now().UTC()
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
 	assert.NoError(t.T(), db.DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000"})
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000"})
