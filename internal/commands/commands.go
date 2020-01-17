@@ -3,6 +3,7 @@ package commands
 import (
 	"github.com/musicmash/musicmash/internal/commands/artists"
 	"github.com/musicmash/musicmash/internal/commands/notifysettings"
+	"github.com/musicmash/musicmash/internal/commands/open"
 	"github.com/musicmash/musicmash/internal/commands/releases"
 	"github.com/musicmash/musicmash/internal/commands/stores"
 	"github.com/musicmash/musicmash/internal/commands/subscriptions"
@@ -16,5 +17,6 @@ func AddCommands(cmd *cobra.Command) {
 		subscriptions.NewSubscriptionCommand(),
 		releases.NewReleaseCommand(),
 		notifysettings.NewNotificationSettingsCommand(),
+		open.NewOpenCommand(),
 	)
 }
