@@ -11,6 +11,7 @@ func NewReleaseCommand() *cobra.Command {
 	}
 	cmd.AddCommand(
 		NewByCommand(),
+		NewForCommand(),
 	)
 	return cmd
 }
