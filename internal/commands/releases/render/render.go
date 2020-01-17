@@ -8,17 +8,17 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-var headers = []string{"id", "artist_id", "released", "poster", "title", "itunes_id", "spotify_id", "deezer_id"}
+var headers = []string{"id", "poster", "released", "artist_id", "title", "itunes_id", "spotify_id", "deezer_id"}
 
 func Releases(releases []*releases.Release, showName bool) error {
 	table := tablewriter.NewWriter(os.Stdout)
 	if showName {
-		headers[1] = "artist_name"
+		headers[3] = "artist_name"
 	}
 	table.SetHeader(headers)
 	table.SetAutoFormatHeaders(false)
 	for i := range releases {
-		row := []string{fmt.Sprint(releases[i].ID)}
+		row := []string{fmt.Sprint(releases[i].ID), releases[i].Poster, releases[i].Released.Format("2006-01-02")}
 
 		if showName {
 			row = append(row, fmt.Sprint(releases[i].ArtistName))
@@ -27,8 +27,6 @@ func Releases(releases []*releases.Release, showName bool) error {
 		}
 
 		row = append(row,
-			releases[i].Released.Format("2006-01-02"),
-			releases[i].Poster,
 			releases[i].Title,
 			releases[i].ItunesID,
 			releases[i].SpotifyID,
