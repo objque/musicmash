@@ -14,21 +14,21 @@ func (t *testAPISuite) TestArtists_Search() {
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
 
 	// action
-	releases, err := artists.Search(t.client, "arch")
+	artists, err := artists.Search(t.client, "arch")
 
 	// assert
 	assert.NoError(t.T(), err)
-	assert.Len(t.T(), releases, 1)
-	assert.Equal(t.T(), vars.ArtistArchitects, releases[0].Name)
+	assert.Len(t.T(), artists, 1)
+	assert.Equal(t.T(), vars.ArtistArchitects, artists[0].Name)
 }
 
 func (t *testAPISuite) TestArtists_Search_Empty() {
 	// action
-	releases, err := artists.Search(t.client, "arch")
+	artists, err := artists.Search(t.client, "arch")
 
 	// assert
 	assert.NoError(t.T(), err)
-	assert.Len(t.T(), releases, 0)
+	assert.Len(t.T(), artists, 0)
 }
 
 func (t *testAPISuite) TestArtists_Search_Internal() {
@@ -37,11 +37,11 @@ func (t *testAPISuite) TestArtists_Search_Internal() {
 	assert.NoError(t.T(), db.DbMgr.Close())
 
 	// action
-	releases, err := artists.Search(t.client, "arch")
+	artists, err := artists.Search(t.client, "arch")
 
 	// assert
 	assert.Error(t.T(), err)
-	assert.Len(t.T(), releases, 0)
+	assert.Len(t.T(), artists, 0)
 }
 
 func (t *testAPISuite) TestArtists_Create() {
