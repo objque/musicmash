@@ -6,6 +6,7 @@ import (
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/testutils/vars"
 	"github.com/musicmash/musicmash/pkg/api/artists"
+	"github.com/musicmash/musicmash/pkg/api/releases"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -146,7 +147,7 @@ func (t *testAPISuite) TestArtists_Get_Releases() {
 	}))
 
 	// action
-	releases, err := artists.GetReleases(t.client, 666)
+	releases, err := releases.By(t.client, 666)
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -158,7 +159,7 @@ func (t *testAPISuite) TestArtists_Get_Releases() {
 func (t *testAPISuite) TestArtists_Get_Releases_Empty() {
 	// action
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: 666}))
-	releases, err := artists.GetReleases(t.client, 666)
+	releases, err := releases.By(t.client, 666)
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -170,7 +171,7 @@ func (t *testAPISuite) TestArtists_Get_Releases_Internal() {
 	_ = db.DbMgr.Close()
 
 	// action
-	releases, err := artists.GetReleases(t.client, 666)
+	releases, err := releases.By(t.client, 666)
 
 	// assert
 	assert.Error(t.T(), err)
@@ -179,7 +180,7 @@ func (t *testAPISuite) TestArtists_Get_Releases_Internal() {
 
 func (t *testAPISuite) TestArtists_Get_Releases_ArtistNotFound() {
 	// action
-	releases, err := artists.GetReleases(t.client, 666)
+	releases, err := releases.By(t.client, 666)
 
 	// assert
 	assert.Error(t.T(), err)

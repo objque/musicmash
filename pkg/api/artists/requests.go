@@ -113,30 +113,3 @@ func Get(provider *api.Provider, id int64, _ *GetOptions) (*Artist, error) {
 	}
 	return &artist, nil
 }
-
-func GetReleases(provider *api.Provider, id int64) ([]*Release, error) {
-	url := fmt.Sprintf("%s/artists/%d/releases", provider.URL, id)
-	request, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
-		return nil, err
-	}
-
-	command, _ := http2curl.GetCurlCommand(request)
-	log.Debug(command)
-
-	resp, err := provider.Client.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return nil, api.ExtractError(resp.Body)
-	}
-
-	release := []*Release{}
-	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
-		return nil, err
-	}
-	return release, nil
-}

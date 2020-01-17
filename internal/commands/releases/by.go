@@ -7,7 +7,7 @@ import (
 	"github.com/musicmash/musicmash/internal/commands/releases/render"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/pkg/api"
-	"github.com/musicmash/musicmash/pkg/api/artists"
+	"github.com/musicmash/musicmash/pkg/api/releases"
 	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 )
@@ -26,7 +26,7 @@ func NewByCommand() *cobra.Command {
 				return errors.New("artist_id should be int")
 			}
 
-			result, err := artists.GetReleases(api.NewProvider(url, 1), artistID)
+			result, err := releases.By(api.NewProvider(url, 1), artistID)
 			if err != nil {
 				return err
 			}

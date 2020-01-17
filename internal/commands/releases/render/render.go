@@ -4,13 +4,13 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/musicmash/musicmash/pkg/api/artists"
+	"github.com/musicmash/musicmash/pkg/api/releases"
 	"github.com/olekukonko/tablewriter"
 )
 
 var headers = []string{"id", "artist_id", "released", "poster", "title", "itunes_id", "spotify_id", "deezer_id"}
 
-func Releases(releases []*artists.Release) error {
+func Releases(releases []*releases.Release) error {
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader(headers)
 	table.SetAutoFormatHeaders(false)
