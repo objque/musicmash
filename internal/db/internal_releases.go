@@ -14,6 +14,7 @@ type InternalRelease struct {
 	ItunesID   string    `json:"itunes_id"`
 	SpotifyID  string    `json:"spotify_id"`
 	DeezerID   string    `json:"deezer_id"`
+	Type       string    `json:"type"`
 }
 
 type InternalReleaseMgr interface {
@@ -29,6 +30,7 @@ SELECT releases.id,
 	   releases.released,
 	   releases.poster,
 	   releases.title,
+	   releases.type,
 	   itunes.store_id  AS itunes_id,
 	   spotify.store_id AS spotify_id,
 	   deezer.store_id  AS deezer_id
@@ -71,6 +73,7 @@ SELECT releases.id,
 	   releases.released,
 	   releases.poster,
 	   releases.title,
+	   releases.type,
 	   itunes.store_id  AS itunes_id,
 	   spotify.store_id AS spotify_id,
 	   deezer.store_id  AS deezer_id

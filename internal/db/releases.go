@@ -15,6 +15,7 @@ type Release struct {
 	Released  time.Time
 	StoreName string
 	StoreID   string
+	Type      string
 }
 
 type ReleaseMgr interface {

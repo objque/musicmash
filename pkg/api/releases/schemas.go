@@ -12,4 +12,5 @@ type Release struct {
 	ItunesID   string    `json:"itunes_id"`
 	SpotifyID  string    `json:"spotify_id"`
 	DeezerID   string    `json:"deezer_id"`
+	Type       string    `json:"type"`
 }

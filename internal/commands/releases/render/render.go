@@ -8,7 +8,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-var headers = []string{"id", "poster", "released", "artist_id", "title", "itunes_id", "spotify_id", "deezer_id"}
+var headers = []string{"id", "poster", "released", "artist_id", "title", "type", "itunes_id", "spotify_id", "deezer_id"}
 
 func Releases(releases []*releases.Release, showName, showPoster bool) error {
 	table := tablewriter.NewWriter(os.Stdout)
@@ -40,6 +40,7 @@ func Releases(releases []*releases.Release, showName, showPoster bool) error {
 
 		row = append(row,
 			releases[i].Title,
+			releases[i].Type,
 			releases[i].ItunesID,
 			releases[i].SpotifyID,
 			releases[i].DeezerID,

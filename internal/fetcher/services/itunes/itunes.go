@@ -96,6 +96,7 @@ func (f *Fetcher) saveWorker(id int, releases <-chan *batch, wg *sync.WaitGroup)
 				Title:     title,
 				Poster:    release.Attributes.Artwork.GetLink(posterWidth, posterHeight),
 				Released:  release.Attributes.ReleaseDate.Value,
+				Type:      "album",
 			})
 			if err != nil {
 				log.Errorf("can't save release from %s with id %s: %v", f.GetStoreName(), release.ID, err)
