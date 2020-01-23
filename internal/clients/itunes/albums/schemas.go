@@ -3,6 +3,7 @@ package albums
 import (
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes/types"
 )
@@ -78,13 +79,19 @@ func (a *AlbumAttributes) GetCollectionType() string {
 	}
 }
 
-func (a *AlbumArtwork) GetLink(width, height int) string {
-	if width > a.Width {
-		width = a.Width
-	}
-	if height > a.Height {
-		height = a.Height
-	}
-	url := strings.Replace(a.URL, "{w}", strconv.Itoa(width), 1)
+func (a *Album) GetPoster(width, height int) string {
+	url := strings.Replace(a.Attributes.Artwork.URL, "{w}", strconv.Itoa(width), 1)
 	return strings.Replace(url, "{h}", strconv.Itoa(height), 1)
+}
+
+func (a *Album) GetID() string {
+	return a.ID
+}
+
+func (a *Album) GetName() string {
+	return a.Attributes.Name
+}
+
+func (a *Album) GetReleaseDate() time.Time {
+	return a.Attributes.ReleaseDate.Value
 }

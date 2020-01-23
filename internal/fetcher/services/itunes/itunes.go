@@ -48,37 +48,53 @@ func removeAlbumType(title string) string {
 	return strings.Replace(title, LPReleaseType, "", -1)
 }
 
+type Release interface {
+	GetID() string
+	GetName() string
+	GetPoster(width, height int) string
+	GetReleaseDate() time.Time
+}
+
 type batch struct {
 	ArtistID int64
-	Releases []*albums.Album
+	Type     string
+	Releases []Release
 }
 
 //nolint:gocognit
 func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, releases chan<- *batch, wg *sync.WaitGroup) {
 	log.Infof("Worker #%d is running", id)
-	for artist := range artists {
-		artistID, err := strconv.ParseUint(artist.StoreID, 10, 64)
+	for association := range artists {
+		artistStoreID, err := strconv.ParseUint(association.StoreID, 10, 64)
 		if err != nil {
-			log.Errorf("can't parse uint64 from %s", artist.StoreID)
+			log.Errorf("can't parse uint64 from %s", association.StoreID)
 			wg.Done()
 			continue
 		}
 
-		latestAlbums, err := albums.GetLatestArtistAlbums(f.Provider, artistID)
-		if err != nil {
-			log.Error(errors.Wrapf(err, "tried to get albums for artist with id %s", artist.StoreID))
-			wg.Done()
-			continue
-		}
-
-		if len(latestAlbums) == 0 {
-			log.Debugf("Artist with id %s hasn't latest albums", artist.StoreID)
-			wg.Done()
-			continue
-		}
-		releases <- &batch{ArtistID: artist.ArtistID, Releases: latestAlbums}
+		log.Debugf("Getting albums by artist %v associated with store id %v", association.ArtistID, artistStoreID)
+		f.fetchAlbums(association.ArtistID, artistStoreID, releases)
 	}
 	log.Infof("Fetch worker #%d is finished", id)
+}
+
+func (f *Fetcher) fetchAlbums(artistID int64, storeID uint64, releases chan<- *batch) {
+	latestAlbums, err := albums.GetLatestArtistAlbums(f.Provider, storeID)
+	if err != nil {
+		log.Error(errors.Wrapf(err, "tried to get albums by artist %v associated with store id %v", artistID, storeID))
+		return
+	}
+
+	if len(latestAlbums) == 0 {
+		log.Debugf("Artist %v associated with store id %v hasn't latest albums", artistID, storeID)
+		return
+	}
+
+	rels := make([]Release, len(latestAlbums))
+	for i := range latestAlbums {
+		rels[i] = Release(latestAlbums[i])
+	}
+	releases <- &batch{ArtistID: artistID, Type: "album", Releases: rels}
 }
 
 func (f *Fetcher) saveWorker(id int, releases <-chan *batch, wg *sync.WaitGroup) {
@@ -87,19 +103,19 @@ func (f *Fetcher) saveWorker(id int, releases <-chan *batch, wg *sync.WaitGroup)
 		tx := db.DbMgr.Begin()
 		now := time.Now().UTC()
 		for _, release := range batch.Releases {
-			title := removeAlbumType(release.Attributes.Name)
+			title := removeAlbumType(release.GetName())
 			err := tx.EnsureReleaseExists(&db.Release{
 				CreatedAt: now,
 				StoreName: f.GetStoreName(),
-				StoreID:   release.ID,
+				StoreID:   release.GetID(),
 				ArtistID:  batch.ArtistID,
 				Title:     title,
-				Poster:    release.Attributes.Artwork.GetLink(posterWidth, posterHeight),
-				Released:  release.Attributes.ReleaseDate.Value,
-				Type:      "album",
+				Poster:    release.GetPoster(posterWidth, posterHeight),
+				Released:  release.GetReleaseDate(),
+				Type:      batch.Type,
 			})
 			if err != nil {
-				log.Errorf("can't save release from %s with id %s: %v", f.GetStoreName(), release.ID, err)
+				log.Errorf("can't save release from %s with id %s: %v", f.GetStoreName(), release.GetID(), err)
 			}
 		}
 		tx.Commit()
