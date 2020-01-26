@@ -7,11 +7,11 @@ import (
 )
 
 type Release struct {
-	ID        uint64    `json:"id"`
-	CreatedAt time.Time `json:"-"`
-	ArtistID  int64     `json:"artist_id"`
-	Title     string    `json:"title"`
-	Poster    string    `json:"poster"`
+	ID        uint64
+	CreatedAt time.Time
+	ArtistID  int64
+	Title     string
+	Poster    string
 	Released  time.Time
 	StoreName string
 	StoreID   string
