@@ -8,6 +8,7 @@ import (
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/clients/itunes/albums"
+	"github.com/musicmash/musicmash/internal/clients/itunes/songs"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/pkg/errors"
@@ -72,29 +73,56 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, releases c
 		}
 
 		log.Debugf("Getting albums by artist %v associated with store id %v", association.ArtistID, artistStoreID)
-		f.fetchAlbums(association.ArtistID, artistStoreID, releases)
+		if rels := f.fetchAlbums(association.ArtistID, artistStoreID); rels != nil && len(rels) > 0 {
+			releases <- &batch{ArtistID: association.ArtistID, Type: "album", Releases: rels}
+		}
+
+		log.Debugf("Getting songs by artist %v associated with store id %v", association.ArtistID, artistStoreID)
+		if rels := f.fetchSongs(association.ArtistID, artistStoreID); rels != nil && len(rels) > 0 {
+			releases <- &batch{ArtistID: association.ArtistID, Type: "song", Releases: rels}
+		}
 	}
 	log.Infof("Fetch worker #%d is finished", id)
 	done <- 1
 }
 
-func (f *Fetcher) fetchAlbums(artistID int64, storeID uint64, releases chan<- *batch) {
+func (f *Fetcher) fetchAlbums(artistID int64, storeID uint64) []Release {
 	latestAlbums, err := albums.GetLatestArtistAlbums(f.Provider, storeID)
 	if err != nil {
 		log.Error(errors.Wrapf(err, "tried to get albums by artist %v associated with store id %v", artistID, storeID))
-		return
-	}
-
-	if len(latestAlbums) == 0 {
-		log.Debugf("Artist %v associated with store id %v hasn't latest albums", artistID, storeID)
-		return
+		return nil
 	}
 
 	rels := make([]Release, len(latestAlbums))
 	for i := range latestAlbums {
 		rels[i] = Release(latestAlbums[i])
 	}
-	releases <- &batch{ArtistID: artistID, Type: "album", Releases: rels}
+	return rels
+}
+
+func (f *Fetcher) fetchSongs(artistID int64, storeID uint64) []Release {
+	latestSongs, err := songs.GetLatestArtistSongs(f.Provider, storeID)
+	if err != nil {
+		log.Error(errors.Wrapf(err, "tried to get songs by artist %v associated with store id %v", artistID, storeID))
+		return nil
+	}
+
+	rels := []Release{}
+	for i := range latestSongs {
+		dbReleases, err := db.DbMgr.FindReleases(map[string]interface{}{
+			"artist_id": artistID,
+			"title":     removeAlbumType(latestSongs[i].GetAlbumName()),
+		})
+		if err != nil {
+			log.Errorf("can't check if song from %s with id %s exists: %v",
+				f.GetStoreName(), latestSongs[i].GetID(), err)
+			continue
+		}
+		if len(dbReleases) == 0 {
+			rels = append(rels, latestSongs[i])
+		}
+	}
+	return rels
 }
 
 func (f *Fetcher) saveWorker(id int, releases <-chan *batch, done chan<- int) {

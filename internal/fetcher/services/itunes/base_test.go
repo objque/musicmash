@@ -19,7 +19,8 @@ type testAppleFetcherSuite struct {
 	mux      *http.ServeMux
 }
 
-func (t *testAppleFetcherSuite) SetupSuite() {
+func (t *testAppleFetcherSuite) SetupTest() {
+	t.Suite.SetupTest()
 	t.mux = http.NewServeMux()
 	t.server = httptest.NewServer(t.mux)
 	t.provider = itunes.NewProvider(t.server.URL, vars.TokenSimple, time.Minute)
@@ -30,7 +31,8 @@ func (t *testAppleFetcherSuite) SetupSuite() {
 	}
 }
 
-func (t *testAppleFetcherSuite) TearDownSuite() {
+func (t *testAppleFetcherSuite) TearDownTest() {
+	t.Suite.TearDownTest()
 	t.server.Close()
 }
 
