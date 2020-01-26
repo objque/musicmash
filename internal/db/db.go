@@ -1,6 +1,8 @@
 package db
 
 import (
+	"fmt"
+
 	"github.com/jinzhu/gorm"
 	"github.com/musicmash/musicmash/internal/log"
 	migrate "github.com/rubenv/sql-migrate"
@@ -82,6 +84,6 @@ func (mgr *AppDatabaseMgr) ApplyMigrations(pathToMigrations string) error {
 		return err
 	}
 
-	log.Infof("Applied %d migrations!\n", n)
+	log.Infoln(fmt.Sprintf("Applied %d migrations!", n))
 	return nil
 }
