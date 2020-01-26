@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testAppleMusicClientSuite) TestFetchAndSave() {
+func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	// arrange
 	f := NewService(t.provider, 5, 1)
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", vars.StoreIDA)
@@ -65,7 +65,7 @@ func (t *testAppleMusicClientSuite) TestFetchAndSave() {
 	assert.Equal(t.T(), 2025, releases[0].Released.Year())
 }
 
-func (t *testAppleMusicClientSuite) TestFetchAndSave_AlreadyExists() {
+func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
 	// arrange
 	f := NewService(t.provider, 1, 1)
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", vars.StoreIDB)
