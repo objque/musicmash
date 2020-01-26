@@ -71,6 +71,6 @@ func TestTelegramUtils_MakeText_Announced(t *testing.T) {
 	text := makeText(vars.ArtistArchitects, &release)
 
 	// assert
-	wantMessage := fmt.Sprintf("New album announced \n*Holly Hell*\nby Architects\nRelease date: %s [\u200c\u200c](http://pic#1.jpeg)", released.Format(time.RFC850))
+	wantMessage := fmt.Sprintf("New album announced \n*Holly Hell*\nby Architects\nRelease date: %s [\u200c\u200c](http://pic#1.jpeg)", released.Format("Monday, 02-Jan-06"))
 	assert.Equal(t, wantMessage, text)
 }

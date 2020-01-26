@@ -14,7 +14,7 @@ func makeText(artistName string, release *db.Release) string {
 	state := "released"
 	if release.Released.After(time.Now().UTC()) {
 		state = "announced"
-		releaseDate = fmt.Sprintf("\nRelease date: %s", release.Released.Format(time.RFC850))
+		releaseDate = fmt.Sprintf("\nRelease date: %s", release.Released.Format("Monday, 02-Jan-06"))
 	}
 
 	poster := fmt.Sprintf("[\u200c\u200c](%s)", release.Poster)
