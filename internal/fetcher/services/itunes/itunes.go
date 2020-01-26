@@ -127,7 +127,7 @@ func (f *Fetcher) fetchSongs(artistID int64, storeID uint64) []Release {
 
 func (f *Fetcher) saveWorker(id int, releases <-chan *batch, done chan<- int) {
 	for batch := range releases {
-		log.Debugf("Saving %d releases by %d", len(batch.Releases), batch.ArtistID)
+		log.Debugf("Saving %d %v releases by %d", len(batch.Releases), batch.Type, batch.ArtistID)
 		tx := db.DbMgr.Begin()
 		now := time.Now().UTC()
 		for _, release := range batch.Releases {
