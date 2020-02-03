@@ -32,13 +32,16 @@ SELECT releases.id as release_id,
 FROM releases
 INNER JOIN subscriptions ON subscriptions.artist_id=releases.artist_id
               AND subscriptions.created_at <= releases.released
-LEFT JOIN notifications ON notifications.user_name=subscriptions.user_name
-              AND notifications.release_id=releases.id
-              AND is_coming=(releases.released >= ?)
 LEFT JOIN artists ON releases.artist_id=artists.id
 LEFT JOIN notification_settings ON notification_settings.user_name=subscriptions.user_name
-WHERE notifications.user_name IS NULL
-ORDER BY notifications.user_name
+WHERE NOT EXISTS (
+       SELECT user_name, release_id, is_coming
+       FROM notifications
+       WHERE notifications.user_name=subscriptions.user_name
+              AND notifications.release_id=releases.id
+              AND notifications.is_coming=(datetime(releases.released) > datetime(?))
+)
+ORDER BY subscriptions.user_name;
 `
 
 	notifications := []*InternalNotification{}
