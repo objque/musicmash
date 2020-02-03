@@ -50,14 +50,15 @@ func (mgr *AppDatabaseMgr) GetSimpleUserSubscriptions(userName string) ([]int64,
 }
 
 func (mgr *AppDatabaseMgr) SubscribeUser(userName string, artists []int64) error {
+	now := time.Now().UTC()
 	const query = `
-insert into subscriptions (user_name, artist_id)
-select ? as user_name, id as artist_id from artists
+insert into subscriptions (created_at, user_name, artist_id)
+select ? as created_at, ? as user_name, id as artist_id from artists
 where
     artist_id in (?) and
     artist_id not in (select artist_id from subscriptions where user_name = ?)`
 
-	return mgr.db.Exec(query, userName, artists, userName).Error
+	return mgr.db.Exec(query, now, userName, artists, userName).Error
 }
 
 func (mgr *AppDatabaseMgr) UnSubscribeUser(userName string, artists []int64) error {
