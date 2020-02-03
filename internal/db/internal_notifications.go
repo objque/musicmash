@@ -30,7 +30,7 @@ SELECT releases.id as release_id,
        notification_settings.service,
        notification_settings.data
 FROM releases
-INNER JOIN subscriptions ON subscriptions.artist_id=releases.artist_id 
+INNER JOIN subscriptions ON subscriptions.artist_id=releases.artist_id
               AND subscriptions.created_at <= releases.released
 LEFT JOIN notifications ON notifications.user_name=subscriptions.user_name
               AND notifications.release_id=releases.id

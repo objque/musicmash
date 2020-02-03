@@ -94,7 +94,7 @@ LEFT JOIN releases AS deezer ON (
    deezer.store_name  = 'deezer'
 )
 WHERE releases.artist_id IN (
-   SELECT artist_id FROM subscriptions 
+   SELECT artist_id FROM subscriptions
    WHERE user_name = ?
 ) AND (
    releases.released >= ? AND releases.released < ?
