@@ -5,8 +5,8 @@ import "github.com/spf13/cobra"
 func NewNotificationSettingsCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "notification-settings",
-		Short:   "Manage notifications",
 		Aliases: []string{"ns"},
+		Short:   "Manage notifications",
 		Args:    cobra.NoArgs,
 	}
 	cmd.AddCommand(

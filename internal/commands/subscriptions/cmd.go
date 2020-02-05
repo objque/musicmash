@@ -5,8 +5,8 @@ import "github.com/spf13/cobra"
 func NewSubscriptionCommand() *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "subscription",
+		Aliases: []string{"subscriptions", "subs"},
 		Short:   "Manage subscriptions",
-		Aliases: []string{"subs"},
 		Args:    cobra.NoArgs,
 	}
 	cmd.AddCommand(
