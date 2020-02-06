@@ -8,6 +8,7 @@ import (
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/clients/itunes/albums"
+	"github.com/musicmash/musicmash/internal/clients/itunes/musicvideos"
 	"github.com/musicmash/musicmash/internal/clients/itunes/songs"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
@@ -81,6 +82,11 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, releases c
 		if rels := f.fetchSongs(association.ArtistID, artistStoreID); rels != nil && len(rels) > 0 {
 			releases <- &batch{ArtistID: association.ArtistID, Type: "song", Releases: rels}
 		}
+
+		log.Debugf("Getting music-videos by artist %v associated with store id %v", association.ArtistID, artistStoreID)
+		if rels := f.fetchMusicVideos(association.ArtistID, artistStoreID); rels != nil && len(rels) > 0 {
+			releases <- &batch{ArtistID: association.ArtistID, Type: "music-video", Releases: rels}
+		}
 	}
 	log.Infof("Fetch worker #%d is finished", id)
 	done <- 1
@@ -125,9 +131,23 @@ func (f *Fetcher) fetchSongs(artistID int64, storeID uint64) []Release {
 	return rels
 }
 
+func (f *Fetcher) fetchMusicVideos(artistID int64, storeID uint64) []Release {
+	latestMusicVideos, err := musicvideos.GetLatestArtistMusicVideos(f.Provider, storeID)
+	if err != nil {
+		log.Error(errors.Wrapf(err, "tried to get music-videos by artist %v associated with store id %v", artistID, storeID))
+		return nil
+	}
+
+	rels := make([]Release, len(latestMusicVideos))
+	for i := range latestMusicVideos {
+		rels[i] = Release(latestMusicVideos[i])
+	}
+	return rels
+}
+
 func (f *Fetcher) saveWorker(id int, releases <-chan *batch, done chan<- int) {
 	for batch := range releases {
-		log.Debugf("Saving %d %v releases by %d", len(batch.Releases), batch.Type, batch.ArtistID)
+		log.Infof("Saving %d %v releases by %d", len(batch.Releases), batch.Type, batch.ArtistID)
 		tx := db.DbMgr.Begin()
 		now := time.Now().UTC()
 		for _, release := range batch.Releases {

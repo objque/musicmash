@@ -55,6 +55,20 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
   ]
 }`, vars.StoreIDB)))
 	})
+	musicVideosURL := fmt.Sprintf("/v1/catalog/us/artists/%s/music-videos", vars.StoreIDA)
+	t.mux.HandleFunc(musicVideosURL, func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(fmt.Sprintf(`{
+  "data": [
+    {
+      "attributes": {
+        "name": "Way To Break My Heart (feat. Skrillex) [Lyric Video]",
+        "releaseDate": "2025-10-18"
+      },
+      "id": "%s"
+    }
+  ]
+}`, vars.StoreIDC)))
+	})
 
 	// action
 	wg := sync.WaitGroup{}
@@ -72,7 +86,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t.T(), err)
-	assert.Len(t.T(), releases, 2)
+	assert.Len(t.T(), releases, 3)
 	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[0].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDA, releases[0].StoreID)
 	assert.Equal(t.T(), 18, releases[0].Released.Day())
@@ -86,6 +100,13 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	assert.Equal(t.T(), time.July, releases[1].Released.Month())
 	assert.Equal(t.T(), 2025, releases[1].Released.Year())
 	assert.Equal(t.T(), "song", releases[1].Type)
+
+	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[2].ArtistID)
+	assert.Equal(t.T(), vars.StoreIDC, releases[2].StoreID)
+	assert.Equal(t.T(), 18, releases[2].Released.Day())
+	assert.Equal(t.T(), time.October, releases[2].Released.Month())
+	assert.Equal(t.T(), 2025, releases[2].Released.Year())
+	assert.Equal(t.T(), "music-video", releases[2].Type)
 }
 
 func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
@@ -131,14 +152,36 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
   ]
 }`, vars.StoreIDB)))
 	})
+	musicVideosURL := fmt.Sprintf("/v1/catalog/us/artists/%s/music-videos", vars.StoreIDB)
+	t.mux.HandleFunc(musicVideosURL, func(w http.ResponseWriter, _ *http.Request) {
+		_, _ = w.Write([]byte(fmt.Sprintf(`{
+  "data": [
+    {
+      "attributes": {
+        "name": "Way To Break My Heart (feat. Skrillex) [Lyric Video]",
+        "releaseDate": "2029-03-29"
+      },
+      "id": "%s"
+    }
+  ]
+}`, vars.StoreIDB)))
+	})
+	// album
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistID:  vars.StoreIDQ,
 		StoreID:   vars.StoreIDA,
 		StoreName: f.GetStoreName(),
 	}))
+	// song
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistID:  vars.StoreIDQ,
 		StoreID:   vars.StoreIDB,
+		StoreName: f.GetStoreName(),
+	}))
+	// music-video
+	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
+		ArtistID:  vars.StoreIDQ,
+		StoreID:   vars.StoreIDC,
 		StoreName: f.GetStoreName(),
 	}))
 
@@ -158,7 +201,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
 	// assert
 	releases, err := db.DbMgr.GetAllReleases()
 	assert.NoError(t.T(), err)
-	assert.Len(t.T(), releases, 2)
+	assert.Len(t.T(), releases, 3)
 	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[0].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDA, releases[0].StoreID)
 	assert.Equal(t.T(), 1, releases[0].Released.Day())
@@ -170,4 +213,10 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
 	assert.Equal(t.T(), 1, releases[1].Released.Day())
 	assert.Equal(t.T(), time.January, releases[1].Released.Month())
 	assert.Equal(t.T(), 1, releases[1].Released.Year())
+
+	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[2].ArtistID)
+	assert.Equal(t.T(), vars.StoreIDC, releases[2].StoreID)
+	assert.Equal(t.T(), 1, releases[2].Released.Day())
+	assert.Equal(t.T(), time.January, releases[2].Released.Month())
+	assert.Equal(t.T(), 1, releases[2].Released.Year())
 }
