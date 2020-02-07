@@ -26,6 +26,7 @@ SELECT releases.id as release_id,
        releases.store_id,
        releases.store_name,
        releases.poster as release_poster,
+       releases.type,
        subscriptions.user_name,
        notification_settings.service,
        notification_settings.data

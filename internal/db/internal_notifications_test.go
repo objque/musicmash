@@ -78,6 +78,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  time.Now().UTC().AddDate(0, 0, -15),
 		StoreName: vars.StoreApple,
+		Type:      vars.ReleaseTypeAlbum,
 		StoreID:   "this-oldest-release-have-to-be-in-output",
 	}))
 	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
@@ -87,6 +88,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 		Title:     vars.ArtistAlgorithm,
 		Released:  time.Now().UTC().AddDate(1, 0, 0),
 		StoreName: vars.StoreApple,
+		Type:      vars.ReleaseTypeAlbum,
 		StoreID:   "this-future-release-have-to-be-in-output",
 	}))
 
@@ -104,6 +106,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 		assert.Equal(t.T(), notificationService, notification.Service)
 		assert.Equal(t.T(), notificationData, notification.Data)
 		assert.Equal(t.T(), vars.StoreApple, notification.StoreName)
+		assert.Equal(t.T(), vars.ReleaseTypeAlbum, notification.Type)
 		assert.Contains(t.T(), notification.StoreID, "have-to-be-in-output")
 	}
 }
