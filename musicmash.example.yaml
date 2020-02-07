@@ -25,7 +25,9 @@ stores:
   itunes:
     url: https://api.music.apple.com
     fetch_workers: 5
-    meta: {}
+    meta: # basically it's just an optional map of key=value (string=string)
+      token: "AMQjRckzD]VDJA@rW(w7PiV=TtPjRshDjgGgUjC.ctxwhgc8cR+z2ammv,dLWok3"
+      region: "us"
     release_url: https://itunes.apple.com/us/album/%s
     name: Apple Music
     fetch: true
