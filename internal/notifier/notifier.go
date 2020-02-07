@@ -20,7 +20,7 @@ func Notify() {
 	NotifyWithPeriod(last.Date)
 }
 
-func markReleaseAsDeliveredTo(userName string, releaseID uint64, isComing bool) error {
+func markReleaseAsDelivered(userName string, releaseID uint64, isComing bool) error {
 	return db.DbMgr.CreateNotification(&db.Notification{
 		Date:      time.Now().UTC(),
 		UserName:  userName,
@@ -57,6 +57,6 @@ func NotifyWithPeriod(period time.Time) {
 			continue
 		}
 
-		_ = markReleaseAsDeliveredTo(notification.UserName, notification.ReleaseID, notification.IsComing())
+		_ = markReleaseAsDelivered(notification.UserName, notification.ReleaseID, notification.IsComing())
 	}
 }
