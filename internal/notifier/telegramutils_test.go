@@ -18,6 +18,7 @@ func TestTelegramUtils_MakeText(t *testing.T) {
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  time.Now().UTC().Truncate(time.Hour).Add(-time.Hour),
 		Poster:    vars.PosterSimple,
+		Type:      vars.ReleaseTypeAlbum,
 	}
 
 	// action
@@ -35,6 +36,7 @@ func TestTelegramUtils_MakeButtons(t *testing.T) {
 		Released:  time.Now().UTC().Truncate(time.Hour).Add(-time.Hour),
 		Poster:    vars.PosterSimple,
 		StoreID:   vars.StoreIDA,
+		Type:      vars.ReleaseTypeAlbum,
 	}
 	config.Config = &config.AppConfig{
 		Stores: config.StoresConfig{
@@ -65,6 +67,7 @@ func TestTelegramUtils_MakeText_Announced(t *testing.T) {
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  released,
 		Poster:    vars.PosterSimple,
+		Type:      vars.ReleaseTypeAlbum,
 	}
 
 	// action

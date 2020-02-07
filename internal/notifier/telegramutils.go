@@ -18,7 +18,7 @@ func makeText(artistName string, release *db.Release) string {
 	}
 
 	poster := fmt.Sprintf("[\u200c\u200c](%s)", release.Poster)
-	return fmt.Sprintf("New album %s \n*%s*\nby %s%s %s", state, release.Title, artistName, releaseDate, poster)
+	return fmt.Sprintf("New %s %s \n*%s*\nby %s%s %s", release.Type, state, release.Title, artistName, releaseDate, poster)
 }
 
 func makeButtons(release *db.Release) *[][]tgbotapi.InlineKeyboardButton {
