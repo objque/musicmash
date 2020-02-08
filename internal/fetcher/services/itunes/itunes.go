@@ -149,27 +149,27 @@ func (f *Fetcher) fetchMusicVideos(artistID int64, storeID uint64) []Release {
 func (f *Fetcher) saveWorker(id int, releases <-chan *batch, done chan<- int) {
 	for batch := range releases {
 		log.Infof("Saving %d %v releases by %d", len(batch.Releases), batch.Type, batch.ArtistID)
-		tx := db.DbMgr.Begin()
 		now := time.Now().UTC()
-		for _, release := range batch.Releases {
-			title := removeAlbumType(release.GetName())
-			err := tx.EnsureReleaseExists(&db.Release{
+		// cast releases to db.releases and insert as batch
+		rels := make([]*db.Release, len(batch.Releases))
+		for i, release := range batch.Releases {
+			rels[i] = &db.Release{
 				CreatedAt: now,
 				StoreName: f.GetStoreName(),
 				StoreID:   release.GetID(),
 				ArtistID:  batch.ArtistID,
-				Title:     title,
+				Title:     removeAlbumType(release.GetName()),
 				Poster:    release.GetPoster(posterWidth, posterHeight),
 				Released:  release.GetReleaseDate(),
 				Type:      batch.Type,
 				Explicit:  release.IsExplicit(),
-			})
-			if err != nil {
-				log.Errorf("can't save release from %s with id %s: %v", f.GetStoreName(), release.GetID(), err)
 			}
 		}
-		tx.Commit()
-		log.Debugf("Finish saving releases by %d", batch.ArtistID)
+		if err := db.DbMgr.InsertBatchNewReleases(rels); err != nil {
+			log.Errorf("Failed to insert batch with %v releases by %v: %v", len(rels), batch.ArtistID, err)
+			continue
+		}
+		log.Debugf("finish saving releases by %d", batch.ArtistID)
 	}
 	log.Infof("Save worker #%d is finished", id)
 	done <- 1

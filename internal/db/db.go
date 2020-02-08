@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/jinzhu/gorm"
+	"github.com/jmoiron/sqlx"
 	"github.com/musicmash/musicmash/internal/log"
 	migrate "github.com/rubenv/sql-migrate"
 
@@ -36,11 +37,12 @@ type DataMgr interface {
 }
 
 type AppDatabaseMgr struct {
-	db *gorm.DB
+	db    *gorm.DB
+	newdb *sqlx.DB
 }
 
 func NewAppDatabaseMgr(db *gorm.DB) *AppDatabaseMgr {
-	return &AppDatabaseMgr{db: db}
+	return &AppDatabaseMgr{db: db, newdb: sqlx.NewDb(db.DB(), db.Dialect().GetName())}
 }
 
 func NewMainDatabaseMgr() *AppDatabaseMgr {

@@ -7,16 +7,16 @@ import (
 )
 
 type Release struct {
-	ID        uint64
-	CreatedAt time.Time
-	ArtistID  int64
-	Title     string
-	Poster    string
-	Released  time.Time
-	StoreName string
-	StoreID   string
-	Type      string
-	Explicit  bool
+	ID        uint64    `db:"id"`
+	CreatedAt time.Time `db:"created_at"`
+	ArtistID  int64     `db:"artist_id"`
+	Title     string    `db:"title"`
+	Poster    string    `db:"poster"`
+	Released  time.Time `db:"released"`
+	StoreName string    `db:"store_name"`
+	StoreID   string    `db:"store_id"`
+	Type      string    `db:"type"`
+	Explicit  bool      `db:"explicit"`
 }
 
 type ReleaseMgr interface {
@@ -24,6 +24,7 @@ type ReleaseMgr interface {
 	GetAllReleases() ([]*Release, error)
 	FindReleases(condition map[string]interface{}) ([]*Release, error)
 	FindNewReleases(date time.Time) ([]*Release, error)
+	InsertBatchNewReleases(releases []*Release) error
 }
 
 func (r *Release) IsComing() bool {

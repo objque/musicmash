@@ -17,6 +17,9 @@ github.com/jinzhu/gorm/dialects/sqlite
 github.com/jinzhu/inflection
 # github.com/jinzhu/now v1.1.1
 github.com/jinzhu/now
+# github.com/jmoiron/sqlx v1.2.1-0.20191203222853-2ba0fc60eb4a
+github.com/jmoiron/sqlx
+github.com/jmoiron/sqlx/reflectx
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
 github.com/konsorten/go-windows-terminal-sequences
 # github.com/mattn/go-runewidth v0.0.8
