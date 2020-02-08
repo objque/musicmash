@@ -75,17 +75,17 @@ func (f *Fetcher) fetchWorker(id int, artists <-chan *db.Association, releases c
 		}
 
 		log.Debugf("Getting albums by artist %v associated with store id %v", association.ArtistID, artistStoreID)
-		if rels := f.fetchAlbums(association.ArtistID, artistStoreID); rels != nil && len(rels) > 0 {
+		if rels := f.fetchAlbums(association.ArtistID, artistStoreID); len(rels) > 0 {
 			releases <- &batch{ArtistID: association.ArtistID, Type: "album", Releases: rels}
 		}
 
 		log.Debugf("Getting songs by artist %v associated with store id %v", association.ArtistID, artistStoreID)
-		if rels := f.fetchSongs(association.ArtistID, artistStoreID); rels != nil && len(rels) > 0 {
+		if rels := f.fetchSongs(association.ArtistID, artistStoreID); len(rels) > 0 {
 			releases <- &batch{ArtistID: association.ArtistID, Type: "song", Releases: rels}
 		}
 
 		log.Debugf("Getting music-videos by artist %v associated with store id %v", association.ArtistID, artistStoreID)
-		if rels := f.fetchMusicVideos(association.ArtistID, artistStoreID); rels != nil && len(rels) > 0 {
+		if rels := f.fetchMusicVideos(association.ArtistID, artistStoreID); len(rels) > 0 {
 			releases <- &batch{ArtistID: association.ArtistID, Type: "music-video", Releases: rels}
 		}
 	}
