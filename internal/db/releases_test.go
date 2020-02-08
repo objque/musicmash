@@ -10,6 +10,7 @@ func (t *testDBSuite) TestReleases_EnsureExists() {
 	err := DbMgr.EnsureReleaseExists(&Release{
 		StoreName: vars.StoreDeezer,
 		StoreID:   vars.StoreApple,
+		Explicit:  true,
 	})
 
 	// assert
@@ -17,6 +18,7 @@ func (t *testDBSuite) TestReleases_EnsureExists() {
 	releases, err := DbMgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
+	assert.True(t.T(), releases[0].Explicit)
 }
 
 func (t *testDBSuite) TestReleases_FindReleases() {
@@ -31,6 +33,7 @@ func (t *testDBSuite) TestReleases_FindReleases() {
 		ArtistID:  vars.StoreIDQ,
 		StoreName: vars.StoreApple,
 		StoreID:   vars.StoreIDB,
+		Explicit:  true,
 	}))
 
 	// action
@@ -40,4 +43,5 @@ func (t *testDBSuite) TestReleases_FindReleases() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
 	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[0].ArtistID)
+	assert.True(t.T(), releases[0].Explicit)
 }

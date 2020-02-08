@@ -79,6 +79,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 		Released:  time.Now().UTC().AddDate(0, 0, -15),
 		StoreName: vars.StoreApple,
 		Type:      vars.ReleaseTypeAlbum,
+		Explicit:  true,
 		StoreID:   "this-oldest-release-have-to-be-in-output",
 	}))
 	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
@@ -89,6 +90,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 		Released:  time.Now().UTC().AddDate(1, 0, 0),
 		StoreName: vars.StoreApple,
 		Type:      vars.ReleaseTypeAlbum,
+		Explicit:  true,
 		StoreID:   "this-future-release-have-to-be-in-output",
 	}))
 
@@ -108,6 +110,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 		assert.Equal(t.T(), vars.StoreApple, notification.StoreName)
 		assert.Equal(t.T(), vars.ReleaseTypeAlbum, notification.Type)
 		assert.Contains(t.T(), notification.StoreID, "have-to-be-in-output")
+		assert.True(t.T(), notification.Explicit)
 	}
 }
 
@@ -131,6 +134,7 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 		Released:  time.Now().UTC().AddDate(0, 0, -15),
 		StoreName: vars.StoreApple,
 		StoreID:   "this-oldest-release-wont-be-in-output",
+		Explicit:  true,
 	}))
 	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
 		ArtistID:  vars.StoreIDQ,
@@ -139,6 +143,7 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 		StoreName: vars.StoreApple,
 		StoreID:   "this-future-release-have-to-be-in-output",
 		Poster:    vars.PosterSimple,
+		Explicit:  true,
 	}))
 
 	// action

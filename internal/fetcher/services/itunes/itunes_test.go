@@ -25,7 +25,8 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
           "url": "https://is4-ssl.mzstatic.com/image/thumb/Music/0a/90/94/mzi.nyyoiwvs.jpg/{w}x{h}bb.jpeg"
         },
         "name": "Daybreaker (Deluxe Edition)",
-        "releaseDate": "2025-07-18"
+        "releaseDate": "2025-07-18",
+        "contentRating": "explicit"
       },
       "id": "%s"
     },
@@ -33,7 +34,8 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
       "attributes": {
         "artistName": "Architects",
         "name": "The Here and Now",
-        "releaseDate": "2012-07-13"
+        "releaseDate": "2012-07-13",
+        "contentRating": "explicit"
       },
       "id": "1045635474"
     }
@@ -49,7 +51,8 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
         "albumName": "The Here and Now",
         "name": "Where Are Ü Now (with Justin Bieber)",
         "releaseDate": "2025-07-18",
-		"url": "url:/%s"
+		"url": "url:/%s",
+        "contentRating": "explicit"
       }
     }
   ]
@@ -62,7 +65,8 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
     {
       "attributes": {
         "name": "Way To Break My Heart (feat. Skrillex) [Lyric Video]",
-        "releaseDate": "2025-10-18"
+        "releaseDate": "2025-10-18",
+        "contentRating": "explicit"
       },
       "id": "%s"
     }
@@ -93,6 +97,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	assert.Equal(t.T(), time.July, releases[0].Released.Month())
 	assert.Equal(t.T(), 2025, releases[0].Released.Year())
 	assert.Equal(t.T(), "album", releases[0].Type)
+	assert.True(t.T(), releases[0].Explicit)
 
 	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[1].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDB, releases[1].StoreID)
@@ -100,6 +105,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	assert.Equal(t.T(), time.July, releases[1].Released.Month())
 	assert.Equal(t.T(), 2025, releases[1].Released.Year())
 	assert.Equal(t.T(), "song", releases[1].Type)
+	assert.True(t.T(), releases[1].Explicit)
 
 	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[2].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDC, releases[2].StoreID)
@@ -107,6 +113,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	assert.Equal(t.T(), time.October, releases[2].Released.Month())
 	assert.Equal(t.T(), 2025, releases[2].Released.Year())
 	assert.Equal(t.T(), "music-video", releases[2].Type)
+	assert.True(t.T(), releases[2].Explicit)
 }
 
 func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
@@ -123,7 +130,8 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
           "url": "https://is4-ssl.mzstatic.com/image/thumb/Music/0a/90/94/mzi.nyyoiwvs.jpg/{w}x{h}bb.jpeg"
         },
         "name": "Daybreaker (Deluxe Edition)",
-        "releaseDate": "2025-07-18"
+        "releaseDate": "2025-07-18",
+        "contentRating": "explicit"
       },
       "id": "%s"
     },
@@ -131,7 +139,8 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
       "attributes": {
         "artistName": "Architects",
         "name": "The Here and Now",
-        "releaseDate": "2012-07-13"
+        "releaseDate": "2012-07-13",
+        "contentRating": "explicit"
       },
       "id": "1045635474"
     }
@@ -146,7 +155,8 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
       "attributes": {
         "albumName": "The Here and Now",
         "releaseDate": "2025-07-18",
-        "url": "url:/%s"
+        "url": "url:/%s",
+        "contentRating": "explicit"
       }
     }
   ]
@@ -159,7 +169,8 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
     {
       "attributes": {
         "name": "Way To Break My Heart (feat. Skrillex) [Lyric Video]",
-        "releaseDate": "2029-03-29"
+        "releaseDate": "2029-03-29",
+        "contentRating": "explicit"
       },
       "id": "%s"
     }
@@ -171,18 +182,21 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
 		ArtistID:  vars.StoreIDQ,
 		StoreID:   vars.StoreIDA,
 		StoreName: f.GetStoreName(),
+		Explicit:  true,
 	}))
 	// song
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistID:  vars.StoreIDQ,
 		StoreID:   vars.StoreIDB,
 		StoreName: f.GetStoreName(),
+		Explicit:  true,
 	}))
 	// music-video
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
 		ArtistID:  vars.StoreIDQ,
 		StoreID:   vars.StoreIDC,
 		StoreName: f.GetStoreName(),
+		Explicit:  true,
 	}))
 
 	// action
@@ -207,16 +221,19 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
 	assert.Equal(t.T(), 1, releases[0].Released.Day())
 	assert.Equal(t.T(), time.January, releases[0].Released.Month())
 	assert.Equal(t.T(), 1, releases[0].Released.Year())
+	assert.True(t.T(), releases[0].Explicit)
 
 	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[1].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDB, releases[1].StoreID)
 	assert.Equal(t.T(), 1, releases[1].Released.Day())
 	assert.Equal(t.T(), time.January, releases[1].Released.Month())
 	assert.Equal(t.T(), 1, releases[1].Released.Year())
+	assert.True(t.T(), releases[1].Explicit)
 
 	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[2].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDC, releases[2].StoreID)
 	assert.Equal(t.T(), 1, releases[2].Released.Day())
 	assert.Equal(t.T(), time.January, releases[2].Released.Month())
 	assert.Equal(t.T(), 1, releases[2].Released.Year())
+	assert.True(t.T(), releases[2].Explicit)
 }

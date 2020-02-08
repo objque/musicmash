@@ -16,6 +16,7 @@ type Release struct {
 	StoreName string
 	StoreID   string
 	Type      string
+	Explicit  bool
 }
 
 type ReleaseMgr interface {

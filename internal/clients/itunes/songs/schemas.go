@@ -19,11 +19,12 @@ type Song struct {
 }
 
 type SongAttributes struct {
-	Artwork     Artwork    `json:"artwork"`
-	ReleaseDate types.Time `json:"releaseDate"`
-	Name        string     `json:"name"`
-	AlbumName   string     `json:"albumName"`
-	URL         string     `json:"url"`
+	Artwork       Artwork    `json:"artwork"`
+	ReleaseDate   types.Time `json:"releaseDate"`
+	Name          string     `json:"name"`
+	AlbumName     string     `json:"albumName"`
+	URL           string     `json:"url"`
+	ContentRating string     `json:"contentRating"`
 }
 
 type Artwork struct {
@@ -54,4 +55,8 @@ func (a *Song) GetAlbumName() string {
 
 func (a *Song) GetReleaseDate() time.Time {
 	return a.Attributes.ReleaseDate.Value
+}
+
+func (a *Song) IsExplicit() bool {
+	return a.Attributes.ContentRating == "explicit"
 }

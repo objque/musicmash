@@ -18,9 +18,9 @@ func (t *testAPISuite) TestReleases_Get() {
 	r := time.Now().UTC()
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
 	assert.NoError(t.T(), db.DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
-	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000"})
-	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000"})
-	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreSpotify, StoreID: "3000"})
+	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000", Explicit: true})
+	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000", Explicit: true})
+	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreSpotify, StoreID: "3000", Explicit: true})
 
 	since := r.AddDate(-1, 0, 0)
 	till := r.AddDate(1, 0, 0)
@@ -48,6 +48,7 @@ func (t *testAPISuite) TestReleases_Get() {
 			ItunesID:   "1000",
 			DeezerID:   "2000",
 			SpotifyID:  "3000",
+			Explicit:   true,
 		}
 		assert.Equal(t.T(), expected, feed[0])
 	}
@@ -58,9 +59,9 @@ func (t *testAPISuite) TestReleases_Get_EmptyForPeriod() {
 	r := time.Now().UTC()
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
 	assert.NoError(t.T(), db.DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
-	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000"})
-	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000"})
-	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreSpotify, StoreID: "3000"})
+	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000", Explicit: true})
+	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000", Explicit: true})
+	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreSpotify, StoreID: "3000", Explicit: true})
 
 	// action
 	since := r.AddDate(-1, -1, 0)

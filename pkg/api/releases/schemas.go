@@ -13,4 +13,5 @@ type Release struct {
 	SpotifyID  string    `json:"spotify_id"`
 	DeezerID   string    `json:"deezer_id"`
 	Type       string    `json:"type"`
+	Explicit   bool      `json:"explicit"`
 }

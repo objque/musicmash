@@ -55,6 +55,7 @@ type Release interface {
 	GetName() string
 	GetPoster(width, height int) string
 	GetReleaseDate() time.Time
+	IsExplicit() bool
 }
 
 type batch struct {
@@ -161,6 +162,7 @@ func (f *Fetcher) saveWorker(id int, releases <-chan *batch, done chan<- int) {
 				Poster:    release.GetPoster(posterWidth, posterHeight),
 				Released:  release.GetReleaseDate(),
 				Type:      batch.Type,
+				Explicit:  release.IsExplicit(),
 			})
 			if err != nil {
 				log.Errorf("can't save release from %s with id %s: %v", f.GetStoreName(), release.GetID(), err)
