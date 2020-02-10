@@ -159,6 +159,6 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 	assert.Equal(t.T(), vars.ArtistArchitects, notifications[0].ArtistName)
 	assert.Equal(t.T(), vars.ArtistAlgorithm, notifications[0].Title)
 	assert.Equal(t.T(), vars.StoreApple, notifications[0].StoreName)
-	assert.Equal(t.T(), vars.PosterSimple, notifications[0].ReleasePoster)
+	assert.Equal(t.T(), vars.PosterSimple, notifications[0].Poster)
 	assert.Contains(t.T(), notifications[0].StoreID, "this-future-release-have-to-be-in-output")
 }

@@ -3,12 +3,19 @@ package db
 import "time"
 
 type InternalNotification struct {
-	Artist
-	Release
-	NotificationSettings
-	ArtistName    string
-	ReleaseID     uint64
-	ReleasePoster string
+	ArtistID   int64
+	ArtistName string
+	ReleaseID  uint64
+	Title      string
+	Released   time.Time
+	StoreID    string
+	StoreName  string
+	Poster     string
+	Type       string
+	UserName   string
+	Service    string
+	Data       string
+	Explicit   bool
 }
 
 type InternalNotificationMgr interface {
@@ -25,7 +32,7 @@ SELECT releases.id as release_id,
        releases.released,
        releases.store_id,
        releases.store_name,
-       releases.poster as release_poster,
+       releases.poster,
        releases.type,
        releases.explicit,
        subscriptions.user_name,
