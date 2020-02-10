@@ -13,7 +13,7 @@ import (
 
 func TestTelegramUtils_MakeText(t *testing.T) {
 	// arrange
-	release := db.Release{
+	release := db.InternalNotification{
 		StoreName: vars.StoreApple,
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  time.Now().UTC().Truncate(time.Hour).Add(-time.Hour),
@@ -30,7 +30,7 @@ func TestTelegramUtils_MakeText(t *testing.T) {
 
 func TestTelegramUtils_MakeButtons(t *testing.T) {
 	// arrange
-	release := db.Release{
+	release := db.InternalNotification{
 		StoreName: vars.StoreApple,
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  time.Now().UTC().Truncate(time.Hour).Add(-time.Hour),
@@ -62,7 +62,7 @@ func TestTelegramUtils_MakeButtons(t *testing.T) {
 func TestTelegramUtils_MakeText_Announced(t *testing.T) {
 	// arrange
 	released := time.Now().UTC().Truncate(time.Hour).Add(time.Hour * 48)
-	release := db.Release{
+	release := db.InternalNotification{
 		StoreName: vars.StoreApple,
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  released,

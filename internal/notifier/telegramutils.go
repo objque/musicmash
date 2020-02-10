@@ -9,7 +9,7 @@ import (
 	tgbotapi "gopkg.in/telegram-bot-api.v4"
 )
 
-func makeText(artistName string, release *db.Release) string {
+func makeText(artistName string, release *db.InternalNotification) string {
 	releaseDate := ""
 	state := "released"
 	if release.Released.After(time.Now().UTC()) {
@@ -21,7 +21,7 @@ func makeText(artistName string, release *db.Release) string {
 	return fmt.Sprintf("New %s %s \n*%s*\nby %s%s %s", release.Type, state, release.Title, artistName, releaseDate, poster)
 }
 
-func makeButtons(release *db.Release) *[][]tgbotapi.InlineKeyboardButton {
+func makeButtons(release *db.InternalNotification) *[][]tgbotapi.InlineKeyboardButton {
 	buttons := [][]tgbotapi.InlineKeyboardButton{}
 	storeDetails := config.Config.Stores[release.StoreName]
 	buttonLabel := fmt.Sprintf("Listen on %s", storeDetails.Name)
@@ -30,7 +30,7 @@ func makeButtons(release *db.Release) *[][]tgbotapi.InlineKeyboardButton {
 	return &buttons
 }
 
-func makeMessage(artistName string, release *db.Release) *tgbotapi.MessageConfig {
+func makeMessage(artistName string, release *db.InternalNotification) *tgbotapi.MessageConfig {
 	message := tgbotapi.MessageConfig{
 		BaseChat: tgbotapi.BaseChat{
 			ReplyToMessageID: 0,

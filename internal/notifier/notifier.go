@@ -42,10 +42,7 @@ func NotifyWithPeriod(period time.Time) {
 	}
 
 	for _, notification := range notifications {
-		// todo: remove this after switching from gorm to sqlx
-		notification.Release.ID = notification.ReleaseID
-		notification.Release.Poster = notification.ReleasePoster
-		message := makeMessage(notification.ArtistName, &notification.Release)
+		message := makeMessage(notification.ArtistName, notification)
 		message.ChatID, err = strconv.ParseInt(notification.Data, 10, 64)
 		if err != nil {
 			log.Warnf("user_name (%s) has broken %s data: '%v'",
@@ -57,6 +54,6 @@ func NotifyWithPeriod(period time.Time) {
 			continue
 		}
 
-		_ = markReleaseAsDelivered(notification.UserName, notification.ReleaseID, notification.IsComing())
+		_ = markReleaseAsDelivered(notification.UserName, notification.ReleaseID, notification.IsReleaseComing())
 	}
 }
