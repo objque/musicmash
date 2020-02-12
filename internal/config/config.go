@@ -37,16 +37,6 @@ func New() *AppConfig {
 			Enabled: true,
 			Delay:   8,
 		},
-		Stores: StoresConfig{
-			"itunes": {
-				Name:         "Apple Music",
-				URL:          "https://api.music.apple.com",
-				FetchWorkers: 5,
-				SaveWorkers:  1,
-				ReleaseURL:   "https://itunes.apple.com/us/{release_type}/{release_id}",
-				Fetch:        true,
-			},
-		},
 		Sentry: SentryConfig{
 			Enabled:     false,
 			Key:         "https://uuid@sentry.io/123456",

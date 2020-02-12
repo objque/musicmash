@@ -27,15 +27,6 @@ fetcher:
   enabled: true
   delay: 8
 
-stores:
-  itunes:
-    url: https://api.music.apple.com
-    fetch_workers: 5
-    save_workers: 1
-    release_url: https://itunes.apple.com/us/{release_type}/{release_id}
-    name: Apple Music
-    fetch: true
-
 sentry:
   enabled: false
   key: https://uuid@sentry.io/123456
