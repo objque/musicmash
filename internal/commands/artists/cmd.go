@@ -13,7 +13,6 @@ func NewArtistCommand() *cobra.Command {
 		NewCreateCommand(),
 		NewSearchCommand(),
 		NewShowCommand(),
-		NewAssociateCommand(),
 	)
 	return cmd
 }

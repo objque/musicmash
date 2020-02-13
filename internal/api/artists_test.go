@@ -56,57 +56,6 @@ func (t *testAPISuite) TestArtists_Create() {
 	assert.Equal(t.T(), int64(1), artist.ID)
 }
 
-func (t *testAPISuite) TestArtists_Associate() {
-	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
-	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(vars.StoreApple))
-
-	// action
-	info := &artists.Association{ArtistID: 1, StoreName: vars.StoreApple, StoreID: vars.StoreIDA}
-	err := artists.Associate(t.client, info)
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Equal(t.T(), vars.StoreIDA, info.StoreID)
-	assert.Equal(t.T(), vars.StoreApple, info.StoreName)
-	assert.Equal(t.T(), int64(1), info.ArtistID)
-}
-
-func (t *testAPISuite) TestArtists_Associate_ArtistNotFound() {
-	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(vars.StoreApple))
-
-	// action
-	info := &artists.Association{ArtistID: 1, StoreName: vars.StoreApple, StoreID: vars.StoreIDA}
-	err := artists.Associate(t.client, info)
-
-	// assert
-	assert.Error(t.T(), err)
-}
-
-func (t *testAPISuite) TestArtists_Associate_AlreadyAssociated() {
-	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
-	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(vars.StoreApple))
-	assert.NoError(t.T(), db.DbMgr.EnsureAssociationExists(1, vars.StoreApple, vars.StoreIDA))
-
-	// action
-	info := &artists.Association{ArtistID: 1, StoreName: vars.StoreApple, StoreID: vars.StoreIDA}
-	err := artists.Associate(t.client, info)
-
-	// assert
-	assert.Error(t.T(), err)
-}
-
-func (t *testAPISuite) TestArtists_Associate_StoreNotFound() {
-	// action
-	info := &artists.Association{ArtistID: 1, StoreName: vars.StoreApple, StoreID: vars.StoreIDA}
-	err := artists.Associate(t.client, info)
-
-	// assert
-	assert.Error(t.T(), err)
-}
-
 func (t *testAPISuite) TestArtists_Get() {
 	// arrange
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))

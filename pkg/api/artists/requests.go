@@ -63,30 +63,6 @@ func Create(provider *api.Provider, artist *Artist) error {
 	return json.NewDecoder(resp.Body).Decode(&artist)
 }
 
-func Associate(provider *api.Provider, info *Association) error {
-	url := fmt.Sprintf("%s/artists/associate", provider.URL)
-	b, _ := json.Marshal(&info)
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(b))
-	if err != nil {
-		return err
-	}
-
-	command, _ := http2curl.GetCurlCommand(request)
-	log.Debug(command)
-
-	resp, err := provider.Client.Do(request)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return api.ExtractError(resp.Body)
-	}
-
-	return json.NewDecoder(resp.Body).Decode(&info)
-}
-
 func Get(provider *api.Provider, id int64, _ *GetOptions) (*Artist, error) {
 	url := fmt.Sprintf("%s/artists/%d", provider.URL, id)
 	request, err := http.NewRequest(http.MethodGet, url, nil)

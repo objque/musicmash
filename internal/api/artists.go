@@ -26,7 +26,6 @@ func NewArtistsController() *ArtistsController {
 func (c *ArtistsController) Register(router chi.Router) {
 	router.Route(PathArtists, func(r chi.Router) {
 		r.Post("/", c.addArtist)
-		r.Post("/associate", c.associateArtist)
 		r.Get("/", c.searchArtist)
 		r.Get("/{id}", c.getArtist)
 		r.Get("/{artist_id}/releases", c.getReleasesBy)
@@ -60,46 +59,6 @@ func (c *ArtistsController) addArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = httputils.WriteJSON(w, http.StatusCreated, &artist)
-}
-
-func (c *ArtistsController) associateArtist(w http.ResponseWriter, r *http.Request) {
-	info := db.Association{}
-	err := json.NewDecoder(r.Body).Decode(&info)
-	if err != nil {
-		httputils.WriteError(w, errors.New("invalid body"))
-		return
-	}
-
-	if exist := db.DbMgr.IsStoreExists(info.StoreName); !exist {
-		httputils.WriteError(w, errors.New("store not found"))
-		return
-	}
-
-	if exist := db.DbMgr.IsAssociationExists(info.StoreName, info.StoreID); exist {
-		httputils.WriteError(w, errors.New("artist already associated"))
-		return
-	}
-
-	_, err = db.DbMgr.GetArtist(info.ArtistID)
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			httputils.WriteError(w, errors.New("artist not found"))
-			return
-		}
-
-		httputils.WriteInternalError(w)
-		log.Error(err)
-		return
-	}
-
-	err = db.DbMgr.EnsureAssociationExists(info.ArtistID, info.StoreName, info.StoreID)
-	if err != nil {
-		httputils.WriteInternalError(w)
-		log.Error(err)
-		return
-	}
-
-	_ = httputils.WriteJSON(w, http.StatusCreated, &info)
 }
 
 func (c *ArtistsController) searchArtist(w http.ResponseWriter, r *http.Request) {
