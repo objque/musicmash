@@ -58,4 +58,4 @@ build-arm7: clean
 	env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -v -o ./dist/musicmashctl ./cmd/musicmashctl/...
 
 api:
-	musicmash --fetcher-enabled=false --notifier-enabled=false --db-auto-migrate=true --db-migrations-dir=./migrations/sqlite3
+	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations/sqlite3

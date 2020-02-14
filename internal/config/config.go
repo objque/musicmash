@@ -34,7 +34,7 @@ func New() *AppConfig {
 			Level: "INFO",
 		},
 		Fetcher: FetcherConfig{
-			Enabled: true,
+			Enabled: false,
 			Delay:   8,
 		},
 		Sentry: SentryConfig{
@@ -43,7 +43,7 @@ func New() *AppConfig {
 			Environment: "production",
 		},
 		Notifier: NotifierConfig{
-			Enabled: true,
+			Enabled: false,
 			Delay:   1,
 		},
 		Proxy: ProxyConfig{

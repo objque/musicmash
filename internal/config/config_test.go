@@ -24,7 +24,7 @@ log:
   level: INFO
 
 fetcher:
-  enabled: true
+  enabled: false
   delay: 8
 
 sentry:
@@ -33,7 +33,7 @@ sentry:
   environment: production
 
 notifier:
-  enabled: true
+  enabled: false
   delay: 1
 
 proxy:
