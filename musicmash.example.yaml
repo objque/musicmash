@@ -28,7 +28,7 @@ stores:
     meta: # basically it's just an optional map of key=value (string=string)
       token: "AMQjRckzD]VDJA@rW(w7PiV=TtPjRshDjgGgUjC.ctxwhgc8cR+z2ammv,dLWok3"
       region: "us"
-    release_url: https://itunes.apple.com/us/album/%s
+    release_url: https://itunes.apple.com/us/{release_type}/{release_id}
     name: Apple Music
     fetch: true
 

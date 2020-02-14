@@ -2,6 +2,7 @@ package notifier
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/config"
@@ -29,9 +30,19 @@ func makeButtons(release *db.InternalNotification) *[][]tgbotapi.InlineKeyboardB
 		releaseAction = "View"
 	}
 	buttonLabel := fmt.Sprintf("%s on %s", releaseAction, storeDetails.Name)
-	url := fmt.Sprintf(config.Config.Stores[release.StoreName].ReleaseURL, release.StoreID)
+	url := replacePlaceholders(config.Config.Stores[release.StoreName].ReleaseURL, release)
 	buttons = append(buttons, tgbotapi.NewInlineKeyboardRow(tgbotapi.NewInlineKeyboardButtonURL(buttonLabel, url)))
 	return &buttons
+}
+
+func replacePlaceholders(url string, release *db.InternalNotification) string {
+	const (
+		replaceCount           = 1
+		releaseTypePlaceholder = "{release_type}"
+		releaseIDPlaceholder   = "{release_id}"
+	)
+	url = strings.Replace(url, releaseTypePlaceholder, release.Type, replaceCount)
+	return strings.Replace(url, releaseIDPlaceholder, release.StoreID, replaceCount)
 }
 
 func makeMessage(artistName string, release *db.InternalNotification) *tgbotapi.MessageConfig {

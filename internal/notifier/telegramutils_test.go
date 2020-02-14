@@ -42,7 +42,7 @@ func TestTelegramUtils_MakeButtons(t *testing.T) {
 		Stores: config.StoresConfig{
 			vars.StoreApple: {
 				Name:       vars.StoreApple,
-				ReleaseURL: "https://itunes.apple.com/us/album/%s",
+				ReleaseURL: "https://itunes.apple.com/us/{release_type}/{release_id}",
 			},
 		},
 	}

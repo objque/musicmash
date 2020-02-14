@@ -43,7 +43,7 @@ func New() *AppConfig {
 				URL:          "https://api.music.apple.com",
 				FetchWorkers: 5,
 				SaveWorkers:  1,
-				ReleaseURL:   "https://itunes.apple.com/us/album/%s",
+				ReleaseURL:   "https://itunes.apple.com/us/{release_type}/{release_id}",
 				Fetch:        true,
 			},
 		},
