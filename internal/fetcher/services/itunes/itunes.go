@@ -4,6 +4,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/musicmash/musicmash/internal/clients/itunes"
 	"github.com/musicmash/musicmash/internal/clients/itunes/albums"
@@ -84,9 +85,11 @@ func (f *Fetcher) saveWorker(id int, releases <-chan *batch, wg *sync.WaitGroup)
 	for batch := range releases {
 		log.Debugf("Saving %d releases by %d", len(batch.Releases), batch.ArtistID)
 		tx := db.DbMgr.Begin()
+		now := time.Now().UTC()
 		for _, release := range batch.Releases {
 			title := removeAlbumType(release.Attributes.Name)
 			err := tx.EnsureReleaseExists(&db.Release{
+				CreatedAt: now,
 				StoreName: f.GetStoreName(),
 				StoreID:   release.ID,
 				ArtistID:  batch.ArtistID,
