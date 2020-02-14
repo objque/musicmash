@@ -57,5 +57,5 @@ build-arm7: clean
 	env GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=arm-linux-gnueabi-gcc go build -ldflags="-s -w" -v -o ./dist/musicmash ./cmd/musicmash/...
 	env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -v -o ./dist/musicmashctl ./cmd/musicmashctl/...
 
-api:
+api: install
 	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations/sqlite3
