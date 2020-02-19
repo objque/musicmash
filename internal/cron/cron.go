@@ -4,27 +4,21 @@ import (
 	"strings"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 )
 
 type cron struct {
-	ActionName               string
-	Action                   func()
-	CountOfSkippedHoursToRun float64
+	ActionName string
+	Action     func()
+	Delay      time.Duration
 }
 
-func (c *cron) Run() {
-	for {
-		if !c.IsMustFetch() {
-			time.Sleep(time.Minute * 15)
-			continue
-		}
-
+func (c *cron) wrapAction(action func()) func() {
+	return func() {
 		now := time.Now().UTC()
 		log.Infof("Start %sing stage", c.ActionName)
-		c.Action()
+		action()
 		log.Infof("Finish %sing stage", c.ActionName)
 		log.Infof("%sing stage elapsed %s", strings.Title(c.ActionName), time.Now().UTC().Sub(now).String())
 		if err := db.DbMgr.SetLastActionDate(c.ActionName, now); err != nil {
@@ -33,33 +27,27 @@ func (c *cron) Run() {
 	}
 }
 
-func (c *cron) IsMustFetch() bool {
-	last, err := db.DbMgr.GetLastActionDate(c.ActionName)
-	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			if err = db.DbMgr.SetLastActionDate(c.ActionName, time.Now().UTC()); err != nil {
-				log.Errorf("can't save last_action date for %s, do it manually", c.ActionName)
-				return false
-			}
-
-			log.Infof("Last %s set as now(). Next in %v hour",
-				c.ActionName, c.CountOfSkippedHoursToRun)
-			return false
-		}
-
-		log.Error(err)
-		return false
+func (c *cron) Run() {
+	// override user action with our wrapper with extra logic
+	c.Action = c.wrapAction(c.Action)
+	now := time.Now().UTC()
+	next := time.Now().UTC().Add(c.Delay)
+	// start task immediately if delay if over against provided delay
+	if now.After(next) {
+		log.Infof("Starting %ving stage immediately, because provided delay is over after last fetch: %v | configured delay is: %v",
+			c.ActionName, time.Now().UTC().Sub(now).String(), c.Delay)
+		c.Action()
 	}
 
-	diff := calcDiffHours(last.Date)
-	log.Infof("Last %s was at %s. Next in %v hour",
-		c.ActionName,
-		last.Date.Format("2006-01-02T15:04:05"),
-		c.CountOfSkippedHoursToRun-diff)
-	return diff >= c.CountOfSkippedHoursToRun
+	for {
+		select {
+		case <-time.NewTicker(c.Delay).C:
+			c.Action()
+		}
+	}
 }
 
-func Run(actionName string, countOfSkippedHours float64, action func()) {
-	c := cron{Action: action, ActionName: actionName, CountOfSkippedHoursToRun: countOfSkippedHours}
+func Run(actionName string, delay time.Duration, action func()) {
+	c := cron{Action: action, ActionName: actionName, Delay: delay}
 	c.Run()
 }

@@ -19,7 +19,7 @@ log:
 
 fetcher:
   enabled: true
-  delay: 8 # hours
+  delay: 6h0m0s # time.Duration format: XXhYYmZZs, you may provide any part like 24m
 
 stores:
   itunes:
@@ -39,7 +39,7 @@ sentry:
 notifier:
   enabled: true
   telegram_token: 12345:xxxx_yyy_token
-  delay: 1 # hours
+  delay: 12h0m0s # time.Duration format: XXhYYmZZs, you may provide any part like 24m
 
 proxy:
   enabled: false

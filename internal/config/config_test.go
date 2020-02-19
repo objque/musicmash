@@ -25,7 +25,7 @@ log:
 
 fetcher:
   enabled: false
-  delay: 8
+  delay: 1h
 
 sentry:
   enabled: false

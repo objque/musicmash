@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"net/url"
 	"strconv"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 	"golang.org/x/net/proxy"
@@ -35,7 +36,7 @@ func New() *AppConfig {
 		},
 		Fetcher: FetcherConfig{
 			Enabled: false,
-			Delay:   8,
+			Delay:   time.Hour,
 		},
 		Sentry: SentryConfig{
 			Enabled:     false,
@@ -44,7 +45,7 @@ func New() *AppConfig {
 		},
 		Notifier: NotifierConfig{
 			Enabled: false,
-			Delay:   1,
+			Delay:   time.Hour,
 		},
 		Proxy: ProxyConfig{
 			Enabled:  false,
@@ -92,14 +93,14 @@ func (c *AppConfig) FlagSet() {
 	flag.StringVar(&c.Log.File, "log-file", c.Log.File, "Path to log file")
 
 	flag.BoolVar(&c.Fetcher.Enabled, "fetcher-enabled", c.Fetcher.Enabled, "Is fetcher enabled")
-	flag.Float64Var(&c.Fetcher.Delay, "fetcher-delay", c.Fetcher.Delay, "Delay between fetches")
+	flag.DurationVar(&c.Fetcher.Delay, "fetcher-delay", c.Fetcher.Delay, "Delay between fetches")
 
 	flag.BoolVar(&c.Sentry.Enabled, "sentry-enabled", c.Sentry.Enabled, "Is Sentry enabled")
 	flag.StringVar(&c.Sentry.Key, "sentry-key", c.Sentry.Key, "Sentry dsn")
 	flag.StringVar(&c.Sentry.Environment, "sentry-environment", c.Sentry.Environment, "Sentry environment")
 
 	flag.BoolVar(&c.Notifier.Enabled, "notifier-enabled", c.Notifier.Enabled, "Is notifier enabled")
-	flag.Float64Var(&c.Notifier.Delay, "notifier-delay", c.Notifier.Delay, "Delay between notifies")
+	flag.DurationVar(&c.Notifier.Delay, "notifier-delay", c.Notifier.Delay, "Delay between notifies")
 	flag.StringVar(&c.Notifier.TelegramToken, "notifier-telegram-token", c.Notifier.TelegramToken, "Telegram bot token")
 
 	flag.BoolVar(&c.Proxy.Enabled, "proxy-enabled", false, "Use proxy for notifier (if telegram blocked in your country)")

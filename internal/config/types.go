@@ -1,5 +1,7 @@
 package config
 
+import "time"
+
 type AppConfig struct {
 	HTTP     HTTPConfig     `yaml:"http"`
 	DB       DBConfig       `yaml:"db"`
@@ -33,14 +35,14 @@ type DBConfig struct {
 }
 
 type FetcherConfig struct {
-	Enabled bool    `yaml:"enabled"`
-	Delay   float64 `yaml:"delay"`
+	Enabled bool          `yaml:"enabled"`
+	Delay   time.Duration `yaml:"delay"`
 }
 
 type NotifierConfig struct {
-	Enabled       bool    `yaml:"enabled"`
-	TelegramToken string  `yaml:"telegram_token"`
-	Delay         float64 `yaml:"delay"`
+	Enabled       bool          `yaml:"enabled"`
+	TelegramToken string        `yaml:"telegram_token"`
+	Delay         time.Duration `yaml:"delay"`
 }
 
 type StoreConfig struct {
