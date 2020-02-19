@@ -1,15 +1,12 @@
 package releases
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
 	"net/url"
 	"time"
 
 	"github.com/musicmash/musicmash/pkg/api"
-	log "github.com/sirupsen/logrus"
-	"moul.io/http2curl"
 )
 
 type GetOptions struct {
@@ -29,56 +26,25 @@ func For(provider *api.Provider, userName string, opts *GetOptions) ([]*Release,
 		u.RawQuery = values.Encode()
 	}
 
-	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
-	if err != nil {
+	headers := http.Header{
+		"x-user-name": {userName},
+	}
+
+	releases := []*Release{}
+	if err := api.GetWithHeaders(provider, u, headers, &releases); err != nil {
 		return nil, err
 	}
-	request.Header.Add("x-user-name", userName)
 
-	command, _ := http2curl.GetCurlCommand(request)
-	log.Debug(command)
-
-	resp, err := provider.Client.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return nil, api.ExtractError(resp.Body)
-	}
-
-	stores := []*Release{}
-	if err := json.NewDecoder(resp.Body).Decode(&stores); err != nil {
-		return nil, err
-	}
-	return stores, nil
+	return releases, nil
 }
 
 func By(provider *api.Provider, id int64) ([]*Release, error) {
 	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/artists/%d/releases", provider.URL, id))
 
-	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
-	if err != nil {
+	releases := []*Release{}
+	if err := api.Get(provider, u, &releases); err != nil {
 		return nil, err
 	}
 
-	command, _ := http2curl.GetCurlCommand(request)
-	log.Debug(command)
-
-	resp, err := provider.Client.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return nil, api.ExtractError(resp.Body)
-	}
-
-	release := []*Release{}
-	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
-		return nil, err
-	}
-	return release, nil
+	return releases, nil
 }

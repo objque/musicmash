@@ -8,62 +8,31 @@ import (
 	"net/url"
 
 	"github.com/musicmash/musicmash/pkg/api"
-	log "github.com/sirupsen/logrus"
-	"moul.io/http2curl"
 )
 
 func Create(provider *api.Provider, userName string, settings *Settings) error {
 	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/notifications/settings", provider.URL))
 
 	b, _ := json.Marshal(&settings)
-	request, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(b))
-	if err != nil {
-		return err
-	}
-	request.Header.Add("x-user-name", userName)
-
-	command, _ := http2curl.GetCurlCommand(request)
-	log.Debug(command)
-
-	resp, err := provider.Client.Do(request)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return api.ExtractError(resp.Body)
+	headers := http.Header{
+		"x-user-name": {userName},
 	}
 
-	return json.NewDecoder(resp.Body).Decode(&settings)
+	return api.PostWithHeaders(provider, u, headers, bytes.NewBuffer(b), &settings)
 }
 
 func List(provider *api.Provider, userName string) ([]*Settings, error) {
 	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/notifications/settings", provider.URL))
 
-	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
-	if err != nil {
-		return nil, err
-	}
-	request.Header.Add("x-user-name", userName)
-
-	command, _ := http2curl.GetCurlCommand(request)
-	log.Debug(command)
-
-	resp, err := provider.Client.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return nil, api.ExtractError(resp.Body)
+	headers := http.Header{
+		"x-user-name": {userName},
 	}
 
 	settings := []*Settings{}
-	if err := json.NewDecoder(resp.Body).Decode(&settings); err != nil {
+	if err := api.GetWithHeaders(provider, u, headers, &settings); err != nil {
 		return nil, err
 	}
+
 	return settings, nil
 }
 
@@ -71,24 +40,9 @@ func Update(provider *api.Provider, userName string, settings *Settings) error {
 	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/notifications/settings", provider.URL))
 
 	b, _ := json.Marshal(&settings)
-	request, err := http.NewRequest(http.MethodPatch, u.String(), bytes.NewBuffer(b))
-	if err != nil {
-		return err
-	}
-	request.Header.Add("x-user-name", userName)
-
-	command, _ := http2curl.GetCurlCommand(request)
-	log.Debug(command)
-
-	resp, err := provider.Client.Do(request)
-	if err != nil {
-		return err
-	}
-	defer func() { _ = resp.Body.Close() }()
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return api.ExtractError(resp.Body)
+	headers := http.Header{
+		"x-user-name": {userName},
 	}
 
-	return json.NewDecoder(resp.Body).Decode(&settings)
+	return api.PatchWithHeaders(provider, u, headers, bytes.NewBuffer(b), &settings)
 }
