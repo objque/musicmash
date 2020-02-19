@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS "artists" (
     "id"         INTEGER PRIMARY KEY AUTOINCREMENT,
     "name"       VARCHAR(255),
     "poster"     VARCHAR(255),
-    "popularity" INTEGER,
-    "followers"  INTEGER
+    "popularity" INTEGER default 0,
+    "followers"  INTEGER default 0
 );
 -- +migrate StatementEnd
 
