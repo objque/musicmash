@@ -8,7 +8,7 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	log "github.com/sirupsen/logrus"
+	"github.com/musicmash/musicmash/internal/log"
 	"moul.io/http2curl"
 )
 
@@ -23,7 +23,7 @@ func do(provider *Provider, url fmt.Stringer, method string, header http.Header,
 	}
 
 	command, _ := http2curl.GetCurlCommand(request)
-	log.Debug(command)
+	log.Debugln(command)
 
 	resp, err := provider.Client.Do(request)
 	if err != nil {
