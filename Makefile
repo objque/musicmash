@@ -13,40 +13,6 @@ build: clean
 	go build -ldflags="-s -w" -v -o dist/musicmash ./cmd/musicmash/...
 	go build -ldflags="-s -w" -v -o dist/musicmashctl ./cmd/musicmashctl/...
 
-install:
-	go install -v ./cmd/...
-
-t tests: install
-	go test -v ./internal/...
-
-add-ssh-key:
-	openssl aes-256-cbc -K $(encrypted_a4311917bb34_key) -iv $(encrypted_a4311917bb34_iv) -in travis_key.enc -out /tmp/travis_key -d
-	chmod 600 /tmp/travis_key
-	ssh-add /tmp/travis_key
-
-docker-login:
-	docker login -u $(REGISTRY_USER) -p $(REGISTRY_PASS)
-
-docker-build:
-	docker build \
-		--build-arg RELEASE=${RELEASE} \
-		--build-arg COMMIT=${COMMIT} \
-		--build-arg BUILD_TIME=${BUILD_TIME} \
-		-t $(REGISTRY_REPO):$(VERSION) .
-
-docker-push: docker-login
-	docker push $(REGISTRY_REPO):$(VERSION)
-
-deploy:
-	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music
-
-deploy-staging:
-	ssh -o "StrictHostKeyChecking no" $(STAGING_USER)@$(STAGING_HOST) make run-music
-
-lint-all l:
-	bash ./scripts/revive.sh
-	bash ./scripts/golangci-lint.sh
-
 build-arm7: clean
 	if ! which arm-linux-gnueabi-gcc > /dev/null; then \
 		echo "you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7:"; \
@@ -57,9 +23,26 @@ build-arm7: clean
 	env GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=arm-linux-gnueabi-gcc go build -ldflags="-s -w" -v -o ./dist/musicmash ./cmd/musicmash/...
 	env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -v -o ./dist/musicmashctl ./cmd/musicmashctl/...
 
-api: install
-	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations/sqlite3
+install:
+	go install -v ./cmd/...
+
+tests t: install
+	go test -v ./internal/...
 
 update-deps:
 	go get -u ./...
 	go mod vendor
+
+image:
+	docker build \
+		--build-arg RELEASE=${RELEASE} \
+		--build-arg COMMIT=${COMMIT} \
+		--build-arg BUILD_TIME=${BUILD_TIME} \
+		-t $(REGISTRY_REPO):$(VERSION) .
+
+lint l:
+	bash ./scripts/revive.sh
+	bash ./scripts/golangci-lint.sh
+
+api: install
+	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations/sqlite3
