@@ -1,9 +1,11 @@
 package api
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
+	"io/ioutil"
 	"net/http"
 
 	log "github.com/sirupsen/logrus"
@@ -29,12 +31,18 @@ func do(provider *Provider, url fmt.Stringer, method string, header http.Header,
 	}
 	defer func() { _ = resp.Body.Close() }()
 
+	b, err := ioutil.ReadAll(resp.Body)
+	if err == nil {
+		// TODO (m.kalinin): add resp.body limit length
+		log.Debugln(fmt.Sprintf("Got %v status_code with resp: %s", resp.StatusCode, string(b)))
+	}
+
 	if resp.StatusCode == http.StatusNoContent {
 		return nil
 	}
 
 	if resp.StatusCode >= http.StatusBadRequest {
-		return ExtractError(resp.Body)
+		return ExtractError(bytes.NewReader(b))
 	}
 
 	// TODO (m.kalinin): decode subscriptions after create
@@ -42,7 +50,7 @@ func do(provider *Provider, url fmt.Stringer, method string, header http.Header,
 		return nil
 	}
 
-	return json.NewDecoder(resp.Body).Decode(out)
+	return json.NewDecoder(bytes.NewReader(b)).Decode(out)
 }
 
 func Get(provider *Provider, url fmt.Stringer, out interface{}) error {
