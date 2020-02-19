@@ -13,7 +13,7 @@ func (t *testAPISuite) fillRelease(release *db.Release) {
 	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(release))
 }
 
-func (t *testAPISuite) TestReleases_Get() {
+func (t *testAPISuite) TestReleases_Get_ForUser() {
 	// arrange
 	r := time.Now().UTC()
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
@@ -54,7 +54,7 @@ func (t *testAPISuite) TestReleases_Get() {
 	}
 }
 
-func (t *testAPISuite) TestReleases_Get_EmptyForPeriod() {
+func (t *testAPISuite) TestReleases_Get_ForUser_EmptyForPeriod() {
 	// arrange
 	r := time.Now().UTC()
 	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
@@ -70,5 +70,63 @@ func (t *testAPISuite) TestReleases_Get_EmptyForPeriod() {
 
 	// assert
 	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 0)
+}
+
+func (t *testAPISuite) TestReleases_Get_ByArtist() {
+	// arrange
+	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: 666}))
+	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
+		ID:       vars.StoreIDQ,
+		ArtistID: 666,
+		Title:    vars.ArtistArchitects,
+		Released: time.Now(),
+	}))
+
+	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
+		ID:       vars.StoreIDW,
+		ArtistID: 777,
+		Title:    vars.ArtistArchitects,
+		Released: time.Now().UTC().AddDate(-1, 0, 0),
+	}))
+
+	// action
+	releases, err := releases.By(t.client, 666)
+
+	// assert
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
+	assert.Equal(t.T(), vars.ArtistArchitects, releases[0].Title)
+	assert.Equal(t.T(), uint64(vars.StoreIDQ), releases[0].ID)
+}
+
+func (t *testAPISuite) TestReleases_Get_ByArtist_Empty() {
+	// action
+	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: 666}))
+	releases, err := releases.By(t.client, 666)
+
+	// assert
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 0)
+}
+
+func (t *testAPISuite) TestReleases_Get_ByArtist_Internal() {
+	// arrange
+	_ = db.DbMgr.Close()
+
+	// action
+	releases, err := releases.By(t.client, 666)
+
+	// assert
+	assert.Error(t.T(), err)
+	assert.Len(t.T(), releases, 0)
+}
+
+func (t *testAPISuite) TestReleases_Get_ByArtist_ArtistNotFound() {
+	// action
+	releases, err := releases.By(t.client, 666)
+
+	// assert
+	assert.Error(t.T(), err)
 	assert.Len(t.T(), releases, 0)
 }

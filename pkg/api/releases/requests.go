@@ -39,7 +39,10 @@ func For(provider *api.Provider, userName string, opts *GetOptions) ([]*Release,
 }
 
 func By(provider *api.Provider, id int64) ([]*Release, error) {
-	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/artists/%d/releases", provider.URL, id))
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/releases", provider.URL))
+	values := u.Query()
+	values.Set("artist_id", fmt.Sprint(id))
+	u.RawQuery = values.Encode()
 
 	releases := []*Release{}
 	if err := api.Get(provider, u, &releases); err != nil {
