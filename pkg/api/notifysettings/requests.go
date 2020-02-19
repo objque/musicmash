@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/musicmash/musicmash/pkg/api"
 	log "github.com/sirupsen/logrus"
@@ -12,9 +13,10 @@ import (
 )
 
 func Create(provider *api.Provider, userName string, settings *Settings) error {
-	url := fmt.Sprintf("%s/notifications/settings", provider.URL)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/notifications/settings", provider.URL))
+
 	b, _ := json.Marshal(&settings)
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(b))
+	request, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}
@@ -37,8 +39,9 @@ func Create(provider *api.Provider, userName string, settings *Settings) error {
 }
 
 func List(provider *api.Provider, userName string) ([]*Settings, error) {
-	url := fmt.Sprintf("%s/notifications/settings", provider.URL)
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/notifications/settings", provider.URL))
+
+	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -65,9 +68,10 @@ func List(provider *api.Provider, userName string) ([]*Settings, error) {
 }
 
 func Update(provider *api.Provider, userName string, settings *Settings) error {
-	url := fmt.Sprintf("%s/notifications/settings", provider.URL)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/notifications/settings", provider.URL))
+
 	b, _ := json.Marshal(&settings)
-	request, err := http.NewRequest(http.MethodPatch, url, bytes.NewBuffer(b))
+	request, err := http.NewRequest(http.MethodPatch, u.String(), bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}

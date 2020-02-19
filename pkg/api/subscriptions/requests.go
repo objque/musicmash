@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/musicmash/musicmash/pkg/api"
 	log "github.com/sirupsen/logrus"
@@ -12,8 +13,9 @@ import (
 )
 
 func List(provider *api.Provider, userName string) ([]*Subscription, error) {
-	url := fmt.Sprintf("%s/subscriptions", provider.URL)
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/subscriptions", provider.URL))
+
+	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -40,9 +42,10 @@ func List(provider *api.Provider, userName string) ([]*Subscription, error) {
 }
 
 func Create(provider *api.Provider, userName string, artists []int64) error {
-	url := fmt.Sprintf("%s/subscriptions", provider.URL)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/subscriptions", provider.URL))
+
 	b, _ := json.Marshal(&artists)
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(b))
+	request, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}
@@ -64,9 +67,10 @@ func Create(provider *api.Provider, userName string, artists []int64) error {
 }
 
 func Delete(provider *api.Provider, userName string, artists []int64) error {
-	url := fmt.Sprintf("%s/subscriptions", provider.URL)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/subscriptions", provider.URL))
+
 	b, _ := json.Marshal(&artists)
-	request, err := http.NewRequest(http.MethodDelete, url, bytes.NewBuffer(b))
+	request, err := http.NewRequest(http.MethodDelete, u.String(), bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}

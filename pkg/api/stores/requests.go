@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 
 	"github.com/musicmash/musicmash/pkg/api"
 	log "github.com/sirupsen/logrus"
@@ -11,8 +12,9 @@ import (
 )
 
 func List(provider *api.Provider) ([]*Store, error) {
-	url := fmt.Sprintf("%s/stores", provider.URL)
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/stores", provider.URL))
+
+	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}

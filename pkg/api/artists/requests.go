@@ -13,8 +13,12 @@ import (
 )
 
 func Search(provider *api.Provider, name string) ([]*Artist, error) {
-	searchURL := fmt.Sprintf("%s/artists?name=%s", provider.URL, url.QueryEscape(name))
-	request, err := http.NewRequest(http.MethodGet, searchURL, nil)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/artists", provider.URL))
+	values := u.Query()
+	values.Set("name", url.QueryEscape(name))
+	u.RawQuery = values.Encode()
+
+	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -40,9 +44,10 @@ func Search(provider *api.Provider, name string) ([]*Artist, error) {
 }
 
 func Create(provider *api.Provider, artist *Artist) error {
-	url := fmt.Sprintf("%s/artists", provider.URL)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/artists", provider.URL))
+
 	b, _ := json.Marshal(&artist)
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(b))
+	request, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
 		return err
 	}
@@ -64,8 +69,9 @@ func Create(provider *api.Provider, artist *Artist) error {
 }
 
 func Get(provider *api.Provider, id int64, _ *GetOptions) (*Artist, error) {
-	url := fmt.Sprintf("%s/artists/%d", provider.URL, id)
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/artists/%d", provider.URL, id))
+
+	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}

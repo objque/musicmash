@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"strings"
+	"net/url"
 	"time"
 
 	"github.com/musicmash/musicmash/pkg/api"
@@ -17,18 +17,19 @@ type GetOptions struct {
 }
 
 func For(provider *api.Provider, userName string, opts *GetOptions) ([]*Release, error) {
-	url := fmt.Sprintf("%s/releases", provider.URL)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/releases", provider.URL))
 	if opts != nil {
-		args := []string{}
+		values := u.Query()
 		if opts.Since != nil {
-			args = append(args, fmt.Sprintf("since=%s", opts.Since.Format("2006-01-02")))
+			values.Set("since", opts.Since.Format("2006-01-02"))
 		}
 		if opts.Till != nil {
-			args = append(args, fmt.Sprintf("till=%s", opts.Till.Format("2006-01-02")))
+			values.Set("till", opts.Till.Format("2006-01-02"))
 		}
-		url = fmt.Sprintf("%v?%v", url, strings.Join(args, "&"))
+		u.RawQuery = values.Encode()
 	}
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+
+	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -55,8 +56,9 @@ func For(provider *api.Provider, userName string, opts *GetOptions) ([]*Release,
 }
 
 func By(provider *api.Provider, id int64) ([]*Release, error) {
-	url := fmt.Sprintf("%s/artists/%d/releases", provider.URL, id)
-	request, err := http.NewRequest(http.MethodGet, url, nil)
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/artists/%d/releases", provider.URL, id))
+
+	request, err := http.NewRequest(http.MethodGet, u.String(), nil)
 	if err != nil {
 		return nil, err
 	}

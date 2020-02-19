@@ -14,6 +14,7 @@ import (
 
 func Create(provider *api.Provider, info *Association) error {
 	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/associations", provider.URL))
+
 	b, _ := json.Marshal(&info)
 	request, err := http.NewRequest(http.MethodPost, u.String(), bytes.NewBuffer(b))
 	if err != nil {
