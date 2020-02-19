@@ -11,7 +11,6 @@ import (
 )
 
 func NewUpdateCommand() *cobra.Command {
-	setting := notifysettings.Settings{}
 	cmd := &cobra.Command{
 		Use:          "update [OPTIONS] <username>",
 		Short:        "Update new notifications settings",
@@ -19,6 +18,7 @@ func NewUpdateCommand() *cobra.Command {
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			url := fmt.Sprintf("http://%v:%v", config.Config.HTTP.IP, config.Config.HTTP.Port)
+			setting := notifysettings.Settings{Service: args[1], Data: args[2]}
 			err := notifysettings.Update(api.NewProvider(url, 1), args[0], &setting)
 			if err != nil {
 				return err
@@ -27,10 +27,5 @@ func NewUpdateCommand() *cobra.Command {
 			return render.Setting(&setting)
 		},
 	}
-
-	flags := cmd.Flags()
-	flags.StringVar(&setting.Service, "service", "telegram", "Service which will be used for notifications")
-	flags.StringVar(&setting.Data, "data", "", "Data for notifier. e.g chat_id for telegram")
-	_ = cmd.MarkFlagRequired("data")
 	return cmd
 }
