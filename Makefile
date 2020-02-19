@@ -59,3 +59,7 @@ build-arm7: clean
 
 api: install
 	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations/sqlite3
+
+update-deps:
+	go get -u ./...
+	go mod vendor
