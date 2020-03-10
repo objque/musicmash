@@ -34,7 +34,7 @@ sentry:
 
 notifier:
   enabled: false
-  delay: 1
+  delay: 1h
 
 proxy:
   enabled: false
