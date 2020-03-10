@@ -17,6 +17,7 @@ func getMux() *chi.Mux {
 	r.Use(middleware.RealIP)
 	r.Use(middleware.Logger)
 	r.Use(middleware.Recoverer)
+	r.Use(middleware.DefaultCompress)
 
 	r.Get("/healthz", healthz)
 
