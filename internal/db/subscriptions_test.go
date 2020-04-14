@@ -5,6 +5,22 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+func (t *testDBSuite) TestSubscriptions_Create() {
+	// action
+	err := DbMgr.CreateSubscription(&Subscription{
+		UserName: vars.UserObjque,
+		ArtistID: vars.StoreIDW,
+	})
+
+	// assert
+	assert.NoError(t.T(), err)
+	subs, err := DbMgr.GetUserSubscriptions(vars.UserObjque)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), subs, 1)
+	assert.Equal(t.T(), int64(vars.StoreIDW), subs[0].ArtistID)
+	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
+}
+
 func (t *testDBSuite) TestSubscriptions_SubscribeAndGetUser() {
 	// arrange
 	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))

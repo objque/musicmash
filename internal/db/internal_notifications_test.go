@@ -123,7 +123,7 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ, Name: vars.ArtistArchitects}))
 	// subscribe users
 	assert.NoError(t.T(), DbMgr.CreateSubscription(&Subscription{
-		// by default created_at is now()
+		CreatedAt: time.Now().UTC(),
 		UserName: vars.UserObjque,
 		ArtistID: vars.StoreIDQ,
 	}))
