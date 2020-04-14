@@ -39,40 +39,27 @@ func (t *testDBSuite) TestSubscriptions_SubscribeAndGetArtists() {
 	assert.Equal(t.T(), int64(vars.StoreIDW), subs[1].ArtistID)
 }
 
-func (t *testDBSuite) TestSubscriptions_Get_ForAnotherUser() {
+func (t *testDBSuite) TestSubscriptions_SubscribeAndGet() {
+	// arrange
+	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
+
+	// action
+	subs, err := DbMgr.GetUserSubscriptions(vars.UserObjque)
+
+	// assert
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), subs, 1)
+	assert.Equal(t.T(), int64(vars.StoreIDQ), subs[0].ArtistID)
+}
+
+func (t *testDBSuite) TestSubscriptions_SubscribeAndGet_Empty() {
 	// arrange
 	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
 	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
 
 	// action
 	subs, err := DbMgr.GetUserSubscriptions(vars.UserBot)
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Len(t.T(), subs, 0)
-}
-
-func (t *testDBSuite) TestSubscriptions_SubscribeAndGetSimple() {
-	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
-
-	// action
-	subs, err := DbMgr.GetSimpleUserSubscriptions(vars.UserObjque)
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Len(t.T(), subs, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDQ), subs[0])
-}
-
-func (t *testDBSuite) TestSubscriptions_Get_ForAnotherUserSimple() {
-	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
-
-	// action
-	subs, err := DbMgr.GetSimpleUserSubscriptions(vars.UserBot)
 
 	// assert
 	assert.NoError(t.T(), err)

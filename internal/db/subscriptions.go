@@ -10,7 +10,6 @@ type Subscription struct {
 }
 
 type SubscriptionMgr interface {
-	GetSimpleUserSubscriptions(userName string) ([]int64, error)
 	GetUserSubscriptions(userName string) ([]*Subscription, error)
 	GetArtistsSubscriptions(artists []int64) ([]*Subscription, error)
 	CreateSubscription(subscription *Subscription) error
@@ -38,15 +37,6 @@ func (mgr *AppDatabaseMgr) GetArtistsSubscriptions(artists []int64) ([]*Subscrip
 		return nil, err
 	}
 	return subs, nil
-}
-
-func (mgr *AppDatabaseMgr) GetSimpleUserSubscriptions(userName string) ([]int64, error) {
-	ids := []int64{}
-	err := mgr.db.Table("subscriptions").Where("user_name = ?", userName).Pluck("artist_id", &ids).Error
-	if err != nil {
-		return nil, err
-	}
-	return ids, nil
 }
 
 func (mgr *AppDatabaseMgr) SubscribeUser(userName string, artists []int64) error {
