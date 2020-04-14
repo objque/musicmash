@@ -7,7 +7,7 @@ import (
 )
 
 func healthz(w http.ResponseWriter, _ *http.Request) {
-	if err := db.DbMgr.Ping(); err != nil {
+	if err := db.Mgr.Ping(); err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		return
 	}

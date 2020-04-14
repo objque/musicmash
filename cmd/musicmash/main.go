@@ -59,13 +59,13 @@ func main() {
 	log.Debugf("CLI Args: %v", os.Args[1:])
 	log.Debugf("Application configuration: \n%s", config.Config.Dump())
 
-	db.DbMgr = db.NewMainDatabaseMgr()
+	db.Mgr = db.NewMainDatabaseMgr()
 	if config.Config.DB.AutoMigrate {
 		if config.Config.DB.MigrationsDir == "" {
 			exitWithError(errors.New("Auto-migrations is enabled, but path to folder is empty"))
 		}
 
-		if err := db.DbMgr.ApplyMigrations(config.Config.DB.MigrationsDir); err != nil {
+		if err := db.Mgr.ApplyMigrations(config.Config.DB.MigrationsDir); err != nil {
 			exitWithError(err)
 		}
 	}
@@ -81,7 +81,7 @@ func main() {
 		}
 	}
 
-	if err := db.DbMgr.EnsureStoreExists("itunes"); err != nil {
+	if err := db.Mgr.EnsureStoreExists("itunes"); err != nil {
 		exitWithError(err)
 	}
 	log.Info("Running musicmash..")
@@ -101,7 +101,7 @@ func main() {
 		if err := telegram.NewWithClient(config.Config.Notifier.TelegramToken, mustGetHTTPClient()); err != nil {
 			exitWithError(errors.Wrap(err, "Can't setup telegram client"))
 		}
-		if err := db.DbMgr.EnsureNotificationServiceExists("telegram"); err != nil {
+		if err := db.Mgr.EnsureNotificationServiceExists("telegram"); err != nil {
 			exitWithError(err)
 		}
 		go cron.Run(db.ActionNotify, config.Config.Notifier.Delay, notifier.Notify)

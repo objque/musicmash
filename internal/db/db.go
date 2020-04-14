@@ -13,7 +13,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-var DbMgr DataMgr
+var Mgr DataMgr
 
 type DataMgr interface {
 	ArtistMgr

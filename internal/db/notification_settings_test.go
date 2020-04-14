@@ -7,7 +7,7 @@ import (
 
 func (t *testDBSuite) TestNotificationSettings_EnsureExists() {
 	// action
-	err := DbMgr.EnsureNotificationSettingsExists(&NotificationSettings{
+	err := Mgr.EnsureNotificationSettingsExists(&NotificationSettings{
 		UserName: vars.UserObjque,
 		Service:  "email",
 		Data:     "email@test.io",
@@ -15,7 +15,7 @@ func (t *testDBSuite) TestNotificationSettings_EnsureExists() {
 
 	// assert
 	assert.NoError(t.T(), err)
-	settings, err := DbMgr.FindNotificationSettings(vars.UserObjque)
+	settings, err := Mgr.FindNotificationSettings(vars.UserObjque)
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), settings, 1)
 	assert.Equal(t.T(), vars.UserObjque, settings[0].UserName)
@@ -25,19 +25,19 @@ func (t *testDBSuite) TestNotificationSettings_EnsureExists() {
 
 func (t *testDBSuite) TestNotificationSettings_Update() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureNotificationSettingsExists(&NotificationSettings{
+	assert.NoError(t.T(), Mgr.EnsureNotificationSettingsExists(&NotificationSettings{
 		UserName: vars.UserObjque,
 		Service:  "email",
 		Data:     "email@test.io",
 	}))
-	assert.NoError(t.T(), DbMgr.EnsureNotificationSettingsExists(&NotificationSettings{
+	assert.NoError(t.T(), Mgr.EnsureNotificationSettingsExists(&NotificationSettings{
 		UserName: vars.UserBot,
 		Service:  "email",
 		Data:     "email@test.io",
 	}))
 
 	// action
-	err := DbMgr.UpdateNotificationSettings(&NotificationSettings{
+	err := Mgr.UpdateNotificationSettings(&NotificationSettings{
 		UserName: vars.UserObjque,
 		Service:  "email",
 		Data:     "objque@test.io",
@@ -45,7 +45,7 @@ func (t *testDBSuite) TestNotificationSettings_Update() {
 
 	// assert
 	assert.NoError(t.T(), err)
-	settings, err := DbMgr.FindNotificationSettings(vars.UserObjque)
+	settings, err := Mgr.FindNotificationSettings(vars.UserObjque)
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), settings, 1)
 	assert.Equal(t.T(), vars.UserObjque, settings[0].UserName)

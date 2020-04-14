@@ -21,7 +21,7 @@ func (c *cron) wrapAction(action func()) func() {
 		action()
 		log.Infof("Finish %sing stage", c.ActionName)
 		log.Infof("%sing stage elapsed %s", strings.Title(c.ActionName), time.Now().UTC().Sub(now).String())
-		if err := db.DbMgr.SetLastActionDate(c.ActionName, now); err != nil {
+		if err := db.Mgr.SetLastActionDate(c.ActionName, now); err != nil {
 			log.Errorf("can't save last_action date for %s: %v", c.ActionName, err)
 		}
 	}

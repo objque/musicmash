@@ -9,8 +9,8 @@ import (
 
 func (t *testAPISuite) TestAssociations_Add() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
-	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
+	assert.NoError(t.T(), db.Mgr.EnsureStoreExists(vars.StoreApple))
 
 	// action
 	association := &associations.Association{ArtistID: 1, StoreName: vars.StoreApple, StoreID: vars.StoreIDA}
@@ -25,7 +25,7 @@ func (t *testAPISuite) TestAssociations_Add() {
 
 func (t *testAPISuite) TestAssociations_ArtistNotFound() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), db.Mgr.EnsureStoreExists(vars.StoreApple))
 
 	// action
 	association := &associations.Association{ArtistID: 1, StoreName: vars.StoreApple, StoreID: vars.StoreIDA}
@@ -37,9 +37,9 @@ func (t *testAPISuite) TestAssociations_ArtistNotFound() {
 
 func (t *testAPISuite) TestAssociations_AlreadyAssociated() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
-	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(vars.StoreApple))
-	assert.NoError(t.T(), db.DbMgr.EnsureAssociationExists(1, vars.StoreApple, vars.StoreIDA))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
+	assert.NoError(t.T(), db.Mgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), db.Mgr.EnsureAssociationExists(1, vars.StoreApple, vars.StoreIDA))
 
 	// action
 	association := &associations.Association{ArtistID: 1, StoreName: vars.StoreApple, StoreID: vars.StoreIDA}

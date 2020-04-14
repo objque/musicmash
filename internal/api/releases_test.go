@@ -10,14 +10,14 @@ import (
 )
 
 func (t *testAPISuite) fillRelease(release *db.Release) {
-	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(release))
+	assert.NoError(t.T(), db.Mgr.EnsureReleaseExists(release))
 }
 
 func (t *testAPISuite) TestReleases_Get_ForUser() {
 	// arrange
 	r := time.Now().UTC()
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), db.DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), db.Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000", Explicit: true})
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000", Explicit: true})
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreSpotify, StoreID: "3000", Explicit: true})
@@ -57,8 +57,8 @@ func (t *testAPISuite) TestReleases_Get_ForUser() {
 func (t *testAPISuite) TestReleases_Get_ForUser_EmptyForPeriod() {
 	// arrange
 	r := time.Now().UTC()
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), db.DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), db.Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000", Explicit: true})
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000", Explicit: true})
 	t.fillRelease(&db.Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreSpotify, StoreID: "3000", Explicit: true})
@@ -75,15 +75,15 @@ func (t *testAPISuite) TestReleases_Get_ForUser_EmptyForPeriod() {
 
 func (t *testAPISuite) TestReleases_Get_ByArtist() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: 666}))
-	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{ID: 666}))
+	assert.NoError(t.T(), db.Mgr.EnsureReleaseExists(&db.Release{
 		ID:       vars.StoreIDQ,
 		ArtistID: 666,
 		Title:    vars.ArtistArchitects,
 		Released: time.Now(),
 	}))
 
-	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
+	assert.NoError(t.T(), db.Mgr.EnsureReleaseExists(&db.Release{
 		ID:       vars.StoreIDW,
 		ArtistID: 777,
 		Title:    vars.ArtistArchitects,
@@ -102,7 +102,7 @@ func (t *testAPISuite) TestReleases_Get_ByArtist() {
 
 func (t *testAPISuite) TestReleases_Get_ByArtist_Empty() {
 	// action
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: 666}))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{ID: 666}))
 	releases, err := releases.By(t.client, 666)
 
 	// assert
@@ -112,7 +112,7 @@ func (t *testAPISuite) TestReleases_Get_ByArtist_Empty() {
 
 func (t *testAPISuite) TestReleases_Get_ByArtist_Internal() {
 	// arrange
-	_ = db.DbMgr.Close()
+	_ = db.Mgr.Close()
 
 	// action
 	releases, err := releases.By(t.client, 666)

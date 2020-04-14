@@ -88,7 +88,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	wg.Wait()
 
 	// assert
-	releases, err := db.DbMgr.GetAllReleases()
+	releases, err := db.Mgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 3)
 	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[0].ArtistID)
@@ -178,21 +178,21 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
 }`, vars.StoreIDB)))
 	})
 	// album
-	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
+	assert.NoError(t.T(), db.Mgr.EnsureReleaseExists(&db.Release{
 		ArtistID:  vars.StoreIDQ,
 		StoreID:   vars.StoreIDA,
 		StoreName: f.GetStoreName(),
 		Explicit:  true,
 	}))
 	// song
-	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
+	assert.NoError(t.T(), db.Mgr.EnsureReleaseExists(&db.Release{
 		ArtistID:  vars.StoreIDQ,
 		StoreID:   vars.StoreIDB,
 		StoreName: f.GetStoreName(),
 		Explicit:  true,
 	}))
 	// music-video
-	assert.NoError(t.T(), db.DbMgr.EnsureReleaseExists(&db.Release{
+	assert.NoError(t.T(), db.Mgr.EnsureReleaseExists(&db.Release{
 		ArtistID:  vars.StoreIDQ,
 		StoreID:   vars.StoreIDC,
 		StoreName: f.GetStoreName(),
@@ -213,7 +213,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
 	wg.Wait()
 
 	// assert
-	releases, err := db.DbMgr.GetAllReleases()
+	releases, err := db.Mgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 3)
 	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[0].ArtistID)

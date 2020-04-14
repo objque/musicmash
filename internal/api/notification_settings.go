@@ -52,7 +52,7 @@ func (s *NotificationSettingsController) addNotificationSettings(w http.Response
 		return
 	}
 
-	dbSettings, err := db.DbMgr.FindNotificationSettingsForService(userName, settings.Service)
+	dbSettings, err := db.Mgr.FindNotificationSettingsForService(userName, settings.Service)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
@@ -64,7 +64,7 @@ func (s *NotificationSettingsController) addNotificationSettings(w http.Response
 	}
 
 	settings.UserName = userName
-	err = db.DbMgr.EnsureNotificationSettingsExists(&settings)
+	err = db.Mgr.EnsureNotificationSettingsExists(&settings)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
@@ -98,7 +98,7 @@ func (s *NotificationSettingsController) updateNotificationSettings(w http.Respo
 	}
 
 	settings.UserName = userName
-	err = db.DbMgr.UpdateNotificationSettings(&settings)
+	err = db.Mgr.UpdateNotificationSettings(&settings)
 	if err != nil {
 		if err == db.ErrNotificationSettingsNotFound {
 			httputils.WriteError(w, err)
@@ -120,7 +120,7 @@ func (s *NotificationSettingsController) listNotificationSettings(w http.Respons
 		return
 	}
 
-	settings, err := db.DbMgr.FindNotificationSettings(userName)
+	settings, err := db.Mgr.FindNotificationSettings(userName)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)

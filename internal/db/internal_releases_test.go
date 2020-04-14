@@ -8,11 +8,11 @@ import (
 )
 
 func (t *testDBSuite) fillRelease(release *Release) {
-	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(release))
+	assert.NoError(t.T(), Mgr.EnsureReleaseExists(release))
 }
 
 func (t *testDBSuite) setupInternalReleases(id int64, r time.Time) {
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: id, Name: vars.ArtistSkrillex}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: id, Name: vars.ArtistSkrillex}))
 
 	t.fillRelease(&Release{ArtistID: id, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000", Type: "album", Explicit: true})
 	t.fillRelease(&Release{ArtistID: id, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000", Type: "album", Explicit: true})
@@ -38,7 +38,7 @@ func (t *testDBSuite) TestInternalReleases_GetArtist() {
 	t.setupInternalReleases(artistID, r)
 
 	// action
-	releases, err := DbMgr.GetArtistInternalReleases(artistID)
+	releases, err := Mgr.GetArtistInternalReleases(artistID)
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -66,12 +66,12 @@ func (t *testDBSuite) TestInternalReleases_GetForUser() {
 	r := time.Now().UTC().Truncate(time.Hour)
 	t.setupInternalReleases(artistID, r)
 	// user should be subscribed after artists is created
-	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{artistID}))
+	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{artistID}))
 
 	// action
 	since := r.AddDate(0, -1, -3)
 	till := r.AddDate(0, -1, 3)
-	releases, err := DbMgr.GetUserInternalReleases(vars.UserObjque, &since, &till)
+	releases, err := Mgr.GetUserInternalReleases(vars.UserObjque, &since, &till)
 
 	// assert
 	assert.NoError(t.T(), err)

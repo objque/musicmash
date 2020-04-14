@@ -116,7 +116,7 @@ func (f *Fetcher) fetchSongs(artistID int64, storeID uint64) []Release {
 
 	rels := []Release{}
 	for i := range latestSongs {
-		dbReleases, err := db.DbMgr.FindReleases(map[string]interface{}{
+		dbReleases, err := db.Mgr.FindReleases(map[string]interface{}{
 			"artist_id": artistID,
 			"title":     removeAlbumType(latestSongs[i].GetAlbumName()),
 		})
@@ -165,7 +165,7 @@ func (f *Fetcher) saveWorker(id int, releases <-chan *batch, done chan<- int) {
 				Explicit:  release.IsExplicit(),
 			}
 		}
-		if err := db.DbMgr.InsertBatchNewReleases(rels); err != nil {
+		if err := db.Mgr.InsertBatchNewReleases(rels); err != nil {
 			log.Errorf("Failed to insert batch with %v releases by %v: %v", len(rels), batch.ArtistID, err)
 			continue
 		}

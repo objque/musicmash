@@ -9,7 +9,7 @@ import (
 
 func (t *testAPISuite) TestArtists_Search() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
 
 	// action
 	artists, err := artists.Search(t.client, "arch")
@@ -32,7 +32,7 @@ func (t *testAPISuite) TestArtists_Search_Empty() {
 func (t *testAPISuite) TestArtists_Search_Internal() {
 	// arrange
 	// close connection manually to get internal error
-	assert.NoError(t.T(), db.DbMgr.Close())
+	assert.NoError(t.T(), db.Mgr.Close())
 
 	// action
 	artists, err := artists.Search(t.client, "arch")
@@ -55,7 +55,7 @@ func (t *testAPISuite) TestArtists_Create() {
 
 func (t *testAPISuite) TestArtists_Get() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
 
 	// action
 	artist, err := artists.Get(t.client, 1, nil)

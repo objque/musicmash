@@ -11,7 +11,7 @@ import (
 )
 
 func Notify() {
-	last, err := db.DbMgr.GetLastActionDate(db.ActionNotify)
+	last, err := db.Mgr.GetLastActionDate(db.ActionNotify)
 	if err != nil {
 		log.Error(errors.Wrap(err, "tried to get last_action for notify stage"))
 		return
@@ -21,7 +21,7 @@ func Notify() {
 }
 
 func markReleaseAsDelivered(userName string, releaseID uint64, isComing bool) error {
-	return db.DbMgr.CreateNotification(&db.Notification{
+	return db.Mgr.CreateNotification(&db.Notification{
 		Date:      time.Now().UTC(),
 		UserName:  userName,
 		ReleaseID: releaseID,
@@ -30,7 +30,7 @@ func markReleaseAsDelivered(userName string, releaseID uint64, isComing bool) er
 }
 
 func NotifyWithPeriod(period time.Time) {
-	notifications, err := db.DbMgr.FindNotReceivedNotifications()
+	notifications, err := db.Mgr.FindNotReceivedNotifications()
 	if err != nil {
 		log.Error(errors.Wrapf(err, "tried to notify users, but can't get new releases for date %v", period))
 		return

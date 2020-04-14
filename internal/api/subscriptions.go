@@ -48,7 +48,7 @@ func (c *SubscriptionsController) createSubscriptions(w http.ResponseWriter, r *
 		return
 	}
 
-	err = db.DbMgr.SubscribeUser(userName, artists)
+	err = db.Mgr.SubscribeUser(userName, artists)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
@@ -65,7 +65,7 @@ func (c *SubscriptionsController) listSubscriptions(w http.ResponseWriter, r *ht
 		return
 	}
 
-	subs, err := db.DbMgr.GetUserSubscriptions(userName)
+	subs, err := db.Mgr.GetUserSubscriptions(userName)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
@@ -94,7 +94,7 @@ func (c *SubscriptionsController) deleteSubscriptions(w http.ResponseWriter, r *
 		return
 	}
 
-	err = db.DbMgr.UnSubscribeUser(userName, artists)
+	err = db.Mgr.UnSubscribeUser(userName, artists)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)

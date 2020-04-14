@@ -50,7 +50,7 @@ func (c *ArtistsController) addArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	err = db.DbMgr.EnsureArtistExists(&artist)
+	err = db.Mgr.EnsureArtistExists(&artist)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
@@ -67,7 +67,7 @@ func (c *ArtistsController) searchArtist(w http.ResponseWriter, r *http.Request)
 		return
 	}
 
-	artists, err := db.DbMgr.SearchArtists(name)
+	artists, err := db.Mgr.SearchArtists(name)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
@@ -84,7 +84,7 @@ func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	artist, err := db.DbMgr.GetArtist(id)
+	artist, err := db.Mgr.GetArtist(id)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			httputils.WriteError(w, errors.New("artist not found"))

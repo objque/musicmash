@@ -10,11 +10,11 @@ import (
 func (t *testDBSuite) TestNotifications_CreateAndGet() {
 	// action
 	now := time.Now().UTC()
-	err := DbMgr.CreateNotification(&Notification{UserName: vars.UserObjque, Date: now, ReleaseID: 1})
+	err := Mgr.CreateNotification(&Notification{UserName: vars.UserObjque, Date: now, ReleaseID: 1})
 
 	// assert
 	assert.NoError(t.T(), err)
-	notifications, err := DbMgr.GetNotificationsForUser(vars.UserObjque)
+	notifications, err := Mgr.GetNotificationsForUser(vars.UserObjque)
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), notifications, 1)
 	assert.Equal(t.T(), vars.UserObjque, notifications[0].UserName)

@@ -38,17 +38,17 @@ func (c *AssociationsController) addAssociation(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	if exist := db.DbMgr.IsStoreExists(info.StoreName); !exist {
+	if exist := db.Mgr.IsStoreExists(info.StoreName); !exist {
 		httputils.WriteError(w, errors.New("store not found"))
 		return
 	}
 
-	if exist := db.DbMgr.IsAssociationExists(info.StoreName, info.StoreID); exist {
+	if exist := db.Mgr.IsAssociationExists(info.StoreName, info.StoreID); exist {
 		httputils.WriteError(w, errors.New("artist already associated"))
 		return
 	}
 
-	_, err = db.DbMgr.GetArtist(info.ArtistID)
+	_, err = db.Mgr.GetArtist(info.ArtistID)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			httputils.WriteError(w, errors.New("artist not found"))
@@ -60,7 +60,7 @@ func (c *AssociationsController) addAssociation(w http.ResponseWriter, r *http.R
 		return
 	}
 
-	err = db.DbMgr.EnsureAssociationExists(info.ArtistID, info.StoreName, info.StoreID)
+	err = db.Mgr.EnsureAssociationExists(info.ArtistID, info.StoreName, info.StoreID)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
@@ -75,7 +75,7 @@ func (c *AssociationsController) listAssociations(w http.ResponseWriter, r *http
 	opts := db.AssociationOpts{}
 
 	if storeName := r.URL.Query().Get("store_name"); storeName != "" {
-		if !db.DbMgr.IsStoreExists(storeName) {
+		if !db.Mgr.IsStoreExists(storeName) {
 			httputils.WriteError(w, errors.New("store_name not exists"))
 			return
 		}
@@ -90,7 +90,7 @@ func (c *AssociationsController) listAssociations(w http.ResponseWriter, r *http
 			return
 		}
 
-		_, err = db.DbMgr.GetArtist(artistID)
+		_, err = db.Mgr.GetArtist(artistID)
 		if err != nil {
 			if gorm.IsRecordNotFoundError(err) {
 				httputils.WriteError(w, errors.New("artist not found"))
@@ -105,7 +105,7 @@ func (c *AssociationsController) listAssociations(w http.ResponseWriter, r *http
 		opts.ArtistID = artistID
 	}
 
-	associations, err := db.DbMgr.FindAssociations(&opts)
+	associations, err := db.Mgr.FindAssociations(&opts)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)

@@ -13,12 +13,12 @@ type Suite struct {
 }
 
 func (t *Suite) SetupTest() {
-	db.DbMgr = db.NewFakeDatabaseMgr()
-	assert.NoError(t.T(), db.DbMgr.ApplyMigrations(db.GetPathToMigrationsDir()))
+	db.Mgr = db.NewFakeDatabaseMgr()
+	assert.NoError(t.T(), db.Mgr.ApplyMigrations(db.GetPathToMigrationsDir()))
 }
 
 func (t *Suite) TearDownTest() {
-	_ = db.DbMgr.Close()
+	_ = db.Mgr.Close()
 }
 
 func Run(t *testing.T, testingSuite suite.TestingSuite) {

@@ -9,10 +9,10 @@ import (
 func (t *testDBSuite) TestLastAction_Get() {
 	// arrange
 	last := time.Now().UTC()
-	assert.NoError(t.T(), DbMgr.SetLastActionDate(ActionFetch, last))
+	assert.NoError(t.T(), Mgr.SetLastActionDate(ActionFetch, last))
 
 	// action
-	res, err := DbMgr.GetLastActionDate(ActionFetch)
+	res, err := Mgr.GetLastActionDate(ActionFetch)
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -21,7 +21,7 @@ func (t *testDBSuite) TestLastAction_Get() {
 
 func (t *testDBSuite) TestLastAction_Set() {
 	// action
-	err := DbMgr.SetLastActionDate(ActionFetch, time.Now().UTC())
+	err := Mgr.SetLastActionDate(ActionFetch, time.Now().UTC())
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -29,22 +29,22 @@ func (t *testDBSuite) TestLastAction_Set() {
 
 func (t *testDBSuite) TestLastAction_Update() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.SetLastActionDate(ActionFetch, time.Now()))
+	assert.NoError(t.T(), Mgr.SetLastActionDate(ActionFetch, time.Now()))
 
 	// action
 	n := time.Now().UTC()
-	err := DbMgr.SetLastActionDate(ActionFetch, n)
+	err := Mgr.SetLastActionDate(ActionFetch, n)
 
 	// assert
 	assert.NoError(t.T(), err)
-	last, err := DbMgr.GetLastActionDate(ActionFetch)
+	last, err := Mgr.GetLastActionDate(ActionFetch)
 	assert.NoError(t.T(), err)
 	assert.Equal(t.T(), last.Date, n)
 }
 
 func (t *testDBSuite) TestLastAction_NotFound() {
 	// arrange
-	_, err := DbMgr.GetLastActionDate(ActionFetch)
+	_, err := Mgr.GetLastActionDate(ActionFetch)
 
 	// assert
 	assert.Error(t.T(), err)

@@ -7,23 +7,23 @@ import (
 
 func (t *testDBSuite) TestStores_EnsureExists() {
 	// action
-	assert.NoError(t.T(), DbMgr.EnsureStoreExists(vars.StoreDeezer))
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreDeezer))
 
 	// assert
-	assert.True(t.T(), DbMgr.IsStoreExists(vars.StoreDeezer))
+	assert.True(t.T(), Mgr.IsStoreExists(vars.StoreDeezer))
 }
 
 func (t *testDBSuite) TestStores_NotExists() {
-	assert.False(t.T(), DbMgr.IsStoreExists(vars.StoreDeezer))
+	assert.False(t.T(), Mgr.IsStoreExists(vars.StoreDeezer))
 }
 
 func (t *testDBSuite) TestStores_GetAll() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureStoreExists(vars.StoreDeezer))
-	assert.NoError(t.T(), DbMgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreDeezer))
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreApple))
 
 	// action
-	stores, err := DbMgr.GetAllStores()
+	stores, err := Mgr.GetAllStores()
 
 	// assert
 	assert.NoError(t.T(), err)

@@ -7,14 +7,14 @@ import (
 
 func (t *testDBSuite) TestSubscriptions_Create() {
 	// action
-	err := DbMgr.CreateSubscription(&Subscription{
+	err := Mgr.CreateSubscription(&Subscription{
 		UserName: vars.UserObjque,
 		ArtistID: vars.StoreIDW,
 	})
 
 	// assert
 	assert.NoError(t.T(), err)
-	subs, err := DbMgr.GetUserSubscriptions(vars.UserObjque)
+	subs, err := Mgr.GetUserSubscriptions(vars.UserObjque)
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 1)
 	assert.Equal(t.T(), int64(vars.StoreIDW), subs[0].ArtistID)
@@ -23,11 +23,11 @@ func (t *testDBSuite) TestSubscriptions_Create() {
 
 func (t *testDBSuite) TestSubscriptions_SubscribeAndGetUser() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
 
 	// action
-	subs, err := DbMgr.GetUserSubscriptions(vars.UserObjque)
+	subs, err := Mgr.GetUserSubscriptions(vars.UserObjque)
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -38,13 +38,13 @@ func (t *testDBSuite) TestSubscriptions_SubscribeAndGetUser() {
 
 func (t *testDBSuite) TestSubscriptions_SubscribeAndGetArtists() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDW}))
-	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserBot, []int64{vars.StoreIDW}))
-	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ, vars.StoreIDW}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDW}))
+	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserBot, []int64{vars.StoreIDW}))
+	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ, vars.StoreIDW}))
 
 	// action
-	subs, err := DbMgr.GetArtistsSubscriptions([]int64{vars.StoreIDW})
+	subs, err := Mgr.GetArtistsSubscriptions([]int64{vars.StoreIDW})
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -57,11 +57,11 @@ func (t *testDBSuite) TestSubscriptions_SubscribeAndGetArtists() {
 
 func (t *testDBSuite) TestSubscriptions_SubscribeAndGet() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
 
 	// action
-	subs, err := DbMgr.GetUserSubscriptions(vars.UserObjque)
+	subs, err := Mgr.GetUserSubscriptions(vars.UserObjque)
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -71,11 +71,11 @@ func (t *testDBSuite) TestSubscriptions_SubscribeAndGet() {
 
 func (t *testDBSuite) TestSubscriptions_SubscribeAndGet_Empty() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
 
 	// action
-	subs, err := DbMgr.GetUserSubscriptions(vars.UserBot)
+	subs, err := Mgr.GetUserSubscriptions(vars.UserBot)
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -84,19 +84,19 @@ func (t *testDBSuite) TestSubscriptions_SubscribeAndGet_Empty() {
 
 func (t *testDBSuite) TestSubscriptions_UnSubscribe() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), DbMgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
-	subs, err := DbMgr.GetUserSubscriptions(vars.UserObjque)
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
+	subs, err := Mgr.GetUserSubscriptions(vars.UserObjque)
 	assert.NoError(t.T(), err)
 	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
 	assert.Equal(t.T(), int64(vars.StoreIDQ), subs[0].ArtistID)
 
 	// action
-	err = DbMgr.UnSubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ})
+	err = Mgr.UnSubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ})
 
 	// assert
 	assert.NoError(t.T(), err)
-	subs, err = DbMgr.GetUserSubscriptions(vars.UserObjque)
+	subs, err = Mgr.GetUserSubscriptions(vars.UserObjque)
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 0)
 }

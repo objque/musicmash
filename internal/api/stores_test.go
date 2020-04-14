@@ -9,7 +9,7 @@ import (
 
 func (t *testAPISuite) TestStores_List() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), db.Mgr.EnsureStoreExists(vars.StoreApple))
 
 	// action
 	stores, err := stores.List(t.client)

@@ -9,7 +9,7 @@ import (
 
 func (t *testAPISuite) TestSubscriptions_Create() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{ID: vars.StoreIDQ}))
 
 	// action
 	err := subscriptions.Create(t.client, vars.UserObjque, []int64{
@@ -26,9 +26,9 @@ func (t *testAPISuite) TestSubscriptions_Create() {
 
 func (t *testAPISuite) TestSubscriptions_List() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), db.DbMgr.EnsureArtistExists(&db.Artist{ID: vars.StoreIDW}))
-	assert.NoError(t.T(), db.DbMgr.SubscribeUser(vars.UserObjque, []int64{
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{ID: vars.StoreIDW}))
+	assert.NoError(t.T(), db.Mgr.SubscribeUser(vars.UserObjque, []int64{
 		vars.StoreIDQ, vars.StoreIDW,
 	}))
 

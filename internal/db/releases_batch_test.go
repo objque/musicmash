@@ -35,11 +35,11 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_1() {
 	}
 
 	// action
-	err := DbMgr.InsertBatchNewReleases(rels)
+	err := Mgr.InsertBatchNewReleases(rels)
 
 	// assert
 	assert.NoError(t.T(), err)
-	releases, err := DbMgr.GetAllReleases()
+	releases, err := Mgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 2)
 
@@ -71,7 +71,7 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_1() {
 func (t *testDBSuite) TestReleasesBatch_InsertMany_Ignore() {
 	// arrange
 	now := time.Date(2020, 10, 01, 0, 0, 0, 0, time.UTC)
-	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
+	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: now,
 		ArtistID:  vars.StoreIDW,
 		Title:     vars.ReleaseArchitectsHollyHell,
@@ -107,11 +107,11 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_Ignore() {
 	}
 
 	// action
-	err := DbMgr.InsertBatchNewReleases(rels)
+	err := Mgr.InsertBatchNewReleases(rels)
 
 	// assert
 	assert.NoError(t.T(), err)
-	releases, err := DbMgr.GetAllReleases()
+	releases, err := Mgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 2)
 

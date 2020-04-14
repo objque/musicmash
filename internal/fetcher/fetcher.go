@@ -35,7 +35,7 @@ func fetchFromServices(services []services.Service) *sync.WaitGroup {
 
 	// fetch from all services
 	for _, service := range services {
-		storeArtists, err := db.DbMgr.GetAllAssociationsFromStore(service.GetStoreName())
+		storeArtists, err := db.Mgr.GetAllAssociationsFromStore(service.GetStoreName())
 		if err != nil {
 			log.Error(errors.Wrapf(err, "can't receive artists from store: %s", service.GetStoreName()))
 			wg.Done()

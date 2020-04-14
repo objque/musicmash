@@ -7,7 +7,7 @@ import (
 
 func (t *testDBSuite) TestReleases_EnsureExists() {
 	// action
-	err := DbMgr.EnsureReleaseExists(&Release{
+	err := Mgr.EnsureReleaseExists(&Release{
 		StoreName: vars.StoreDeezer,
 		StoreID:   vars.StoreApple,
 		Explicit:  true,
@@ -15,7 +15,7 @@ func (t *testDBSuite) TestReleases_EnsureExists() {
 
 	// assert
 	assert.NoError(t.T(), err)
-	releases, err := DbMgr.GetAllReleases()
+	releases, err := Mgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
 	assert.True(t.T(), releases[0].Explicit)
@@ -23,13 +23,13 @@ func (t *testDBSuite) TestReleases_EnsureExists() {
 
 func (t *testDBSuite) TestReleases_FindReleases() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
+	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		ArtistID:  vars.StoreIDW,
 		StoreName: vars.StoreApple,
 		StoreID:   vars.StoreIDA,
 		Poster:    vars.PosterSimple,
 	}))
-	assert.NoError(t.T(), DbMgr.EnsureReleaseExists(&Release{
+	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		ArtistID:  vars.StoreIDQ,
 		StoreName: vars.StoreApple,
 		StoreID:   vars.StoreIDB,
@@ -37,7 +37,7 @@ func (t *testDBSuite) TestReleases_FindReleases() {
 	}))
 
 	// action
-	releases, err := DbMgr.FindReleases(map[string]interface{}{"poster": ""})
+	releases, err := Mgr.FindReleases(map[string]interface{}{"poster": ""})
 
 	// assert
 	assert.NoError(t.T(), err)

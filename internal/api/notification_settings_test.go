@@ -25,7 +25,7 @@ func (t *testAPISuite) TestNotificationSettings_Create() {
 
 func (t *testAPISuite) TestNotificationSettings_Create_AlreadyExists() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
+	assert.NoError(t.T(), db.Mgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
 		UserName: vars.UserObjque,
 		Service:  "telegram",
 		Data:     "chat-id-here",
@@ -43,12 +43,12 @@ func (t *testAPISuite) TestNotificationSettings_Create_AlreadyExists() {
 
 func (t *testAPISuite) TestNotificationSettings_Update() {
 	// arrange
-	assert.NoError(t.T(), db.DbMgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
+	assert.NoError(t.T(), db.Mgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
 		UserName: vars.UserObjque,
 		Service:  "icq",
 		Data:     "chat-id-here",
 	}))
-	assert.NoError(t.T(), db.DbMgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
+	assert.NoError(t.T(), db.Mgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
 		UserName: vars.UserObjque,
 		Service:  "telegram",
 		Data:     "chat-id-here",

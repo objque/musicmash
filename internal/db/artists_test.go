@@ -7,7 +7,7 @@ import (
 
 func (t *testDBSuite) TestArtist_EnsureExists() {
 	// action
-	err := DbMgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex})
+	err := Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex})
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -15,10 +15,10 @@ func (t *testDBSuite) TestArtist_EnsureExists() {
 
 func (t *testDBSuite) TestArtists_GetAll() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
 
 	// action
-	artists, err := DbMgr.GetAllArtists()
+	artists, err := Mgr.GetAllArtists()
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -27,11 +27,11 @@ func (t *testDBSuite) TestArtists_GetAll() {
 
 func (t *testDBSuite) TestArtists_Search() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex, Followers: 100}))
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: vars.ArtistArchitects, Followers: 250}))
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: vars.ArtistSPY}))
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: vars.ArtistWildways, Followers: 50}))
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{Name: vars.ArtistRitaOra, Followers: 90}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex, Followers: 100}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistArchitects, Followers: 250}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSPY}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistWildways, Followers: 50}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistRitaOra, Followers: 90}))
 	want := []struct {
 		SearchText string
 		Artists    []string
@@ -43,7 +43,7 @@ func (t *testDBSuite) TestArtists_Search() {
 
 	for i := range want {
 		// action
-		artists, err := DbMgr.SearchArtists(want[i].SearchText)
+		artists, err := Mgr.SearchArtists(want[i].SearchText)
 
 		// assert
 		assert.NoError(t.T(), err)
@@ -56,14 +56,14 @@ func (t *testDBSuite) TestArtists_Search() {
 
 func (t *testDBSuite) TestArtists_GetWithFullInfo() {
 	// arrange
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 1, Name: vars.ArtistSkrillex, Followers: 100}))
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 2, Name: vars.ArtistArchitects, Followers: 250}))
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 3, Name: vars.ArtistSPY}))
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 4, Name: vars.ArtistWildways, Followers: 50}))
-	assert.NoError(t.T(), DbMgr.EnsureArtistExists(&Artist{ID: 5, Name: vars.ArtistRitaOra, Followers: 90}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 1, Name: vars.ArtistSkrillex, Followers: 100}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 2, Name: vars.ArtistArchitects, Followers: 250}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 3, Name: vars.ArtistSPY}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 4, Name: vars.ArtistWildways, Followers: 50}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 5, Name: vars.ArtistRitaOra, Followers: 90}))
 
 	// action
-	artist, err := DbMgr.GetArtist(1)
+	artist, err := Mgr.GetArtist(1)
 
 	// assert
 	assert.NoError(t.T(), err)

@@ -46,7 +46,7 @@ func (rc *ReleasesController) getReleasesByArtist(w http.ResponseWriter, r *http
 		return
 	}
 
-	_, err = db.DbMgr.GetArtist(id)
+	_, err = db.Mgr.GetArtist(id)
 	if err != nil {
 		if gorm.IsRecordNotFoundError(err) {
 			httputils.WriteError(w, errors.New("artist not found"))
@@ -58,7 +58,7 @@ func (rc *ReleasesController) getReleasesByArtist(w http.ResponseWriter, r *http
 		return
 	}
 
-	releases, err := db.DbMgr.GetArtistInternalReleases(id)
+	releases, err := db.Mgr.GetArtistInternalReleases(id)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
@@ -92,7 +92,7 @@ func (rc *ReleasesController) getReleasesForUser(w http.ResponseWriter, r *http.
 		return
 	}
 
-	releases, err := db.DbMgr.GetUserInternalReleases(userName, since, till)
+	releases, err := db.Mgr.GetUserInternalReleases(userName, since, till)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
