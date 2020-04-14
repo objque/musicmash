@@ -22,7 +22,7 @@ github.com/jmoiron/sqlx
 github.com/jmoiron/sqlx/reflectx
 # github.com/konsorten/go-windows-terminal-sequences v1.0.2
 github.com/konsorten/go-windows-terminal-sequences
-# github.com/mattn/go-runewidth v0.0.8
+# github.com/mattn/go-runewidth v0.0.9
 github.com/mattn/go-runewidth
 # github.com/mattn/go-sqlite3 v2.0.3+incompatible
 github.com/mattn/go-sqlite3
@@ -52,10 +52,10 @@ github.com/technoweenie/multipartstreamer
 # go.uber.org/ratelimit v0.1.0
 go.uber.org/ratelimit
 go.uber.org/ratelimit/internal/clock
-# golang.org/x/net v0.0.0-20200202094626-16171245cfb2
+# golang.org/x/net v0.0.0-20200226121028-0de0cce0169b
 golang.org/x/net/internal/socks
 golang.org/x/net/proxy
-# golang.org/x/sys v0.0.0-20200217220822-9197077df867
+# golang.org/x/sys v0.0.0-20200413165638-669c56c373c4
 golang.org/x/sys/unix
 # gopkg.in/gorp.v1 v1.7.2
 gopkg.in/gorp.v1
