@@ -30,7 +30,7 @@ func NewDeleteCommand() *cobra.Command {
 				return err
 			}
 
-			fmt.Println(fmt.Sprintf("User has been unsubscribed"))
+			fmt.Println("User has been unsubscribed")
 			return nil
 		},
 	}

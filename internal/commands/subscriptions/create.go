@@ -30,7 +30,7 @@ func NewCreateCommand() *cobra.Command {
 				return err
 			}
 
-			fmt.Println(fmt.Sprintf("User has been subscribed"))
+			fmt.Println("User has been subscribed")
 			return nil
 		},
 	}

@@ -36,7 +36,7 @@ func NewByCommand() *cobra.Command {
 			}
 
 			if len(result) == 0 {
-				fmt.Println(fmt.Sprintf("Artist hasn't released anything yet"))
+				fmt.Println("Artist hasn't released anything yet")
 				return nil
 			}
 

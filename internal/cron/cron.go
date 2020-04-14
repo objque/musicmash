@@ -39,11 +39,8 @@ func (c *cron) Run() {
 		c.Action()
 	}
 
-	for {
-		select {
-		case <-time.NewTicker(c.Delay).C:
-			c.Action()
-		}
+	for range time.NewTicker(c.Delay).C {
+		c.Action()
 	}
 }
 
