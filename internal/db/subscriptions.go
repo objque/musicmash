@@ -15,7 +15,6 @@ type Subscription struct {
 
 type SubscriptionMgr interface {
 	GetUserSubscriptions(userName string) ([]*Subscription, error)
-	GetArtistsSubscriptions(artists []int64) ([]*Subscription, error)
 	CreateSubscription(subscription *Subscription) error
 	SubscribeUser(userName string, artists []int64) error
 	UnSubscribeUser(userName string, artists []int64) error
@@ -40,22 +39,6 @@ func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string) ([]*Subscriptio
 
 	subs := []*Subscription{}
 	if err := mgr.newdb.Select(&subs, query, userName); err != nil {
-		return nil, err
-	}
-
-	return subs, nil
-}
-
-func (mgr *AppDatabaseMgr) GetArtistsSubscriptions(artists []int64) ([]*Subscription, error) {
-	const rawquery = "select * from subscriptions where artist_id in (?) order by user_name"
-
-	subs := []*Subscription{}
-	query, args, err := sqlx.In(rawquery, artists)
-	if err != nil {
-		return nil, err
-	}
-
-	if err := mgr.newdb.Select(&subs, query, args...); err != nil {
 		return nil, err
 	}
 

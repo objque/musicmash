@@ -36,25 +36,6 @@ func (t *testDBSuite) TestSubscriptions_SubscribeAndGetUser() {
 	assert.Equal(t.T(), int64(vars.StoreIDQ), subs[0].ArtistID)
 }
 
-func (t *testDBSuite) TestSubscriptions_SubscribeAndGetArtists() {
-	// arrange
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDW}))
-	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserBot, []int64{vars.StoreIDW}))
-	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ, vars.StoreIDW}))
-
-	// action
-	subs, err := Mgr.GetArtistsSubscriptions([]int64{vars.StoreIDW})
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Len(t.T(), subs, 2)
-	assert.Equal(t.T(), vars.UserBot, subs[0].UserName)
-	assert.Equal(t.T(), int64(vars.StoreIDW), subs[0].ArtistID)
-	assert.Equal(t.T(), vars.UserObjque, subs[1].UserName)
-	assert.Equal(t.T(), int64(vars.StoreIDW), subs[1].ArtistID)
-}
-
 func (t *testDBSuite) TestSubscriptions_SubscribeAndGet() {
 	// arrange
 	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
