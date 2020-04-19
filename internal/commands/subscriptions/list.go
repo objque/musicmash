@@ -12,6 +12,7 @@ import (
 )
 
 func NewListCommand() *cobra.Command {
+	var showPoster bool
 	cmd := &cobra.Command{
 		Use:          "list <username>",
 		Short:        "List of user subscriptions",
@@ -29,8 +30,11 @@ func NewListCommand() *cobra.Command {
 				os.Exit(0)
 			}
 
-			return render.Subscriptions(result)
+			return render.Subscriptions(result, showPoster)
 		},
 	}
+
+	flags := cmd.Flags()
+	flags.BoolVar(&showPoster, "show-poster", showPoster, "Show poster column")
 	return cmd
 }

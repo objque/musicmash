@@ -6,6 +6,13 @@ import (
 )
 
 func (t *testDBSuite) TestSubscriptions_Create() {
+	// arrange
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{
+		ID:     vars.StoreIDW,
+		Name:   vars.ArtistSkrillex,
+		Poster: vars.PosterMiddle,
+	}))
+
 	// action
 	err := Mgr.CreateSubscription(&Subscription{
 		UserName: vars.UserObjque,
@@ -17,13 +24,21 @@ func (t *testDBSuite) TestSubscriptions_Create() {
 	subs, err := Mgr.GetUserSubscriptions(vars.UserObjque)
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDW), subs[0].ArtistID)
+	// id always equals to zero, because it doesn't load in query
+	assert.Equal(t.T(), uint64(0), subs[0].ID)
 	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
+	assert.Equal(t.T(), int64(vars.StoreIDW), subs[0].ArtistID)
+	assert.Equal(t.T(), vars.ArtistSkrillex, subs[0].ArtistName)
+	assert.Equal(t.T(), vars.PosterMiddle, subs[0].ArtistPoster)
 }
 
 func (t *testDBSuite) TestSubscriptions_SubscribeAndGet() {
 	// arrange
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{
+		ID:     vars.StoreIDQ,
+		Name:   vars.ArtistSkrillex,
+		Poster: vars.PosterMiddle,
+	}))
 	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
 
 	// action
@@ -32,7 +47,12 @@ func (t *testDBSuite) TestSubscriptions_SubscribeAndGet() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 1)
+	// id always equals to zero, because it doesn't load in query
+	assert.Equal(t.T(), uint64(0), subs[0].ID)
+	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
 	assert.Equal(t.T(), int64(vars.StoreIDQ), subs[0].ArtistID)
+	assert.Equal(t.T(), vars.ArtistSkrillex, subs[0].ArtistName)
+	assert.Equal(t.T(), vars.PosterMiddle, subs[0].ArtistPoster)
 }
 
 func (t *testDBSuite) TestSubscriptions_SubscribeAndGet_Empty() {

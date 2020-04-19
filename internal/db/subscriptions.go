@@ -7,10 +7,12 @@ import (
 )
 
 type Subscription struct {
-	ID        uint64    `json:"-" db:"id"`
-	CreatedAt time.Time `json:"-" db:"created_at"`
-	UserName  string    `json:"-" db:"user_name"`
-	ArtistID  int64     `json:"artist_id" db:"artist_id"`
+	ID           uint64    `json:"-"`
+	CreatedAt    time.Time `json:"-"`
+	UserName     string    `json:"-"             db:"user_name"`
+	ArtistID     int64     `json:"artist_id"     db:"artist_id"`
+	ArtistName   string    `json:"artist_name"   db:"artist_name"`
+	ArtistPoster string    `json:"artist_poster" db:"artist_poster"`
 }
 
 type SubscriptionMgr interface {
@@ -35,7 +37,15 @@ func (mgr *AppDatabaseMgr) CreateSubscription(subscription *Subscription) error 
 }
 
 func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string) ([]*Subscription, error) {
-	const query = "select * from subscriptions where user_name = ?"
+	const query = "" +
+		"select" +
+		" user_name," +
+		" artists.id as artist_id," +
+		" artists.name as artist_name," +
+		" artists.poster as artist_poster " +
+		"from subscriptions " +
+		"left join artists on subscriptions.artist_id=artists.id " +
+		"where subscriptions.user_name = ?"
 
 	subs := []*Subscription{}
 	if err := mgr.newdb.Select(&subs, query, userName); err != nil {
