@@ -12,8 +12,9 @@ func (t *testAPISuite) TestSubscriptions_Create() {
 	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{ID: vars.StoreIDQ}))
 
 	// action
-	err := subscriptions.Create(t.client, vars.UserObjque, []int64{
-		vars.StoreIDQ, vars.StoreIDW,
+	err := subscriptions.Create(t.client, vars.UserObjque, []*subscriptions.Subscription{
+		{ArtistID: vars.StoreIDQ},
+		{ArtistID: vars.StoreIDW},
 	})
 
 	// assert
@@ -33,7 +34,9 @@ func (t *testAPISuite) TestSubscriptions_List() {
 	}))
 
 	// action
-	err := subscriptions.Delete(t.client, vars.UserObjque, []int64{vars.StoreIDW})
+	err := subscriptions.Delete(t.client, vars.UserObjque, []*subscriptions.Subscription{
+		{ArtistID: vars.StoreIDW},
+	})
 
 	// assert
 	assert.NoError(t.T(), err)

@@ -25,24 +25,24 @@ func List(provider *api.Provider, userName string) ([]*Subscription, error) {
 	return subscriptions, nil
 }
 
-func Create(provider *api.Provider, userName string, artists []int64) error {
+func Create(provider *api.Provider, userName string, subscriptions []*Subscription) error {
 	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/subscriptions", provider.URL))
 
 	headers := http.Header{
 		"x-user-name": {userName},
 	}
 
-	b, _ := json.Marshal(&artists)
+	b, _ := json.Marshal(&subscriptions)
 	return api.PostWithHeaders(provider, u, headers, bytes.NewBuffer(b), nil)
 }
 
-func Delete(provider *api.Provider, userName string, artists []int64) error {
+func Delete(provider *api.Provider, userName string, subscriptions []*Subscription) error {
 	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/subscriptions", provider.URL))
 
 	headers := http.Header{
 		"x-user-name": {userName},
 	}
 
-	b, _ := json.Marshal(&artists)
+	b, _ := json.Marshal(&subscriptions)
 	return api.DeleteWithHeaders(provider, u, headers, bytes.NewBuffer(b))
 }

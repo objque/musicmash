@@ -29,6 +29,14 @@ func (c *SubscriptionsController) Register(router chi.Router) {
 	})
 }
 
+func getArtistIdsFromSubscriptions(subscriptions []*db.Subscription) []int64 {
+	ids := make([]int64, len(subscriptions))
+	for i, sub := range subscriptions {
+		ids[i] = sub.ArtistID
+	}
+	return ids
+}
+
 func (c *SubscriptionsController) createSubscriptions(w http.ResponseWriter, r *http.Request) {
 	userName, err := GetUser(r)
 	if err != nil {
@@ -36,19 +44,20 @@ func (c *SubscriptionsController) createSubscriptions(w http.ResponseWriter, r *
 		return
 	}
 
-	artists := []int64{}
-	err = json.NewDecoder(r.Body).Decode(&artists)
+	subscriptions := []*db.Subscription{}
+	err = json.NewDecoder(r.Body).Decode(&subscriptions)
 	if err != nil {
 		httputils.WriteError(w, errors.New("invalid body"))
 		return
 	}
 
-	if len(artists) == 0 {
-		httputils.WriteError(w, errors.New("artists weren't provided"))
+	if len(subscriptions) == 0 {
+		httputils.WriteError(w, errors.New("subscriptions weren't provided"))
 		return
 	}
 
-	err = db.Mgr.SubscribeUser(userName, artists)
+	ids := getArtistIdsFromSubscriptions(subscriptions)
+	err = db.Mgr.SubscribeUser(userName, ids)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
@@ -82,19 +91,20 @@ func (c *SubscriptionsController) deleteSubscriptions(w http.ResponseWriter, r *
 		return
 	}
 
-	artists := []int64{}
-	err = json.NewDecoder(r.Body).Decode(&artists)
+	subscriptions := []*db.Subscription{}
+	err = json.NewDecoder(r.Body).Decode(&subscriptions)
 	if err != nil {
 		httputils.WriteError(w, errors.New("invalid body"))
 		return
 	}
 
-	if len(artists) == 0 {
-		httputils.WriteError(w, errors.New("artists weren't provided"))
+	if len(subscriptions) == 0 {
+		httputils.WriteError(w, errors.New("subscriptions weren't provided"))
 		return
 	}
 
-	err = db.Mgr.UnSubscribeUser(userName, artists)
+	ids := getArtistIdsFromSubscriptions(subscriptions)
+	err = db.Mgr.UnSubscribeUser(userName, ids)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
