@@ -3,6 +3,7 @@ module github.com/musicmash/musicmash
 go 1.13
 
 require (
+	github.com/Masterminds/squirrel v1.4.0
 	github.com/getsentry/sentry-go v0.5.1
 	github.com/go-chi/chi v4.0.3+incompatible
 	github.com/go-sql-driver/mysql v1.5.0 // indirect

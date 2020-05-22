@@ -9,9 +9,9 @@ type Release struct {
 	Released   time.Time `json:"released"`
 	Poster     string    `json:"poster"`
 	Title      string    `json:"title"`
-	ItunesID   string    `json:"itunes_id"`
-	SpotifyID  string    `json:"spotify_id"`
-	DeezerID   string    `json:"deezer_id"`
+	ItunesID   *string   `json:"itunes_id"`
+	SpotifyID  *string   `json:"spotify_id"`
+	DeezerID   *string   `json:"deezer_id"`
 	Type       string    `json:"type"`
 	Explicit   bool      `json:"explicit"`
 }

@@ -4,11 +4,10 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
+	"strings"
 	"time"
 
 	"github.com/go-chi/chi"
-	"github.com/jinzhu/gorm"
-	"github.com/jinzhu/now"
 	"github.com/musicmash/musicmash/internal/api/httputils"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
@@ -30,69 +29,104 @@ func (rc *ReleasesController) Register(router chi.Router) {
 	})
 }
 
+//nolint:gocyclo,gocognit
 func (rc *ReleasesController) getReleases(w http.ResponseWriter, r *http.Request) {
-	if r.URL.Query().Get("artist_id") != "" {
-		rc.getReleasesByArtist(w, r)
-		return
+	var defaultMaxLimit uint64 = 100
+	opts := db.GetInternalReleaseOpts{
+		Limit:    &defaultMaxLimit,
+		SortType: "DESC",
 	}
 
-	rc.getReleasesForUser(w, r)
-}
+	opts.UserName, _ = GetUser(r)
 
-func (rc *ReleasesController) getReleasesByArtist(w http.ResponseWriter, r *http.Request) {
-	id, err := strconv.ParseInt(r.URL.Query().Get("artist_id"), 10, 64)
-	if err != nil {
-		httputils.WriteError(w, errors.New("wrong id"))
-		return
-	}
-
-	_, err = db.Mgr.GetArtist(id)
-	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
-			httputils.WriteError(w, errors.New("artist not found"))
+	// todo: extract all query parsers
+	if v := r.URL.Query().Get("offset"); v != "" {
+		offset, err := strconv.ParseUint(v, 10, 32)
+		if err != nil {
+			httputils.WriteError(w, errors.New("offset must be int and greater than 0"))
 			return
 		}
 
-		httputils.WriteInternalError(w)
-		log.Error(err)
-		return
+		opts.Offset = &offset
 	}
 
-	releases, err := db.Mgr.GetArtistInternalReleases(id)
-	if err != nil {
-		httputils.WriteInternalError(w)
-		log.Error(err)
-		return
+	if v := r.URL.Query().Get("limit"); v != "" {
+		limit, err := strconv.ParseUint(v, 10, 32)
+		if err != nil {
+			httputils.WriteError(w, errors.New("limit must be int and greater than 0, but less than 100"))
+			return
+		}
+
+		if limit > defaultMaxLimit {
+			httputils.WriteError(w, errors.New("limit must be int and greater than 0, but less than 100"))
+			return
+		}
+
+		opts.Limit = &limit
 	}
 
-	_ = httputils.WriteJSON(w, http.StatusOK, &releases)
-}
+	if v := r.URL.Query().Get("artist_id"); v != "" {
+		artistID, err := strconv.ParseInt(v, 10, 64)
+		if err != nil {
+			httputils.WriteError(w, errors.New("artist_id must be int and greater than 0"))
+			return
+		}
 
-func (rc *ReleasesController) getReleasesForUser(w http.ResponseWriter, r *http.Request) {
-	userName, err := GetUser(r)
-	if err != nil {
-		httputils.WriteError(w, err)
-		return
+		opts.ArtistID = &artistID
 	}
 
-	since, _ := httputils.GetQueryTimeWithLayout(r, "since", "2006-01-02")
-	if since == nil {
-		s := now.New(time.Now()).BeginningOfWeek()
-		since = &s
+	if v := r.URL.Query().Get("explicit"); v != "" {
+		explicit, err := strconv.ParseBool(v)
+		if err != nil {
+			httputils.WriteError(w, errors.New("explicit must be true or false"))
+			return
+		}
+
+		opts.Explicit = &explicit
 	}
 
-	till, _ := httputils.GetQueryTimeWithLayout(r, "till", "2006-01-02")
-	if till == nil {
-		t := since.AddDate(0, 0, 7)
-		till = &t
+	if opts.ReleaseType = r.URL.Query().Get("type"); opts.ReleaseType != "" {
+		if opts.ReleaseType != "album" && opts.ReleaseType != "song" && opts.ReleaseType != "music-video" {
+			httputils.WriteError(w, errors.New("type must be one of {album,song,music-video}"))
+			return
+		}
 	}
 
-	if since.After(*till) {
+	if v := strings.ToUpper(r.URL.Query().Get("sort_type")); v != "" {
+		if v != "ASC" && v != "DESC" {
+			httputils.WriteError(w, errors.New("sort_type must be one of {asc,desc}"))
+			return
+		}
+
+		opts.SortType = v
+	}
+
+	if v := r.URL.Query().Get("since"); v != "" {
+		since, err := time.Parse("2006-01-02", v)
+		if err != nil {
+			httputils.WriteError(w, errors.New("since must be in format YYYY-MM-DD"))
+			return
+		}
+
+		opts.Since = &since
+	}
+
+	if v := r.URL.Query().Get("till"); v != "" {
+		till, err := time.Parse("2006-01-02", v)
+		if err != nil {
+			httputils.WriteError(w, errors.New("till must be in format YYYY-MM-DD"))
+			return
+		}
+
+		opts.Till = &till
+	}
+
+	if opts.Since != nil && opts.Till != nil && opts.Since.After(*opts.Till) {
 		httputils.WriteError(w, errors.New("since must be before till"))
 		return
 	}
 
-	releases, err := db.Mgr.GetUserInternalReleases(userName, since, till)
+	releases, err := db.Mgr.GetInternalReleases(&opts)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)
