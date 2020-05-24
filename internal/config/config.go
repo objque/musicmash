@@ -20,7 +20,7 @@ var Config *AppConfig
 func New() *AppConfig {
 	return &AppConfig{
 		HTTP: HTTPConfig{
-			IP:   "127.0.0.1",
+			IP:   "0.0.0.0",
 			Port: 8844,
 		},
 		DB: DBConfig{
@@ -105,7 +105,7 @@ func (c *AppConfig) FlagSet() {
 
 	flag.BoolVar(&c.Proxy.Enabled, "proxy-enabled", false, "Use proxy for notifier (if telegram blocked in your country)")
 	flag.StringVar(&c.Proxy.Type, "proxy-type", "http", "Type of proxy: http and socks5 are available")
-	flag.StringVar(&c.Proxy.Host, "proxy-host", "127.0.0.1:888", "Proxy host and port")
+	flag.StringVar(&c.Proxy.Host, "proxy-host", "0.0.0.0:8888", "Proxy host and port")
 	flag.StringVar(&c.Proxy.UserName, "proxy-username", "", "Proxy username")
 	flag.StringVar(&c.Proxy.Password, "proxy-password", "", "Proxy password")
 }
