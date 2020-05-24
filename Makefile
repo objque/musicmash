@@ -44,5 +44,5 @@ lint l:
 	bash ./scripts/revive.sh
 	bash ./scripts/golangci-lint.sh
 
-api: install
+run: install
 	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations/sqlite3
