@@ -1,0 +1,15 @@
+version: '3'
+services:
+  sources:
+    image: golang:latest
+    container_name: musicmash
+    ports:
+      - "8844:8844"
+    volumes:
+      - ./:/go/src/github.com/musicmash
+      - ./musicmash.example.yml:/etc/musicmash/musicmash.yml
+      - ./migrations:/etc/musicmash/migrations
+    working_dir: /go/src/github.com/musicmash
+    stdin_open: true
+    tty: true
+    command: ["/bin/bash"]
