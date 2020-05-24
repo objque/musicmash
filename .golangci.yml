@@ -237,6 +237,7 @@ linters:
     - wsl
     - lll
     - gomnd
+    - testpackage
   fast: false
 
 issues:

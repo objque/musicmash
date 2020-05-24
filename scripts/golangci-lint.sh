@@ -2,7 +2,7 @@
 
 if ! which golangci-lint > /dev/null; then
     echo "==> Installing golangci-lint"
-    curl -sfL https://install.goreleaser.com/github.com/golangci/golangci-lint.sh | sh -s -- -b $GOPATH/bin latest
+    curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $GOPATH/bin v1.25.0
 fi
 
 echo "==> Checking golangci-ling..."
