@@ -7,41 +7,6 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testAPISuite) TestArtists_Search() {
-	// arrange
-	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
-
-	// action
-	artists, err := artists.Search(t.client, "arch")
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Len(t.T(), artists, 1)
-	assert.Equal(t.T(), vars.ArtistArchitects, artists[0].Name)
-}
-
-func (t *testAPISuite) TestArtists_Search_Empty() {
-	// action
-	artists, err := artists.Search(t.client, "arch")
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Len(t.T(), artists, 0)
-}
-
-func (t *testAPISuite) TestArtists_Search_Internal() {
-	// arrange
-	// close connection manually to get internal error
-	assert.NoError(t.T(), db.Mgr.Close())
-
-	// action
-	artists, err := artists.Search(t.client, "arch")
-
-	// assert
-	assert.Error(t.T(), err)
-	assert.Len(t.T(), artists, 0)
-}
-
 func (t *testAPISuite) TestArtists_Create() {
 	// action
 	artist := &artists.Artist{Name: vars.ArtistArchitects}

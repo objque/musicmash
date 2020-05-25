@@ -26,7 +26,6 @@ func NewArtistsController() *ArtistsController {
 func (c *ArtistsController) Register(router chi.Router) {
 	router.Route(PathArtists, func(r chi.Router) {
 		r.Post("/", c.addArtist)
-		r.Get("/", c.searchArtist)
 		r.Get("/{id}", c.getArtist)
 	})
 }
@@ -58,23 +57,6 @@ func (c *ArtistsController) addArtist(w http.ResponseWriter, r *http.Request) {
 	}
 
 	_ = httputils.WriteJSON(w, http.StatusCreated, &artist)
-}
-
-func (c *ArtistsController) searchArtist(w http.ResponseWriter, r *http.Request) {
-	name := r.URL.Query().Get("name")
-	if len(name) == 0 {
-		httputils.WriteError(w, errors.New("query argument name didn't provided"))
-		return
-	}
-
-	artists, err := db.Mgr.SearchArtists(name)
-	if err != nil {
-		httputils.WriteInternalError(w)
-		log.Error(err)
-		return
-	}
-
-	_ = httputils.WriteJSON(w, http.StatusOK, &artists)
 }
 
 func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
