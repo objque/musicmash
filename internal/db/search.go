@@ -1,7 +1,8 @@
 package db
 
 type Search struct {
-	Artists []*Artist `json:"artists"`
+	Artists  []*Artist          `json:"artists"`
+	Releases []*InternalRelease `json:"releases"`
 }
 
 type SearchMgr interface {
@@ -14,6 +15,11 @@ func (mgr *AppDatabaseMgr) Search(query string) (*Search, error) {
 		return nil, err
 	}
 
-	result := Search{Artists: artists}
+	rels, err := mgr.GetInternalReleases(&GetInternalReleaseOpts{Title: query})
+	if err != nil {
+		return nil, err
+	}
+
+	result := Search{Artists: artists, Releases: rels}
 	return &result, nil
 }

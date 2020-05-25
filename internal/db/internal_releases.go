@@ -28,6 +28,7 @@ type GetInternalReleaseOpts struct {
 	UserName    string
 	ReleaseType string
 	SortType    string
+	Title       string
 	Explicit    *bool
 	Since       *time.Time
 	Till        *time.Time
@@ -98,6 +99,10 @@ func applyInternalReleasesFilters(query sq.SelectBuilder, opts *GetInternalRelea
 
 	if opts.ReleaseType != "" {
 		query = query.Where("releases.type = ?", opts.ReleaseType)
+	}
+
+	if opts.Title != "" {
+		query = query.Where("releases.title like ?", fmt.Sprint("%", opts.Title, "%"))
 	}
 
 	if opts.Since != nil {

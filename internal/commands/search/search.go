@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/musicmash/musicmash/internal/commands/artists/render"
+	artsrender "github.com/musicmash/musicmash/internal/commands/artists/render"
+	relsrender "github.com/musicmash/musicmash/internal/commands/releases/render"
 	"github.com/musicmash/musicmash/internal/config"
 	"github.com/musicmash/musicmash/pkg/api"
 	"github.com/musicmash/musicmash/pkg/api/search"
@@ -29,7 +30,9 @@ func NewSearchCommand() *cobra.Command {
 				return nil
 			}
 
-			return render.Artists(result.Artists)
+			_ = artsrender.Artists(result.Artists)
+			_ = relsrender.Releases(result.Releases, relsrender.Options{ShowNames: true, ShowPosters: false})
+			return nil
 		},
 	}
 	return cmd
