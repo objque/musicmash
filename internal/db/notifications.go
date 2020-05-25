@@ -3,11 +3,11 @@ package db
 import "time"
 
 type Notification struct {
-	ID        int
-	Date      time.Time
-	UserName  string
-	ReleaseID uint64
-	IsComing  bool
+	ID        int       `db:"id"`
+	Date      time.Time `db:"date"`
+	UserName  string    `db:"user_name"`
+	ReleaseID uint64    `db:"release_id"`
+	IsComing  bool      `db:"is_coming"`
 }
 
 type NotificationMgr interface {
@@ -16,13 +16,21 @@ type NotificationMgr interface {
 }
 
 func (mgr *AppDatabaseMgr) GetNotificationsForUser(userName string) ([]*Notification, error) {
+	const query = "select * from notifications where user_name = $1"
+
 	notifications := []*Notification{}
-	if err := mgr.db.Where("user_name = ?", userName).Find(&notifications).Error; err != nil {
+	err := mgr.newdb.Select(&notifications, query, userName)
+	if err != nil {
 		return nil, err
 	}
+
 	return notifications, nil
 }
 
 func (mgr *AppDatabaseMgr) CreateNotification(notification *Notification) error {
-	return mgr.db.Create(&notification).Error
+	const query = "insert into notifications (date, user_name, release_id, is_coming) values ($1, $2, $3, $4)"
+
+	_, err := mgr.newdb.Exec(query, notification.Date, notification.UserName, notification.ReleaseID, notification.IsComing)
+
+	return err
 }
