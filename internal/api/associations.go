@@ -1,13 +1,13 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi"
-	"github.com/jinzhu/gorm"
 	"github.com/musicmash/musicmash/internal/api/httputils"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
@@ -50,7 +50,7 @@ func (c *AssociationsController) addAssociation(w http.ResponseWriter, r *http.R
 
 	_, err = db.Mgr.GetArtist(info.ArtistID)
 	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+		if err == sql.ErrNoRows {
 			httputils.WriteError(w, errors.New("artist not found"))
 			return
 		}
@@ -92,7 +92,7 @@ func (c *AssociationsController) listAssociations(w http.ResponseWriter, r *http
 
 		_, err = db.Mgr.GetArtist(artistID)
 		if err != nil {
-			if gorm.IsRecordNotFoundError(err) {
+			if err == sql.ErrNoRows {
 				httputils.WriteError(w, errors.New("artist not found"))
 				return
 			}

@@ -1,12 +1,12 @@
 package db
 
-import "github.com/jinzhu/gorm"
+import sq "github.com/Masterminds/squirrel"
 
 type Association struct {
-	ID        int64  `json:"-"`
-	ArtistID  int64  `json:"artist_id"`
-	StoreName string `json:"name"`
-	StoreID   string `json:"id"`
+	ID        int64  `json:"-"         db:"id"`
+	ArtistID  int64  `json:"artist_id" db:"artist_id"`
+	StoreName string `json:"name"      db:"store_name"`
+	StoreID   string `json:"id"        db:"store_id"`
 }
 
 type AssociationOpts struct {
@@ -37,30 +37,42 @@ func (mgr *AppDatabaseMgr) IsAssociationExists(storeName, storeID string) bool {
 }
 
 func (mgr *AppDatabaseMgr) EnsureAssociationExists(artistID int64, storeName, storeID string) error {
-	return mgr.db.Create(&Association{ArtistID: artistID, StoreName: storeName, StoreID: storeID}).Error
+	const query = "insert into associations (artist_id, store_name, store_id) values ($1, $2, $3)"
+
+	_, err := mgr.newdb.Exec(query, artistID, storeName, storeID)
+
+	return err
 }
 
-func applyAssociationsFilters(db *gorm.DB, opts *AssociationOpts) *gorm.DB {
+func applyAssociationsFilters(query sq.SelectBuilder, opts *AssociationOpts) sq.SelectBuilder {
 	if opts.StoreID != "" {
-		db = db.Where("store_id = ?", opts.StoreID)
+		query = query.Where("store_id = ?", opts.StoreID)
 	}
 	if opts.StoreName != "" {
-		db = db.Where("store_name = ?", opts.StoreName)
+		query = query.Where("store_name = ?", opts.StoreName)
 	}
 	if opts.ArtistID != 0 {
-		db = db.Where("artist_id = ?", opts.ArtistID)
+		query = query.Where("artist_id = ?", opts.ArtistID)
 	}
-	return db
+	return query
 }
 
 func (mgr *AppDatabaseMgr) FindAssociations(opts *AssociationOpts) ([]*Association, error) {
-	association := []*Association{}
-	db := mgr.db
+	query := sq.Select("artist_id", "store_name", "store_id").From("associations")
 	if opts != nil {
-		db = applyAssociationsFilters(db, opts)
+		query = applyAssociationsFilters(query, opts)
 	}
-	if err := db.Find(&association).Error; err != nil {
+
+	sql, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
 		return nil, err
 	}
-	return association, nil
+
+	associations := []*Association{}
+	err = mgr.newdb.Select(&associations, sql, args...)
+	if err != nil {
+		return nil, err
+	}
+
+	return associations, nil
 }
