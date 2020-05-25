@@ -25,11 +25,6 @@ func NewSearchCommand() *cobra.Command {
 				return err
 			}
 
-			if len(result.Artists) == 0 {
-				fmt.Println("Artists not found")
-				return nil
-			}
-
 			_ = artsrender.Artists(result.Artists)
 			_ = relsrender.Releases(result.Releases, relsrender.Options{ShowNames: true, ShowPosters: false})
 			return nil
