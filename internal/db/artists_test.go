@@ -27,11 +27,11 @@ func (t *testDBSuite) TestArtists_GetAll() {
 
 func (t *testDBSuite) TestArtists_Search() {
 	// arrange
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex, Followers: 100}))
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistArchitects, Followers: 250}))
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSPY}))
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistWildways, Followers: 50}))
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistRitaOra, Followers: 90}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 1, Name: vars.ArtistSkrillex, Followers: 100}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 2, Name: vars.ArtistArchitects, Followers: 250}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 3, Name: vars.ArtistSPY}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 4, Name: vars.ArtistWildways, Followers: 50}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 5, Name: vars.ArtistRitaOra, Followers: 90}))
 	want := []struct {
 		SearchText string
 		Artists    []string

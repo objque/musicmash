@@ -1,13 +1,13 @@
 package api
 
 import (
+	"database/sql"
 	"encoding/json"
 	"errors"
 	"net/http"
 	"strconv"
 
 	"github.com/go-chi/chi"
-	"github.com/jinzhu/gorm"
 	"github.com/musicmash/musicmash/internal/api/httputils"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
@@ -38,11 +38,13 @@ func (c *ArtistsController) addArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	// TODO (m.kalinin): when project was moved from gorm to sqlx we have broke method db.CreateArtist
+	// it requires id for insert an new entity. so for temporary reason code below was commented.
 	// do not allow override ID
-	if artist.ID != 0 {
-		httputils.WriteError(w, errors.New("artist id should be empty"))
-		return
-	}
+	//if artist.ID != 0 {
+	//	httputils.WriteError(w, errors.New("artist id should be empty"))
+	//	return
+	//}
 
 	if artist.Name == "" {
 		httputils.WriteError(w, errors.New("artist name didn't provided"))
@@ -68,7 +70,7 @@ func (c *ArtistsController) getArtist(w http.ResponseWriter, r *http.Request) {
 
 	artist, err := db.Mgr.GetArtist(id)
 	if err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+		if err == sql.ErrNoRows {
 			httputils.WriteError(w, errors.New("artist not found"))
 			return
 		}
