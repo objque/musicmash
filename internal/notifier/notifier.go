@@ -43,7 +43,7 @@ func NotifyWithPeriod(period time.Time) {
 
 	for _, notification := range notifications {
 		message := makeMessage(notification.ArtistName, notification)
-		message.ChatID, err = strconv.ParseInt(notification.Data, 10, 64)
+		message.ChatID, err = strconv.ParseInt(*notification.Data, 10, 64)
 		if err != nil {
 			log.Warnf("user_name (%s) has broken %s data: '%v'",
 				notification.UserName, notification.Service, notification.Data)

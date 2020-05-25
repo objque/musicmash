@@ -3,19 +3,19 @@ package db
 import "time"
 
 type InternalNotification struct {
-	ArtistID   int64
-	ArtistName string
-	ReleaseID  uint64
-	Title      string
-	Released   time.Time
-	StoreID    string
-	StoreName  string
-	Poster     string
-	Type       string
-	UserName   string
-	Service    string
-	Data       string
-	Explicit   bool
+	ArtistID   int64     `db:"artist_id"`
+	ArtistName string    `db:"artist_name"`
+	ReleaseID  uint64    `db:"release_id"`
+	Title      string    `db:"title"`
+	Released   time.Time `db:"released"`
+	StoreID    string    `db:"store_id"`
+	StoreName  string    `db:"store_name"`
+	Poster     string    `db:"poster"`
+	Type       string    `db:"type"`
+	UserName   string    `db:"user_name"`
+	Service    *string   `db:"service"`
+	Data       *string   `db:"data"`
+	Explicit   bool      `db:"explicit"`
 }
 
 type InternalNotificationMgr interface {
@@ -28,7 +28,6 @@ func (r *InternalNotification) IsReleaseComing() bool {
 }
 
 func (mgr *AppDatabaseMgr) FindNotReceivedNotifications() ([]*InternalNotification, error) {
-	future := time.Now().UTC().Truncate(24 * time.Hour)
 	const query = `
 SELECT releases.id as release_id,
        releases.artist_id,
@@ -53,15 +52,17 @@ WHERE NOT EXISTS (
        FROM notifications
        WHERE notifications.user_name=subscriptions.user_name
               AND notifications.release_id=releases.id
-              AND notifications.is_coming=(datetime(releases.released) > datetime(?))
+              AND notifications.is_coming=(datetime(releases.released) > datetime($1))
 )
 ORDER BY subscriptions.user_name;
 `
 
+	future := time.Now().UTC().Truncate(24 * time.Hour)
 	notifications := []*InternalNotification{}
-	err := mgr.db.Raw(query, future).Scan(&notifications).Error
+	err := mgr.newdb.Select(&notifications, query, future.Format("2006-01-02"))
 	if err != nil {
 		return nil, err
 	}
+
 	return notifications, nil
 }
