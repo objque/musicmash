@@ -28,6 +28,7 @@ func getMux() *chi.Mux {
 		NewStoresController().Register(r)
 		NewNotificationSettingsController().Register(r)
 		NewReleasesController().Register(r)
+		NewSearchsController().Register(r)
 	})
 	return r
 }
