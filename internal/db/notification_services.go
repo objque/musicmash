@@ -1,7 +1,8 @@
 package db
 
 import (
-	"github.com/jinzhu/gorm"
+	"database/sql"
+
 	"github.com/musicmash/musicmash/internal/log"
 )
 
@@ -15,9 +16,12 @@ type NotificationServiceMgr interface {
 }
 
 func (mgr *AppDatabaseMgr) IsNotificationServiceExists(id string) bool {
+	const query = "select * from notification_services where id = $1"
+
 	service := NotificationService{}
-	if err := mgr.db.Where("id = ?", id).First(&service).Error; err != nil {
-		if gorm.IsRecordNotFoundError(err) {
+	err := mgr.newdb.Get(&service, query, id)
+	if err != nil {
+		if err == sql.ErrNoRows {
 			return false
 		}
 
@@ -28,8 +32,13 @@ func (mgr *AppDatabaseMgr) IsNotificationServiceExists(id string) bool {
 }
 
 func (mgr *AppDatabaseMgr) EnsureNotificationServiceExists(id string) error {
-	if !mgr.IsNotificationServiceExists(id) {
-		return mgr.db.Create(&NotificationService{ID: id}).Error
+	if mgr.IsNotificationServiceExists(id) {
+		return nil
 	}
-	return nil
+
+	const query = "insert into notification_services (id) values ($1)"
+
+	_, err := mgr.newdb.Exec(query, id)
+
+	return err
 }
