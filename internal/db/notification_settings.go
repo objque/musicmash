@@ -1,10 +1,10 @@
 package db
 
 type NotificationSettings struct {
-	ID       int    `json:"-"`
-	UserName string `json:"-"`
-	Service  string `json:"service"`
-	Data     string `json:"data"`
+	ID       int    `json:"-"       db:"id"`
+	UserName string `json:"-"       db:"user_name"`
+	Service  string `json:"service" db:"service"`
+	Data     string `json:"data"    db:"data"`
 }
 
 type NotificationSettingsMgr interface {
@@ -15,18 +15,26 @@ type NotificationSettingsMgr interface {
 }
 
 func (mgr *AppDatabaseMgr) FindNotificationSettings(userName string) ([]*NotificationSettings, error) {
+	const query = "select * from notification_settings where user_name = $1"
+
 	settings := []*NotificationSettings{}
-	if err := mgr.db.Where("user_name = ?", userName).Find(&settings).Error; err != nil {
+	err := mgr.newdb.Select(&settings, query, userName)
+	if err != nil {
 		return nil, err
 	}
+
 	return settings, nil
 }
 
 func (mgr *AppDatabaseMgr) FindNotificationSettingsForService(userName, service string) ([]*NotificationSettings, error) {
+	const query = "select * from notification_settings where user_name = $1 and service = $2"
+
 	settings := []*NotificationSettings{}
-	if err := mgr.db.Where("user_name = ? and service = ?", userName, service).Find(&settings).Error; err != nil {
+	err := mgr.newdb.Select(&settings, query, userName, service)
+	if err != nil {
 		return nil, err
 	}
+
 	return settings, nil
 }
 
@@ -35,15 +43,19 @@ func (mgr *AppDatabaseMgr) EnsureNotificationSettingsExists(settings *Notificati
 	if err != nil {
 		return err
 	}
-	if len(userSettings) == 0 {
-		return mgr.db.Create(settings).Error
+	if len(userSettings) != 0 {
+		return nil
 	}
-	return nil
+
+	const query = "insert into notification_settings (user_name, service, data) values ($1, $2, $3)"
+
+	_, err = mgr.newdb.Exec(query, settings.UserName, settings.Service, settings.Data)
+
+	return err
 }
 
 func (mgr *AppDatabaseMgr) UpdateNotificationSettings(settings *NotificationSettings) error {
-	existing := []*NotificationSettings{}
-	err := mgr.db.Where("user_name = ? and service = ?", settings.UserName, settings.Service).Find(&existing).Error
+	existing, err := mgr.FindNotificationSettingsForService(settings.UserName, settings.Service)
 	if err != nil {
 		return err
 	}
@@ -51,6 +63,9 @@ func (mgr *AppDatabaseMgr) UpdateNotificationSettings(settings *NotificationSett
 		return ErrNotificationSettingsNotFound
 	}
 
-	const query = "update notification_settings set data = ? where user_name = ? and service = ?"
-	return mgr.db.Exec(query, settings.Data, settings.UserName, settings.Service).Error
+	const query = "update notification_settings set data = $1 where user_name = $2 and service = $3"
+
+	_, err = mgr.newdb.Exec(query, settings.Data, settings.UserName, settings.Service)
+
+	return err
 }
