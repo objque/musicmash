@@ -116,10 +116,7 @@ func (f *Fetcher) fetchSongs(artistID int64, storeID uint64) []Release {
 
 	rels := []Release{}
 	for i := range latestSongs {
-		dbReleases, err := db.Mgr.FindReleases(map[string]interface{}{
-			"artist_id": artistID,
-			"title":     removeAlbumType(latestSongs[i].GetAlbumName()),
-		})
+		dbReleases, err := db.Mgr.FindReleases(artistID, removeAlbumType(latestSongs[i].GetAlbumName()))
 		if err != nil {
 			log.Errorf("can't check if song from %s with id %s exists: %v",
 				f.GetStoreName(), latestSongs[i].GetID(), err)

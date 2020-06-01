@@ -27,21 +27,22 @@ func (t *testDBSuite) TestReleases_FindReleases() {
 		ArtistID:  vars.StoreIDW,
 		StoreName: vars.StoreApple,
 		StoreID:   vars.StoreIDA,
-		Poster:    vars.PosterSimple,
+		Title:     vars.ArtistAlgorithm,
+		Explicit:  true,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		ArtistID:  vars.StoreIDQ,
 		StoreName: vars.StoreApple,
 		StoreID:   vars.StoreIDB,
-		Explicit:  true,
 	}))
 
 	// action
-	releases, err := Mgr.FindReleases(map[string]interface{}{"poster": ""})
+	releases, err := Mgr.FindReleases(vars.StoreIDW, vars.ArtistAlgorithm)
 
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[0].ArtistID)
+	assert.Equal(t.T(), int64(vars.StoreIDW), releases[0].ArtistID)
+	assert.Equal(t.T(), vars.ArtistAlgorithm, releases[0].Title)
 	assert.True(t.T(), releases[0].Explicit)
 }

@@ -39,7 +39,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	// won't be in output
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: time.Now().UTC(),
-		ID:        100,
+		ID:        1,
 		ArtistID:  vars.StoreIDQ,
 		Released:  time.Now().UTC().AddDate(0, -1, 0),
 		StoreName: vars.StoreApple,
@@ -47,7 +47,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: time.Now().UTC(),
-		ID:        105,
+		ID:        2,
 		ArtistID:  vars.StoreIDQ,
 		Released:  time.Now().UTC().AddDate(0, 10, 0),
 		StoreName: vars.StoreApple,
@@ -55,25 +55,25 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	}))
 	// deliver notifications
 	assert.NoError(t.T(), Mgr.CreateNotification(&Notification{
-		ReleaseID: 100, IsComing: true, UserName: vars.UserObjque, Date: time.Now().UTC(),
+		ReleaseID: 1, IsComing: true, UserName: vars.UserObjque, Date: time.Now().UTC(),
 	}))
 	assert.NoError(t.T(), Mgr.CreateNotification(&Notification{
-		ReleaseID: 100, IsComing: false, UserName: vars.UserObjque, Date: time.Now().UTC(),
+		ReleaseID: 1, IsComing: false, UserName: vars.UserObjque, Date: time.Now().UTC(),
 	}))
 	assert.NoError(t.T(), Mgr.CreateNotification(&Notification{
-		ReleaseID: 100, IsComing: false, UserName: vars.UserBot, Date: time.Now().UTC(),
+		ReleaseID: 1, IsComing: false, UserName: vars.UserBot, Date: time.Now().UTC(),
 	}))
 	assert.NoError(t.T(), Mgr.CreateNotification(&Notification{
-		ReleaseID: 105, IsComing: true, UserName: vars.UserObjque, Date: time.Now().UTC(),
+		ReleaseID: 2, IsComing: true, UserName: vars.UserObjque, Date: time.Now().UTC(),
 	}))
 	assert.NoError(t.T(), Mgr.CreateNotification(&Notification{
-		ReleaseID: 105, IsComing: true, UserName: vars.UserBot, Date: time.Now().UTC(),
+		ReleaseID: 2, IsComing: true, UserName: vars.UserBot, Date: time.Now().UTC(),
 	}))
 	// fill releases
 	// should be in output
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: time.Now().UTC(),
-		ID:        20,
+		ID:        3,
 		ArtistID:  vars.StoreIDQ,
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  time.Now().UTC().AddDate(0, 0, -15),
@@ -84,7 +84,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: time.Now().UTC(),
-		ID:        25,
+		ID:        4,
 		ArtistID:  vars.StoreIDQ,
 		Title:     vars.ArtistAlgorithm,
 		Released:  time.Now().UTC().AddDate(1, 0, 0),
