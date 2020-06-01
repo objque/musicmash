@@ -5,10 +5,6 @@ type Search struct {
 	Releases []*InternalRelease `json:"releases"`
 }
 
-type SearchMgr interface {
-	Search(query string) (*Search, error)
-}
-
 func (mgr *AppDatabaseMgr) Search(query string) (*Search, error) {
 	artists, err := mgr.SearchArtists(query)
 	if err != nil {

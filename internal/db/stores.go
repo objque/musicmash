@@ -10,13 +10,6 @@ type Store struct {
 	Name string `json:"name"`
 }
 
-type StoreMgr interface {
-	IsStoreExists(name string) bool
-	EnsureStoreExists(name string) error
-	CreateStore(name string) (*Store, error)
-	GetAllStores() ([]*Store, error)
-}
-
 func (mgr *AppDatabaseMgr) IsStoreExists(name string) bool {
 	const query = "select * from stores where name = $1"
 

@@ -18,14 +18,6 @@ type Release struct {
 	Explicit  bool      `db:"explicit"`
 }
 
-type ReleaseMgr interface {
-	EnsureReleaseExists(release *Release) error
-	CreateRelease(release *Release) error
-	GetAllReleases() ([]*Release, error)
-	FindReleases(condition map[string]interface{}) ([]*Release, error)
-	InsertBatchNewReleases(releases []*Release) error
-}
-
 func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {
 	const query = "select * from releases where store_id = $1 and store_name = $2 limit 1"
 

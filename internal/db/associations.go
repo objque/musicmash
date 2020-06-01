@@ -15,14 +15,6 @@ type AssociationOpts struct {
 	StoreID   string
 }
 
-type AssociationMgr interface {
-	GetAllAssociationsFromStore(name string) ([]*Association, error)
-	GetAssociationFromStore(artistID int64, store string) ([]*Association, error)
-	IsAssociationExists(storeName, storeID string) bool
-	EnsureAssociationExists(artistID int64, storeName, storeID string) error
-	FindAssociations(opts *AssociationOpts) ([]*Association, error)
-}
-
 func (mgr *AppDatabaseMgr) GetAssociationFromStore(artistID int64, store string) ([]*Association, error) {
 	return mgr.FindAssociations(&AssociationOpts{ArtistID: artistID, StoreName: store})
 }

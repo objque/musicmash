@@ -34,10 +34,6 @@ type GetInternalReleaseOpts struct {
 	Till        *time.Time
 }
 
-type InternalReleaseMgr interface {
-	GetInternalReleases(opts *GetInternalReleaseOpts) ([]*InternalRelease, error)
-}
-
 func (mgr *AppDatabaseMgr) GetInternalReleases(opts *GetInternalReleaseOpts) ([]*InternalRelease, error) {
 	query := sq.Select(
 		"releases.id",

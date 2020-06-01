@@ -7,13 +7,6 @@ type NotificationSettings struct {
 	Data     string `json:"data"    db:"data"`
 }
 
-type NotificationSettingsMgr interface {
-	FindNotificationSettings(userName string) ([]*NotificationSettings, error)
-	FindNotificationSettingsForService(userName, service string) ([]*NotificationSettings, error)
-	EnsureNotificationSettingsExists(settings *NotificationSettings) error
-	UpdateNotificationSettings(settings *NotificationSettings) error
-}
-
 func (mgr *AppDatabaseMgr) FindNotificationSettings(userName string) ([]*NotificationSettings, error) {
 	const query = "select * from notification_settings where user_name = $1"
 

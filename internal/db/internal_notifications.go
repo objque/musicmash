@@ -18,10 +18,6 @@ type InternalNotification struct {
 	Explicit   bool      `db:"explicit"`
 }
 
-type InternalNotificationMgr interface {
-	FindNotReceivedNotifications() ([]*InternalNotification, error)
-}
-
 func (r *InternalNotification) IsReleaseComing() bool {
 	// if release day tomorrow or later, than that means coming release is here
 	return r.Released.After(time.Now().UTC().Truncate(24 * time.Hour))

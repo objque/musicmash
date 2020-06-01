@@ -13,11 +13,6 @@ type LastAction struct {
 	Action string    `db:"action"`
 }
 
-type LastActionMgr interface {
-	GetLastActionDate(action string) (*LastAction, error)
-	SetLastActionDate(action string, time time.Time) error
-}
-
 func (mgr *AppDatabaseMgr) GetLastActionDate(action string) (*LastAction, error) {
 	const query = "select * from last_actions where action = $1"
 

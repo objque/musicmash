@@ -15,13 +15,6 @@ type Subscription struct {
 	ArtistPoster string    `json:"artist_poster" db:"artist_poster"`
 }
 
-type SubscriptionMgr interface {
-	GetUserSubscriptions(userName string) ([]*Subscription, error)
-	CreateSubscription(subscription *Subscription) error
-	SubscribeUser(userName string, artists []int64) error
-	UnSubscribeUser(userName string, artists []int64) error
-}
-
 func (mgr *AppDatabaseMgr) CreateSubscription(subscription *Subscription) error {
 	const query = "insert into subscriptions (created_at, user_name, artist_id) VALUES (?, ?, ?)"
 

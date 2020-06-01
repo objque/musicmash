@@ -10,11 +10,6 @@ type NotificationService struct {
 	ID string
 }
 
-type NotificationServiceMgr interface {
-	IsNotificationServiceExists(id string) bool
-	EnsureNotificationServiceExists(id string) error
-}
-
 func (mgr *AppDatabaseMgr) IsNotificationServiceExists(id string) bool {
 	const query = "select * from notification_services where id = $1"
 

@@ -13,14 +13,6 @@ type Artist struct {
 	Followers  uint   `json:"followers"  db:"followers"`
 }
 
-type ArtistMgr interface {
-	EnsureArtistExists(artist *Artist) error
-	CreateArtist(artist *Artist) error
-	GetAllArtists() ([]*Artist, error)
-	SearchArtists(name string) ([]*Artist, error)
-	GetArtist(id int64) (*Artist, error)
-}
-
 func (mgr *AppDatabaseMgr) GetAllArtists() ([]*Artist, error) {
 	const query = "select * from artists"
 

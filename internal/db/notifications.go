@@ -10,11 +10,6 @@ type Notification struct {
 	IsComing  bool      `db:"is_coming"`
 }
 
-type NotificationMgr interface {
-	CreateNotification(notification *Notification) error
-	GetNotificationsForUser(userName string) ([]*Notification, error)
-}
-
 func (mgr *AppDatabaseMgr) GetNotificationsForUser(userName string) ([]*Notification, error) {
 	const query = "select * from notifications where user_name = $1"
 

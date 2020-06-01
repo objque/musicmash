@@ -13,29 +13,7 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/sqlite"
 )
 
-var Mgr DataMgr
-
-type DataMgr interface {
-	ArtistMgr
-	AssociationMgr
-	StoreMgr
-	ReleaseMgr
-	InternalReleaseMgr
-	LastActionMgr
-	SubscriptionMgr
-	NotificationMgr
-	NotificationServiceMgr
-	NotificationSettingsMgr
-	InternalNotificationMgr
-	SearchMgr
-	Begin() *AppDatabaseMgr
-	Commit() *AppDatabaseMgr
-	Rollback() *AppDatabaseMgr
-	Close() error
-	Ping() error
-	GetDialectName() string
-	ApplyMigrations(pathToMigrations string) error
-}
+var Mgr *AppDatabaseMgr
 
 type AppDatabaseMgr struct {
 	db    *gorm.DB
