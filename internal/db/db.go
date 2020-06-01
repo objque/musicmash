@@ -1,27 +1,43 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 
-	"github.com/jinzhu/gorm"
 	"github.com/jmoiron/sqlx"
 	"github.com/musicmash/musicmash/internal/log"
 	migrate "github.com/rubenv/sql-migrate"
 
 	// load dialects
-	_ "github.com/jinzhu/gorm/dialects/mysql"
-	_ "github.com/jinzhu/gorm/dialects/sqlite"
+	_ "github.com/mattn/go-sqlite3"
 )
 
 var Mgr *AppDatabaseMgr
 
 type AppDatabaseMgr struct {
-	db    *gorm.DB
-	newdb *sqlx.DB
+	newdb  SQLCommon
+	parent *sql.DB
 }
 
-func NewAppDatabaseMgr(db *gorm.DB) *AppDatabaseMgr {
-	return &AppDatabaseMgr{db: db, newdb: sqlx.NewDb(db.DB(), db.Dialect().GetName())}
+type SQLCommon interface {
+	QueryRow(query string, args ...interface{}) *sql.Row
+	Get(dest interface{}, query string, args ...interface{}) error
+	Select(dest interface{}, query string, args ...interface{}) error
+	Exec(query string, args ...interface{}) (sql.Result, error)
+	NamedExec(string, interface{}) (sql.Result, error)
+}
+
+type sqlDb interface {
+	Beginx() (*sqlx.Tx, error)
+}
+
+type sqlTx interface {
+	Commit() error
+	Rollback() error
+}
+
+func NewAppDatabaseMgr(db *sqlx.DB) *AppDatabaseMgr {
+	return &AppDatabaseMgr{newdb: db, parent: db.DB}
 }
 
 func NewMainDatabaseMgr() *AppDatabaseMgr {
@@ -34,33 +50,50 @@ func NewFakeDatabaseMgr() *AppDatabaseMgr {
 	return NewAppDatabaseMgr(db)
 }
 
-func (mgr *AppDatabaseMgr) Begin() *AppDatabaseMgr {
-	return &AppDatabaseMgr{db: mgr.db.Begin()}
+func (mgr *AppDatabaseMgr) Begin() (*AppDatabaseMgr, error) {
+	if conn, ok := mgr.newdb.(sqlDb); ok && conn != nil {
+		tx, err := conn.Beginx()
+		if err != nil {
+			return nil, err
+		}
+
+		return &AppDatabaseMgr{newdb: interface{}(tx).(SQLCommon), parent: mgr.parent}, nil
+	}
+
+	return nil, fmt.Errorf("error begin: %w", ErrAlreadyInTx)
 }
 
-func (mgr *AppDatabaseMgr) Commit() *AppDatabaseMgr {
-	return &AppDatabaseMgr{db: mgr.db.Commit()}
+func (mgr *AppDatabaseMgr) Commit() error {
+	if tx, ok := mgr.newdb.(sqlTx); ok && tx != nil {
+		return tx.Commit()
+	}
+
+	return fmt.Errorf("error commit: %w", ErrNotInTx)
 }
 
-func (mgr *AppDatabaseMgr) Rollback() *AppDatabaseMgr {
-	return &AppDatabaseMgr{db: mgr.db.Rollback()}
+func (mgr *AppDatabaseMgr) Rollback() error {
+	if tx, ok := mgr.newdb.(sqlTx); ok && tx != nil {
+		return tx.Rollback()
+	}
+
+	return fmt.Errorf("error rollback: %w", ErrNotInTx)
 }
 
 func (mgr *AppDatabaseMgr) Close() error {
-	return mgr.db.Close()
+	return mgr.parent.Close()
 }
 
 func (mgr *AppDatabaseMgr) Ping() error {
-	return mgr.db.DB().Ping()
+	return mgr.parent.Ping()
 }
 
 func (mgr *AppDatabaseMgr) GetDialectName() string {
-	return mgr.db.Dialect().GetName()
+	return "sqlite3"
 }
 
 func (mgr *AppDatabaseMgr) ApplyMigrations(pathToMigrations string) error {
 	migrations := &migrate.FileMigrationSource{Dir: pathToMigrations}
-	n, err := migrate.Exec(mgr.db.DB(), mgr.GetDialectName(), migrations, migrate.Up)
+	n, err := migrate.Exec(mgr.parent, mgr.GetDialectName(), migrations, migrate.Up)
 	if err != nil {
 		return err
 	}
