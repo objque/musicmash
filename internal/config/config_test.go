@@ -13,11 +13,11 @@ http:
   port: 8844
 
 db:
-  type: sqlite3
-  host: musicmash.sqlite3
+  host: musicmash.db
+  port: 5432
   log: false
   auto_migrate: false
-  migrations_dir: migrations/sqlite3
+  migrations_dir: migrations
 
 log:
   file: musicmash.log

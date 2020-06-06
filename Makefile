@@ -48,4 +48,16 @@ lint l:
 	bash ./scripts/golangci-lint.sh
 
 run: install
-	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations/sqlite3
+	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations
+
+db-status:
+	sql-migrate status --env=staging
+
+db-up:
+	sql-migrate up --env=staging
+
+db-redo:
+	sql-migrate redo --env=staging
+
+db-down:
+	sql-migrate down --env=staging

@@ -24,11 +24,11 @@ func New() *AppConfig {
 			Port: 8844,
 		},
 		DB: DBConfig{
-			Type:          "sqlite3",
-			Host:          "musicmash.sqlite3",
+			Host:          "musicmash.db",
+			Port:          5432,
 			Log:           false,
 			AutoMigrate:   false,
-			MigrationsDir: "migrations/sqlite3",
+			MigrationsDir: "migrations",
 		},
 		Log: LogConfig{
 			File:  "musicmash.log",
@@ -78,8 +78,8 @@ func (c *AppConfig) FlagSet() {
 	flag.StringVar(&c.HTTP.IP, "http-ip", c.HTTP.IP, "API ip address")
 	flag.IntVar(&c.HTTP.Port, "http-port", c.HTTP.Port, "API port")
 
-	flag.StringVar(&c.DB.Type, "db-type", c.DB.Type, "Database type: mysql or sqlite3")
 	flag.StringVar(&c.DB.Host, "db-host", c.DB.Host, "Database host")
+	flag.IntVar(&c.DB.Port, "db-port", c.DB.Port, "Database port")
 	flag.StringVar(&c.DB.Name, "db-name", c.DB.Name, "Database name")
 	flag.StringVar(&c.DB.Login, "db-login", c.DB.Login, "Database user login")
 	flag.StringVar(&c.DB.Pass, "db-pass", c.DB.Pass, "Database user password")
@@ -113,8 +113,8 @@ func (c *AppConfig) FlagSet() {
 func (c *AppConfig) FlagReload() {
 	_ = flag.Set("http-port", fmt.Sprintf("%d", c.HTTP.Port))
 
-	_ = flag.Set("db-type", c.DB.Type)
 	_ = flag.Set("db-host", c.DB.Host)
+	_ = flag.Set("db-port", fmt.Sprint(c.DB.Port))
 	_ = flag.Set("db-name", c.DB.Name)
 	_ = flag.Set("db-login", c.DB.Login)
 	_ = flag.Set("db-pass", c.DB.Pass)
@@ -148,16 +148,10 @@ func (c *AppConfig) Dump() string {
 	return string(b)
 }
 
-func (db *DBConfig) GetConnString() (dialect, connString string) {
-	const mysqlConnectionFormat = "%v:%v@tcp(%v)/%v?charset=utf8&parseTime=True&loc=UTC"
-	switch db.Type {
-	case "mysql":
-		return db.Type, fmt.Sprintf(mysqlConnectionFormat, db.Login, db.Pass, db.Host, db.Name)
-	case "sqlite3":
-		return db.Type, db.Host
-	default:
-		panic("Only mysql/sqlite3 is currently supported")
-	}
+func (db *DBConfig) GetConnString() string {
+	return fmt.Sprintf(
+		"host=%v port=%v user=%v dbname=%v sslmode=disable password=%v",
+		db.Host, db.Port, db.Login, db.Name, db.Pass)
 }
 
 func (p *ProxyConfig) GetHTTPTransport() (*http.Transport, error) {

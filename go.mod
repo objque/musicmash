@@ -10,8 +10,9 @@ require (
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
 	github.com/jinzhu/now v1.1.1
 	github.com/jmoiron/sqlx v1.2.1-0.20191203222853-2ba0fc60eb4a
+	github.com/lib/pq v1.2.0
 	github.com/mattn/go-runewidth v0.0.9 // indirect
-	github.com/mattn/go-sqlite3 v2.0.3+incompatible
+	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pkg/errors v0.9.1
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5

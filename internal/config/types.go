@@ -24,8 +24,8 @@ type LogConfig struct {
 }
 
 type DBConfig struct {
-	Type          string `yaml:"type"`
 	Host          string `yaml:"host"`
+	Port          int    `yaml:"port"`
 	Name          string `yaml:"name"`
 	Login         string `yaml:"login"`
 	Pass          string `yaml:"pass"`

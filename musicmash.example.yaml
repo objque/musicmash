@@ -1,11 +1,11 @@
 ---
 http:
-  ip: 10.0.0.240
+  ip: 0.0.0.0
   port: 8844
 
 db:
-  type: mysql
-  host: 10.0.0.42
+  host: musicmash.db
+  port: 5432
   name: musicmash
   login: musicmash
   pass: musicmash

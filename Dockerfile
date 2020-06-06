@@ -37,4 +37,4 @@ COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmash /usr/lo
 COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmashctl /usr/local/bin/musicmashctl
 
 ENTRYPOINT ["/usr/local/bin/musicmash"]
-CMD ["-db-auto-migrate=true", "-db-migrations-dir=/etc/musicmash/migrations/sqlite3"]
+CMD ["-db-auto-migrate=true", "-db-migrations-dir=/etc/musicmash/migrations"]

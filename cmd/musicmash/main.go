@@ -59,7 +59,7 @@ func main() {
 	log.Debugf("CLI Args: %v", os.Args[1:])
 	log.Debugf("Application configuration: \n%s", config.Config.Dump())
 
-	db.Mgr = db.NewMainDatabaseMgr()
+	db.Mgr = db.NewMainDatabaseMgr(config.Config.DB.GetConnString())
 	if config.Config.DB.AutoMigrate {
 		if config.Config.DB.MigrationsDir == "" {
 			exitWithError(errors.New("Auto-migrations is enabled, but path to folder is empty"))

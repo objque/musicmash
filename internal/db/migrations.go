@@ -18,6 +18,6 @@ func GetPathToMigrationsDir() string {
 	// slittedPath should be
 	// /go/src/github.com/musicmash/musicmash/internal
 
-	slittedPath = append(slittedPath, "migrations/sqlite3")
+	slittedPath = append(slittedPath, "migrations")
 	return strings.Join(slittedPath, "/")
 }

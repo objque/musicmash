@@ -57,7 +57,7 @@ func (mgr *AppDatabaseMgr) GetAllReleases() ([]*Release, error) {
 }
 
 func (mgr *AppDatabaseMgr) FindReleases(artistID int64, title string) ([]*Release, error) {
-	const query = "select * from releases where artist_id = $1 and title = ?"
+	const query = "select * from releases where artist_id = $1 and title = $2"
 
 	releases := []*Release{}
 	err := mgr.newdb.Select(&releases, query, artistID, title)

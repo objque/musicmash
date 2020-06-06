@@ -1,4 +1,4 @@
-development:
-    dialect: sqlite3
-    datasource: musicmash.sqlite3
-    dir: migrations/sqlite3
+staging:
+    dialect: postgres
+    datasource: host=${DB_HOST} port=${DB_PORT} dbname=${DB_NAME} user=${DB_USER} password=${DB_PASSWORD} sslmode=disable
+    dir: migrations
