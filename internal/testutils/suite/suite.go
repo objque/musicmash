@@ -22,5 +22,9 @@ func (t *Suite) TearDownTest() {
 }
 
 func Run(t *testing.T, testingSuite suite.TestingSuite) {
+	if testing.Short() {
+		t.Skip("skipping db tests in short mode")
+	}
+
 	suite.Run(t, testingSuite)
 }
