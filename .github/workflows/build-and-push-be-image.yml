@@ -72,6 +72,17 @@ jobs:
           docker push $IMAGE_NAME:latest
           docker push docker.pkg.github.com/$IMAGE_NAME/musicmash:latest
 
+      - name: Tag image with git tag if exists
+        if: github.event_name == 'push' && github.event.ref_type == 'tag'
+        run: |
+          GIT_TAG="${GITHUB_REF#refs/tags/}"
+
+          docker tag $IMAGE_NAME:latest $IMAGE_NAME:$GIT_TAG
+          docker tag $IMAGE_NAME:latest docker.pkg.github.com/$IMAGE_NAME/musicmash:$GIT_TAG
+
+          docker push $IMAGE_NAME:$GIT_TAG
+          docker push docker.pkg.github.com/$IMAGE_NAME/musicmash:$GIT_TAG
+
       - name: Logout
         run: |
           docker logout docker.pkg.github.com
