@@ -49,7 +49,7 @@ func (t *testDBSuite) TestArtists_Search() {
 		assert.NoError(t.T(), err)
 		assert.Len(t.T(), artists, len(want[i].Artists))
 		for i, wantName := range want[i].Artists {
-			assert.Equal(t.T(), wantName, artists[i].Name)
+			assert.Equal(t.T(), wantName, artists[i].Name, want[i].SearchText)
 		}
 	}
 }

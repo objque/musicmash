@@ -8,7 +8,7 @@ import (
 
 func (t *testDBSuite) TestLastAction_Get() {
 	// arrange
-	last := time.Now().UTC()
+	last := time.Now().UTC().Truncate(time.Minute)
 	assert.NoError(t.T(), Mgr.SetLastActionDate(ActionFetch, last))
 
 	// action
@@ -16,12 +16,13 @@ func (t *testDBSuite) TestLastAction_Get() {
 
 	// assert
 	assert.NoError(t.T(), err)
-	assert.Equal(t.T(), last, res.Date)
+	assert.Equal(t.T(), last, res.Date.UTC())
 }
 
 func (t *testDBSuite) TestLastAction_Set() {
 	// action
-	err := Mgr.SetLastActionDate(ActionFetch, time.Now().UTC())
+	now := time.Now().UTC().Truncate(time.Minute)
+	err := Mgr.SetLastActionDate(ActionFetch, now)
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -32,14 +33,14 @@ func (t *testDBSuite) TestLastAction_Update() {
 	assert.NoError(t.T(), Mgr.SetLastActionDate(ActionFetch, time.Now()))
 
 	// action
-	n := time.Now().UTC()
-	err := Mgr.SetLastActionDate(ActionFetch, n)
+	now := time.Now().UTC().Truncate(time.Minute)
+	err := Mgr.SetLastActionDate(ActionFetch, now)
 
 	// assert
 	assert.NoError(t.T(), err)
 	last, err := Mgr.GetLastActionDate(ActionFetch)
 	assert.NoError(t.T(), err)
-	assert.Equal(t.T(), last.Date, n)
+	assert.Equal(t.T(), last.Date.UTC(), now)
 }
 
 func (t *testDBSuite) TestLastAction_NotFound() {

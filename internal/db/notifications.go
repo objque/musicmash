@@ -25,7 +25,8 @@ func (mgr *AppDatabaseMgr) GetNotificationsForUser(userName string) ([]*Notifica
 func (mgr *AppDatabaseMgr) CreateNotification(notification *Notification) error {
 	const query = "insert into notifications (date, user_name, release_id, is_coming) values ($1, $2, $3, $4)"
 
-	_, err := mgr.newdb.Exec(query, notification.Date, notification.UserName, notification.ReleaseID, notification.IsComing)
-
-	return err
+	return mgr.newdb.QueryRow(query,
+		notification.Date, notification.UserName,
+		notification.ReleaseID, notification.IsComing,
+	).Scan(&notification.ID)
 }

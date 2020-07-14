@@ -8,6 +8,9 @@ import (
 )
 
 func (t *testAPISuite) TestNotificationSettings_Create() {
+	// arrange
+	assert.NoError(t.T(), db.Mgr.EnsureNotificationServiceExists("telegram"))
+
 	// action
 	err := notifysettings.Create(t.client, vars.UserObjque, &notifysettings.Settings{
 		Service: "telegram",
@@ -25,6 +28,7 @@ func (t *testAPISuite) TestNotificationSettings_Create() {
 
 func (t *testAPISuite) TestNotificationSettings_Create_AlreadyExists() {
 	// arrange
+	assert.NoError(t.T(), db.Mgr.EnsureNotificationServiceExists("telegram"))
 	assert.NoError(t.T(), db.Mgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
 		UserName: vars.UserObjque,
 		Service:  "telegram",
@@ -43,6 +47,8 @@ func (t *testAPISuite) TestNotificationSettings_Create_AlreadyExists() {
 
 func (t *testAPISuite) TestNotificationSettings_Update() {
 	// arrange
+	assert.NoError(t.T(), db.Mgr.EnsureNotificationServiceExists("telegram"))
+	assert.NoError(t.T(), db.Mgr.EnsureNotificationServiceExists("icq"))
 	assert.NoError(t.T(), db.Mgr.EnsureNotificationSettingsExists(&db.NotificationSettings{
 		UserName: vars.UserObjque,
 		Service:  "icq",

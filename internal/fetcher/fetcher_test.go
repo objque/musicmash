@@ -12,7 +12,9 @@ import (
 
 func (t *testFetcherSuite) TestFetchAndSave() {
 	// arrange
-	assert.NoError(t.T(), db.Mgr.EnsureAssociationExists(vars.StoreIDW, vars.StoreApple, vars.StoreIDA))
+	assert.NoError(t.T(), db.Mgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistSkrillex}))
+	assert.NoError(t.T(), db.Mgr.EnsureAssociationExists(1, vars.StoreApple, vars.StoreIDA))
 	url := fmt.Sprintf("/v1/catalog/us/artists/%s/albums", vars.StoreIDA)
 	t.mux.HandleFunc(url, func(w http.ResponseWriter, _ *http.Request) {
 		_, _ = w.Write([]byte(fmt.Sprintf(`{
@@ -47,7 +49,7 @@ func (t *testFetcherSuite) TestFetchAndSave() {
 	releases, err := db.Mgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDW), releases[0].ArtistID)
+	assert.Equal(t.T(), int64(1), releases[0].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDA, releases[0].StoreID)
 	assert.Equal(t.T(), 18, releases[0].Released.Day())
 	assert.Equal(t.T(), time.July, releases[0].Released.Month())

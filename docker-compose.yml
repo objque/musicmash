@@ -2,9 +2,23 @@ version: '3'
 services:
   sources:
     image: golang:latest
-    container_name: musicmash
+    container_name: musicmash.sources
+    depends_on:
+      - db
     ports:
       - "8844:8844"
+    environment:
+      - DB_HOST=musicmash.db
+      - DB_PORT=5432
+      - DB_NAME=musicmash
+      - DB_USER=musicmash
+      - DB_PASSWORD=musicmash
+
+      - TEST_DB_HOST=musicmash.test_db
+      - TEST_DB_PORT=5432
+      - TEST_DB_NAME=e79ad87c-29ed-4a8f-a403-4f1a25178ae7
+      - TEST_DB_USER=DO_NOT_EXEC_QUERIES_ON_IT
+      - TEST_DB_PASSWORD=40e921b5-aa90-443f-a3d2-99e6b1fe5946
     volumes:
       - ./:/go/src/github.com/musicmash
       - ./musicmash.example.yml:/etc/musicmash/musicmash.yml
@@ -13,3 +27,31 @@ services:
     stdin_open: true
     tty: true
     command: ["/bin/bash"]
+
+  db:
+    image: postgres:12.1
+    container_name: musicmash.db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=musicmash
+      - POSTGRES_PASSWORD=musicmash
+      - POSTGRES_DB=musicmash
+
+  #
+  # IMPORTANT: this container uses only for tests
+  # DO NOT EXEC QUERIES ON IT!
+  test_db:
+    image: postgres:12.1
+    container_name: musicmash.test_db
+    ports:
+      - "2345:5432"
+    environment:
+      - POSTGRES_DB=e79ad87c-29ed-4a8f-a403-4f1a25178ae7
+      - POSTGRES_USER=DO_NOT_EXEC_QUERIES_ON_IT
+      - POSTGRES_PASSWORD=40e921b5-aa90-443f-a3d2-99e6b1fe5946
+    command: >
+      -c fsync=off
+      -c max_prepared_transactions=30
+      -c synchronous_commit=off
+      -c full_page_writes=off

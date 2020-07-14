@@ -7,13 +7,17 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testDBSuite) TestReleasesBatch_InsertMany_1() {
+func (t *testDBSuite) TestReleasesBatch_InsertMany() {
 	// arrange
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreSpotify))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSPY}))
 	now := time.Date(2020, 10, 01, 0, 0, 0, 0, time.UTC)
 	rels := []*Release{
 		{
 			CreatedAt: now,
-			ArtistID:  vars.StoreIDW,
+			ArtistID:  1,
 			Title:     vars.ReleaseArchitectsHollyHell,
 			Poster:    vars.PosterMiddle,
 			Released:  now.AddDate(0, -1, 0),
@@ -23,7 +27,7 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_1() {
 			Explicit:  true,
 		}, {
 			CreatedAt: now,
-			ArtistID:  vars.StoreIDQ,
+			ArtistID:  2,
 			Title:     vars.ReleaseArchitectsHollyHell,
 			Poster:    vars.PosterMiddle,
 			Released:  now.AddDate(0, -5, 0),
@@ -45,7 +49,7 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_1() {
 
 	assert.Equal(t.T(), now.Year(), releases[0].CreatedAt.Year())
 	assert.Equal(t.T(), now.Day(), releases[0].CreatedAt.Day())
-	assert.Equal(t.T(), int64(vars.StoreIDW), releases[0].ArtistID)
+	assert.Equal(t.T(), int64(1), releases[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, releases[0].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, releases[0].Poster)
 	assert.Equal(t.T(), now.Year(), releases[0].Released.Year())
@@ -57,7 +61,7 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_1() {
 
 	assert.Equal(t.T(), now.Year(), releases[1].CreatedAt.Year())
 	assert.Equal(t.T(), now.Day(), releases[1].CreatedAt.Day())
-	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[1].ArtistID)
+	assert.Equal(t.T(), int64(2), releases[1].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, releases[1].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, releases[1].Poster)
 	assert.Equal(t.T(), now.Year(), releases[1].Released.Year())
@@ -70,10 +74,14 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_1() {
 
 func (t *testDBSuite) TestReleasesBatch_InsertMany_Ignore() {
 	// arrange
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreSpotify))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSPY}))
 	now := time.Date(2020, 10, 01, 0, 0, 0, 0, time.UTC)
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: now,
-		ArtistID:  vars.StoreIDW,
+		ArtistID:  1,
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Poster:    vars.PosterMiddle,
 		Released:  now.AddDate(0, -1, 0),
@@ -85,7 +93,7 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_Ignore() {
 	rels := []*Release{
 		{
 			CreatedAt: now,
-			ArtistID:  vars.StoreIDW,
+			ArtistID:  1,
 			Title:     vars.ReleaseArchitectsHollyHell,
 			Poster:    vars.PosterMiddle,
 			Released:  now.AddDate(0, -1, 0),
@@ -95,7 +103,7 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_Ignore() {
 			Explicit:  true,
 		}, {
 			CreatedAt: now,
-			ArtistID:  vars.StoreIDQ,
+			ArtistID:  2,
 			Title:     vars.ReleaseArchitectsHollyHell,
 			Poster:    vars.PosterMiddle,
 			Released:  now.AddDate(0, -5, 0),
@@ -117,7 +125,7 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_Ignore() {
 
 	assert.Equal(t.T(), now.Year(), releases[0].CreatedAt.Year())
 	assert.Equal(t.T(), now.Day(), releases[0].CreatedAt.Day())
-	assert.Equal(t.T(), int64(vars.StoreIDW), releases[0].ArtistID)
+	assert.Equal(t.T(), int64(1), releases[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, releases[0].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, releases[0].Poster)
 	assert.Equal(t.T(), now.Year(), releases[0].Released.Year())
@@ -129,7 +137,7 @@ func (t *testDBSuite) TestReleasesBatch_InsertMany_Ignore() {
 
 	assert.Equal(t.T(), now.Year(), releases[1].CreatedAt.Year())
 	assert.Equal(t.T(), now.Day(), releases[1].CreatedAt.Day())
-	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[1].ArtistID)
+	assert.Equal(t.T(), int64(2), releases[1].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, releases[1].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, releases[1].Poster)
 	assert.Equal(t.T(), now.Year(), releases[1].Released.Year())

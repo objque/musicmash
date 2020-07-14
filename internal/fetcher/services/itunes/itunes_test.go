@@ -73,13 +73,15 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
   ]
 }`, vars.StoreIDC)))
 	})
+	assert.NoError(t.T(), db.Mgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
 
 	// action
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	storeArtists := []*db.Association{
 		{
-			ArtistID:  vars.StoreIDQ,
+			ArtistID:  1,
 			StoreID:   vars.StoreIDA,
 			StoreName: f.GetStoreName(),
 		},
@@ -91,7 +93,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	releases, err := db.Mgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 3)
-	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[0].ArtistID)
+	assert.Equal(t.T(), int64(1), releases[0].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDA, releases[0].StoreID)
 	assert.Equal(t.T(), 18, releases[0].Released.Day())
 	assert.Equal(t.T(), time.July, releases[0].Released.Month())
@@ -99,7 +101,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	assert.Equal(t.T(), "album", releases[0].Type)
 	assert.True(t.T(), releases[0].Explicit)
 
-	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[1].ArtistID)
+	assert.Equal(t.T(), int64(1), releases[1].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDB, releases[1].StoreID)
 	assert.Equal(t.T(), 18, releases[1].Released.Day())
 	assert.Equal(t.T(), time.July, releases[1].Released.Month())
@@ -107,7 +109,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave() {
 	assert.Equal(t.T(), "song", releases[1].Type)
 	assert.True(t.T(), releases[1].Explicit)
 
-	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[2].ArtistID)
+	assert.Equal(t.T(), int64(1), releases[2].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDC, releases[2].StoreID)
 	assert.Equal(t.T(), 18, releases[2].Released.Day())
 	assert.Equal(t.T(), time.October, releases[2].Released.Month())
@@ -177,23 +179,25 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
   ]
 }`, vars.StoreIDB)))
 	})
+	assert.NoError(t.T(), db.Mgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistArchitects}))
 	// album
 	assert.NoError(t.T(), db.Mgr.EnsureReleaseExists(&db.Release{
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 		StoreID:   vars.StoreIDA,
 		StoreName: f.GetStoreName(),
 		Explicit:  true,
 	}))
 	// song
 	assert.NoError(t.T(), db.Mgr.EnsureReleaseExists(&db.Release{
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 		StoreID:   vars.StoreIDB,
 		StoreName: f.GetStoreName(),
 		Explicit:  true,
 	}))
 	// music-video
 	assert.NoError(t.T(), db.Mgr.EnsureReleaseExists(&db.Release{
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 		StoreID:   vars.StoreIDC,
 		StoreName: f.GetStoreName(),
 		Explicit:  true,
@@ -204,7 +208,7 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
 	wg.Add(1)
 	storeArtists := []*db.Association{
 		{
-			ArtistID:  vars.StoreIDQ,
+			ArtistID:  1,
 			StoreID:   vars.StoreIDB,
 			StoreName: f.GetStoreName(),
 		},
@@ -216,21 +220,21 @@ func (t *testAppleFetcherSuite) TestFetchAndSave_AlreadyExists() {
 	releases, err := db.Mgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 3)
-	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[0].ArtistID)
+	assert.Equal(t.T(), int64(1), releases[0].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDA, releases[0].StoreID)
 	assert.Equal(t.T(), 1, releases[0].Released.Day())
 	assert.Equal(t.T(), time.January, releases[0].Released.Month())
 	assert.Equal(t.T(), 1, releases[0].Released.Year())
 	assert.True(t.T(), releases[0].Explicit)
 
-	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[1].ArtistID)
+	assert.Equal(t.T(), int64(1), releases[1].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDB, releases[1].StoreID)
 	assert.Equal(t.T(), 1, releases[1].Released.Day())
 	assert.Equal(t.T(), time.January, releases[1].Released.Month())
 	assert.Equal(t.T(), 1, releases[1].Released.Year())
 	assert.True(t.T(), releases[1].Explicit)
 
-	assert.Equal(t.T(), int64(vars.StoreIDQ), releases[2].ArtistID)
+	assert.Equal(t.T(), int64(1), releases[2].ArtistID)
 	assert.Equal(t.T(), vars.StoreIDC, releases[2].StoreID)
 	assert.Equal(t.T(), 1, releases[2].Released.Day())
 	assert.Equal(t.T(), time.January, releases[2].Released.Month())

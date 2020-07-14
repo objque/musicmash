@@ -38,13 +38,10 @@ func (c *ArtistsController) addArtist(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// TODO (m.kalinin): when project was moved from gorm to sqlx we have broke method db.CreateArtist
-	// it requires id for insert an new entity. so for temporary reason code below was commented.
-	// do not allow override ID
-	//if artist.ID != 0 {
-	//	httputils.WriteError(w, errors.New("artist id should be empty"))
-	//	return
-	//}
+	if artist.ID != 0 {
+		httputils.WriteError(w, errors.New("artist id should be empty"))
+		return
+	}
 
 	if artist.Name == "" {
 		httputils.WriteError(w, errors.New("artist name didn't provided"))

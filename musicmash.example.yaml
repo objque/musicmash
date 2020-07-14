@@ -10,7 +10,7 @@ db:
   login: musicmash
   pass: musicmash
   log: false
-  auto_migrate: false
+  auto_migrate: true
   migrations_dir: ./migrations
 
 log:
@@ -37,7 +37,7 @@ sentry:
   key: https://uuid@sentry.io/123456
 
 notifier:
-  enabled: true
+  enabled: false
   telegram_token: 12345:xxxx_yyy_token
   delay: 12h0m0s # time.Duration format: XXhYYmZZs, you may provide any part like 24m
 

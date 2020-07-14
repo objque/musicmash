@@ -8,7 +8,6 @@ import (
 )
 
 type InternalRelease struct {
-	ID         uint64    `json:"id"          db:"id"`
 	ArtistID   int64     `json:"artist_id"   db:"artist_id"`
 	ArtistName string    `json:"artist_name" db:"artist_name"`
 	Released   time.Time `json:"released"    db:"released"`
@@ -36,7 +35,6 @@ type GetInternalReleaseOpts struct {
 
 func (mgr *AppDatabaseMgr) GetInternalReleases(opts *GetInternalReleaseOpts) ([]*InternalRelease, error) {
 	query := sq.Select(
-		"releases.id",
 		"releases.artist_id",
 		"artists.name AS artist_name",
 		"releases.released",
@@ -64,7 +62,18 @@ func (mgr *AppDatabaseMgr) GetInternalReleases(opts *GetInternalReleaseOpts) ([]
 			AND releases.title = deezer.title
 			AND deezer.store_name = 'deezer'
 		)`).
-		GroupBy("releases.title")
+		GroupBy(
+			"releases.artist_id",
+			"artist_name",
+			"releases.released",
+			"releases.poster",
+			"releases.title",
+			"releases.type",
+			"releases.explicit",
+			"itunes_id",
+			"spotify_id",
+			"deezer_id",
+		)
 
 	if opts != nil {
 		query = applyInternalReleasesFilters(query, opts)

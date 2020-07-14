@@ -17,17 +17,20 @@ func (t *testDBSuite) prepareReleasesTestCase() {
 	r := time.Now().UTC()
 	monthAgo := r.AddDate(0, -1, 0)
 	yearAgo := r.AddDate(-1, 0, 0)
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistAlgorithm, ID: vars.StoreIDQ}))
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex, ID: vars.StoreIDW}))
-	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{vars.StoreIDQ}))
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreDeezer))
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreSpotify))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistAlgorithm, ID: 1}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex, ID: 2}))
+	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{1}))
 	// first release
-	t.fillRelease(&Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000", Type: vars.ReleaseTypeAlbum, Explicit: true})
-	t.fillRelease(&Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000", Type: vars.ReleaseTypeAlbum, Explicit: true})
-	t.fillRelease(&Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreSpotify, StoreID: "3000", Type: vars.ReleaseTypeAlbum, Explicit: true})
+	t.fillRelease(&Release{ArtistID: 1, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000", Type: vars.ReleaseTypeAlbum, Explicit: true})
+	t.fillRelease(&Release{ArtistID: 1, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000", Type: vars.ReleaseTypeAlbum, Explicit: true})
+	t.fillRelease(&Release{ArtistID: 1, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreSpotify, StoreID: "3000", Type: vars.ReleaseTypeAlbum, Explicit: true})
 	// second release
-	t.fillRelease(&Release{ArtistID: vars.StoreIDQ, Title: vars.ReleaseArchitectsHollyHell, Poster: vars.PosterMiddle, Released: monthAgo, StoreName: vars.StoreApple, StoreID: "1100", Type: vars.ReleaseTypeSong, Explicit: false})
+	t.fillRelease(&Release{ArtistID: 1, Title: vars.ReleaseArchitectsHollyHell, Poster: vars.PosterMiddle, Released: monthAgo, StoreName: vars.StoreApple, StoreID: "1100", Type: vars.ReleaseTypeSong, Explicit: false})
 	// third release from another artist
-	t.fillRelease(&Release{ArtistID: vars.StoreIDW, Title: vars.ReleaseRitaOraLouder, Poster: vars.PosterGiant, Released: yearAgo, StoreName: vars.StoreApple, StoreID: "1110", Type: vars.ReleaseTypeVideo, Explicit: true})
+	t.fillRelease(&Release{ArtistID: 2, Title: vars.ReleaseRitaOraLouder, Poster: vars.PosterGiant, Released: yearAgo, StoreName: vars.StoreApple, StoreID: "1110", Type: vars.ReleaseTypeVideo, Explicit: true})
 }
 
 func (t *testDBSuite) TestInternalReleases_Get_All() {
@@ -35,12 +38,13 @@ func (t *testDBSuite) TestInternalReleases_Get_All() {
 	t.prepareReleasesTestCase()
 
 	// action
-	rels, err := Mgr.GetInternalReleases(nil)
+	rels, err := Mgr.GetInternalReleases(&GetInternalReleaseOpts{SortType: "desc"})
+
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 3)
 	// releases are sort by release date desc
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
 	assert.Equal(t.T(), "1000", *rels[0].ItunesID)
@@ -49,7 +53,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All() {
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, rels[0].Type)
 	assert.True(t.T(), rels[0].Explicit)
 
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[1].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[1].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[1].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[1].Poster)
 	assert.Equal(t.T(), "1100", *rels[1].ItunesID)
@@ -58,7 +62,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All() {
 	assert.Equal(t.T(), vars.ReleaseTypeSong, rels[1].Type)
 	assert.False(t.T(), rels[1].Explicit)
 
-	assert.Equal(t.T(), int64(vars.StoreIDW), rels[2].ArtistID)
+	assert.Equal(t.T(), int64(2), rels[2].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseRitaOraLouder, rels[2].Title)
 	assert.Equal(t.T(), vars.PosterGiant, rels[2].Poster)
 	assert.Equal(t.T(), "1110", *rels[2].ItunesID)
@@ -73,7 +77,6 @@ func (t *testDBSuite) TestInternalReleases_Get_All_ChangeSortType() {
 	t.prepareReleasesTestCase()
 
 	// action
-
 	rels, err := Mgr.GetInternalReleases(&GetInternalReleaseOpts{
 		SortType: releases.SortTypeASC,
 	})
@@ -82,7 +85,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All_ChangeSortType() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 3)
 	// releases are sort by release date ASC!
-	assert.Equal(t.T(), int64(vars.StoreIDW), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(2), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseRitaOraLouder, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
 	assert.Equal(t.T(), "1110", *rels[0].ItunesID)
@@ -91,7 +94,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All_ChangeSortType() {
 	assert.Equal(t.T(), vars.ReleaseTypeVideo, rels[0].Type)
 	assert.True(t.T(), rels[0].Explicit)
 
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[1].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[1].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[1].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[1].Poster)
 	assert.Equal(t.T(), "1100", *rels[1].ItunesID)
@@ -100,7 +103,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All_ChangeSortType() {
 	assert.Equal(t.T(), vars.ReleaseTypeSong, rels[1].Type)
 	assert.False(t.T(), rels[1].Explicit)
 
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[2].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[2].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, rels[2].Title)
 	assert.Equal(t.T(), vars.PosterSimple, rels[2].Poster)
 	assert.Equal(t.T(), "1000", *rels[2].ItunesID)
@@ -116,13 +119,14 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByLimit() {
 
 	// action
 	rels, err := Mgr.GetInternalReleases(&GetInternalReleaseOpts{
-		Limit: ptr.Uint(1),
+		Limit:    ptr.Uint(1),
+		SortType: "desc",
 	})
 
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
 	assert.Equal(t.T(), "1000", *rels[0].ItunesID)
@@ -138,14 +142,15 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterBy_LimitAndOffset() {
 
 	// action
 	rels, err := Mgr.GetInternalReleases(&GetInternalReleaseOpts{
-		Limit:  ptr.Uint(1),
-		Offset: ptr.Uint(1),
+		Limit:    ptr.Uint(1),
+		Offset:   ptr.Uint(1),
+		SortType: "desc",
 	})
 
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)
 	assert.Equal(t.T(), "1100", *rels[0].ItunesID)
@@ -161,14 +166,15 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByArtistID() {
 
 	// action
 	rels, err := Mgr.GetInternalReleases(&GetInternalReleaseOpts{
-		ArtistID: ptr.Int(vars.StoreIDQ),
+		ArtistID: ptr.Int(1),
+		SortType: "desc",
 	})
 
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 2)
 	// releases are sort by release date desc
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
 	assert.Equal(t.T(), "1000", *rels[0].ItunesID)
@@ -177,7 +183,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByArtistID() {
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, rels[0].Type)
 	assert.True(t.T(), rels[0].Explicit)
 
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[1].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[1].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[1].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[1].Poster)
 	assert.Equal(t.T(), "1100", *rels[1].ItunesID)
@@ -193,14 +199,14 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByArtistID_ReleaseType() {
 
 	// action
 	rels, err := Mgr.GetInternalReleases(&GetInternalReleaseOpts{
-		ArtistID:    ptr.Int(vars.StoreIDQ),
+		ArtistID:    ptr.Int(1),
 		ReleaseType: vars.ReleaseTypeSong,
 	})
 
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)
 	assert.Equal(t.T(), "1100", *rels[0].ItunesID)
@@ -223,7 +229,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterBySince() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
 	assert.Equal(t.T(), "1000", *rels[0].ItunesID)
@@ -246,7 +252,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByTill() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDW), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(2), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseRitaOraLouder, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
 	assert.Equal(t.T(), "1110", *rels[0].ItunesID)
@@ -271,7 +277,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterBy_SinceAndTill() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDW), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(2), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseRitaOraLouder, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
 	assert.Equal(t.T(), "1110", *rels[0].ItunesID)
@@ -295,7 +301,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterBy_Explicit() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
 	// releases are sort by release date desc
-	assert.Equal(t.T(), int64(vars.StoreIDQ), rels[0].ArtistID)
+	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)
 	assert.Equal(t.T(), "1100", *rels[0].ItunesID)

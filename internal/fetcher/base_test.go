@@ -30,10 +30,16 @@ func (t *testFetcherSuite) SetupSuite() {
 			},
 		},
 	}
+	t.Suite.SetupSuite()
+}
+
+func (t *testFetcherSuite) TearDownTest() {
+	t.Suite.TearDownTest()
 }
 
 func (t *testFetcherSuite) TearDownSuite() {
 	t.server.Close()
+	t.Suite.TearDownSuite()
 }
 
 func TestFetcherSuite(t *testing.T) {

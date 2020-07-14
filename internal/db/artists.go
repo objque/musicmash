@@ -26,7 +26,7 @@ func (mgr *AppDatabaseMgr) GetAllArtists() ([]*Artist, error) {
 }
 
 func (mgr *AppDatabaseMgr) SearchArtists(name string) ([]*Artist, error) {
-	const query = "select * from artists where name like $1 order by followers desc limit 100"
+	const query = "select * from artists where name ilike $1 order by followers desc limit 100"
 
 	artists := []*Artist{}
 	err := mgr.newdb.Select(&artists, query, fmt.Sprint("%", html.EscapeString(name), "%"))
@@ -47,16 +47,9 @@ func (mgr *AppDatabaseMgr) EnsureArtistExists(artist *Artist) error {
 }
 
 func (mgr *AppDatabaseMgr) CreateArtist(artist *Artist) error {
-	const query = "insert into artists (id, name, poster, popularity, followers) values ($1, $2, $3, $4, $5)"
+	const query = "insert into artists (name, poster, popularity, followers) values ($1, $2, $3, $4) returning id"
 
-	r, err := mgr.newdb.Exec(query, artist.ID, artist.Name, artist.Poster, artist.Popularity, artist.Followers)
-	if err != nil {
-		return err
-	}
-
-	id, _ := r.LastInsertId()
-	artist.ID = id
-	return nil
+	return mgr.newdb.QueryRow(query, artist.Name, artist.Poster, artist.Popularity, artist.Followers).Scan(&artist.ID)
 }
 
 func (mgr *AppDatabaseMgr) GetArtist(id int64) (*Artist, error) {

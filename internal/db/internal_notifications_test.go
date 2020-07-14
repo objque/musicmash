@@ -14,18 +14,20 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	)
 
 	// arrange
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreApple))
 	// create artist
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ, Name: vars.ArtistArchitects}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistArchitects}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: 1, Name: vars.ArtistArchitects}))
 	// subscribe users
 	assert.NoError(t.T(), Mgr.CreateSubscription(&Subscription{
 		CreatedAt: time.Now().UTC().AddDate(-1, 0, 0),
 		UserName:  vars.UserObjque,
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 	}))
 	assert.NoError(t.T(), Mgr.CreateSubscription(&Subscription{
 		CreatedAt: time.Now().UTC().AddDate(-1, 0, 0),
 		UserName:  vars.UserBot,
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 	}))
 	// fill contacts
 	assert.NoError(t.T(), Mgr.EnsureNotificationServiceExists(notificationService))
@@ -40,7 +42,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: time.Now().UTC(),
 		ID:        1,
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 		Released:  time.Now().UTC().AddDate(0, -1, 0),
 		StoreName: vars.StoreApple,
 		StoreID:   "this-oldest-release-wont-be-in-output",
@@ -48,7 +50,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: time.Now().UTC(),
 		ID:        2,
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 		Released:  time.Now().UTC().AddDate(0, 10, 0),
 		StoreName: vars.StoreApple,
 		StoreID:   "this-future-release-wont-be-in-output",
@@ -74,7 +76,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: time.Now().UTC(),
 		ID:        3,
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  time.Now().UTC().AddDate(0, 0, -15),
 		StoreName: vars.StoreApple,
@@ -85,7 +87,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		CreatedAt: time.Now().UTC(),
 		ID:        4,
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 		Title:     vars.ArtistAlgorithm,
 		Released:  time.Now().UTC().AddDate(1, 0, 0),
 		StoreName: vars.StoreApple,
@@ -103,7 +105,7 @@ func (t *testDBSuite) TestInternalNotifications_Find() {
 	// 2 coming releases weren't delivery
 	assert.Len(t.T(), notifications, 4)
 	for _, notification := range notifications {
-		assert.Equal(t.T(), int64(vars.StoreIDQ), notification.ArtistID)
+		assert.Equal(t.T(), int64(1), notification.ArtistID)
 		assert.Equal(t.T(), vars.ArtistArchitects, notification.ArtistName)
 		assert.Equal(t.T(), notificationService, *notification.Service)
 		assert.Equal(t.T(), notificationData, *notification.Data)
@@ -119,17 +121,18 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 	// which released before he subscribed for an artist
 
 	// arrange
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreApple))
 	// create artist
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{ID: vars.StoreIDQ, Name: vars.ArtistArchitects}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistArchitects}))
 	// subscribe users
 	assert.NoError(t.T(), Mgr.CreateSubscription(&Subscription{
 		CreatedAt: time.Now().UTC(),
 		UserName:  vars.UserObjque,
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 	}))
 	// fill releases
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 		Title:     vars.ReleaseArchitectsHollyHell,
 		Released:  time.Now().UTC().AddDate(0, 0, -15),
 		StoreName: vars.StoreApple,
@@ -137,7 +140,7 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 		Explicit:  true,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
-		ArtistID:  vars.StoreIDQ,
+		ArtistID:  1,
 		Title:     vars.ArtistAlgorithm,
 		Released:  time.Now().UTC().AddDate(1, 0, 0),
 		StoreName: vars.StoreApple,
@@ -155,7 +158,7 @@ func (t *testDBSuite) TestInternalNotifications_SubscribedAfterRelease() {
 	// should receive notification about future release
 	// shouldn't receive notification about old release
 	assert.Len(t.T(), notifications, 1)
-	assert.Equal(t.T(), int64(vars.StoreIDQ), notifications[0].ArtistID)
+	assert.Equal(t.T(), int64(1), notifications[0].ArtistID)
 	assert.Equal(t.T(), vars.ArtistArchitects, notifications[0].ArtistName)
 	assert.Equal(t.T(), vars.ArtistAlgorithm, notifications[0].Title)
 	assert.Nil(t.T(), notifications[0].Service)

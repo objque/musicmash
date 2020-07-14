@@ -31,17 +31,10 @@ func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {
 
 func (mgr *AppDatabaseMgr) CreateRelease(release *Release) error {
 	const query = "insert into releases (created_at, artist_id, title, poster, released, store_name, store_id, type, explicit) " +
-		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)"
+		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) returning id"
 
-	r, err := mgr.newdb.Exec(query, release.CreatedAt, release.ArtistID, release.Title, release.Poster,
-		release.Released, release.StoreName, release.StoreID, release.Type, release.Explicit)
-	if err != nil {
-		return err
-	}
-
-	id, _ := r.LastInsertId()
-	release.ID = uint64(id)
-	return nil
+	return mgr.newdb.QueryRow(query, release.CreatedAt, release.ArtistID, release.Title, release.Poster,
+		release.Released, release.StoreName, release.StoreID, release.Type, release.Explicit).Scan(&release.ID)
 }
 
 func (mgr *AppDatabaseMgr) GetAllReleases() ([]*Release, error) {

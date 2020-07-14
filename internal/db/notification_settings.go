@@ -40,11 +40,9 @@ func (mgr *AppDatabaseMgr) EnsureNotificationSettingsExists(settings *Notificati
 		return nil
 	}
 
-	const query = "insert into notification_settings (user_name, service, data) values ($1, $2, $3)"
+	const query = "insert into notification_settings (user_name, service, data) values ($1, $2, $3) returning id"
 
-	_, err = mgr.newdb.Exec(query, settings.UserName, settings.Service, settings.Data)
-
-	return err
+	return mgr.newdb.QueryRow(query, settings.UserName, settings.Service, settings.Data).Scan(&settings.ID)
 }
 
 func (mgr *AppDatabaseMgr) UpdateNotificationSettings(settings *NotificationSettings) error {

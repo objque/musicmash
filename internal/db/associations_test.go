@@ -8,9 +8,10 @@ import (
 func (t *testDBSuite) TestAssociations_EnsureArtistExistsInStore() {
 	// arrange
 	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreDeezer))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
 
 	// action
-	err := Mgr.EnsureAssociationExists(vars.StoreIDQ, vars.StoreDeezer, vars.StoreIDA)
+	err := Mgr.EnsureAssociationExists(1, vars.StoreDeezer, vars.StoreIDA)
 
 	// assert
 	assert.NoError(t.T(), err)
@@ -22,11 +23,12 @@ func (t *testDBSuite) TestAssociations_EnsureArtistExistsInStore() {
 func (t *testDBSuite) TestAssociations_GetArtistFromStore() {
 	// arrange
 	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreApple))
-	assert.NoError(t.T(), Mgr.EnsureAssociationExists(vars.StoreIDQ, vars.StoreApple, vars.StoreIDA))
-	assert.NoError(t.T(), Mgr.EnsureAssociationExists(vars.StoreIDQ, vars.StoreApple, vars.StoreIDB))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
+	assert.NoError(t.T(), Mgr.EnsureAssociationExists(1, vars.StoreApple, vars.StoreIDA))
+	assert.NoError(t.T(), Mgr.EnsureAssociationExists(1, vars.StoreApple, vars.StoreIDB))
 
 	// action
-	artists, err := Mgr.GetAssociationFromStore(vars.StoreIDQ, vars.StoreApple)
+	artists, err := Mgr.GetAssociationFromStore(1, vars.StoreApple)
 
 	// assert
 	assert.NoError(t.T(), err)

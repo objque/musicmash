@@ -9,7 +9,7 @@ import (
 	migrate "github.com/rubenv/sql-migrate"
 
 	// load dialects
-	_ "github.com/mattn/go-sqlite3"
+	_ "github.com/lib/pq"
 )
 
 var Mgr *AppDatabaseMgr
@@ -40,8 +40,8 @@ func NewAppDatabaseMgr(db *sqlx.DB) *AppDatabaseMgr {
 	return &AppDatabaseMgr{newdb: db, parent: db.DB}
 }
 
-func NewMainDatabaseMgr() *AppDatabaseMgr {
-	db := InitMain()
+func NewMainDatabaseMgr(args string) *AppDatabaseMgr {
+	db := InitMain(args)
 	return NewAppDatabaseMgr(db)
 }
 
@@ -79,6 +79,22 @@ func (mgr *AppDatabaseMgr) Rollback() error {
 	return fmt.Errorf("error rollback: %w", ErrNotInTx)
 }
 
+func (mgr *AppDatabaseMgr) TruncateAllTables() error {
+	const query = "TRUNCATE " +
+		"last_actions," +
+		"notifications," +
+		"notification_settings," +
+		"notification_services," +
+		"releases," +
+		"subscriptions," +
+		"associations," +
+		"stores," +
+		"artists " +
+		"RESTART IDENTITY CASCADE"
+	_, err := mgr.newdb.Exec(query)
+	return err
+}
+
 func (mgr *AppDatabaseMgr) Close() error {
 	return mgr.parent.Close()
 }
@@ -87,17 +103,24 @@ func (mgr *AppDatabaseMgr) Ping() error {
 	return mgr.parent.Ping()
 }
 
-func (mgr *AppDatabaseMgr) GetDialectName() string {
-	return "sqlite3"
-}
-
 func (mgr *AppDatabaseMgr) ApplyMigrations(pathToMigrations string) error {
 	migrations := &migrate.FileMigrationSource{Dir: pathToMigrations}
-	n, err := migrate.Exec(mgr.parent, mgr.GetDialectName(), migrations, migrate.Up)
+	n, err := migrate.Exec(mgr.parent, "postgres", migrations, migrate.Up)
 	if err != nil {
 		return err
 	}
 
 	log.Infoln(fmt.Sprintf("Applied %d migrations!", n))
+	return nil
+}
+
+func (mgr *AppDatabaseMgr) DropAllTablesViaMigrations(pathToMigrations string) error {
+	migrations := &migrate.FileMigrationSource{Dir: pathToMigrations}
+	n, err := migrate.Exec(mgr.parent, "postgres", migrations, migrate.Down)
+	if err != nil {
+		return err
+	}
+
+	log.Infof("Dropped %d migrations!", n)
 	return nil
 }

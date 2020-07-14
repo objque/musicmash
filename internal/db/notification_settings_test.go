@@ -6,6 +6,9 @@ import (
 )
 
 func (t *testDBSuite) TestNotificationSettings_EnsureExists() {
+	// arrange
+	assert.NoError(t.T(), Mgr.EnsureNotificationServiceExists("email"))
+
 	// action
 	err := Mgr.EnsureNotificationSettingsExists(&NotificationSettings{
 		UserName: vars.UserObjque,
@@ -25,6 +28,7 @@ func (t *testDBSuite) TestNotificationSettings_EnsureExists() {
 
 func (t *testDBSuite) TestNotificationSettings_Update() {
 	// arrange
+	assert.NoError(t.T(), Mgr.EnsureNotificationServiceExists("email"))
 	assert.NoError(t.T(), Mgr.EnsureNotificationSettingsExists(&NotificationSettings{
 		UserName: vars.UserObjque,
 		Service:  "email",

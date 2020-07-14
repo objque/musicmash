@@ -43,6 +43,9 @@ image:
 		--build-arg BUILD_TIME=${BUILD_TIME} \
 		-t $(REGISTRY_REPO):$(VERSION) .
 
+compose:
+	docker-compose up --build -d
+
 lint l:
 	bash ./scripts/revive.sh
 	bash ./scripts/golangci-lint.sh

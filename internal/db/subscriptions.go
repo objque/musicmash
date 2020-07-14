@@ -16,17 +16,11 @@ type Subscription struct {
 }
 
 func (mgr *AppDatabaseMgr) CreateSubscription(subscription *Subscription) error {
-	const query = "insert into subscriptions (created_at, user_name, artist_id) VALUES ($1, $2, $3)"
+	const query = "insert into subscriptions (created_at, user_name, artist_id) VALUES ($1, $2, $3) returning id"
 
 	now := subscription.CreatedAt.Format("2006-01-02T15:04:05")
-	result, err := mgr.newdb.Exec(query, now, subscription.UserName, subscription.ArtistID)
-	if err != nil {
-		return err
-	}
 
-	id, _ := result.LastInsertId()
-	subscription.ID = uint64(id)
-	return nil
+	return mgr.newdb.QueryRow(query, now, subscription.UserName, subscription.ArtistID).Scan(&subscription.ID)
 }
 
 func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string) ([]*Subscription, error) {
@@ -49,30 +43,33 @@ func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string) ([]*Subscriptio
 }
 
 func (mgr *AppDatabaseMgr) SubscribeUser(userName string, artists []int64) error {
-	const rawquery = `
-insert into subscriptions (created_at, user_name, artist_id)
-select $1 as created_at, $2 as user_name, id as artist_id from artists
-where
-    artist_id in ($3) and
-    artist_id not in (select artist_id from subscriptions where user_name = $4)`
+	const query = "INSERT INTO subscriptions (created_at, user_name, artist_id) " +
+		"VALUES (now(), $1, $2) ON CONFLICT DO NOTHING"
 
-	now := time.Now().UTC().Format("2006-01-02T15:04:05")
-	query, args, err := sqlx.In(rawquery, now, userName, artists, userName)
+	tx, err := mgr.Begin()
 	if err != nil {
 		return err
 	}
 
-	_, err = mgr.newdb.Exec(query, args...)
-	return err
+	for _, artistID := range artists {
+		if _, err = tx.newdb.Exec(query, userName, artistID); err != nil {
+			_ = tx.Rollback()
+			return err
+		}
+	}
+
+	return tx.Commit()
 }
 
 func (mgr *AppDatabaseMgr) UnSubscribeUser(userName string, artists []int64) error {
-	const rawquery = "delete from subscriptions where user_name = $1 and artist_id in ($2)"
+	const rawquery = "delete from subscriptions where user_name = ? and artist_id in (?)"
 
 	query, args, err := sqlx.In(rawquery, userName, artists)
 	if err != nil {
 		return err
 	}
+
+	query = sqlx.Rebind(sqlx.DOLLAR, query)
 
 	_, err = mgr.newdb.Exec(query, args...)
 	return err
