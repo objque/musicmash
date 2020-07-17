@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"net/http"
 	"os"
 	"strings"
 
@@ -14,8 +13,6 @@ import (
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
-	"github.com/musicmash/musicmash/internal/notifier"
-	"github.com/musicmash/musicmash/internal/notifier/telegram"
 	"github.com/musicmash/musicmash/internal/version"
 	"github.com/pkg/errors"
 )
@@ -91,34 +88,7 @@ func main() {
 		}
 		go cron.Run(db.ActionFetch, config.Config.Fetcher.Delay, fetcher.Fetch)
 	}
-	if config.Config.Notifier.Enabled {
-		if config.Config.Notifier.Delay <= 0 {
-			exitWithError(errors.New("Invalid notifier delay: value should be greater than zero"))
-		}
-		if len(config.Config.Notifier.TelegramToken) == 0 {
-			exitWithError(errors.New("Telegram token is unset, but notifier is enabled"))
-		}
-		if err := telegram.NewWithClient(config.Config.Notifier.TelegramToken, mustGetHTTPClient()); err != nil {
-			exitWithError(errors.Wrap(err, "Can't setup telegram client"))
-		}
-		if err := db.Mgr.EnsureNotificationServiceExists("telegram"); err != nil {
-			exitWithError(err)
-		}
-		go cron.Run(db.ActionNotify, config.Config.Notifier.Delay, notifier.Notify)
-	}
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
-}
-
-func mustGetHTTPClient() *http.Client {
-	if !config.Config.Proxy.Enabled {
-		return &http.Client{}
-	}
-
-	transport, err := config.Config.Proxy.GetHTTPTransport()
-	if err != nil {
-		exitWithError(err)
-	}
-	return &http.Client{Transport: transport}
 }
 
 func isArgProvided(argName string) bool {

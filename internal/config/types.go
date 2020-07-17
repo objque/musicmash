@@ -3,14 +3,12 @@ package config
 import "time"
 
 type AppConfig struct {
-	HTTP     HTTPConfig     `yaml:"http"`
-	DB       DBConfig       `yaml:"db"`
-	Log      LogConfig      `yaml:"log"`
-	Fetcher  FetcherConfig  `yaml:"fetcher"`
-	Stores   StoresConfig   `yaml:"stores"`
-	Sentry   SentryConfig   `yaml:"sentry"`
-	Notifier NotifierConfig `yaml:"notifier"`
-	Proxy    ProxyConfig    `yaml:"proxy"`
+	HTTP    HTTPConfig    `yaml:"http"`
+	DB      DBConfig      `yaml:"db"`
+	Log     LogConfig     `yaml:"log"`
+	Fetcher FetcherConfig `yaml:"fetcher"`
+	Stores  StoresConfig  `yaml:"stores"`
+	Sentry  SentryConfig  `yaml:"sentry"`
 }
 
 type HTTPConfig struct {
@@ -39,12 +37,6 @@ type FetcherConfig struct {
 	Delay   time.Duration `yaml:"delay"`
 }
 
-type NotifierConfig struct {
-	Enabled       bool          `yaml:"enabled"`
-	TelegramToken string        `yaml:"telegram_token"`
-	Delay         time.Duration `yaml:"delay"`
-}
-
 type StoreConfig struct {
 	URL          string `yaml:"url"`
 	FetchWorkers int    `yaml:"fetch_workers"`
@@ -62,12 +54,4 @@ type SentryConfig struct {
 	Enabled     bool   `yaml:"enabled"`
 	Key         string `yaml:"key"`
 	Environment string `yaml:"environment"`
-}
-
-type ProxyConfig struct {
-	Enabled  bool   `yaml:"enabled"`
-	Type     string `yaml:"type"`
-	Host     string `yaml:"host"`
-	UserName string `yaml:"user_name"`
-	Password string `yaml:"password"`
 }

@@ -268,9 +268,6 @@ issues:
     - path: internal/db/models.go
       linters:
         - golint
-    - path: internal/db/internal_notifications.go
-      linters:
-        - govet
 
   # Independently from option `exclude` we use default exclude patterns,
   # it can be disabled by this option. To list all

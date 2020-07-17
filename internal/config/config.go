@@ -1,17 +1,13 @@
 package config
 
 import (
-	"errors"
 	"flag"
 	"fmt"
 	"io/ioutil"
-	"net/http"
-	"net/url"
 	"strconv"
 	"time"
 
 	log "github.com/sirupsen/logrus"
-	"golang.org/x/net/proxy"
 	yaml "gopkg.in/yaml.v2"
 )
 
@@ -42,17 +38,6 @@ func New() *AppConfig {
 			Enabled:     false,
 			Key:         "https://uuid@sentry.io/123456",
 			Environment: "production",
-		},
-		Notifier: NotifierConfig{
-			Enabled: false,
-			Delay:   time.Hour,
-		},
-		Proxy: ProxyConfig{
-			Enabled:  false,
-			Type:     "socks5",
-			Host:     "example.com:1080",
-			UserName: "musicmash",
-			Password: "1s9J-9j2sa-Zkks",
 		},
 	}
 }
@@ -98,16 +83,6 @@ func (c *AppConfig) FlagSet() {
 	flag.BoolVar(&c.Sentry.Enabled, "sentry-enabled", c.Sentry.Enabled, "Is Sentry enabled")
 	flag.StringVar(&c.Sentry.Key, "sentry-key", c.Sentry.Key, "Sentry dsn")
 	flag.StringVar(&c.Sentry.Environment, "sentry-environment", c.Sentry.Environment, "Sentry environment")
-
-	flag.BoolVar(&c.Notifier.Enabled, "notifier-enabled", c.Notifier.Enabled, "Is notifier enabled")
-	flag.DurationVar(&c.Notifier.Delay, "notifier-delay", c.Notifier.Delay, "Delay between notifies")
-	flag.StringVar(&c.Notifier.TelegramToken, "notifier-telegram-token", c.Notifier.TelegramToken, "Telegram bot token")
-
-	flag.BoolVar(&c.Proxy.Enabled, "proxy-enabled", false, "Use proxy for notifier (if telegram blocked in your country)")
-	flag.StringVar(&c.Proxy.Type, "proxy-type", "http", "Type of proxy: http and socks5 are available")
-	flag.StringVar(&c.Proxy.Host, "proxy-host", "0.0.0.0:8888", "Proxy host and port")
-	flag.StringVar(&c.Proxy.UserName, "proxy-username", "", "Proxy username")
-	flag.StringVar(&c.Proxy.Password, "proxy-password", "", "Proxy password")
 }
 
 func (c *AppConfig) FlagReload() {
@@ -131,16 +106,6 @@ func (c *AppConfig) FlagReload() {
 	_ = flag.Set("sentry", strconv.FormatBool(c.Sentry.Enabled))
 	_ = flag.Set("sentry-key", c.Sentry.Key)
 	_ = flag.Set("sentry-environment", c.Sentry.Environment)
-
-	_ = flag.Set("notifier-enabled", strconv.FormatBool(c.Notifier.Enabled))
-	_ = flag.Set("notifier-delay", fmt.Sprintf("%v", c.Notifier.Delay))
-	_ = flag.Set("notifier-telegram-token", c.Notifier.TelegramToken)
-
-	_ = flag.Set("proxy-enabled", strconv.FormatBool(c.Proxy.Enabled))
-	_ = flag.Set("proxy-type", c.Proxy.Type)
-	_ = flag.Set("proxy-host", c.Proxy.Host)
-	_ = flag.Set("proxy-username", c.Proxy.UserName)
-	_ = flag.Set("proxy-password", c.Proxy.Password)
 }
 
 func (c *AppConfig) Dump() string {
@@ -152,37 +117,4 @@ func (db *DBConfig) GetConnString() string {
 	return fmt.Sprintf(
 		"host=%v port=%v user=%v dbname=%v sslmode=disable password=%v",
 		db.Host, db.Port, db.Login, db.Name, db.Pass)
-}
-
-func (p *ProxyConfig) GetHTTPTransport() (*http.Transport, error) {
-	switch p.Type {
-	case "socks5":
-		return p.getSocksTransport()
-	case "http":
-		return p.getHTTPTransport()
-	default:
-		return nil, errors.New("only socks5/http proxy-types are available")
-	}
-}
-
-func (p *ProxyConfig) getProxyURL() *url.URL {
-	return &url.URL{
-		Scheme: p.Type,
-		Host:   p.Host,
-		User:   url.UserPassword(p.UserName, p.Password),
-	}
-}
-
-func (p *ProxyConfig) getHTTPTransport() (*http.Transport, error) {
-	transport := http.Transport{Proxy: http.ProxyURL(p.getProxyURL())}
-	return &transport, nil
-}
-
-func (p *ProxyConfig) getSocksTransport() (*http.Transport, error) {
-	dialer, err := proxy.FromURL(p.getProxyURL(), proxy.Direct)
-	if err != nil {
-		return nil, err
-	}
-	transport := http.Transport{Dial: dialer.Dial}
-	return &transport, nil
 }

@@ -82,9 +82,6 @@ func (mgr *AppDatabaseMgr) Rollback() error {
 func (mgr *AppDatabaseMgr) TruncateAllTables() error {
 	const query = "TRUNCATE " +
 		"last_actions," +
-		"notifications," +
-		"notification_settings," +
-		"notification_services," +
 		"releases," +
 		"subscriptions," +
 		"associations," +
