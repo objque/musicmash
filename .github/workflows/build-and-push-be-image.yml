@@ -26,7 +26,7 @@ jobs:
 
       - name: Test whole code
         run: |
-          go test -v -mod=vendor ./internal/...
+          go test -v -mod=vendor -short ./internal/...
 
       - name: Install and run lints
         run: |
