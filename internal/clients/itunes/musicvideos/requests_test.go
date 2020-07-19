@@ -90,7 +90,7 @@ func TestClient_GetLatestArtistMusicVideo(t *testing.T) {
     {
       "attributes": {
         "name": "The Here and Now",
-        "releaseDate": "2020-07-13"
+        "releaseDate": "2024-07-13"
       },
       "id": "%s"
     },

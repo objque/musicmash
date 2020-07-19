@@ -102,7 +102,7 @@ func TestClient_GetLatestArtistAlbum(t *testing.T) {
         "isComplete": true,
         "isSingle": false,
         "name": "The Here and Now",
-        "releaseDate": "2020-07-13"
+        "releaseDate": "2024-07-13"
       },
       "id": "%s"
     },
