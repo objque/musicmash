@@ -1,7 +1,7 @@
 override RELEASE="$(git tag -l --points-at HEAD)"
 override COMMIT="$(shell git rev-parse --short HEAD)"
 override BUILD_TIME="$(shell date -u '+%Y-%m-%dT%H:%M:%S')"
-override VERSION="v3"
+override VERSION=v3
 
 all:
 
