@@ -7,8 +7,8 @@ import (
 	"reflect"
 	"regexp"
 	"runtime/debug"
-	"sync"
 	"testing"
+	"time"
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -17,31 +17,21 @@ import (
 var allTestsFilter = func(_, _ string) (bool, error) { return true, nil }
 var matchMethod = flag.String("testify.m", "", "regular expression to select tests of the testify suite to run")
 
-type TestingT interface {
-	Run(name string, f func(t *testing.T)) bool
-	Errorf(format string, args ...interface{})
-	Fatalf(format string, args ...interface{})
-	FailNow()
-	Log(args ...interface{})
-	Logf(format string, args ...interface{})
-	Skip(args ...interface{})
-}
-
 // Suite is a basic testing suite with methods for storing and
 // retrieving the current *testing.T context.
 type Suite struct {
 	*assert.Assertions
 	require *require.Assertions
-	t       TestingT
+	t       *testing.T
 }
 
 // T retrieves the current *testing.T context.
-func (suite *Suite) T() TestingT {
+func (suite *Suite) T() *testing.T {
 	return suite.t
 }
 
 // SetT sets the current *testing.T context.
-func (suite *Suite) SetT(t TestingT) {
+func (suite *Suite) SetT(t *testing.T) {
 	suite.t = t
 	suite.Assertions = assert.New(t)
 	suite.require = require.New(t)
@@ -91,43 +81,68 @@ func (suite *Suite) Run(name string, subtest func()) bool {
 // Run takes a testing suite and runs all of the tests attached
 // to it.
 func Run(t *testing.T, suite TestingSuite) {
-	testsSync := &sync.WaitGroup{}
-	suite.SetT(t)
 	defer failOnPanic(t)
 
-	suiteSetupDone := false
+	suite.SetT(t)
 
-	methodFinder := reflect.TypeOf(suite)
+	var suiteSetupDone bool
+
+	var stats *SuiteInformation
+	if _, ok := suite.(WithStats); ok {
+		stats = newSuiteInformation()
+	}
+
 	tests := []testing.InternalTest{}
-	for index := 0; index < methodFinder.NumMethod(); index++ {
-		method := methodFinder.Method(index)
+	methodFinder := reflect.TypeOf(suite)
+	suiteName := methodFinder.Elem().Name()
+
+	for i := 0; i < methodFinder.NumMethod(); i++ {
+		method := methodFinder.Method(i)
+
 		ok, err := methodFilter(method.Name)
 		if err != nil {
 			fmt.Fprintf(os.Stderr, "testify: invalid regexp for -m: %s\n", err)
 			os.Exit(1)
 		}
+
 		if !ok {
 			continue
 		}
+
 		if !suiteSetupDone {
+			if stats != nil {
+				stats.Start = time.Now()
+			}
+
 			if setupAllSuite, ok := suite.(SetupAllSuite); ok {
 				setupAllSuite.SetupSuite()
 			}
-			defer func() {
-				if tearDownAllSuite, ok := suite.(TearDownAllSuite); ok {
-					testsSync.Wait()
-					tearDownAllSuite.TearDownSuite()
-				}
-			}()
+
 			suiteSetupDone = true
 		}
+
 		test := testing.InternalTest{
 			Name: method.Name,
 			F: func(t *testing.T) {
-				defer testsSync.Done()
 				parentT := suite.T()
 				suite.SetT(t)
 				defer failOnPanic(t)
+				defer func() {
+					if stats != nil {
+						passed := !t.Failed()
+						stats.end(method.Name, passed)
+					}
+
+					if afterTestSuite, ok := suite.(AfterTest); ok {
+						afterTestSuite.AfterTest(suiteName, method.Name)
+					}
+
+					if tearDownTestSuite, ok := suite.(TearDownTestSuite); ok {
+						tearDownTestSuite.TearDownTest()
+					}
+
+					suite.SetT(parentT)
+				}()
 
 				if setupTestSuite, ok := suite.(SetupTestSuite); ok {
 					setupTestSuite.SetupTest()
@@ -135,25 +150,47 @@ func Run(t *testing.T, suite TestingSuite) {
 				if beforeTestSuite, ok := suite.(BeforeTest); ok {
 					beforeTestSuite.BeforeTest(methodFinder.Elem().Name(), method.Name)
 				}
-				defer func() {
-					if afterTestSuite, ok := suite.(AfterTest); ok {
-						afterTestSuite.AfterTest(methodFinder.Elem().Name(), method.Name)
-					}
-					if tearDownTestSuite, ok := suite.(TearDownTestSuite); ok {
-						tearDownTestSuite.TearDownTest()
-					}
-					suite.SetT(parentT)
-				}()
+
+				if stats != nil {
+					stats.start(method.Name)
+				}
+
 				method.Func.Call([]reflect.Value{reflect.ValueOf(suite)})
 			},
 		}
 		tests = append(tests, test)
-		testsSync.Add(1)
 	}
+	if suiteSetupDone {
+		defer func() {
+			if tearDownAllSuite, ok := suite.(TearDownAllSuite); ok {
+				tearDownAllSuite.TearDownSuite()
+			}
+
+			if suiteWithStats, measureStats := suite.(WithStats); measureStats {
+				stats.End = time.Now()
+				suiteWithStats.HandleStats(suiteName, stats)
+			}
+		}()
+	}
+
 	runTests(t, tests)
 }
 
+// Filtering method according to set regular expression
+// specified command-line argument -m
+func methodFilter(name string) (bool, error) {
+	if ok, _ := regexp.MatchString("^Test", name); !ok {
+		return false, nil
+	}
+	return regexp.MatchString(*matchMethod, name)
+}
+
 func runTests(t testing.TB, tests []testing.InternalTest) {
+	if len(tests) == 0 {
+		t.Log("warning: no tests to run")
+		return
+	}
+
 	r, ok := t.(runner)
 	if !ok { // backwards compatibility with Go 1.6 and below
 		if !testing.RunTests(allTestsFilter, tests) {
@@ -165,15 +202,6 @@ func runTests(t testing.TB, tests []testing.InternalTest) {
 	for _, test := range tests {
 		r.Run(test.Name, test.F)
 	}
-}
-
-// Filtering method according to set regular expression
-// specified command-line argument -m
-func methodFilter(name string) (bool, error) {
-	if ok, _ := regexp.MatchString("^Test", name); !ok {
-		return false, nil
-	}
-	return regexp.MatchString(*matchMethod, name)
 }
 
 type runner interface {
