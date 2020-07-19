@@ -120,6 +120,6 @@ func (c *AppConfig) Dump() string {
 
 func (db *DBConfig) GetConnString() string {
 	return fmt.Sprintf(
-		"host=%v port=%v user=%v dbname=%v sslmode=disable password=%v",
+		"host=%v port=%v user=%v dbname=%v password=%v sslmode=disable extra_float_digits=1",
 		db.Host, db.Port, db.Login, db.Name, db.Pass)
 }
