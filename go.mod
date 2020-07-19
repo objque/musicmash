@@ -8,6 +8,7 @@ require (
 	github.com/go-chi/chi v4.0.3+incompatible
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
 	github.com/go-telegram-bot-api/telegram-bot-api v4.6.4+incompatible // indirect
+	github.com/hashicorp/go-retryablehttp v0.6.6
 	github.com/jinzhu/now v1.1.1
 	github.com/jmoiron/sqlx v1.2.1-0.20191203222853-2ba0fc60eb4a
 	github.com/lib/pq v1.2.0

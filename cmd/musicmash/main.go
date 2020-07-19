@@ -13,6 +13,7 @@ import (
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/fetcher"
 	"github.com/musicmash/musicmash/internal/log"
+	"github.com/musicmash/musicmash/internal/notifier"
 	"github.com/musicmash/musicmash/internal/version"
 	"github.com/pkg/errors"
 )
@@ -87,6 +88,17 @@ func main() {
 			exitWithError(errors.New("Invalid fetcher delay: value should be greater than zero"))
 		}
 		go cron.Run(db.ActionFetch, config.Config.Fetcher.Delay, fetcher.Fetch)
+	}
+	if config.Config.Notifier.Enabled {
+		if config.Config.Notifier.Delay <= 0 {
+			exitWithError(errors.New("Invalid notifier delay: value should be greater than zero"))
+		}
+
+		notify, err := notifier.New(config.Config.Notifier.URL)
+		if err != nil {
+			exitWithError(fmt.Errorf("bad url for notifier: %v", err))
+		}
+		go cron.Run(notifier.Action, config.Config.Notifier.Delay, notify.Notify)
 	}
 	log.Panic(api.ListenAndServe(config.Config.HTTP.IP, config.Config.HTTP.Port))
 }

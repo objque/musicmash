@@ -48,9 +48,10 @@ func fetchFromServices(services []services.Service) *sync.WaitGroup {
 	return &wg
 }
 
-func Fetch() {
+func Fetch() error {
 	fetchFromServices(getServices()).Wait()
 
 	// run callback
 	log.Info("All stores were fetched")
+	return nil
 }

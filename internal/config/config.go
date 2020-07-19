@@ -34,6 +34,11 @@ func New() *AppConfig {
 			Enabled: false,
 			Delay:   time.Hour,
 		},
+		Notifier: NotifyConfig{
+			Enabled: false,
+			Delay:   30 * time.Minute,
+			URL:     "http://notify/v1/releases",
+		},
 		Sentry: SentryConfig{
 			Enabled:     false,
 			Key:         "https://uuid@sentry.io/123456",

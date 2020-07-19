@@ -1,7 +1,7 @@
 package cron
 
 import (
-	"strings"
+	"fmt"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
@@ -9,42 +9,51 @@ import (
 )
 
 type cron struct {
+	Action     func() error
 	ActionName string
-	Action     func()
 	Delay      time.Duration
 }
 
-func (c *cron) wrapAction(action func()) func() {
-	return func() {
-		now := time.Now().UTC()
-		log.Infof("Start %sing stage", c.ActionName)
-		action()
-		log.Infof("Finish %sing stage", c.ActionName)
-		log.Infof("%sing stage elapsed %s", strings.Title(c.ActionName), time.Now().UTC().Sub(now).String())
-		if err := db.Mgr.SetLastActionDate(c.ActionName, now); err != nil {
-			log.Errorf("can't save last_action date for %s: %v", c.ActionName, err)
-		}
+func (c *cron) doActionAndUpdateLast() {
+	// do action...
+	if err := c.Action(); err != nil {
+		log.Errorf("%v action return err: %w", err)
+		return
+	}
+
+	// update date when action was successful
+	now := time.Now().UTC()
+	if err := db.Mgr.SetLastActionDate(c.ActionName, now); err != nil {
+		log.Errorf("can't save last_action date for %s: %v", c.ActionName, err)
 	}
 }
 
 func (c *cron) Run() {
-	// override user action with our wrapper with extra logic
-	c.Action = c.wrapAction(c.Action)
-	now := time.Now().UTC()
-	next := time.Now().UTC().Add(c.Delay)
-	// start task immediately if delay if over against provided delay
-	if now.After(next) {
-		log.Infof("Starting %ving stage immediately, because provided delay is over after last fetch: %v | configured delay is: %v",
-			c.ActionName, time.Now().UTC().Sub(now).String(), c.Delay)
-		c.Action()
+	// get last date when action was successful
+	last, err := db.Mgr.GetLastActionDate(c.ActionName)
+	if err != nil {
+		log.Error(fmt.Errorf("tried to get last_action for %v stage: %w", c.ActionName, err))
+		return
 	}
 
+	// check if action is outdated and we should start action now
+	now := time.Now().UTC()
+	previous := last.Date.Add(c.Delay)
+	if now.After(previous) {
+		c.doActionAndUpdateLast()
+	}
+
+	// schedule new ticker
 	for range time.NewTicker(c.Delay).C {
-		c.Action()
+		c.doActionAndUpdateLast()
 	}
 }
 
-func Run(actionName string, delay time.Duration, action func()) {
-	c := cron{Action: action, ActionName: actionName, Delay: delay}
-	c.Run()
+func Run(actionName string, delay time.Duration, action func() error) {
+	scheduler := cron{
+		Action:     action,
+		ActionName: actionName,
+		Delay:      delay,
+	}
+	scheduler.Run()
 }

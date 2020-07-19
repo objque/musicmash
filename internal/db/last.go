@@ -2,9 +2,9 @@ package db
 
 import "time"
 
+// TODO (m.kalinin): move into fetcher package
 const (
-	ActionFetch  = "fetch"
-	ActionNotify = "notify"
+	ActionFetch = "fetch"
 )
 
 type LastAction struct {

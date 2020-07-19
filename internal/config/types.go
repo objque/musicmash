@@ -3,12 +3,13 @@ package config
 import "time"
 
 type AppConfig struct {
-	HTTP    HTTPConfig    `yaml:"http"`
-	DB      DBConfig      `yaml:"db"`
-	Log     LogConfig     `yaml:"log"`
-	Fetcher FetcherConfig `yaml:"fetcher"`
-	Stores  StoresConfig  `yaml:"stores"`
-	Sentry  SentryConfig  `yaml:"sentry"`
+	HTTP     HTTPConfig    `yaml:"http"`
+	DB       DBConfig      `yaml:"db"`
+	Log      LogConfig     `yaml:"log"`
+	Fetcher  FetcherConfig `yaml:"fetcher"`
+	Notifier NotifyConfig  `yaml:"notify"`
+	Stores   StoresConfig  `yaml:"stores"`
+	Sentry   SentryConfig  `yaml:"sentry"`
 }
 
 type HTTPConfig struct {
@@ -35,6 +36,12 @@ type DBConfig struct {
 type FetcherConfig struct {
 	Enabled bool          `yaml:"enabled"`
 	Delay   time.Duration `yaml:"delay"`
+}
+
+type NotifyConfig struct {
+	Enabled bool          `yaml:"enabled"`
+	Delay   time.Duration `yaml:"delay"`
+	URL     string        `yaml:"url"`
 }
 
 type StoreConfig struct {

@@ -27,6 +27,11 @@ fetcher:
   enabled: false
   delay: 1h
 
+notify:
+  enabled: false
+  delay: 30m
+  url: http://notify/v1/releases
+
 sentry:
   enabled: false
   key: https://uuid@sentry.io/123456
