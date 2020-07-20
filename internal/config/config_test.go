@@ -27,7 +27,7 @@ fetcher:
   enabled: false
   delay: 1h
 
-notify:
+notifier:
   enabled: false
   delay: 30m
   url: http://notify/v1/releases

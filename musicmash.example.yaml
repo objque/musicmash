@@ -22,7 +22,7 @@ fetcher:
   delay: 6h0m0s # time.Duration format: XXhYYmZZs, you may provide any part like 24m
 
 # call external service that sends notifications
-notify:
+notifier:
   enabled: true
   delay: 30m
   url: http://notifier/v1/releases

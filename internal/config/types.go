@@ -7,7 +7,7 @@ type AppConfig struct {
 	DB       DBConfig      `yaml:"db"`
 	Log      LogConfig     `yaml:"log"`
 	Fetcher  FetcherConfig `yaml:"fetcher"`
-	Notifier NotifyConfig  `yaml:"notify"`
+	Notifier NotifyConfig  `yaml:"notifier"`
 	Stores   StoresConfig  `yaml:"stores"`
 	Sentry   SentryConfig  `yaml:"sentry"`
 }
