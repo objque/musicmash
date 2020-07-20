@@ -18,7 +18,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{1, 2}))
 	// fill releases
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().AddDate(0, -1, 0),
 		ArtistID:  1,
 		Poster:    vars.PosterSimple,
 		Title:     vars.ReleaseSkrillexHumble,
@@ -28,7 +28,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 		Type:      vars.ReleaseTypeAlbum,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().AddDate(0, 0, -15),
 		ArtistID:  1,
 		Poster:    vars.PosterGiant,
 		Title:     vars.ReleaseRitaOraLouder,
@@ -39,7 +39,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 		Type:      vars.ReleaseTypeAlbum,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().AddDate(0, 10, 0),
 		ArtistID:  1,
 		Poster:    vars.PosterMiddle,
 		Title:     vars.ReleaseArchitectsNaySayer,
@@ -49,7 +49,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 		Type:      vars.ReleaseTypeAlbum,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: time.Now().UTC().AddDate(1, 0, 0),
 		ArtistID:  2,
 		Poster:    vars.PosterSmall,
 		Title:     vars.ReleaseSkrillexHumble,

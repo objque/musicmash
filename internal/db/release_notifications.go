@@ -9,6 +9,7 @@ import (
 type ReleaseNotification struct {
 	ArtistID   int64     `json:"artist_id"   db:"artist_id"`
 	ArtistName string    `json:"artist_name" db:"artist_name"`
+	CreatedAt  time.Time `json:"-"           db:"created_at"`
 	Released   time.Time `json:"released"    db:"released"`
 	Poster     string    `json:"poster"      db:"poster"`
 	Title      string    `json:"title"       db:"title"`
@@ -53,7 +54,7 @@ func (mgr *AppDatabaseMgr) GetReleaseNotifications(since time.Time) ([]*ReleaseN
 			AND releases.title = deezer.title
 			AND deezer.store_name = 'deezer'
 		)`).
-		Where("releases.released >= ?", since.Format("2006-01-02")).
+		Where("releases.created_at >= ?", since.Format("2006-01-02")).
 		GroupBy(
 			"subscriptions.user_name",
 			"releases.artist_id",
