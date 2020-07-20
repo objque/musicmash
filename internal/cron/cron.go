@@ -15,6 +15,14 @@ type cron struct {
 }
 
 func (c *cron) doActionAndUpdateLast() {
+	// the time of the last success should be equal to the time when we started to perform the action.
+	// this will help avoid problems when several actions can be tied at a time.
+	//
+	// for example, while the notification is in progress, new releases may appear
+	// and when the notification is completed, it will set the date
+	// greater than the release.created_at that was found during the fetch.
+	now := time.Now().UTC()
+
 	// do action...
 	log.Infof("calling %v action", c.ActionName)
 	if err := c.Action(); err != nil {
@@ -23,7 +31,6 @@ func (c *cron) doActionAndUpdateLast() {
 	}
 
 	// update date when action was successful
-	now := time.Now().UTC()
 	if err := db.Mgr.SetLastActionDate(c.ActionName, now); err != nil {
 		log.Errorf("can't save last_action date for %s: %v", c.ActionName, err)
 		return
