@@ -14,7 +14,7 @@ import (
 
 var userAgent = fmt.Sprintf("musicmash-server/%v", version.Commit)
 
-func generateRequestId() string {
+func generateRequestID() string {
 	return uuid.New().String()
 }
 
@@ -32,7 +32,7 @@ func (n *Notifier) sendReleases(releases []*Notification) error {
 	request.Header.Set("User-Agent", userAgent)
 	// request-id may be useful on the external notification service
 	// for e.g it may check few parallel requests on duplicated req-id
-	request.Header.Set("X-Request-Id", generateRequestId())
+	request.Header.Set("X-Request-Id", generateRequestID())
 
 	resp, err := n.httpClient.Do(request)
 	if err != nil {
