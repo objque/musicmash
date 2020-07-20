@@ -54,7 +54,7 @@ func (mgr *AppDatabaseMgr) GetReleaseNotifications(since time.Time) ([]*ReleaseN
 			AND releases.title = deezer.title
 			AND deezer.store_name = 'deezer'
 		)`).
-		Where("releases.created_at >= ?", since.Format("2006-01-02")).
+		Where("releases.created_at >= ?", since.Format("2006-01-02T15:04:05")).
 		GroupBy(
 			"subscriptions.user_name",
 			"releases.artist_id",
