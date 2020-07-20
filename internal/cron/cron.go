@@ -49,6 +49,7 @@ func (c *cron) Run() {
 	}
 
 	// schedule new ticker
+	log.Infof("starting ticker with %v delay for %v action", c.Delay, c.ActionName)
 	for range time.NewTicker(c.Delay).C {
 		c.doActionAndUpdateLast()
 	}
