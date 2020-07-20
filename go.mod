@@ -7,6 +7,7 @@ require (
 	github.com/getsentry/sentry-go v0.6.1
 	github.com/go-chi/chi v4.0.3+incompatible
 	github.com/go-sql-driver/mysql v1.5.0 // indirect
+	github.com/google/uuid v1.0.0
 	github.com/hashicorp/go-retryablehttp v0.6.6
 	github.com/jinzhu/now v1.1.1
 	github.com/jmoiron/sqlx v1.2.1-0.20191203222853-2ba0fc60eb4a

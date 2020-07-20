@@ -7,11 +7,16 @@ import (
 	"io/ioutil"
 	"net/http"
 
+	"github.com/google/uuid"
 	"github.com/musicmash/musicmash/internal/log"
 	"github.com/musicmash/musicmash/internal/version"
 )
 
 var userAgent = fmt.Sprintf("musicmash-server/%v", version.Commit)
+
+func generateRequestId() string {
+	return uuid.New().String()
+}
 
 func (n *Notifier) sendReleases(releases []*Notification) error {
 	b, err := json.Marshal(&releases)
@@ -25,6 +30,9 @@ func (n *Notifier) sendReleases(releases []*Notification) error {
 	}
 
 	request.Header.Set("User-Agent", userAgent)
+	// request-id may be useful on the external notification service
+	// for e.g it may check few parallel requests on duplicated req-id
+	request.Header.Set("X-Request-Id", generateRequestId())
 
 	resp, err := n.httpClient.Do(request)
 	if err != nil {
