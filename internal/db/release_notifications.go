@@ -7,18 +7,18 @@ import (
 )
 
 type ReleaseNotification struct {
-	ArtistID   int64     `json:"artist_id"   db:"artist_id"`
-	ArtistName string    `json:"artist_name" db:"artist_name"`
-	CreatedAt  time.Time `json:"-"           db:"created_at"`
-	Released   time.Time `json:"released"    db:"released"`
-	Poster     string    `json:"poster"      db:"poster"`
-	Title      string    `json:"title"       db:"title"`
-	UserName   string    `json:"user_name"   db:"user_name"`
-	ItunesID   *string   `json:"itunes_id"   db:"itunes_id"`
-	SpotifyID  *string   `json:"spotify_id"  db:"spotify_id"`
-	DeezerID   *string   `json:"deezer_id"   db:"deezer_id"`
-	Type       string    `json:"type"        db:"type"`
-	Explicit   bool      `json:"explicit"    db:"explicit"`
+	ArtistID   int64     `db:"artist_id"`
+	ArtistName string    `db:"artist_name"`
+	CreatedAt  time.Time `db:"created_at"`
+	Released   time.Time `db:"released"`
+	Poster     string    `db:"poster"`
+	Title      string    `db:"title"`
+	UserName   string    `db:"user_name"`
+	ItunesID   *string   `db:"itunes_id"`
+	SpotifyID  *string   `db:"spotify_id"`
+	DeezerID   *string   `db:"deezer_id"`
+	Type       string    `db:"type"`
+	Explicit   bool      `db:"explicit"`
 }
 
 func (mgr *AppDatabaseMgr) GetReleaseNotifications(since time.Time) ([]*ReleaseNotification, error) {
