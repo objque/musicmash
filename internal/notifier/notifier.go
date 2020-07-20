@@ -77,7 +77,7 @@ func groupReleases(releases []*db.ReleaseNotification) []*Notification {
 		group[release.UserName] = append(group[release.UserName], rel)
 	}
 
-	notifications := make([]*Notification, len(group))
+	notifications := []*Notification{}
 	for userName, releases := range group {
 		notifications = append(notifications, &Notification{UserName: userName, Releases: releases})
 	}
