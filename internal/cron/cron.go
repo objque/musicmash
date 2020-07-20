@@ -16,6 +16,7 @@ type cron struct {
 
 func (c *cron) doActionAndUpdateLast() {
 	// do action...
+	log.Infof("calling %v action", c.ActionName)
 	if err := c.Action(); err != nil {
 		log.Errorf("%v action return err: %w", err)
 		return
@@ -25,7 +26,10 @@ func (c *cron) doActionAndUpdateLast() {
 	now := time.Now().UTC()
 	if err := db.Mgr.SetLastActionDate(c.ActionName, now); err != nil {
 		log.Errorf("can't save last_action date for %s: %v", c.ActionName, err)
+		return
 	}
+
+	log.Infof("successfully update date for %v action", c.ActionName)
 }
 
 func (c *cron) Run() {
@@ -40,6 +44,7 @@ func (c *cron) Run() {
 	now := time.Now().UTC()
 	previous := last.Date.Add(c.Delay)
 	if now.After(previous) {
+		log.Infof("%v action was too late, trigger it now", c.ActionName)
 		c.doActionAndUpdateLast()
 	}
 
