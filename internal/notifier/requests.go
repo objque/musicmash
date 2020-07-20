@@ -31,7 +31,7 @@ func (n *Notifier) sendReleases(releases []*Notification) error {
 
 	_ = resp.Body.Close()
 	if resp.StatusCode != http.StatusOK {
-		return fmt.Errorf("notifications server return status code that not equals http.OK")
+		return fmt.Errorf("notifications server return status code %v, but expect 200", resp.StatusCode)
 	}
 
 	return nil
