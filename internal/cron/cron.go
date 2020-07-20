@@ -18,7 +18,7 @@ func (c *cron) doActionAndUpdateLast() {
 	// do action...
 	log.Infof("calling %v action", c.ActionName)
 	if err := c.Action(); err != nil {
-		log.Errorf("%v action return err: %w", err)
+		log.Errorf("%v action return err: %v", err)
 		return
 	}
 
