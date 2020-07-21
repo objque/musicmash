@@ -30,7 +30,7 @@ func (n *Notifier) Notify() error {
 	// get last date when Action was successful
 	last, err := db.Mgr.GetLastActionDate(Action)
 	if err != nil {
-		return fmt.Errorf("tried to get last_action for notify Action: %w", err)
+		return fmt.Errorf("tried to get last_action for notify action: %w", err)
 	}
 
 	// get releases since that date
