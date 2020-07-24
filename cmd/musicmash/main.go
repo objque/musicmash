@@ -79,9 +79,6 @@ func main() {
 		}
 	}
 
-	if err := db.Mgr.EnsureStoreExists("itunes"); err != nil {
-		exitWithError(err)
-	}
 	log.Info("Running musicmash..")
 	if config.Config.Fetcher.Enabled {
 		if config.Config.Fetcher.Delay <= 0 {
