@@ -28,6 +28,21 @@ func (t *testAPISuite) TestSubscriptions_List() {
 	// arrange
 	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistSkrillex}))
 	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistSPY}))
+	assert.NoError(t.T(), db.Mgr.SubscribeUser(vars.UserObjque, []int64{1}))
+
+	// action
+	subs, err := subscriptions.List(t.client, vars.UserObjque)
+
+	// assert
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), subs, 1)
+	assert.Equal(t.T(), int64(1), subs[0].ArtistID)
+}
+
+func (t *testAPISuite) TestSubscriptions_UnSubscribe() {
+	// arrange
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistSkrillex}))
+	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistSPY}))
 	assert.NoError(t.T(), db.Mgr.SubscribeUser(vars.UserObjque, []int64{
 		1, 2,
 	}))
