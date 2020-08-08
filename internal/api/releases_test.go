@@ -319,6 +319,7 @@ func (t *testAPISuite) TestReleases_Get_FilterBy_Artist_Empty() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 0)
 }
+
 func (t *testAPISuite) TestReleases_Get_FilterBy_NotExistingArtist() {
 	// action
 	releases, err := releases.List(t.client, &releases.GetOptions{ArtistID: ptr.Int(666)})

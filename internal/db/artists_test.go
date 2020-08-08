@@ -5,7 +5,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func (t *testDBSuite) TestArtist_EnsureExists() {
+func (t *testDBSuite) TestArtists_EnsureExists() {
 	// action
 	err := Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex})
 
