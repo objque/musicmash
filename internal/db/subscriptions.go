@@ -3,6 +3,7 @@ package db
 import (
 	"time"
 
+	sq "github.com/Masterminds/squirrel"
 	"github.com/jmoiron/sqlx"
 )
 
@@ -24,18 +25,22 @@ func (mgr *AppDatabaseMgr) CreateSubscription(subscription *Subscription) error 
 }
 
 func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string) ([]*Subscription, error) {
-	const query = "" +
-		"select" +
-		" user_name," +
-		" artists.id as artist_id," +
-		" artists.name as artist_name," +
-		" artists.poster as artist_poster " +
-		"from subscriptions " +
-		"left join artists on subscriptions.artist_id=artists.id " +
-		"where subscriptions.user_name = $1"
+	query := sq.Select(
+		"user_name",
+		"artists.id as artist_id",
+		"artists.name as artist_name",
+		"artists.poster as artist_poster").
+		From("subscriptions").
+		LeftJoin("artists on subscriptions.artist_id=artists.id").
+		Where("subscriptions.user_name = ?", userName)
+
+	sql, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()
+	if err != nil {
+		return nil, err
+	}
 
 	subs := []*Subscription{}
-	if err := mgr.newdb.Select(&subs, query, userName); err != nil {
+	if err := mgr.newdb.Select(&subs, sql, args...); err != nil {
 		return nil, err
 	}
 
