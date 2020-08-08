@@ -51,7 +51,7 @@ lint l:
 	bash ./scripts/golangci-lint.sh
 
 run: install
-	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations
+	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations --config musicmash.example.yaml
 
 db-status:
 	sql-migrate status --env=staging
