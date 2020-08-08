@@ -10,11 +10,37 @@ import (
 	"github.com/musicmash/musicmash/pkg/api"
 )
 
-func List(provider *api.Provider, userName string) ([]*Subscription, error) {
-	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/subscriptions", provider.URL))
+type GetOptions struct {
+	Limit    *uint64
+	Offset   *uint64
+	SortType string
+}
 
+func buildValues(opts *GetOptions) *url.Values {
+	values := url.Values{}
+
+	if opts.SortType != "" {
+		values.Set("sort_type", opts.SortType)
+	}
+
+	if opts.Limit != nil {
+		values.Set("limit", fmt.Sprintf("%v", *opts.Limit))
+	}
+
+	if opts.Offset != nil {
+		values.Set("offset", fmt.Sprintf("%v", *opts.Offset))
+	}
+
+	return &values
+}
+
+func List(provider *api.Provider, userName string, opts *GetOptions) ([]*Subscription, error) {
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/subscriptions", provider.URL))
 	headers := http.Header{
 		"x-user-name": {userName},
+	}
+	if opts != nil {
+		u.RawQuery = buildValues(opts).Encode()
 	}
 
 	subscriptions := []*Subscription{}

@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"errors"
 	"net/http"
+	"strconv"
+	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/musicmash/musicmash/internal/api/httputils"
@@ -67,14 +69,58 @@ func (c *SubscriptionsController) createSubscriptions(w http.ResponseWriter, r *
 	w.WriteHeader(http.StatusCreated)
 }
 
+//nolint:gocyclo,gocognit
 func (c *SubscriptionsController) listSubscriptions(w http.ResponseWriter, r *http.Request) {
+	var defaultMaxLimit uint64 = 100
+	opts := db.GetSubscriptionsOpts{
+		Limit:    &defaultMaxLimit,
+		SortType: "ASC",
+	}
+
 	userName, err := GetUser(r)
 	if err != nil {
 		httputils.WriteError(w, err)
 		return
 	}
 
-	subs, err := db.Mgr.GetUserSubscriptions(userName)
+	// todo: extract all query parsers
+	if v := r.URL.Query().Get("offset"); v != "" {
+		//nolint:govet
+		offset, err := strconv.ParseUint(v, 10, 32)
+		if err != nil {
+			httputils.WriteError(w, errors.New("offset must be int and greater than 0"))
+			return
+		}
+
+		opts.Offset = &offset
+	}
+
+	if v := r.URL.Query().Get("limit"); v != "" {
+		//nolint:govet
+		limit, err := strconv.ParseUint(v, 10, 32)
+		if err != nil {
+			httputils.WriteError(w, errors.New("limit must be int and greater than 0, but less than 100"))
+			return
+		}
+
+		if limit > defaultMaxLimit {
+			httputils.WriteError(w, errors.New("limit must be int and greater than 0, but less than 100"))
+			return
+		}
+
+		opts.Limit = &limit
+	}
+
+	if v := strings.ToUpper(r.URL.Query().Get("sort_type")); v != "" {
+		if v != "ASC" && v != "DESC" {
+			httputils.WriteError(w, errors.New("sort_type must be one of {asc,desc}"))
+			return
+		}
+
+		opts.SortType = v
+	}
+
+	subs, err := db.Mgr.GetUserSubscriptions(userName, &opts)
 	if err != nil {
 		httputils.WriteInternalError(w)
 		log.Error(err)

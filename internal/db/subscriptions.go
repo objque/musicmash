@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -16,6 +17,29 @@ type Subscription struct {
 	ArtistPoster string    `json:"artist_poster" db:"artist_poster"`
 }
 
+type GetSubscriptionsOpts struct {
+	Limit    *uint64
+	Offset   *uint64
+	SortType string
+}
+
+func applySubscriptionsFilters(query sq.SelectBuilder, opts *GetSubscriptionsOpts) sq.SelectBuilder {
+	if opts.SortType != "" {
+		// OrderByClause method generates incorrect query and we can't pass ASC/DESC as an arg
+		query = query.OrderBy(fmt.Sprintf("subscriptions.artist_id %v", opts.SortType))
+	}
+
+	if opts.Offset != nil {
+		query = query.Offset(*opts.Offset)
+	}
+
+	if opts.Limit != nil {
+		query = query.Limit(*opts.Limit)
+	}
+
+	return query
+}
+
 func (mgr *AppDatabaseMgr) CreateSubscription(subscription *Subscription) error {
 	const query = "insert into subscriptions (created_at, user_name, artist_id) VALUES ($1, $2, $3) returning id"
 
@@ -24,7 +48,7 @@ func (mgr *AppDatabaseMgr) CreateSubscription(subscription *Subscription) error 
 	return mgr.newdb.QueryRow(query, now, subscription.UserName, subscription.ArtistID).Scan(&subscription.ID)
 }
 
-func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string) ([]*Subscription, error) {
+func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string, opts *GetSubscriptionsOpts) ([]*Subscription, error) {
 	query := sq.Select(
 		"user_name",
 		"artists.id as artist_id",
@@ -33,6 +57,10 @@ func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string) ([]*Subscriptio
 		From("subscriptions").
 		LeftJoin("artists on subscriptions.artist_id=artists.id").
 		Where("subscriptions.user_name = ?", userName)
+
+	if opts != nil {
+		query = applySubscriptionsFilters(query, opts)
+	}
 
 	sql, args, err := query.PlaceholderFormat(sq.Dollar).ToSql()
 	if err != nil {
