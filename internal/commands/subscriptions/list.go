@@ -6,6 +6,7 @@ import (
 
 	"github.com/musicmash/musicmash/internal/commands/subscriptions/render"
 	"github.com/musicmash/musicmash/internal/config"
+	"github.com/musicmash/musicmash/internal/utils/ptr"
 	"github.com/musicmash/musicmash/pkg/api"
 	"github.com/musicmash/musicmash/pkg/api/subscriptions"
 	"github.com/spf13/cobra"
@@ -13,6 +14,11 @@ import (
 
 func NewListCommand() *cobra.Command {
 	var showPoster bool
+	// dirty hack cause cobra can't handle nil as default for int like types
+	opts := subscriptions.GetOptions{
+		Offset: ptr.Uint(0),
+		Limit:  ptr.Uint(100),
+	}
 	cmd := &cobra.Command{
 		Use:          "list <username>",
 		Short:        "List of user subscriptions",
@@ -20,7 +26,7 @@ func NewListCommand() *cobra.Command {
 		SilenceUsage: true,
 		RunE: func(cmd *cobra.Command, args []string) error {
 			url := fmt.Sprintf("http://%v:%v", config.Config.HTTP.IP, config.Config.HTTP.Port)
-			result, err := subscriptions.List(api.NewProvider(url, 1), args[0])
+			result, err := subscriptions.List(api.NewProvider(url, 1), args[0], &opts)
 			if err != nil {
 				return err
 			}
@@ -36,5 +42,8 @@ func NewListCommand() *cobra.Command {
 
 	flags := cmd.Flags()
 	flags.BoolVar(&showPoster, "show-poster", showPoster, "Show poster column")
+	flags.StringVar(&opts.SortType, "sort-type", "asc", "Sort type for subscriptions.artist_id {asc,desc}")
+	flags.Uint64Var(opts.Limit, "limit", 100, "Limit of rows")
+	flags.Uint64Var(opts.Offset, "offset", 0, "Offset for rows")
 	return cmd
 }
