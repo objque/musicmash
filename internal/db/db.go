@@ -2,13 +2,15 @@ package db
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 
+	"github.com/golang-migrate/migrate/v4"
+	"github.com/golang-migrate/migrate/v4/database/postgres"
 	"github.com/jmoiron/sqlx"
-	"github.com/musicmash/musicmash/internal/log"
-	migrate "github.com/rubenv/sql-migrate"
 
 	// load dialects
+	_ "github.com/golang-migrate/migrate/v4/source/file"
 	_ "github.com/lib/pq"
 )
 
@@ -101,23 +103,38 @@ func (mgr *AppDatabaseMgr) Ping() error {
 }
 
 func (mgr *AppDatabaseMgr) ApplyMigrations(pathToMigrations string) error {
-	migrations := &migrate.FileMigrationSource{Dir: pathToMigrations}
-	n, err := migrate.Exec(mgr.parent, "postgres", migrations, migrate.Up)
+	databaseInstance, err := postgres.WithInstance(mgr.parent, &postgres.Config{})
 	if err != nil {
-		return err
+		return fmt.Errorf("can't create migrate postgres instance: %w", err)
 	}
 
-	log.Infoln(fmt.Sprintf("Applied %d migrations!", n))
-	return nil
+	m, err := migrate.NewWithDatabaseInstance(pathToMigrations, "postgres", databaseInstance)
+	if err != nil {
+		return fmt.Errorf("can't create migrate file driver: %w", err)
+	}
+
+	err = m.Up()
+	if err != nil && errors.Is(err, migrate.ErrNoChange) {
+		return nil
+	}
+
+	return fmt.Errorf("can't apply migrations: %w", err)
 }
 
 func (mgr *AppDatabaseMgr) DropAllTablesViaMigrations(pathToMigrations string) error {
-	migrations := &migrate.FileMigrationSource{Dir: pathToMigrations}
-	n, err := migrate.Exec(mgr.parent, "postgres", migrations, migrate.Down)
+	databaseInstance, err := postgres.WithInstance(mgr.parent, &postgres.Config{})
 	if err != nil {
-		return err
+		return fmt.Errorf("can't create migrate postgres instance: %w", err)
 	}
 
-	log.Infof("Dropped %d migrations!", n)
+	m, err := migrate.NewWithDatabaseInstance(pathToMigrations, "postgres", databaseInstance)
+	if err != nil {
+		return fmt.Errorf("can't create migrate file driver: %w", err)
+	}
+
+	if err = m.Down(); err != nil {
+		return fmt.Errorf("can't apply migrations: %w", err)
+	}
+
 	return nil
 }

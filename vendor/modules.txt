@@ -7,7 +7,15 @@ github.com/getsentry/sentry-go
 # github.com/go-chi/chi v4.1.2+incompatible
 github.com/go-chi/chi
 github.com/go-chi/chi/middleware
-# github.com/google/uuid v1.1.1
+# github.com/golang-migrate/migrate/v4 v4.14.1
+github.com/golang-migrate/migrate/v4
+github.com/golang-migrate/migrate/v4/database
+github.com/golang-migrate/migrate/v4/database/postgres
+github.com/golang-migrate/migrate/v4/internal/url
+github.com/golang-migrate/migrate/v4/source
+github.com/golang-migrate/migrate/v4/source/file
+github.com/golang-migrate/migrate/v4/source/httpfs
+# github.com/google/uuid v1.1.2
 github.com/google/uuid
 # github.com/hashicorp/go-cleanhttp v0.5.1
 github.com/hashicorp/go-cleanhttp
@@ -26,7 +34,7 @@ github.com/konsorten/go-windows-terminal-sequences
 github.com/lann/builder
 # github.com/lann/ps v0.0.0-20150810152359-62de8c46ede0
 github.com/lann/ps
-# github.com/lib/pq v1.7.1
+# github.com/lib/pq v1.8.0
 github.com/lib/pq
 github.com/lib/pq/oid
 github.com/lib/pq/scram
@@ -40,9 +48,6 @@ github.com/pkg/errors
 github.com/pmezard/go-difflib/difflib
 # github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
 github.com/rifflock/lfshook
-# github.com/rubenv/sql-migrate v0.0.0-20200616145509-8d140a17f351
-github.com/rubenv/sql-migrate
-github.com/rubenv/sql-migrate/sqlparse
 # github.com/sirupsen/logrus v1.6.0
 github.com/sirupsen/logrus
 # github.com/spf13/cobra v1.0.0
@@ -59,8 +64,6 @@ go.uber.org/ratelimit/internal/clock
 # golang.org/x/sys v0.0.0-20200724161237-0e2f3a69832c
 golang.org/x/sys/internal/unsafeheader
 golang.org/x/sys/unix
-# gopkg.in/gorp.v1 v1.7.2
-gopkg.in/gorp.v1
 # gopkg.in/yaml.v2 v2.3.0
 gopkg.in/yaml.v2
 # gopkg.in/yaml.v3 v3.0.0-20200615113413-eeeca48fe776

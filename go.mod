@@ -6,18 +6,17 @@ require (
 	github.com/Masterminds/squirrel v1.4.0
 	github.com/getsentry/sentry-go v0.7.0
 	github.com/go-chi/chi v4.1.2+incompatible
-	github.com/go-sql-driver/mysql v1.5.0 // indirect
-	github.com/google/uuid v1.1.1
+	github.com/golang-migrate/migrate/v4 v4.14.1
+	github.com/google/uuid v1.1.2
 	github.com/hashicorp/go-retryablehttp v0.6.6
 	github.com/jinzhu/now v1.1.1
 	github.com/jmoiron/sqlx v1.2.1-0.20191203222853-2ba0fc60eb4a
-	github.com/lib/pq v1.7.1
+	github.com/lib/pq v1.8.0
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible // indirect
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/pkg/errors v0.9.1
 	github.com/rifflock/lfshook v0.0.0-20180920164130-b9218ef580f5
-	github.com/rubenv/sql-migrate v0.0.0-20200616145509-8d140a17f351
 	github.com/sirupsen/logrus v1.6.0
 	github.com/spf13/cobra v1.0.0
 	github.com/spf13/pflag v1.0.5 // indirect

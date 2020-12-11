@@ -53,14 +53,17 @@ lint l:
 run: install
 	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations --config musicmash.example.yaml
 
-db-status:
-	sql-migrate status --env=staging
+ensure-go-migrate-installed:
+	bash ./scripts/install-go-migrate.sh
 
-db-up:
-	sql-migrate up --env=staging
+# show latest applied migration
+db-status: ensure-go-migrate-installed
+	migrate -path migrations -database "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable" -verbose version
 
-db-redo:
-	sql-migrate redo --env=staging
+# apply migration up
+db-up: ensure-go-migrate-installed
+	migrate -path migrations -database "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable" -verbose up
 
-db-down:
-	sql-migrate down --env=staging
+# apply migration down
+db-down: ensure-go-migrate-installed
+	migrate -path migrations -database "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable" -verbose down
