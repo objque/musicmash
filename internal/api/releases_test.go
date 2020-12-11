@@ -1,6 +1,7 @@
 package api
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/db"
@@ -25,13 +26,13 @@ func (t *testAPISuite) prepareReleasesTestCase() {
 	assert.NoError(t.T(), db.Mgr.EnsureStoreExists(vars.StoreSpotify))
 	assert.NoError(t.T(), db.Mgr.EnsureStoreExists(vars.StoreDeezer))
 	// first release
-	t.fillRelease(&db.Release{ArtistID: 1, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreApple, StoreID: "1000", Type: vars.ReleaseTypeAlbum, Explicit: true})
-	t.fillRelease(&db.Release{ArtistID: 1, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreDeezer, StoreID: "2000", Type: vars.ReleaseTypeAlbum, Explicit: true})
-	t.fillRelease(&db.Release{ArtistID: 1, Title: vars.ReleaseAlgorithmFloatingIP, Poster: vars.PosterSimple, Released: r, StoreName: vars.StoreSpotify, StoreID: "3000", Type: vars.ReleaseTypeAlbum, Explicit: true})
+	t.fillRelease(&db.Release{ArtistID: 1, Title: vars.ReleaseAlgorithmFloatingIP, Poster: sql.NullString{String: vars.PosterSimple, Valid: true}, Released: r, SpotifyID: "1000", Type: vars.ReleaseTypeAlbum, Explicit: true, TracksCount: 10, DurationMs: 25})
+	t.fillRelease(&db.Release{ArtistID: 1, Title: vars.ReleaseAlgorithmFloatingIP, Poster: sql.NullString{String: vars.PosterSimple, Valid: true}, Released: r, SpotifyID: "2000", Type: vars.ReleaseTypeAlbum, Explicit: true, TracksCount: 10, DurationMs: 25})
+	t.fillRelease(&db.Release{ArtistID: 1, Title: vars.ReleaseAlgorithmFloatingIP, Poster: sql.NullString{String: vars.PosterSimple, Valid: true}, Released: r, SpotifyID: "3000", Type: vars.ReleaseTypeAlbum, Explicit: true, TracksCount: 10, DurationMs: 25})
 	// second release
-	t.fillRelease(&db.Release{ArtistID: 1, Title: vars.ReleaseArchitectsHollyHell, Poster: vars.PosterMiddle, Released: monthAgo, StoreName: vars.StoreApple, StoreID: "1100", Type: vars.ReleaseTypeSong, Explicit: false})
+	t.fillRelease(&db.Release{ArtistID: 1, Title: vars.ReleaseArchitectsHollyHell, Poster: sql.NullString{String: vars.PosterMiddle, Valid: true}, Released: monthAgo, SpotifyID: "1100", Type: vars.ReleaseTypeSong, Explicit: false, TracksCount: 10, DurationMs: 25})
 	// third release from another artist
-	t.fillRelease(&db.Release{ArtistID: 2, Title: vars.ReleaseRitaOraLouder, Poster: vars.PosterGiant, Released: yearAgo, StoreName: vars.StoreApple, StoreID: "1110", Type: vars.ReleaseTypeVideo, Explicit: true})
+	t.fillRelease(&db.Release{ArtistID: 2, Title: vars.ReleaseRitaOraLouder, Poster: sql.NullString{String: vars.PosterGiant, Valid: true}, Released: yearAgo, SpotifyID: "1110", Type: vars.ReleaseTypeVideo, Explicit: true, TracksCount: 10, DurationMs: 25})
 }
 
 func (t *testAPISuite) TestReleases_Get_All() {

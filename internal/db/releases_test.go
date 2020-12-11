@@ -11,8 +11,7 @@ func (t *testDBSuite) TestReleases_EnsureExists() {
 	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
 	err := Mgr.EnsureReleaseExists(&Release{
 		ArtistID:  1,
-		StoreName: vars.StoreDeezer,
-		StoreID:   vars.StoreApple,
+		SpotifyID: vars.StoreApple,
 		Explicit:  true,
 	})
 
@@ -31,15 +30,13 @@ func (t *testDBSuite) TestReleases_FindReleases() {
 	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSPY}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		ArtistID:  1,
-		StoreName: vars.StoreApple,
-		StoreID:   vars.StoreIDA,
+		SpotifyID: vars.StoreIDA,
 		Title:     vars.ArtistAlgorithm,
 		Explicit:  true,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		ArtistID:  2,
-		StoreName: vars.StoreApple,
-		StoreID:   vars.StoreIDB,
+		SpotifyID: vars.StoreIDB,
 	}))
 
 	// action

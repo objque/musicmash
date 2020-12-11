@@ -1,6 +1,7 @@
 package db
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -13,7 +14,7 @@ type testDBSuite struct {
 
 func (t *testDBSuite) SetupSuite() {
 	Mgr = NewFakeDatabaseMgr()
-	assert.NoError(t.T(), Mgr.ApplyMigrations(GetPathToMigrationsDir()))
+	assert.NoError(t.T(), Mgr.ApplyMigrations(fmt.Sprintf("file://%s", GetPathToMigrationsDir())))
 }
 
 func (t *testDBSuite) TearDownTest() {
@@ -21,7 +22,7 @@ func (t *testDBSuite) TearDownTest() {
 }
 
 func (t *testDBSuite) TearDownSuite() {
-	assert.NoError(t.T(), Mgr.DropAllTablesViaMigrations(GetPathToMigrationsDir()))
+	assert.NoError(t.T(), Mgr.DropAllTablesViaMigrations(fmt.Sprintf("file://%s", GetPathToMigrationsDir())))
 	_ = Mgr.Close()
 }
 

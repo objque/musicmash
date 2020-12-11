@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"net/http/httptest"
 	"testing"
 
@@ -20,7 +21,7 @@ func (t *testAPISuite) SetupSuite() {
 	t.server = httptest.NewServer(getMux())
 	t.client = api.NewProvider(t.server.URL, 1)
 	db.Mgr = db.NewFakeDatabaseMgr()
-	assert.NoError(t.T(), db.Mgr.ApplyMigrations(db.GetPathToMigrationsDir()))
+	assert.NoError(t.T(), db.Mgr.ApplyMigrations(fmt.Sprintf("file://%s", db.GetPathToMigrationsDir())))
 }
 
 func (t *testAPISuite) TearDownTest() {
@@ -28,7 +29,7 @@ func (t *testAPISuite) TearDownTest() {
 }
 
 func (t *testAPISuite) TearDownSuite() {
-	assert.NoError(t.T(), db.Mgr.DropAllTablesViaMigrations(db.GetPathToMigrationsDir()))
+	assert.NoError(t.T(), db.Mgr.DropAllTablesViaMigrations(fmt.Sprintf("file://%s", db.GetPathToMigrationsDir())))
 	_ = db.Mgr.Close()
 }
 

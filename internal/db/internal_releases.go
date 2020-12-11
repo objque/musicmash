@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"fmt"
 	"time"
 
@@ -8,16 +9,16 @@ import (
 )
 
 type InternalRelease struct {
-	ArtistID   int64     `json:"artist_id"   db:"artist_id"`
-	ArtistName string    `json:"artist_name" db:"artist_name"`
-	Released   time.Time `json:"released"    db:"released"`
-	Poster     string    `json:"poster"      db:"poster"`
-	Title      string    `json:"title"       db:"title"`
-	ItunesID   *string   `json:"itunes_id"   db:"itunes_id"`
-	SpotifyID  *string   `json:"spotify_id"  db:"spotify_id"`
-	DeezerID   *string   `json:"deezer_id"   db:"deezer_id"`
-	Type       string    `json:"type"        db:"type"`
-	Explicit   bool      `json:"explicit"    db:"explicit"`
+	ArtistID    int64          `json:"artist_id"    db:"artist_id"`
+	ArtistName  string         `json:"artist_name"  db:"artist_name"`
+	Released    time.Time      `json:"released"     db:"released"`
+	TracksCount int32          `json:"tracks_count" db:"tracks_count"`
+	DurationMs  int64          `json:"duration_ms"  db:"duration_ms"`
+	Poster      sql.NullString `json:"poster"       db:"poster"`
+	Title       string         `json:"title"        db:"title"`
+	SpotifyID   string         `json:"spotify_id"   db:"spotify_id"`
+	Type        string         `json:"type"         db:"type"`
+	IsExplicit  bool           `json:"is_explicit"  db:"is_explicit"`
 }
 
 type GetInternalReleaseOpts struct {
@@ -41,27 +42,10 @@ func (mgr *AppDatabaseMgr) GetInternalReleases(opts *GetInternalReleaseOpts) ([]
 		"releases.poster",
 		"releases.title",
 		"releases.type",
-		"releases.explicit",
-		"itunes.store_id AS itunes_id",
-		"spotify.store_id AS spotify_id",
-		"deezer.store_id AS deezer_id").
-		From("releases AS releases").
+		"releases.is_explicit",
+		"releases.spotify_id").
+		From("releases").
 		LeftJoin("artists ON (releases.artist_id = artists.id)").
-		LeftJoin(`releases AS itunes ON (
-			releases.artist_id = itunes.artist_id
-			AND releases.title = itunes.title
-			AND itunes.store_name = 'itunes'
-		)`).
-		LeftJoin(`releases AS spotify ON (
-			releases.artist_id = spotify.artist_id
-			AND releases.title = spotify.title
-			AND spotify.store_name = 'spotify'
-		)`).
-		LeftJoin(`releases AS deezer ON (
-			releases.artist_id = deezer.artist_id
-			AND releases.title = deezer.title
-			AND deezer.store_name = 'deezer'
-		)`).
 		GroupBy(
 			"releases.artist_id",
 			"artist_name",
@@ -69,10 +53,8 @@ func (mgr *AppDatabaseMgr) GetInternalReleases(opts *GetInternalReleaseOpts) ([]
 			"releases.poster",
 			"releases.title",
 			"releases.type",
-			"releases.explicit",
-			"itunes_id",
+			"releases.is_explicit",
 			"spotify_id",
-			"deezer_id",
 		)
 
 	if opts != nil {
@@ -119,7 +101,7 @@ func applyInternalReleasesFilters(query sq.SelectBuilder, opts *GetInternalRelea
 	}
 
 	if opts.Explicit != nil {
-		query = query.Where("releases.explicit = ?", *opts.Explicit)
+		query = query.Where("releases.is_explicit = ?", *opts.Explicit)
 	}
 
 	if opts.SortType != "" {

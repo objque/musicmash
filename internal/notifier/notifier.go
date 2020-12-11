@@ -68,11 +68,9 @@ func groupReleases(releases []*db.ReleaseNotification) []*Notification {
 			Released:   release.Released,
 			Poster:     release.Poster,
 			Title:      release.Title,
-			ItunesID:   release.ItunesID,
 			SpotifyID:  release.SpotifyID,
-			DeezerID:   release.DeezerID,
 			Type:       release.Type,
-			Explicit:   release.Explicit,
+			IsExplicit: release.IsExplicit,
 		}
 		group[release.UserName] = append(group[release.UserName], rel)
 	}

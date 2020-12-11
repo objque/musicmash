@@ -1,6 +1,7 @@
 package db
 
 import (
+	"database/sql"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/testutils/vars"
@@ -18,44 +19,56 @@ func (t *testDBSuite) TestReleaseNotifications() {
 	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{1, 2}))
 	// fill releases
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
+		// this oldest release wont be in output
 		CreatedAt: time.Now().UTC().AddDate(0, -1, 0),
 		ArtistID:  1,
-		Poster:    vars.PosterSimple,
+		Poster: sql.NullString{
+			String: vars.PosterSimple,
+			Valid:  true,
+		},
 		Title:     vars.ReleaseSkrillexHumble,
 		Released:  time.Now().UTC().AddDate(0, -1, 0),
-		StoreName: vars.StoreApple,
-		StoreID:   "this-oldest-release-wont-be-in-output",
+		SpotifyID: "a74ea049-22e3-4cf4-b21d",
 		Type:      vars.ReleaseTypeAlbum,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
+		// this oldest release wont be in output as previous
 		CreatedAt: time.Now().UTC().AddDate(0, 0, -15),
 		ArtistID:  1,
-		Poster:    vars.PosterGiant,
+		Poster: sql.NullString{
+			String: vars.PosterGiant,
+			Valid:  true,
+		},
 		Title:     vars.ReleaseRitaOraLouder,
 		Released:  time.Now().UTC().AddDate(0, 0, -15),
-		StoreName: vars.StoreApple,
-		StoreID:   "this-oldest-release-wont-be-in-output-as-previous",
+		SpotifyID: "11526f06-43ca-4892-9638",
 		Explicit:  true,
 		Type:      vars.ReleaseTypeAlbum,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
+		// this future release have to be in output
 		CreatedAt: time.Now().UTC().AddDate(0, 10, 0),
 		ArtistID:  1,
-		Poster:    vars.PosterMiddle,
+		Poster: sql.NullString{
+			String: vars.PosterMiddle,
+			Valid:  true,
+		},
 		Title:     vars.ReleaseArchitectsNaySayer,
 		Released:  time.Now().UTC().AddDate(0, 10, 0),
-		StoreName: vars.StoreApple,
-		StoreID:   "this-future-release-have-to-be-in-output",
+		SpotifyID: "b7f6b07e-1691-4109-b36d",
 		Type:      vars.ReleaseTypeAlbum,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
+		// this future release have to be in output as previous
 		CreatedAt: time.Now().UTC().AddDate(1, 0, 0),
 		ArtistID:  2,
-		Poster:    vars.PosterSmall,
+		Poster: sql.NullString{
+			String: vars.PosterSmall,
+			Valid:  true,
+		},
 		Title:     vars.ReleaseSkrillexHumble,
 		Released:  time.Now().UTC().AddDate(1, 0, 0),
-		StoreName: vars.StoreApple,
-		StoreID:   "this-future-release-have-to-be-in-output-as-previous",
+		SpotifyID: "28cf0630-1f6c-4668-86ad",
 		Type:      vars.ReleaseTypeAlbum,
 		Explicit:  true,
 	}))
@@ -71,32 +84,26 @@ func (t *testDBSuite) TestReleaseNotifications() {
 	assert.Equal(t.T(), vars.UserBot, release.UserName)
 	assert.Equal(t.T(), int64(1), release.ArtistID)
 	assert.Equal(t.T(), vars.ArtistArchitects, release.ArtistName)
-	assert.Equal(t.T(), vars.PosterMiddle, release.Poster)
-	assert.Equal(t.T(), "this-future-release-have-to-be-in-output", *release.ItunesID)
-	assert.Empty(t.T(), release.SpotifyID)
-	assert.Empty(t.T(), release.DeezerID)
+	assert.Equal(t.T(), vars.PosterMiddle, release.Poster.String)
+	assert.Equal(t.T(), "b7f6b07e-1691-4109-b36d", release.SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, release.Type)
-	assert.False(t.T(), release.Explicit)
+	assert.False(t.T(), release.IsExplicit)
 
 	release = releases[1]
 	assert.Equal(t.T(), vars.UserObjque, release.UserName)
 	assert.Equal(t.T(), int64(1), release.ArtistID)
 	assert.Equal(t.T(), vars.ArtistArchitects, release.ArtistName)
-	assert.Equal(t.T(), vars.PosterMiddle, release.Poster)
-	assert.Equal(t.T(), "this-future-release-have-to-be-in-output", *release.ItunesID)
-	assert.Empty(t.T(), release.SpotifyID)
-	assert.Empty(t.T(), release.DeezerID)
+	assert.Equal(t.T(), vars.PosterMiddle, release.Poster.String)
+	assert.Equal(t.T(), "b7f6b07e-1691-4109-b36d", release.SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, release.Type)
-	assert.False(t.T(), release.Explicit)
+	assert.False(t.T(), release.IsExplicit)
 
 	release = releases[2]
 	assert.Equal(t.T(), vars.UserObjque, release.UserName)
 	assert.Equal(t.T(), int64(2), release.ArtistID)
 	assert.Equal(t.T(), vars.ArtistSkrillex, release.ArtistName)
-	assert.Equal(t.T(), vars.PosterSmall, release.Poster)
-	assert.Equal(t.T(), "this-future-release-have-to-be-in-output-as-previous", *release.ItunesID)
-	assert.Empty(t.T(), release.SpotifyID)
-	assert.Empty(t.T(), release.DeezerID)
+	assert.Equal(t.T(), vars.PosterSmall, release.Poster.String)
+	assert.Equal(t.T(), "28cf0630-1f6c-4668-86ad", release.SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, release.Type)
-	assert.True(t.T(), release.Explicit)
+	assert.True(t.T(), release.IsExplicit)
 }

@@ -1,6 +1,7 @@
 package suite
 
 import (
+	"fmt"
 	"testing"
 
 	"github.com/musicmash/musicmash/internal/db"
@@ -14,7 +15,7 @@ type Suite struct {
 
 func (t *Suite) SetupSuite() {
 	db.Mgr = db.NewFakeDatabaseMgr()
-	assert.NoError(t.T(), db.Mgr.ApplyMigrations(db.GetPathToMigrationsDir()))
+	assert.NoError(t.T(), db.Mgr.ApplyMigrations(fmt.Sprintf("file://%s", db.GetPathToMigrationsDir())))
 }
 
 func (t *Suite) TearDownTest() {
@@ -22,7 +23,7 @@ func (t *Suite) TearDownTest() {
 }
 
 func (t *Suite) TearDownSuite() {
-	assert.NoError(t.T(), db.Mgr.DropAllTablesViaMigrations(db.GetPathToMigrationsDir()))
+	assert.NoError(t.T(), db.Mgr.DropAllTablesViaMigrations(fmt.Sprintf("file://%s", db.GetPathToMigrationsDir())))
 	_ = db.Mgr.Close()
 }
 

@@ -82,15 +82,21 @@ func (mgr *AppDatabaseMgr) Rollback() error {
 }
 
 func (mgr *AppDatabaseMgr) TruncateAllTables() error {
-	const query = "TRUNCATE " +
-		"last_actions," +
-		"releases," +
-		"subscriptions," +
-		"associations," +
-		"stores," +
-		"artists " +
-		"RESTART IDENTITY CASCADE"
+	const query = `TRUNCATE
+		artist_details,
+		artist_headers,
+		artist_gallery,
+		artist_external_links,
+		artist_associations,
+		stores,
+		releases,
+		subscriptions,
+		artists,
+		last_actions
+	RESTART IDENTITY CASCADE`
+
 	_, err := mgr.newdb.Exec(query)
+
 	return err
 }
 
@@ -117,8 +123,11 @@ func (mgr *AppDatabaseMgr) ApplyMigrations(pathToMigrations string) error {
 	if err != nil && errors.Is(err, migrate.ErrNoChange) {
 		return nil
 	}
+	if err != nil {
+		return fmt.Errorf("can't apply migrations: %w", err)
+	}
 
-	return fmt.Errorf("can't apply migrations: %w", err)
+	return nil
 }
 
 func (mgr *AppDatabaseMgr) DropAllTablesViaMigrations(pathToMigrations string) error {

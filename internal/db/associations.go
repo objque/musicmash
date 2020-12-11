@@ -29,7 +29,7 @@ func (mgr *AppDatabaseMgr) IsAssociationExists(storeName, storeID string) bool {
 }
 
 func (mgr *AppDatabaseMgr) EnsureAssociationExists(artistID int64, storeName, storeID string) error {
-	const query = "insert into associations (artist_id, store_name, store_id) values ($1, $2, $3)"
+	const query = "insert into artist_associations (artist_id, store_name, store_id) values ($1, $2, $3)"
 
 	_, err := mgr.newdb.Exec(query, artistID, storeName, storeID)
 
@@ -50,7 +50,7 @@ func applyAssociationsFilters(query sq.SelectBuilder, opts *AssociationOpts) sq.
 }
 
 func (mgr *AppDatabaseMgr) FindAssociations(opts *AssociationOpts) ([]*Association, error) {
-	query := sq.Select("artist_id", "store_name", "store_id").From("associations")
+	query := sq.Select("artist_id", "store_name", "store_id").From("artist_associations")
 	if opts != nil {
 		query = applyAssociationsFilters(query, opts)
 	}
