@@ -3,13 +3,11 @@ package config
 import "time"
 
 type AppConfig struct {
-	HTTP     HTTPConfig    `yaml:"http"`
-	DB       DBConfig      `yaml:"db"`
-	Log      LogConfig     `yaml:"log"`
-	Fetcher  FetcherConfig `yaml:"fetcher"`
-	Notifier NotifyConfig  `yaml:"notifier"`
-	Stores   StoresConfig  `yaml:"stores"`
-	Sentry   SentryConfig  `yaml:"sentry"`
+	HTTP     HTTPConfig   `yaml:"http"`
+	DB       DBConfig     `yaml:"db"`
+	Log      LogConfig    `yaml:"log"`
+	Notifier NotifyConfig `yaml:"notifier"`
+	Sentry   SentryConfig `yaml:"sentry"`
 }
 
 type HTTPConfig struct {
@@ -33,29 +31,11 @@ type DBConfig struct {
 	MigrationsDir string `yaml:"migrations_dir"`
 }
 
-type FetcherConfig struct {
-	Enabled bool          `yaml:"enabled"`
-	Delay   time.Duration `yaml:"delay"`
-}
-
 type NotifyConfig struct {
 	Enabled bool          `yaml:"enabled"`
 	Delay   time.Duration `yaml:"delay"`
 	URL     string        `yaml:"url"`
 }
-
-type StoreConfig struct {
-	URL          string `yaml:"url"`
-	FetchWorkers int    `yaml:"fetch_workers"`
-	SaveWorkers  int    `yaml:"save_workers"`
-	Meta         Meta   `yaml:"meta"`
-	ReleaseURL   string `yaml:"release_url"`
-	Name         string `yaml:"name"`
-	Fetch        bool   `yaml:"fetch"`
-}
-type StoresConfig map[string]*StoreConfig
-
-type Meta map[string]string
 
 type SentryConfig struct {
 	Enabled     bool   `yaml:"enabled"`

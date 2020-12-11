@@ -23,10 +23,6 @@ log:
   file: musicmash.log
   level: INFO
 
-fetcher:
-  enabled: false
-  delay: 1h
-
 notifier:
   enabled: false
   delay: 30m

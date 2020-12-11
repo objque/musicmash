@@ -30,10 +30,6 @@ func New() *AppConfig {
 			File:  "musicmash.log",
 			Level: "INFO",
 		},
-		Fetcher: FetcherConfig{
-			Enabled: false,
-			Delay:   time.Hour,
-		},
 		Notifier: NotifyConfig{
 			Enabled: false,
 			Delay:   30 * time.Minute,
@@ -82,9 +78,6 @@ func (c *AppConfig) FlagSet() {
 	flag.StringVar(&c.Log.Level, "log-level", c.Log.Level, "Log level")
 	flag.StringVar(&c.Log.File, "log-file", c.Log.File, "Path to log file")
 
-	flag.BoolVar(&c.Fetcher.Enabled, "fetcher-enabled", c.Fetcher.Enabled, "Is fetcher enabled")
-	flag.DurationVar(&c.Fetcher.Delay, "fetcher-delay", c.Fetcher.Delay, "Delay between fetches")
-
 	flag.BoolVar(&c.Sentry.Enabled, "sentry-enabled", c.Sentry.Enabled, "Is Sentry enabled")
 	flag.StringVar(&c.Sentry.Key, "sentry-key", c.Sentry.Key, "Sentry dsn")
 	flag.StringVar(&c.Sentry.Environment, "sentry-environment", c.Sentry.Environment, "Sentry environment")
@@ -104,9 +97,6 @@ func (c *AppConfig) FlagReload() {
 
 	_ = flag.Set("log-level", c.Log.Level)
 	_ = flag.Set("log-file", c.Log.File)
-
-	_ = flag.Set("fetcher-enabled", strconv.FormatBool(c.Fetcher.Enabled))
-	_ = flag.Set("fetcher-delay", fmt.Sprintf("%v", c.Fetcher.Delay))
 
 	_ = flag.Set("sentry", strconv.FormatBool(c.Sentry.Enabled))
 	_ = flag.Set("sentry-key", c.Sentry.Key)

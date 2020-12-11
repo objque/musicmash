@@ -17,26 +17,11 @@ log:
   file: /var/log/musicmash/musicmash.log
   level: INFO
 
-fetcher:
-  enabled: true
-  delay: 6h0m0s # time.Duration format: XXhYYmZZs, you may provide any part like 24m
-
 # call external service that sends notifications
 notifier:
   enabled: true
   delay: 30m
   url: http://notifier/v1/releases
-
-stores:
-  itunes:
-    url: https://api.music.apple.com
-    fetch_workers: 5
-    meta: # basically it's just an optional map of key=value (string=string)
-      token: "AMQjRckzD]VDJA@rW(w7PiV=TtPjRshDjgGgUjC.ctxwhgc8cR+z2ammv,dLWok3"
-      region: "us"
-    release_url: https://itunes.apple.com/us/{release_type}/{release_id}
-    name: Apple Music
-    fetch: true
 
 sentry:
   enabled: false

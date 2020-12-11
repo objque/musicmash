@@ -2,11 +2,6 @@ package db
 
 import "time"
 
-// TODO (m.kalinin): move into fetcher package
-const (
-	ActionFetch = "fetch"
-)
-
 type LastAction struct {
 	ID     int       `db:"id"`
 	Date   time.Time `db:"date"`

@@ -6,6 +6,8 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+const ActionFetch = "fetch"
+
 func (t *testDBSuite) TestLastAction_Get() {
 	// arrange
 	last := time.Now().UTC().Truncate(time.Minute)
