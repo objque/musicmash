@@ -26,10 +26,10 @@ build-arm7: clean
 install:
 	go install -v ./cmd/...
 
-tests t:
+test t:
 	go test -v -short ./...
 
-tests-full tf:
+test-full tf:
 	go test -v -p 1 ./...
 
 update-deps:
