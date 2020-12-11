@@ -11,7 +11,7 @@ db:
   pass: musicmash
   log: false
   auto_migrate: true
-  migrations_dir: ./migrations
+  migrations_dir: file:///var/fetchers/migrations
 
 log:
   file: /var/log/musicmash/musicmash.log
