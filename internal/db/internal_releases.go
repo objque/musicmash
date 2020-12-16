@@ -42,6 +42,8 @@ func (mgr *AppDatabaseMgr) GetInternalReleases(opts *GetInternalReleaseOpts) ([]
 		"releases.title",
 		"releases.type",
 		"releases.is_explicit",
+		"releases.tracks_count",
+		"releases.duration_ms",
 		"releases.spotify_id").
 		From("releases").
 		LeftJoin("artists ON (releases.artist_id = artists.id)")

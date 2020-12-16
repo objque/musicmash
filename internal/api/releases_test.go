@@ -48,6 +48,8 @@ func (t *testAPISuite) TestReleases_Get_All() {
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
 	assert.Equal(t.T(), "3000", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.True(t.T(), rels[0].Explicit)
 
 	assert.Equal(t.T(), int64(1), rels[1].ArtistID)
@@ -55,6 +57,8 @@ func (t *testAPISuite) TestReleases_Get_All() {
 	assert.Equal(t.T(), vars.PosterMiddle, rels[1].Poster)
 	assert.Equal(t.T(), "1100", rels[1].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeSong, rels[1].Type)
+	assert.Equal(t.T(), int32(10), rels[1].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[1].DurationMs)
 	assert.False(t.T(), rels[1].Explicit)
 
 	assert.Equal(t.T(), int64(2), rels[2].ArtistID)
@@ -62,6 +66,8 @@ func (t *testAPISuite) TestReleases_Get_All() {
 	assert.Equal(t.T(), vars.PosterGiant, rels[2].Poster)
 	assert.Equal(t.T(), "1110", rels[2].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeVideo, rels[2].Type)
+	assert.Equal(t.T(), int32(10), rels[2].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[2].DurationMs)
 	assert.True(t.T(), rels[2].Explicit)
 }
 
@@ -84,6 +90,8 @@ func (t *testAPISuite) TestReleases_Get_All_ChangeSortType() {
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
 	assert.Equal(t.T(), "1110", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeVideo, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.True(t.T(), rels[0].Explicit)
 
 	assert.Equal(t.T(), int64(1), rels[1].ArtistID)
@@ -91,6 +99,8 @@ func (t *testAPISuite) TestReleases_Get_All_ChangeSortType() {
 	assert.Equal(t.T(), vars.PosterMiddle, rels[1].Poster)
 	assert.Equal(t.T(), "1100", rels[1].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeSong, rels[1].Type)
+	assert.Equal(t.T(), int32(10), rels[1].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[1].DurationMs)
 	assert.False(t.T(), rels[1].Explicit)
 
 	assert.Equal(t.T(), int64(1), rels[2].ArtistID)
@@ -98,6 +108,8 @@ func (t *testAPISuite) TestReleases_Get_All_ChangeSortType() {
 	assert.Equal(t.T(), vars.PosterSimple, rels[2].Poster)
 	assert.Equal(t.T(), "3000", rels[2].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, rels[2].Type)
+	assert.Equal(t.T(), int32(10), rels[2].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[2].DurationMs)
 	assert.True(t.T(), rels[2].Explicit)
 }
 
@@ -118,6 +130,8 @@ func (t *testAPISuite) TestReleases_Get_FilterByLimit() {
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
 	assert.Equal(t.T(), "3000", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.True(t.T(), rels[0].Explicit)
 }
 
@@ -139,6 +153,8 @@ func (t *testAPISuite) TestReleases_Get_FilterBy_LimitAndOffset() {
 	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)
 	assert.Equal(t.T(), "1100", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeSong, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.False(t.T(), rels[0].Explicit)
 }
 
@@ -160,6 +176,8 @@ func (t *testAPISuite) TestReleases_Get_FilterByArtistID() {
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
 	assert.Equal(t.T(), "3000", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.True(t.T(), rels[0].Explicit)
 
 	assert.Equal(t.T(), int64(1), rels[1].ArtistID)
@@ -167,6 +185,8 @@ func (t *testAPISuite) TestReleases_Get_FilterByArtistID() {
 	assert.Equal(t.T(), vars.PosterMiddle, rels[1].Poster)
 	assert.Equal(t.T(), "1100", rels[1].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeSong, rels[1].Type)
+	assert.Equal(t.T(), int32(10), rels[1].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[1].DurationMs)
 	assert.False(t.T(), rels[1].Explicit)
 }
 
@@ -188,6 +208,8 @@ func (t *testAPISuite) TestReleases_Get_FilterByArtistID_ReleaseType() {
 	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)
 	assert.Equal(t.T(), "1100", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeSong, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.False(t.T(), rels[0].Explicit)
 }
 
@@ -209,6 +231,8 @@ func (t *testAPISuite) TestReleases_Get_FilterBySince() {
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
 	assert.Equal(t.T(), "3000", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.True(t.T(), rels[0].Explicit)
 }
 
@@ -230,6 +254,8 @@ func (t *testAPISuite) TestReleases_Get_FilterByTill() {
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
 	assert.Equal(t.T(), "1110", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeVideo, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.True(t.T(), rels[0].Explicit)
 }
 
@@ -253,6 +279,8 @@ func (t *testAPISuite) TestReleases_Get_FilterBy_SinceAndTill() {
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
 	assert.Equal(t.T(), "1110", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeVideo, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.True(t.T(), rels[0].Explicit)
 }
 
@@ -275,6 +303,8 @@ func (t *testAPISuite) TestReleases_Get_FilterBy_Explicit() {
 	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)
 	assert.Equal(t.T(), "1100", rels[0].SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeSong, rels[0].Type)
+	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
+	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.False(t.T(), rels[0].Explicit)
 }
 

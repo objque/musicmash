@@ -10,9 +10,11 @@ func (t *testDBSuite) TestReleases_EnsureExists() {
 	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreDeezer))
 	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
 	err := Mgr.EnsureReleaseExists(&Release{
-		ArtistID:  1,
-		SpotifyID: vars.StoreApple,
-		Explicit:  true,
+		ArtistID:    1,
+		SpotifyID:   vars.StoreApple,
+		Explicit:    true,
+		TracksCount: 10,
+		DurationMs:  25,
 	})
 
 	// assert
@@ -21,6 +23,8 @@ func (t *testDBSuite) TestReleases_EnsureExists() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
 	assert.True(t.T(), releases[0].Explicit)
+	assert.Equal(t.T(), int32(10), releases[0].TracksCount)
+	assert.Equal(t.T(), int64(25), releases[0].DurationMs)
 }
 
 func (t *testDBSuite) TestReleases_FindReleases() {
@@ -29,10 +33,12 @@ func (t *testDBSuite) TestReleases_FindReleases() {
 	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
 	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSPY}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
-		ArtistID:  1,
-		SpotifyID: vars.StoreIDA,
-		Title:     vars.ArtistAlgorithm,
-		Explicit:  true,
+		ArtistID:    1,
+		SpotifyID:   vars.StoreIDA,
+		Title:       vars.ArtistAlgorithm,
+		Explicit:    true,
+		TracksCount: 10,
+		DurationMs:  25,
 	}))
 	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
 		ArtistID:  2,
@@ -48,4 +54,6 @@ func (t *testDBSuite) TestReleases_FindReleases() {
 	assert.Equal(t.T(), int64(1), releases[0].ArtistID)
 	assert.Equal(t.T(), vars.ArtistAlgorithm, releases[0].Title)
 	assert.True(t.T(), releases[0].Explicit)
+	assert.Equal(t.T(), int32(10), releases[0].TracksCount)
+	assert.Equal(t.T(), int64(25), releases[0].DurationMs)
 }
