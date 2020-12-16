@@ -8,7 +8,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 )
 
-var headers = []string{"id", "poster", "released", "artist_id", "title", "type", "explicit", "itunes_id", "spotify_id", "deezer_id"}
+var headers = []string{"id", "poster", "released", "artist_id", "title", "type", "explicit", "spotify_id"}
 
 type Options struct {
 	ShowNames   bool
@@ -44,21 +44,11 @@ func Releases(releases []*releases.Release, opts Options) error {
 			row = append(row, fmt.Sprint(releases[i].ArtistID))
 		}
 
-		var spotifyID, deezerID string
-		if releases[i].SpotifyID != nil {
-			spotifyID = *releases[i].SpotifyID
-		}
-		if releases[i].DeezerID != nil {
-			deezerID = *releases[i].DeezerID
-		}
-
 		row = append(row,
 			releases[i].Title,
 			releases[i].Type,
 			fmt.Sprintf("%v", releases[i].Explicit),
-			*releases[i].ItunesID,
-			spotifyID,
-			deezerID,
+			releases[i].SpotifyID,
 		)
 		table.Append(row)
 	}
