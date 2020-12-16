@@ -15,6 +15,7 @@ type InternalRelease struct {
 	SpotifyID   string    `json:"spotify_id"   db:"spotify_id"`
 	Type        string    `json:"type"         db:"type"`
 	DurationMs  int64     `json:"duration_ms"  db:"duration_ms"`
+	ID          uint64    `json:"id"           db:"id"`
 	ArtistID    int64     `json:"artist_id"    db:"artist_id"`
 	TracksCount int32     `json:"tracks_count" db:"tracks_count"`
 	IsExplicit  bool      `json:"explicit"     db:"is_explicit"`
@@ -35,6 +36,7 @@ type GetInternalReleaseOpts struct {
 
 func (mgr *AppDatabaseMgr) GetInternalReleases(opts *GetInternalReleaseOpts) ([]*InternalRelease, error) {
 	query := sq.Select(
+		"releases.id",
 		"releases.artist_id",
 		"artists.name AS artist_name",
 		"releases.released",

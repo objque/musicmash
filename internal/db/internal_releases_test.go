@@ -42,6 +42,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 3)
 	// releases are sort by release date desc
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
@@ -51,6 +52,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All() {
 	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.True(t.T(), rels[0].IsExplicit)
 
+	assert.NotEmpty(t.T(), rels[1].ID)
 	assert.Equal(t.T(), int64(1), rels[1].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[1].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[1].Poster)
@@ -60,6 +62,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All() {
 	assert.Equal(t.T(), int64(25), rels[1].DurationMs)
 	assert.False(t.T(), rels[1].IsExplicit)
 
+	assert.NotEmpty(t.T(), rels[2].ID)
 	assert.Equal(t.T(), int64(2), rels[2].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseRitaOraLouder, rels[2].Title)
 	assert.Equal(t.T(), vars.PosterGiant, rels[2].Poster)
@@ -83,6 +86,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All_ChangeSortType() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 3)
 	// releases are sort by release date ASC!
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(2), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseRitaOraLouder, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
@@ -92,6 +96,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All_ChangeSortType() {
 	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
 	assert.True(t.T(), rels[0].IsExplicit)
 
+	assert.NotEmpty(t.T(), rels[1].ID)
 	assert.Equal(t.T(), int64(1), rels[1].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[1].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[1].Poster)
@@ -101,6 +106,7 @@ func (t *testDBSuite) TestInternalReleases_Get_All_ChangeSortType() {
 	assert.Equal(t.T(), int64(25), rels[1].DurationMs)
 	assert.False(t.T(), rels[1].IsExplicit)
 
+	assert.NotEmpty(t.T(), rels[2].ID)
 	assert.Equal(t.T(), int64(1), rels[2].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, rels[2].Title)
 	assert.Equal(t.T(), vars.PosterSimple, rels[2].Poster)
@@ -124,6 +130,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByLimit() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
@@ -148,6 +155,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterBy_LimitAndOffset() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)
@@ -171,6 +179,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByArtistID() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(2), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseRitaOraLouder, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
@@ -194,6 +203,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByArtistID_ReleaseType() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)
@@ -217,6 +227,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterBySince() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseAlgorithmFloatingIP, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterSimple, rels[0].Poster)
@@ -240,6 +251,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByTill() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(2), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseRitaOraLouder, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
@@ -265,6 +277,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterBy_SinceAndTill() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(2), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseRitaOraLouder, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterGiant, rels[0].Poster)
@@ -289,6 +302,7 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterBy_Explicit() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), rels, 1)
 	// releases are sort by release date desc
+	assert.NotEmpty(t.T(), rels[0].ID)
 	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
 	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[0].Title)
 	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)

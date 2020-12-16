@@ -22,6 +22,7 @@ func (t *testDBSuite) TestReleases_EnsureExists() {
 	releases, err := Mgr.GetAllReleases()
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
+	assert.NotEmpty(t.T(), releases[0].ID)
 	assert.True(t.T(), releases[0].Explicit)
 	assert.Equal(t.T(), int32(10), releases[0].TracksCount)
 	assert.Equal(t.T(), int64(25), releases[0].DurationMs)
@@ -51,6 +52,7 @@ func (t *testDBSuite) TestReleases_FindReleases() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), releases, 1)
+	assert.NotEmpty(t.T(), releases[0].ID)
 	assert.Equal(t.T(), int64(1), releases[0].ArtistID)
 	assert.Equal(t.T(), vars.ArtistAlgorithm, releases[0].Title)
 	assert.True(t.T(), releases[0].Explicit)
