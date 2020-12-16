@@ -1,23 +1,22 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
 )
 
 type ReleaseNotification struct {
-	ArtistID   int64          `db:"artist_id"`
-	ArtistName string         `db:"artist_name"`
-	CreatedAt  time.Time      `db:"created_at"`
-	Released   time.Time      `db:"released"`
-	Poster     sql.NullString `db:"poster"`
-	Title      string         `db:"title"`
-	UserName   string         `db:"user_name"`
-	SpotifyID  string         `db:"spotify_id"`
-	Type       string         `db:"type"`
-	IsExplicit bool           `db:"is_explicit"`
+	ArtistID   int64     `db:"artist_id"`
+	ArtistName string    `db:"artist_name"`
+	CreatedAt  time.Time `db:"created_at"`
+	Released   time.Time `db:"released"`
+	Poster     string    `db:"poster"`
+	Title      string    `db:"title"`
+	UserName   string    `db:"user_name"`
+	SpotifyID  string    `db:"spotify_id"`
+	Type       string    `db:"type"`
+	IsExplicit bool      `db:"is_explicit"`
 }
 
 func (mgr *AppDatabaseMgr) GetReleaseNotifications(since time.Time) ([]*ReleaseNotification, error) {

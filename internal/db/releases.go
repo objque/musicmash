@@ -6,18 +6,18 @@ import (
 )
 
 type Release struct {
-	ID          uint64         `db:"id"`
-	CreatedAt   time.Time      `db:"created_at"`
-	ArtistID    int64          `db:"artist_id"`
-	Type        string         `db:"type"`
-	TracksCount int32          `db:"tracks_count"`
-	DurationMs  int64          `db:"duration_ms"`
-	Title       string         `db:"title"`
-	Released    time.Time      `db:"released"`
-	Explicit    bool           `db:"is_explicit"`
-	Popularity  sql.NullInt32  `db:"popularity"`
-	Poster      sql.NullString `db:"poster"`
-	SpotifyID   string         `db:"spotify_id"`
+	ID          uint64        `db:"id"`
+	CreatedAt   time.Time     `db:"created_at"`
+	ArtistID    int64         `db:"artist_id"`
+	Type        string        `db:"type"`
+	TracksCount int32         `db:"tracks_count"`
+	DurationMs  int64         `db:"duration_ms"`
+	Title       string        `db:"title"`
+	Released    time.Time     `db:"released"`
+	Explicit    bool          `db:"is_explicit"`
+	Popularity  sql.NullInt32 `db:"popularity"`
+	Poster      string        `db:"poster"`
+	SpotifyID   string        `db:"spotify_id"`
 }
 
 func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {

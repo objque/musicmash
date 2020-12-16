@@ -1,7 +1,6 @@
 package db
 
 import (
-	"database/sql"
 	"time"
 
 	"github.com/musicmash/musicmash/internal/testutils/vars"
@@ -22,10 +21,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 		// this oldest release wont be in output
 		CreatedAt: time.Now().UTC().AddDate(0, -1, 0),
 		ArtistID:  1,
-		Poster: sql.NullString{
-			String: vars.PosterSimple,
-			Valid:  true,
-		},
+		Poster:    vars.PosterSimple,
 		Title:     vars.ReleaseSkrillexHumble,
 		Released:  time.Now().UTC().AddDate(0, -1, 0),
 		SpotifyID: "a74ea049-22e3-4cf4-b21d",
@@ -35,10 +31,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 		// this oldest release wont be in output as previous
 		CreatedAt: time.Now().UTC().AddDate(0, 0, -15),
 		ArtistID:  1,
-		Poster: sql.NullString{
-			String: vars.PosterGiant,
-			Valid:  true,
-		},
+		Poster:    vars.PosterGiant,
 		Title:     vars.ReleaseRitaOraLouder,
 		Released:  time.Now().UTC().AddDate(0, 0, -15),
 		SpotifyID: "11526f06-43ca-4892-9638",
@@ -49,10 +42,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 		// this future release have to be in output
 		CreatedAt: time.Now().UTC().AddDate(0, 10, 0),
 		ArtistID:  1,
-		Poster: sql.NullString{
-			String: vars.PosterMiddle,
-			Valid:  true,
-		},
+		Poster:    vars.PosterMiddle,
 		Title:     vars.ReleaseArchitectsNaySayer,
 		Released:  time.Now().UTC().AddDate(0, 10, 0),
 		SpotifyID: "b7f6b07e-1691-4109-b36d",
@@ -62,10 +52,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 		// this future release have to be in output as previous
 		CreatedAt: time.Now().UTC().AddDate(1, 0, 0),
 		ArtistID:  2,
-		Poster: sql.NullString{
-			String: vars.PosterSmall,
-			Valid:  true,
-		},
+		Poster:    vars.PosterSmall,
 		Title:     vars.ReleaseSkrillexHumble,
 		Released:  time.Now().UTC().AddDate(1, 0, 0),
 		SpotifyID: "28cf0630-1f6c-4668-86ad",
@@ -84,7 +71,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 	assert.Equal(t.T(), vars.UserBot, release.UserName)
 	assert.Equal(t.T(), int64(1), release.ArtistID)
 	assert.Equal(t.T(), vars.ArtistArchitects, release.ArtistName)
-	assert.Equal(t.T(), vars.PosterMiddle, release.Poster.String)
+	assert.Equal(t.T(), vars.PosterMiddle, release.Poster)
 	assert.Equal(t.T(), "b7f6b07e-1691-4109-b36d", release.SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, release.Type)
 	assert.False(t.T(), release.IsExplicit)
@@ -93,7 +80,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 	assert.Equal(t.T(), vars.UserObjque, release.UserName)
 	assert.Equal(t.T(), int64(1), release.ArtistID)
 	assert.Equal(t.T(), vars.ArtistArchitects, release.ArtistName)
-	assert.Equal(t.T(), vars.PosterMiddle, release.Poster.String)
+	assert.Equal(t.T(), vars.PosterMiddle, release.Poster)
 	assert.Equal(t.T(), "b7f6b07e-1691-4109-b36d", release.SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, release.Type)
 	assert.False(t.T(), release.IsExplicit)
@@ -102,7 +89,7 @@ func (t *testDBSuite) TestReleaseNotifications() {
 	assert.Equal(t.T(), vars.UserObjque, release.UserName)
 	assert.Equal(t.T(), int64(2), release.ArtistID)
 	assert.Equal(t.T(), vars.ArtistSkrillex, release.ArtistName)
-	assert.Equal(t.T(), vars.PosterSmall, release.Poster.String)
+	assert.Equal(t.T(), vars.PosterSmall, release.Poster)
 	assert.Equal(t.T(), "28cf0630-1f6c-4668-86ad", release.SpotifyID)
 	assert.Equal(t.T(), vars.ReleaseTypeAlbum, release.Type)
 	assert.True(t.T(), release.IsExplicit)
