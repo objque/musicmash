@@ -17,7 +17,7 @@ type InternalRelease struct {
 	Title       string    `json:"title"        db:"title"`
 	SpotifyID   string    `json:"spotify_id"   db:"spotify_id"`
 	Type        string    `json:"type"         db:"type"`
-	IsExplicit  bool      `json:"is_explicit"  db:"is_explicit"`
+	IsExplicit  bool      `json:"explicit"     db:"is_explicit"`
 }
 
 type GetInternalReleaseOpts struct {
