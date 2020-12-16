@@ -44,17 +44,7 @@ func (mgr *AppDatabaseMgr) GetInternalReleases(opts *GetInternalReleaseOpts) ([]
 		"releases.is_explicit",
 		"releases.spotify_id").
 		From("releases").
-		LeftJoin("artists ON (releases.artist_id = artists.id)").
-		GroupBy(
-			"releases.artist_id",
-			"artist_name",
-			"releases.released",
-			"releases.poster",
-			"releases.title",
-			"releases.type",
-			"releases.is_explicit",
-			"spotify_id",
-		)
+		LeftJoin("artists ON (releases.artist_id = artists.id)")
 
 	if opts != nil {
 		query = applyInternalReleasesFilters(query, opts)
