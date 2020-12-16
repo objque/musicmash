@@ -8,15 +8,15 @@ import (
 )
 
 type InternalRelease struct {
-	ArtistID    int64     `json:"artist_id"    db:"artist_id"`
-	ArtistName  string    `json:"artist_name"  db:"artist_name"`
 	Released    time.Time `json:"released"     db:"released"`
-	TracksCount int32     `json:"tracks_count" db:"tracks_count"`
-	DurationMs  int64     `json:"duration_ms"  db:"duration_ms"`
+	ArtistName  string    `json:"artist_name"  db:"artist_name"`
 	Poster      string    `json:"poster"       db:"poster"`
 	Title       string    `json:"title"        db:"title"`
 	SpotifyID   string    `json:"spotify_id"   db:"spotify_id"`
 	Type        string    `json:"type"         db:"type"`
+	DurationMs  int64     `json:"duration_ms"  db:"duration_ms"`
+	ArtistID    int64     `json:"artist_id"    db:"artist_id"`
+	TracksCount int32     `json:"tracks_count" db:"tracks_count"`
 	IsExplicit  bool      `json:"explicit"     db:"is_explicit"`
 }
 
