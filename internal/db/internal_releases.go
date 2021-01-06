@@ -99,7 +99,10 @@ func applyInternalReleasesFilters(query sq.SelectBuilder, opts *GetInternalRelea
 
 	if opts.SortType != "" {
 		// OrderByClause method generates incorrect query and we can't pass ASC/DESC as an arg
-		query = query.OrderBy(fmt.Sprintf("releases.released %v", opts.SortType))
+		query = query.OrderBy(
+			fmt.Sprintf("releases.released %v", opts.SortType),
+			fmt.Sprintf("releases.id %v", opts.SortType),
+		)
 	}
 
 	if opts.Offset != nil {
