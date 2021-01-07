@@ -40,6 +40,16 @@ func (rc *ReleasesController) getReleases(w http.ResponseWriter, r *http.Request
 	opts.UserName, _ = GetUser(r)
 
 	// todo: extract all query parsers
+	if v := r.URL.Query().Get("before"); v != "" {
+		before, err := strconv.ParseUint(v, 10, 32)
+		if err != nil {
+			httputils.WriteError(w, errors.New("before must be int and greater than 0"))
+			return
+		}
+
+		opts.Before = &before
+	}
+
 	if v := r.URL.Query().Get("offset"); v != "" {
 		offset, err := strconv.ParseUint(v, 10, 32)
 		if err != nil {

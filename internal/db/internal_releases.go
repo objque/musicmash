@@ -22,6 +22,7 @@ type InternalRelease struct {
 }
 
 type GetInternalReleaseOpts struct {
+	Before      *uint64
 	Limit       *uint64
 	Offset      *uint64
 	ArtistID    *int64
@@ -67,6 +68,7 @@ func (mgr *AppDatabaseMgr) GetInternalReleases(opts *GetInternalReleaseOpts) ([]
 	return releases, nil
 }
 
+//nolint:gocognit
 func applyInternalReleasesFilters(query sq.SelectBuilder, opts *GetInternalReleaseOpts) sq.SelectBuilder {
 	// we should choose only one filter for artists: artist_id or user subscriptions
 	if opts.ArtistID != nil {
@@ -95,6 +97,10 @@ func applyInternalReleasesFilters(query sq.SelectBuilder, opts *GetInternalRelea
 
 	if opts.Explicit != nil {
 		query = query.Where("releases.is_explicit = ?", *opts.Explicit)
+	}
+
+	if opts.Before != nil {
+		query = query.Where("releases.id <= ?", *opts.Before)
 	}
 
 	if opts.SortType != "" {

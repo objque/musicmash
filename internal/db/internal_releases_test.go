@@ -144,9 +144,15 @@ func (t *testDBSuite) TestInternalReleases_Get_FilterByLimit() {
 func (t *testDBSuite) TestInternalReleases_Get_FilterBy_LimitAndOffset() {
 	// arrange
 	t.prepareReleasesTestCase()
+	rels, err := Mgr.GetInternalReleases(&GetInternalReleaseOpts{
+		SortType: "desc",
+	})
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), rels, 3)
 
 	// action
-	rels, err := Mgr.GetInternalReleases(&GetInternalReleaseOpts{
+	rels, err = Mgr.GetInternalReleases(&GetInternalReleaseOpts{
+		Before:   &rels[2].ID,
 		Limit:    ptr.Uint(1),
 		Offset:   ptr.Uint(1),
 		SortType: "desc",

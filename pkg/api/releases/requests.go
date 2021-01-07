@@ -15,6 +15,7 @@ const (
 )
 
 type GetOptions struct {
+	Before      *uint64
 	Limit       *uint64
 	Offset      *uint64
 	ArtistID    *int64
@@ -28,6 +29,10 @@ type GetOptions struct {
 
 func buildValues(opts *GetOptions) *url.Values {
 	values := url.Values{}
+
+	if opts.Before != nil {
+		values.Set("before", fmt.Sprintf("%v", *opts.Before))
+	}
 
 	if opts.Limit != nil {
 		values.Set("limit", fmt.Sprintf("%v", *opts.Limit))

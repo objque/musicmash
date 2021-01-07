@@ -138,9 +138,13 @@ func (t *testAPISuite) TestReleases_Get_FilterByLimit() {
 func (t *testAPISuite) TestReleases_Get_FilterBy_LimitAndOffset() {
 	// arrange
 	t.prepareReleasesTestCase()
+	rels, err := releases.List(t.client, nil)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), rels, 3)
 
 	// action
-	rels, err := releases.List(t.client, &releases.GetOptions{
+	rels, err = releases.List(t.client, &releases.GetOptions{
+		Before: &rels[2].ID, // the oldest release
 		Limit:  ptr.Uint(1),
 		Offset: ptr.Uint(1),
 	})
