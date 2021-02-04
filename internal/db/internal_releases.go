@@ -102,7 +102,7 @@ func applyInternalReleasesFilters(query sq.SelectBuilder, opts *GetInternalRelea
 	}
 
 	if opts.Before != nil {
-		query = query.Where("releases.id <= ?", *opts.Before)
+		query = query.Where("releases.id < ?", *opts.Before)
 	}
 
 	if opts.SortType != "" {
