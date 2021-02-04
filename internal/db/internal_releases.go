@@ -73,7 +73,9 @@ func applyInternalReleasesFilters(query sq.SelectBuilder, opts *GetInternalRelea
 	// we should choose only one filter for artists: artist_id or user subscriptions
 	if opts.ArtistID != nil {
 		query = query.Where("releases.artist_id = ?", *opts.ArtistID)
-	} else if opts.UserName != "" {
+	}
+
+	if opts.UserName != "" {
 		const format = "SELECT artist_id FROM subscriptions WHERE user_name = '%v'"
 		subQ := fmt.Sprintf(format, opts.UserName)
 		query = query.Where(fmt.Sprintf("releases.artist_id IN (%v)", subQ))
