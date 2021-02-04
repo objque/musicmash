@@ -75,16 +75,6 @@ func (rc *ReleasesController) getReleases(w http.ResponseWriter, r *http.Request
 		opts.Limit = &limit
 	}
 
-	if v := r.URL.Query().Get("artist_id"); v != "" {
-		artistID, err := strconv.ParseInt(v, 10, 64)
-		if err != nil {
-			httputils.WriteError(w, errors.New("artist_id must be int and greater than 0"))
-			return
-		}
-
-		opts.ArtistID = &artistID
-	}
-
 	if v := r.URL.Query().Get("explicit"); v != "" {
 		explicit, err := strconv.ParseBool(v)
 		if err != nil {

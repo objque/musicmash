@@ -18,7 +18,6 @@ type GetOptions struct {
 	Before      *uint64
 	Limit       *uint64
 	Offset      *uint64
-	ArtistID    *int64
 	UserName    string
 	ReleaseType string
 	SortType    string
@@ -40,10 +39,6 @@ func buildValues(opts *GetOptions) *url.Values {
 
 	if opts.Offset != nil {
 		values.Set("offset", fmt.Sprintf("%v", *opts.Offset))
-	}
-
-	if opts.ArtistID != nil {
-		values.Set("artist_id", fmt.Sprintf("%v", *opts.ArtistID))
 	}
 
 	if opts.ReleaseType != "" {

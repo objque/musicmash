@@ -28,9 +28,8 @@ func NewListCommand() *cobra.Command {
 	renderOpts := render.Options{}
 	// dirty hack cause cobra can't handle nil as default for int like types
 	opts := releases.GetOptions{
-		ArtistID: ptr.Int(0),
-		Offset:   ptr.Uint(0),
-		Limit:    ptr.Uint(100),
+		Offset: ptr.Uint(0),
+		Limit:  ptr.Uint(100),
 	}
 	cmd := &cobra.Command{
 		Use:          "list",
@@ -39,14 +38,9 @@ func NewListCommand() *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			var err error
 
-			// dirty hack cause cobra can't handle nil as default for int like types
-			if *opts.ArtistID == 0 {
-				opts.ArtistID = nil
-
-				// if artist_id not provided, also set limit for since
-				if opts.Since != nil {
-					since = now.BeginningOfWeek().Format("2006-01-02")
-				}
+			// if artist_id not provided, also set limit for since
+			if opts.Since != nil {
+				since = now.BeginningOfWeek().Format("2006-01-02")
 			}
 
 			if opts.Since, err = parseDate(since); since != "" && err != nil {
@@ -70,7 +64,6 @@ func NewListCommand() *cobra.Command {
 	flags := cmd.Flags()
 	flags.Uint64Var(opts.Limit, "limit", 100, "Limit of rows")
 	flags.Uint64Var(opts.Offset, "offset", 0, "Offset for rows")
-	flags.Int64Var(opts.ArtistID, "artist", 0, "Filter releases by artist")
 	flags.StringVar(&since, "since", "", "Filter by release date. Format: YYYY-MM-DD")
 	flags.StringVar(&till, "till", "", "Filter by release date. Format: YYYY-MM-DD")
 	flags.StringVar(&opts.SortType, "sort-type", "desc", "Sort type for releases {asc,desc}")
