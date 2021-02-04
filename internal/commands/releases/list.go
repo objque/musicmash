@@ -7,7 +7,6 @@ import (
 	"github.com/jinzhu/now"
 	"github.com/musicmash/musicmash/internal/commands/releases/render"
 	"github.com/musicmash/musicmash/internal/config"
-	"github.com/musicmash/musicmash/internal/utils/ptr"
 	"github.com/musicmash/musicmash/pkg/api"
 	"github.com/musicmash/musicmash/pkg/api/releases"
 	"github.com/spf13/cobra"
@@ -27,10 +26,7 @@ func NewListCommand() *cobra.Command {
 	var since, till string
 	renderOpts := render.Options{}
 	// dirty hack cause cobra can't handle nil as default for int like types
-	opts := releases.GetOptions{
-		Offset: ptr.Uint(0),
-		Limit:  ptr.Uint(100),
-	}
+	opts := releases.GetOptions{}
 	cmd := &cobra.Command{
 		Use:          "list",
 		Short:        "List of releases with powerful filters",
@@ -63,7 +59,6 @@ func NewListCommand() *cobra.Command {
 
 	flags := cmd.Flags()
 	flags.Uint64Var(opts.Limit, "limit", 100, "Limit of rows")
-	flags.Uint64Var(opts.Offset, "offset", 0, "Offset for rows")
 	flags.StringVar(&since, "since", "", "Filter by release date. Format: YYYY-MM-DD")
 	flags.StringVar(&till, "till", "", "Filter by release date. Format: YYYY-MM-DD")
 	flags.StringVar(&opts.SortType, "sort-type", "desc", "Sort type for releases {asc,desc}")

@@ -24,7 +24,6 @@ type InternalRelease struct {
 type GetInternalReleaseOpts struct {
 	Before      *uint64
 	Limit       *uint64
-	Offset      *uint64
 	ArtistID    *int64
 	UserName    string
 	ReleaseType string
@@ -111,10 +110,6 @@ func applyInternalReleasesFilters(query sq.SelectBuilder, opts *GetInternalRelea
 			fmt.Sprintf("releases.released %v", opts.SortType),
 			fmt.Sprintf("releases.id %v", opts.SortType),
 		)
-	}
-
-	if opts.Offset != nil {
-		query = query.Offset(*opts.Offset)
 	}
 
 	if opts.Limit != nil {

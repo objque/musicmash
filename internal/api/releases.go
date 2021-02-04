@@ -50,16 +50,6 @@ func (rc *ReleasesController) getReleases(w http.ResponseWriter, r *http.Request
 		opts.Before = &before
 	}
 
-	if v := r.URL.Query().Get("offset"); v != "" {
-		offset, err := strconv.ParseUint(v, 10, 32)
-		if err != nil {
-			httputils.WriteError(w, errors.New("offset must be int and greater than 0"))
-			return
-		}
-
-		opts.Offset = &offset
-	}
-
 	if v := r.URL.Query().Get("limit"); v != "" {
 		limit, err := strconv.ParseUint(v, 10, 32)
 		if err != nil {

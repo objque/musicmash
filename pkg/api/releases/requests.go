@@ -17,7 +17,6 @@ const (
 type GetOptions struct {
 	Before      *uint64
 	Limit       *uint64
-	Offset      *uint64
 	UserName    string
 	ReleaseType string
 	SortType    string
@@ -35,10 +34,6 @@ func buildValues(opts *GetOptions) *url.Values {
 
 	if opts.Limit != nil {
 		values.Set("limit", fmt.Sprintf("%v", *opts.Limit))
-	}
-
-	if opts.Offset != nil {
-		values.Set("offset", fmt.Sprintf("%v", *opts.Offset))
 	}
 
 	if opts.ReleaseType != "" {

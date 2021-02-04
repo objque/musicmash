@@ -135,33 +135,6 @@ func (t *testAPISuite) TestReleases_Get_FilterByLimit() {
 	assert.True(t.T(), rels[0].Explicit)
 }
 
-func (t *testAPISuite) TestReleases_Get_FilterBy_LimitAndOffset() {
-	// arrange
-	t.prepareReleasesTestCase()
-	rels, err := releases.List(t.client, nil)
-	assert.NoError(t.T(), err)
-	assert.Len(t.T(), rels, 3)
-
-	// action
-	rels, err = releases.List(t.client, &releases.GetOptions{
-		Before: &rels[2].ID, // the oldest release
-		Limit:  ptr.Uint(1),
-		Offset: ptr.Uint(1),
-	})
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Len(t.T(), rels, 1)
-	assert.Equal(t.T(), int64(1), rels[0].ArtistID)
-	assert.Equal(t.T(), vars.ReleaseArchitectsHollyHell, rels[0].Title)
-	assert.Equal(t.T(), vars.PosterMiddle, rels[0].Poster)
-	assert.Equal(t.T(), "1100", rels[0].SpotifyID)
-	assert.Equal(t.T(), vars.ReleaseTypeSong, rels[0].Type)
-	assert.Equal(t.T(), int32(10), rels[0].TracksCount)
-	assert.Equal(t.T(), int64(25), rels[0].DurationMs)
-	assert.False(t.T(), rels[0].Explicit)
-}
-
 func (t *testAPISuite) TestReleases_Get_FilterByArtistID_ReleaseType() {
 	// arrange
 	t.prepareReleasesTestCase()
