@@ -1,6 +1,7 @@
 package db
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -8,17 +9,49 @@ import (
 )
 
 type InternalRelease struct {
-	Released    time.Time `json:"released"     db:"released"`
-	ArtistName  string    `json:"artist_name"  db:"artist_name"`
-	Poster      string    `json:"poster"       db:"poster"`
-	Title       string    `json:"title"        db:"title"`
-	SpotifyID   string    `json:"spotify_id"   db:"spotify_id"`
-	Type        string    `json:"type"         db:"type"`
-	DurationMs  int64     `json:"duration_ms"  db:"duration_ms"`
-	ID          uint64    `json:"id"           db:"id"`
-	ArtistID    int64     `json:"artist_id"    db:"artist_id"`
-	TracksCount int32     `json:"tracks_count" db:"tracks_count"`
-	IsExplicit  bool      `json:"explicit"     db:"is_explicit"`
+	Released    time.Time `db:"released"`
+	ReleaseDate string    `db:"-"`
+	ArtistName  string    `db:"artist_name"`
+	Poster      string    `db:"poster"`
+	Title       string    `db:"title"`
+	SpotifyID   string    `db:"spotify_id"`
+	Type        string    `db:"type"`
+	DurationMs  int64     `db:"duration_ms"`
+	ID          uint64    `db:"id"`
+	ArtistID    int64     `db:"artist_id"`
+	TracksCount int32     `db:"tracks_count"`
+	IsExplicit  bool      `db:"is_explicit"`
+}
+
+func (r *InternalRelease) MarshalJSON() ([]byte, error) {
+	// TODO (m.kalinin): extract custom marshaler into repository package
+	var release = struct {
+		Released    string `json:"released"`
+		ArtistName  string `json:"artist_name"`
+		Poster      string `json:"poster"`
+		Title       string `json:"title"`
+		SpotifyID   string `json:"spotify_id"`
+		Type        string `json:"type"`
+		DurationMs  int64  `json:"duration_ms"`
+		ID          uint64 `json:"id"`
+		ArtistID    int64  `json:"artist_id"`
+		TracksCount int32  `json:"tracks_count"`
+		IsExplicit  bool   `json:"explicit"`
+	}{
+		Released:    r.Released.Format("2006-01-02"),
+		ArtistName:  r.ArtistName,
+		Poster:      r.Poster,
+		Title:       r.Title,
+		SpotifyID:   r.SpotifyID,
+		Type:        r.Type,
+		DurationMs:  r.DurationMs,
+		ID:          r.ID,
+		ArtistID:    r.ArtistID,
+		TracksCount: r.TracksCount,
+		IsExplicit:  r.IsExplicit,
+	}
+
+	return json.Marshal(&release)
 }
 
 type GetInternalReleaseOpts struct {
