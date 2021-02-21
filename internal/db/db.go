@@ -124,7 +124,7 @@ func (mgr *AppDatabaseMgr) ApplyMigrations(pathToMigrations string) error {
 		return nil
 	}
 	if err != nil {
-		return fmt.Errorf("can't apply migrations: %w", err)
+		return fmt.Errorf("can't apply up migrations: %w", err)
 	}
 
 	return nil
@@ -142,7 +142,7 @@ func (mgr *AppDatabaseMgr) DropAllTablesViaMigrations(pathToMigrations string) e
 	}
 
 	if err = m.Down(); err != nil {
-		return fmt.Errorf("can't apply migrations: %w", err)
+		return fmt.Errorf("can't apply down migrations: %w", err)
 	}
 
 	return nil
