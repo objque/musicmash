@@ -12,7 +12,7 @@ import (
 
 type GetOptions struct {
 	Limit    *uint64
-	Offset   *uint64
+	Before   *uint64
 	SortType string
 }
 
@@ -27,8 +27,8 @@ func buildValues(opts *GetOptions) *url.Values {
 		values.Set("limit", fmt.Sprintf("%v", *opts.Limit))
 	}
 
-	if opts.Offset != nil {
-		values.Set("offset", fmt.Sprintf("%v", *opts.Offset))
+	if opts.Before != nil {
+		values.Set("before", fmt.Sprintf("%v", *opts.Before))
 	}
 
 	return &values

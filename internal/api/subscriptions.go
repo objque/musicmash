@@ -84,15 +84,15 @@ func (c *SubscriptionsController) listSubscriptions(w http.ResponseWriter, r *ht
 	}
 
 	// todo: extract all query parsers
-	if v := r.URL.Query().Get("offset"); v != "" {
+	if v := r.URL.Query().Get("before"); v != "" {
 		//nolint:govet
-		offset, err := strconv.ParseUint(v, 10, 32)
+		before, err := strconv.ParseUint(v, 10, 32)
 		if err != nil {
-			httputils.WriteError(w, errors.New("offset must be int and greater than 0"))
+			httputils.WriteError(w, errors.New("before must be int and greater than 0"))
 			return
 		}
 
-		opts.Offset = &offset
+		opts.Before = &before
 	}
 
 	if v := r.URL.Query().Get("limit"); v != "" {

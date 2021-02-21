@@ -16,7 +16,7 @@ func NewListCommand() *cobra.Command {
 	var showPoster bool
 	// dirty hack cause cobra can't handle nil as default for int like types
 	opts := subscriptions.GetOptions{
-		Offset: ptr.Uint(0),
+		Before: ptr.Uint(0),
 		Limit:  ptr.Uint(100),
 	}
 	cmd := &cobra.Command{
@@ -44,6 +44,6 @@ func NewListCommand() *cobra.Command {
 	flags.BoolVar(&showPoster, "show-poster", showPoster, "Show poster column")
 	flags.StringVar(&opts.SortType, "sort-type", "asc", "Sort type for subscriptions.artist_id {asc,desc}")
 	flags.Uint64Var(opts.Limit, "limit", 100, "Limit of rows")
-	flags.Uint64Var(opts.Offset, "offset", 0, "Offset for rows")
+	flags.Uint64Var(opts.Before, "before", 0, "Show subscriptions before given subscription.id")
 	return cmd
 }

@@ -19,18 +19,18 @@ type Subscription struct {
 
 type GetSubscriptionsOpts struct {
 	Limit    *uint64
-	Offset   *uint64
+	Before   *uint64
 	SortType string
 }
 
 func applySubscriptionsFilters(query sq.SelectBuilder, opts *GetSubscriptionsOpts) sq.SelectBuilder {
 	if opts.SortType != "" {
 		// OrderByClause method generates incorrect query and we can't pass ASC/DESC as an arg
-		query = query.OrderBy(fmt.Sprintf("subscriptions.artist_id %v", opts.SortType))
+		query = query.OrderBy(fmt.Sprintf("subscriptions.id %v", opts.SortType))
 	}
 
-	if opts.Offset != nil {
-		query = query.Offset(*opts.Offset)
+	if opts.Before != nil {
+		query = query.Where("subscriptions.id < ?", *opts.Before)
 	}
 
 	if opts.Limit != nil {
