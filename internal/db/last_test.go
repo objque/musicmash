@@ -1,64 +1,54 @@
 package db
 
 import (
-	"testing"
 	"time"
 
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_LastAction_Get(t *testing.T) {
-	setup()
-	defer teardown()
+const ActionFetch = "fetch"
 
+func (t *testDBSuite) TestLastAction_Get() {
 	// arrange
-	last := time.Now().UTC()
-	assert.NoError(t, DbMgr.SetLastActionDate(ActionFetch, last))
+	last := time.Now().UTC().Truncate(time.Minute)
+	assert.NoError(t.T(), Mgr.SetLastActionDate(ActionFetch, last))
 
 	// action
-	res, err := DbMgr.GetLastActionDate(ActionFetch)
+	res, err := Mgr.GetLastActionDate(ActionFetch)
 
 	// assert
-	assert.NoError(t, err)
-	assert.Equal(t, last, res.Date)
+	assert.NoError(t.T(), err)
+	assert.Equal(t.T(), last, res.Date.UTC())
 }
 
-func TestDB_LastAction_Set(t *testing.T) {
-	setup()
-	defer teardown()
+func (t *testDBSuite) TestLastAction_Set() {
+	// action
+	now := time.Now().UTC().Truncate(time.Minute)
+	err := Mgr.SetLastActionDate(ActionFetch, now)
+
+	// assert
+	assert.NoError(t.T(), err)
+}
+
+func (t *testDBSuite) TestLastAction_Update() {
+	// arrange
+	assert.NoError(t.T(), Mgr.SetLastActionDate(ActionFetch, time.Now()))
 
 	// action
-	err := DbMgr.SetLastActionDate(ActionFetch, time.Now().UTC())
+	now := time.Now().UTC().Truncate(time.Minute)
+	err := Mgr.SetLastActionDate(ActionFetch, now)
 
 	// assert
-	assert.NoError(t, err)
+	assert.NoError(t.T(), err)
+	last, err := Mgr.GetLastActionDate(ActionFetch)
+	assert.NoError(t.T(), err)
+	assert.Equal(t.T(), last.Date.UTC(), now)
 }
 
-func TestDB_LastAction_Update(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestLastAction_NotFound() {
 	// arrange
-	assert.NoError(t, DbMgr.SetLastActionDate(ActionFetch, time.Now()))
-
-	// action
-	n := time.Now().UTC()
-	err := DbMgr.SetLastActionDate(ActionFetch, n)
+	_, err := Mgr.GetLastActionDate(ActionFetch)
 
 	// assert
-	assert.NoError(t, err)
-	last, err := DbMgr.GetLastActionDate(ActionFetch)
-	assert.NoError(t, err)
-	assert.Equal(t, last.Date, n)
-}
-
-func TestDB_LastAction_NotFound(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// arrange
-	_, err := DbMgr.GetLastActionDate(ActionFetch)
-
-	// assert
-	assert.Error(t, err)
+	assert.Error(t.T(), err)
 }

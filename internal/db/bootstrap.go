@@ -1,36 +1,54 @@
 package db
 
 import (
-	"github.com/jinzhu/gorm"
+	"fmt"
+	"os"
+	"strconv"
+
+	"github.com/jmoiron/sqlx"
 	"github.com/musicmash/musicmash/internal/config"
-	"github.com/musicmash/musicmash/internal/log"
 	"github.com/pkg/errors"
 )
 
-func initDB(dialect, args string, logging bool) *gorm.DB {
-	db, err := gorm.Open(dialect, args)
+//nolint:godox
+// TODO (m.kalinin): replace with config values
+const (
+	maxIdleConns = 10
+	maxOpenConns = 100
+)
+
+func initDB(dialect, args string) *sqlx.DB {
+	db, err := sqlx.Open(dialect, args)
 	if err != nil {
 		panic(errors.Wrapf(err, "tried to open connection to %s", dialect))
 	}
 
-	if logging {
-		db = db.LogMode(true)
-		db.SetLogger(gorm.Logger{LogWriter: log.GetLogger()})
-	}
+	db.SetMaxIdleConns(maxIdleConns)
+	db.SetMaxOpenConns(maxOpenConns)
 
-	db.DB().SetMaxIdleConns(10)
-	db.DB().SetMaxOpenConns(100)
-	if err = db.Error; err != nil {
-		panic(errors.Wrap(err, "Error configure database"))
-	}
 	return db
 }
 
-func InitFake() *gorm.DB {
-	return initDB("sqlite3", ":memory:", false)
+func InitFake() *sqlx.DB {
+	conf := config.DBConfig{
+		Host:  os.Getenv("TEST_DB_HOST"),
+		Name:  os.Getenv("TEST_DB_NAME"),
+		Login: os.Getenv("TEST_DB_USER"),
+		Pass:  os.Getenv("TEST_DB_PASSWORD"),
+	}
+
+	if port := os.Getenv("TEST_DB_PORT"); port != "" {
+		value, err := strconv.Atoi(port)
+		if err != nil {
+			panic(fmt.Sprintf("can't parse port value '%v' as int", value))
+		}
+
+		conf.Port = value
+	}
+
+	return InitMain(conf.GetConnString())
 }
 
-func InitMain() *gorm.DB {
-	dialect, args := config.Config.DB.GetConnString()
-	return initDB(dialect, args, config.Config.DB.Log)
+func InitMain(args string) *sqlx.DB {
+	return initDB("postgres", args)
 }

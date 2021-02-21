@@ -1,34 +1,79 @@
 package releases
 
 import (
-	"encoding/json"
 	"fmt"
 	"net/http"
+	"net/url"
 	"time"
 
 	"github.com/musicmash/musicmash/pkg/api"
 )
 
-func Get(provider *api.Provider, since time.Time) ([]*Release, error) {
-	url := fmt.Sprintf("%s/releases?since=%s", provider.URL, since.Format("2006-01-02T15:04:05"))
-	request, err := http.NewRequest(http.MethodGet, url, nil)
-	if err != nil {
+const (
+	SortTypeASC  = "asc"
+	SortTypeDESC = "desc"
+)
+
+type GetOptions struct {
+	Before      *uint64
+	Limit       *uint64
+	UserName    string
+	ReleaseType string
+	SortType    string
+	Explicit    *bool
+	Since       *time.Time
+	Till        *time.Time
+}
+
+func buildValues(opts *GetOptions) *url.Values {
+	values := url.Values{}
+
+	if opts.Before != nil {
+		values.Set("before", fmt.Sprintf("%v", *opts.Before))
+	}
+
+	if opts.Limit != nil {
+		values.Set("limit", fmt.Sprintf("%v", *opts.Limit))
+	}
+
+	if opts.ReleaseType != "" {
+		values.Set("type", opts.ReleaseType)
+	}
+
+	if opts.Explicit != nil {
+		values.Set("explicit", fmt.Sprintf("%v", *opts.Explicit))
+	}
+
+	if opts.SortType != "" {
+		values.Set("sort_type", opts.SortType)
+	}
+
+	if opts.Since != nil {
+		values.Set("since", opts.Since.Format("2006-01-02"))
+	}
+
+	if opts.Till != nil {
+		values.Set("till", opts.Till.Format("2006-01-02"))
+	}
+
+	return &values
+}
+
+func List(provider *api.Provider, opts *GetOptions) ([]*Release, error) {
+	u, _ := url.ParseRequestURI(fmt.Sprintf("%s/releases", provider.URL))
+	headers := http.Header{}
+	if opts != nil {
+		u.RawQuery = buildValues(opts).Encode()
+
+		if opts.UserName != "" {
+			headers.Set("x-user-name", opts.UserName)
+		}
+	}
+
+	releases := []*Release{}
+	if err := api.GetWithHeaders(provider, u, headers, &releases); err != nil {
 		return nil, err
 	}
 
-	resp, err := provider.Client.Do(request)
-	if err != nil {
-		return nil, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode >= http.StatusBadRequest {
-		return nil, fmt.Errorf("got %d status code", resp.StatusCode)
-	}
-
-	release := []*Release{}
-	if err := json.NewDecoder(resp.Body).Decode(&release); err != nil {
-		return nil, err
-	}
-	return release, nil
+	return releases, nil
 }

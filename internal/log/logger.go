@@ -4,8 +4,9 @@ import (
 	"fmt"
 	"runtime"
 	"strings"
+	"time"
 
-	raven "github.com/getsentry/raven-go"
+	sentry "github.com/getsentry/sentry-go"
 	"github.com/sirupsen/logrus"
 )
 
@@ -65,34 +66,37 @@ func Error(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
 	entry.Error(format)
-	raven.CaptureMessage(format, nil)
+	sentry.CaptureMessage(format)
 }
 
 func Errorf(format string, args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format = formatMessageWithFileInfo(format)
 	entry.Errorf(format, args...)
-	raven.CaptureMessage(fmt.Sprintf(format, args...), nil)
+	sentry.CaptureMessage(fmt.Sprintf(format, args...))
 }
 
 func Warn(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
 	entry.Warn(format)
-	raven.CaptureMessage(format, nil)
+	sentry.CaptureMessage(format)
 }
 
 func Warnf(format string, args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format = formatMessageWithFileInfo(format)
 	entry.Warningf(format, args...)
-	raven.CaptureMessage(fmt.Sprintf(format, args...), nil)
+	sentry.CaptureMessage(fmt.Sprintf(format, args...))
 }
 
 func Panic(args ...interface{}) {
 	entry := logger.WithFields(logrus.Fields{})
 	format := formatMessageWithFileInfo(sprintlnn(args...))
-	raven.CaptureMessageAndWait(format, nil)
+	sentry.CaptureMessage(format)
+	if !sentry.Flush(time.Second * 5) {
+		Warn("Sentry flush timeout")
+	}
 	entry.Panic(format)
 }
 

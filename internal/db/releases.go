@@ -1,61 +1,64 @@
 package db
 
 import (
+	"database/sql"
 	"time"
-
-	"github.com/jinzhu/gorm"
 )
 
 type Release struct {
-	ID        uint64    `json:"id"`
-	CreatedAt time.Time `json:"-"`
-	ArtistID  int64     `json:"artist_id"`
-	Title     string    `json:"title" gorm:"size:1000"`
-	Poster    string    `json:"poster"`
-	Released  time.Time `gorm:"type:datetime" json:"released"`
-	StoreName string    `gorm:"unique_index:idx_rel_store_name_store_id" json:"store_name"`
-	StoreID   string    `gorm:"unique_index:idx_rel_store_name_store_id" json:"store_id"`
-}
-
-type ReleaseMgr interface {
-	EnsureReleaseExists(release *Release) error
-	GetAllReleases() ([]*Release, error)
-	FindReleases(condition map[string]interface{}) ([]*Release, error)
-	FindNewReleases(date time.Time) ([]*Release, error)
-	UpdateRelease(release *Release) error
+	CreatedAt   time.Time     `db:"created_at"`
+	Released    time.Time     `db:"released"`
+	Type        string        `db:"type" `
+	Title       string        `db:"title"`
+	Poster      string        `db:"poster"`
+	SpotifyID   string        `db:"spotify_id"`
+	ID          uint64        `db:"id"`
+	ArtistID    int64         `db:"artist_id"`
+	DurationMs  int64         `db:"duration_ms"`
+	Popularity  sql.NullInt32 `db:"popularity"`
+	TracksCount int32         `db:"tracks_count"`
+	Explicit    bool          `db:"is_explicit"`
 }
 
 func (mgr *AppDatabaseMgr) EnsureReleaseExists(release *Release) error {
+	const query = "select * from releases where spotify_id = $1 limit 1"
+
 	res := Release{}
-	err := mgr.db.Where("store_id = ? and store_name = ?", release.StoreID, release.StoreName).First(&res).Error
-	if gorm.IsRecordNotFoundError(err) {
-		return mgr.db.Create(release).Error
+	err := mgr.newdb.Get(&res, query, release.SpotifyID)
+	if err == sql.ErrNoRows {
+		return mgr.CreateRelease(release)
 	}
 	return err
 }
 
+func (mgr *AppDatabaseMgr) CreateRelease(release *Release) error {
+	const query = "insert into releases (created_at, artist_id, title, poster, released, spotify_id, type, is_explicit, tracks_count, duration_ms) " +
+		"VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10) returning id"
+
+	return mgr.newdb.QueryRow(query, release.CreatedAt, release.ArtistID, release.Title, release.Poster,
+		release.Released, release.SpotifyID, release.Type, release.Explicit, release.TracksCount, release.DurationMs).Scan(&release.ID)
+}
+
 func (mgr *AppDatabaseMgr) GetAllReleases() ([]*Release, error) {
+	const query = "select * from releases"
+
 	var releases = []*Release{}
-	return releases, mgr.db.Find(&releases).Error
-}
-
-func (mgr *AppDatabaseMgr) FindNewReleases(date time.Time) ([]*Release, error) {
-	releases := []*Release{}
-	if err := mgr.db.Where("created_at >= ?", date).Find(&releases).Error; err != nil {
-		return nil, err
-	}
-	return releases, nil
-}
-
-func (mgr *AppDatabaseMgr) FindReleases(condition map[string]interface{}) ([]*Release, error) {
-	releases := []*Release{}
-	err := mgr.db.Where(condition).Find(&releases).Error
+	err := mgr.newdb.Select(&releases, query)
 	if err != nil {
 		return nil, err
 	}
+
 	return releases, nil
 }
 
-func (mgr *AppDatabaseMgr) UpdateRelease(release *Release) error {
-	return mgr.db.Save(release).Error
+func (mgr *AppDatabaseMgr) FindReleases(artistID int64, title string) ([]*Release, error) {
+	const query = "select * from releases where artist_id = $1 and title = $2"
+
+	releases := []*Release{}
+	err := mgr.newdb.Select(&releases, query, artistID, title)
+	if err != nil {
+		return nil, err
+	}
+
+	return releases, nil
 }

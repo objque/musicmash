@@ -1,85 +1,61 @@
 package db
 
 import (
-	"testing"
-
-	"github.com/musicmash/musicmash/internal/testutil"
+	"github.com/musicmash/musicmash/internal/testutils/vars"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestDB_Releases_EnsureExists(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestReleases_EnsureExists() {
 	// action
-	err := DbMgr.EnsureReleaseExists(&Release{
-		StoreName: testutil.StoreDeezer,
-		StoreID:   testutil.StoreApple,
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreDeezer))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
+	err := Mgr.EnsureReleaseExists(&Release{
+		ArtistID:    1,
+		SpotifyID:   vars.StoreApple,
+		Explicit:    true,
+		TracksCount: 10,
+		DurationMs:  25,
 	})
 
 	// assert
-	assert.NoError(t, err)
-	releases, err := DbMgr.GetAllReleases()
-	assert.NoError(t, err)
-	assert.Len(t, releases, 1)
+	assert.NoError(t.T(), err)
+	releases, err := Mgr.GetAllReleases()
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
+	assert.NotEmpty(t.T(), releases[0].ID)
+	assert.True(t.T(), releases[0].Explicit)
+	assert.Equal(t.T(), int32(10), releases[0].TracksCount)
+	assert.Equal(t.T(), int64(25), releases[0].DurationMs)
 }
 
-func TestDB_Releases_FindReleases(t *testing.T) {
-	setup()
-	defer teardown()
-
+func (t *testDBSuite) TestReleases_FindReleases() {
 	// arrange
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
-		ArtistID:  testutil.StoreIDW,
-		StoreName: testutil.StoreApple,
-		StoreID:   testutil.StoreIDA,
-		Poster:    testutil.PosterSimple,
+	assert.NoError(t.T(), Mgr.EnsureStoreExists(vars.StoreApple))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSkrillex}))
+	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{Name: vars.ArtistSPY}))
+	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
+		ArtistID:    1,
+		SpotifyID:   vars.StoreIDA,
+		Title:       vars.ArtistAlgorithm,
+		Explicit:    true,
+		TracksCount: 10,
+		DurationMs:  25,
 	}))
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
-		ArtistID:  testutil.StoreIDQ,
-		StoreName: testutil.StoreApple,
-		StoreID:   testutil.StoreIDB,
+	assert.NoError(t.T(), Mgr.EnsureReleaseExists(&Release{
+		ArtistID:  2,
+		SpotifyID: vars.StoreIDB,
 	}))
 
 	// action
-	releases, err := DbMgr.FindReleases(map[string]interface{}{"poster": ""})
+	releases, err := Mgr.FindReleases(1, vars.ArtistAlgorithm)
 
 	// assert
-	assert.NoError(t, err)
-	assert.Len(t, releases, 1)
-	assert.Equal(t, int64(testutil.StoreIDQ), releases[0].ArtistID)
-}
-
-func TestDB_Releases_UpdateRelease(t *testing.T) {
-	setup()
-	defer teardown()
-
-	// arrange
-	release := Release{
-		ArtistID:  testutil.StoreIDW,
-		StoreName: testutil.StoreApple,
-		StoreID:   testutil.StoreIDA,
-	}
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&release))
-	assert.NoError(t, DbMgr.EnsureReleaseExists(&Release{
-		ArtistID:  testutil.StoreIDQ,
-		StoreName: testutil.StoreApple,
-		StoreID:   testutil.StoreIDB,
-	}))
-
-	// action
-	release.Poster = testutil.PosterSimple
-	err := DbMgr.UpdateRelease(&release)
-	releases, _ := DbMgr.GetAllReleases()
-
-	// assert
-	assert.NoError(t, err)
-	assert.Equal(t, int64(testutil.StoreIDW), releases[0].ArtistID)
-	assert.Equal(t, testutil.StoreApple, releases[0].StoreName)
-	assert.Equal(t, testutil.StoreIDA, releases[0].StoreID)
-	assert.Equal(t, testutil.PosterSimple, releases[0].Poster)
-	// another release must not change
-	assert.Equal(t, int64(testutil.StoreIDQ), releases[1].ArtistID)
-	assert.Equal(t, testutil.StoreApple, releases[1].StoreName)
-	assert.Equal(t, testutil.StoreIDB, releases[1].StoreID)
+	assert.NoError(t.T(), err)
+	assert.Len(t.T(), releases, 1)
+	assert.NotEmpty(t.T(), releases[0].ID)
+	assert.Equal(t.T(), int64(1), releases[0].ArtistID)
+	assert.Equal(t.T(), vars.ArtistAlgorithm, releases[0].Title)
+	assert.True(t.T(), releases[0].Explicit)
+	assert.Equal(t.T(), int32(10), releases[0].TracksCount)
+	assert.Equal(t.T(), int64(25), releases[0].DurationMs)
 }

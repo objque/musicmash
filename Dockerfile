@@ -1,25 +1,47 @@
-# Create the intermediate builder image.
-FROM golang:latest as builder
+FROM golang:1-alpine as builder
 
-# Docker is copying directory contents so we need to copy them in same directories.
-WORKDIR /go/src/github.com/musicmash/musicmash
-COPY . .
-
-# Build the static application binary.
 ENV CGO_ENABLED=0
 ENV GOOS=linux
 ENV GOARCH=amd64
-RUN go build -v -a -installsuffix cgo -gcflags "all=-trimpath=$(GOPATH)" -o bin/musicmash ./cmd/...
 
-# Create the final small image.
+ARG RELEASE=unset
+ARG COMMIT=unset
+ARG BUILD_TIME=unset
+ENV PROJECT=github.com/musicmash/musicmash
+
+WORKDIR /go/src/github.com/musicmash
+COPY migrations /var/musicmash/migrations
+COPY go.mod go.mod
+COPY go.sum go.sum
+COPY cmd cmd
+COPY pkg pkg
+COPY internal internal
+
+RUN go build -v \
+    -gcflags "all=-trimpath=${WORKDIR}" \
+    -ldflags "-w -s \
+       -X ${PROJECT}/internal/version.Release=${RELEASE} \
+       -X ${PROJECT}/internal/version.Commit=${COMMIT} \
+       -X ${PROJECT}/internal/version.BuildTime=${BUILD_TIME}" \
+    -o /usr/local/bin/musicmash ./cmd/musicmash/...
+
+RUN go build -v \
+    -gcflags "all=-trimpath=${WORKDIR}" \
+    -ldflags "-w -s \
+       -X ${PROJECT}/internal/version.Release=${RELEASE} \
+       -X ${PROJECT}/internal/version.Commit=${COMMIT} \
+       -X ${PROJECT}/internal/version.BuildTime=${BUILD_TIME}" \
+    -o /usr/local/bin/musicmashctl ./cmd/musicmashctl/...
+
 FROM alpine:latest
 
-RUN apk update && apk upgrade && \
-    apk add --no-cache \
-    ca-certificates vim curl && \
-    rm -rf /var/cache/apk/*
+RUN addgroup -S musicmash && adduser -S musicmash -G musicmash
+USER musicmash
+WORKDIR /home/musicmash
 
-WORKDIR /root/
-COPY --from=builder /go/src/github.com/musicmash/musicmash/bin .
+COPY --from=builder --chown=musicmash:musicmash /var/musicmash/migrations /var/musicmash/migrations
+COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmash /usr/local/bin/musicmash
+COPY --from=builder --chown=musicmash:musicmash /usr/local/bin/musicmashctl /usr/local/bin/musicmashctl
 
-ENTRYPOINT ["./musicmash"]
+ENTRYPOINT ["/usr/local/bin/musicmash"]
+CMD ["-db-auto-migrate=true", "-db-migrations-dir=/var/musicmash/migrations"]

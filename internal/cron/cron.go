@@ -1,58 +1,72 @@
 package cron
 
 import (
+	"fmt"
 	"time"
 
-	"github.com/jinzhu/gorm"
 	"github.com/musicmash/musicmash/internal/db"
 	"github.com/musicmash/musicmash/internal/log"
 )
 
 type cron struct {
-	ActionName               string
-	Action                   func()
-	CountOfSkippedHoursToRun float64
+	Action     func() error
+	ActionName string
+	Delay      time.Duration
+}
+
+func (c *cron) doActionAndUpdateLast() {
+	// the time of the last success should be equal to the time when we started to perform the action.
+	// this will help avoid problems when several actions can be tied at a time.
+	//
+	// for example, while the notification is in progress, new releases may appear
+	// and when the notification is completed, it will set the date
+	// greater than the release.created_at that was found during the fetch.
+	now := time.Now().UTC()
+
+	// do action...
+	log.Infof("calling %v action", c.ActionName)
+	if err := c.Action(); err != nil {
+		log.Errorf("%v action return err: %v", err)
+		return
+	}
+
+	// update date when action was successful
+	if err := db.Mgr.SetLastActionDate(c.ActionName, now); err != nil {
+		log.Errorf("can't save last_action date for %s: %v", c.ActionName, err)
+		return
+	}
+
+	log.Infof("successfully update date for %v action", c.ActionName)
 }
 
 func (c *cron) Run() {
-	for {
-		if !c.IsMustFetch() {
-			time.Sleep(time.Minute * 15)
-			continue
-		}
-
-		now := time.Now().UTC()
-		log.Infof("Start %sing stage for '%s'...", c.ActionName, now.String())
-		c.Action()
-		log.Infof("Finish %sing stage '%s'...", c.ActionName, time.Now().UTC().String())
-		log.Infof("Elapsed time '%s' for %s", time.Now().UTC().Sub(now).String(), c.ActionName)
-		if err := db.DbMgr.SetLastActionDate(c.ActionName, now); err != nil {
-			log.Errorf("can't save last_action date for '%s'", c.ActionName)
-		}
-	}
-}
-
-func (c *cron) IsMustFetch() bool {
-	last, err := db.DbMgr.GetLastActionDate(c.ActionName)
+	// get last date when action was successful
+	last, err := db.Mgr.GetLastActionDate(c.ActionName)
 	if err != nil {
-		if err == gorm.ErrRecordNotFound {
-			log.Infof("LastAction for '%s' not found, will start now...", c.ActionName)
-			return true
-		}
-
-		log.Error(err)
-		return false
+		log.Error(fmt.Errorf("tried to get last_action for %v stage: %w", c.ActionName, err))
+		return
 	}
 
-	diff := calcDiffHours(last.Date)
-	log.Infof("Last %s was at %s next after %v hour",
-		c.ActionName,
-		last.Date.Format("2006-01-02T15:04:05"),
-		c.CountOfSkippedHoursToRun-diff)
-	return diff >= c.CountOfSkippedHoursToRun
+	// check if action is outdated and we should start action now
+	now := time.Now().UTC()
+	previous := last.Date.Add(c.Delay)
+	if now.After(previous) {
+		log.Infof("%v action was too late, trigger it now", c.ActionName)
+		c.doActionAndUpdateLast()
+	}
+
+	// schedule new ticker
+	log.Infof("starting ticker with %v delay for %v action", c.Delay, c.ActionName)
+	for range time.NewTicker(c.Delay).C {
+		c.doActionAndUpdateLast()
+	}
 }
 
-func Run(actionName string, countOfSkippedHours float64, action func()) {
-	c := cron{Action: action, ActionName: actionName, CountOfSkippedHoursToRun: countOfSkippedHours}
-	c.Run()
+func Run(actionName string, delay time.Duration, action func() error) {
+	scheduler := cron{
+		Action:     action,
+		ActionName: actionName,
+		Delay:      delay,
+	}
+	scheduler.Run()
 }

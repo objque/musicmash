@@ -1,34 +1,28 @@
+---
 http:
-    port: 8844
+  ip: 0.0.0.0
+  port: 8844
 
 db:
-    type:  'mysql'
-    host:  'mariadb'
-    name:  'musicmash'
-    login: 'musicmash'
-    pass:  'musicmash'
-    log: false
+  host: musicmash.db
+  port: 5432
+  name: musicmash
+  login: musicmash
+  pass: musicmash
+  log: false
+  auto_migrate: true
+  migrations_dir: file:///var/fetchers/migrations
 
 log:
-    level: DEBUG
-    file: 'musicmash.log'
+  file: /var/log/musicmash/musicmash.log
+  level: INFO
 
-artists: "http://artists"
-
-stores:
-    itunes:
-      url: "https://api.music.apple.com"
-      fetch_workers: 10
-      name: "Apple Music"
-      fetch: true
-      meta:
-        token: "kpXVCIsInR5cCI6IkpXVCIsInR5cCI6IkpXVCIsInR5cCI6I"
-        region: "us"
-
-fetching:
-  refetch_after_hours: 1
-  count_of_skipped_hours: 8
+# call external service that sends notifications
+notifier:
+  enabled: true
+  delay: 30m
+  url: http://notifier/v1/releases
 
 sentry:
-  enabled: true
-  key: "https://xxxxx:yyyyy@sentry.io/123456"
+  enabled: false
+  key: https://uuid@sentry.io/123456

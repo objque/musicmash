@@ -1,43 +1,69 @@
+override RELEASE="$(git tag -l --points-at HEAD)"
+override COMMIT="$(shell git rev-parse --short HEAD)"
+override BUILD_TIME="$(shell date -u '+%Y-%m-%dT%H:%M:%S')"
+override VERSION=v3
+
 all:
 
 clean:
-	rm bin/musicmash || true
+	rm dist/musicmash || true
+	rm dist/musicmashctl || true
 
 build: clean
-	GOOS=linux GOARCH=amd64 go build -v -a -installsuffix cgo -gcflags "all=-trimpath=$(GOPATH)" -o bin/musicmash ./cmd/...
+	go build -ldflags="-s -w" -v -o dist/musicmash ./cmd/musicmash/...
+	go build -ldflags="-s -w" -v -o dist/musicmashctl ./cmd/musicmashctl/...
 
-rgo:
-	go get -u github.com/kyoh86/richgo
+build-arm7: clean
+	if ! which arm-linux-gnueabi-gcc > /dev/null; then \
+		echo "you must have gcc-arm-linux-gnueabi/stable package installed to build musicmash for arm7:"; \
+		echo "\n  apt update && apt install -y gcc-arm-linux-gnueabi/stable\n"; \
+		exit 1; \
+	fi
+
+	env GOOS=linux GOARCH=arm GOARM=7 CGO_ENABLED=1 CC=arm-linux-gnueabi-gcc go build -ldflags="-s -w" -v -o ./dist/musicmash ./cmd/musicmash/...
+	env GOOS=linux GOARCH=arm GOARM=7 go build -ldflags="-s -w" -v -o ./dist/musicmashctl ./cmd/musicmashctl/...
 
 install:
 	go install -v ./cmd/...
 
-t tests: install
-	go test -v ./internal/...
+test t:
+	go test -v -short ./...
 
-add-ssh-key:
-	openssl aes-256-cbc -K $(encrypted_a4311917bb34_key) -iv $(encrypted_a4311917bb34_iv) -in travis_key.enc -out /tmp/travis_key -d
-	chmod 600 /tmp/travis_key
-	ssh-add /tmp/travis_key
+test-full tf:
+	go test -v -p 1 ./...
 
-docker-login:
-	docker login -u $(REGISTRY_USER) -p $(REGISTRY_PASS)
+update-deps:
+	go get -u ./...
+	go mod vendor
 
-docker-build:
-	docker build -t $(REGISTRY_REPO):$(VERSION) .
+image:
+	docker build \
+		--build-arg RELEASE=${RELEASE} \
+		--build-arg COMMIT=${COMMIT} \
+		--build-arg BUILD_TIME=${BUILD_TIME} \
+		-t $(REGISTRY_REPO):$(VERSION) .
 
-docker-push: docker-login
-	docker push $(REGISTRY_REPO):$(VERSION)
+compose:
+	docker-compose up --build -d
 
-deploy:
-	ssh -o "StrictHostKeyChecking no" $(HOST_USER)@$(HOST) make run-music
-
-deploy-staging:
-	ssh -o "StrictHostKeyChecking no" $(STAGING_USER)@$(STAGING_HOST) make run-music
-
-lint-all l:
+lint l:
+	bash ./scripts/revive.sh
 	bash ./scripts/golangci-lint.sh
-	bash ./scripts/consistent.sh
 
-rigo:
-	make install & make rgo
+run: install
+	musicmash --db-auto-migrate=true --db-migrations-dir=./migrations --config musicmash.example.yaml
+
+ensure-go-migrate-installed:
+	bash ./scripts/install-go-migrate.sh
+
+# show latest applied migration
+db-status: ensure-go-migrate-installed
+	migrate -path migrations -database "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable" -verbose version
+
+# apply migration up
+db-up: ensure-go-migrate-installed
+	migrate -path migrations -database "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable" -verbose up
+
+# apply migration down
+db-down: ensure-go-migrate-installed
+	migrate -path migrations -database "postgresql://$(DB_USER):$(DB_PASSWORD)@$(DB_HOST):$(DB_PORT)/$(DB_NAME)?sslmode=disable" -verbose down

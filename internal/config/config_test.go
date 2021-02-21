@@ -6,43 +6,43 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
+var defaultConfig = `
+---
+http:
+  ip: 0.0.0.0
+  port: 8844
+
+db:
+  host: musicmash.db
+  port: 5432
+  log: false
+  auto_migrate: false
+  migrations_dir: migrations
+
+log:
+  file: musicmash.log
+  level: INFO
+
+notifier:
+  enabled: false
+  delay: 30m
+  url: http://notify/v1/releases
+
+sentry:
+  enabled: false
+  key: https://uuid@sentry.io/123456
+  environment: production
+`
+
 func TestConfig_Load(t *testing.T) {
-	err := Load([]byte(`
-artists: http://artists
+	// arrange
+	config := New()
 
-stores:
-    yandex:
-        url: https://music.yandex.ru
-        fetch_workers: 5
-        name: "Yandex.Music"
-        fetch: false
+	// action
+	result := &AppConfig{}
+	err := result.LoadFromBytes([]byte(defaultConfig))
 
-    itunes:
-        url: https://api.music.apple.com
-        fetch_workers: 25
-        name: "Apple Music"
-        fetch: true
-        meta:
-          token: "dd214b951ab64de0af62d53678750c90"
-          region: "us"
-`))
-
+	// assert
 	assert.NoError(t, err)
-	assert.Len(t, Config.Stores, 2)
-
-	assert.Equal(t, "http://artists", Config.Artists)
-
-	assert.Equal(t, "https://music.yandex.ru", Config.Stores["yandex"].URL)
-	assert.Equal(t, 5, Config.Stores["yandex"].FetchWorkers)
-	assert.Equal(t, "Yandex.Music", Config.Stores["yandex"].Name)
-	assert.False(t, Config.Stores["yandex"].Fetch)
-
-	assert.Equal(t, "https://api.music.apple.com", Config.Stores["itunes"].URL)
-	assert.Equal(t, 25, Config.Stores["itunes"].FetchWorkers)
-	assert.Len(t, Config.Stores["itunes"].Meta, 2)
-	assert.Equal(t, "dd214b951ab64de0af62d53678750c90", Config.Stores["itunes"].Meta["token"])
-	assert.Equal(t, "us", Config.Stores["itunes"].Meta["region"])
-	assert.Equal(t, "us", Config.Stores["itunes"].Meta["region"])
-	assert.Equal(t, "Apple Music", Config.Stores["itunes"].Name)
-	assert.True(t, Config.Stores["itunes"].Fetch)
+	assert.Equal(t, config, result)
 }

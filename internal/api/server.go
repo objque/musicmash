@@ -21,13 +21,18 @@ func getMux() *chi.Mux {
 	r.Get("/healthz", healthz)
 
 	r.Route("/v1", func(r chi.Router) {
+		NewArtistsController().Register(r)
+		NewAssociationsController().Register(r)
+		NewSubscriptionsController().Register(r)
+		NewStoresController().Register(r)
 		NewReleasesController().Register(r)
+		NewSearchsController().Register(r)
 	})
 	return r
 }
 
 func ListenAndServe(ip string, port int) error {
 	addr := fmt.Sprintf("%s:%d", ip, port)
-	log.Infof("Listening API on '%s'", addr)
+	log.Infof("Listening API on %s", addr)
 	return http.ListenAndServe(addr, getMux())
 }

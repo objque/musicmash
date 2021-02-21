@@ -1,4 +1,3 @@
-sudo: false
 language: go
 services:
 - "docker"
@@ -7,28 +6,10 @@ cache:
     - ${TRAVIS_HOME}/gopath/bin
     - ${TRAVIS_HOME}/gopath/pkg
 go:
-  - 1.12.x
+  - 1.13.x
 jobs:
   include:
   - stage: "Lint and tests"
-    script: bash ./scripts/consistent.sh
+    script: bash ./scripts/revive.sh
   - script: bash ./scripts/golangci-lint.sh
   - script: make tests
-  - stage: deploy stable build
-    if: branch = master
-    env: VERSION=stable
-    script:
-    - eval "$(ssh-agent -s)"
-    - make add-ssh-key
-    - make docker-build
-    - make docker-push
-    - make deploy
-  - stage: deploy nightly build
-    if: branch = develop
-    env: VERSION=nightly
-    script:
-    - eval "$(ssh-agent -s)"
-    - make add-ssh-key
-    - make docker-build
-    - make docker-push
-    - make deploy-staging
