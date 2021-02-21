@@ -42,7 +42,6 @@ func NewListCommand() *cobra.Command {
 
 	flags := cmd.Flags()
 	flags.BoolVar(&showPoster, "show-poster", showPoster, "Show poster column")
-	flags.StringVar(&opts.SortType, "sort-type", "asc", "Sort type for subscriptions.artist_id {asc,desc}")
 	flags.Uint64Var(opts.Limit, "limit", 100, "Limit of rows")
 	flags.Uint64Var(opts.Before, "before", 0, "Show subscriptions before given subscription.id")
 	return cmd

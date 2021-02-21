@@ -39,8 +39,8 @@ func (t *testAPISuite) TestSubscriptions_List() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 2)
-	assert.Equal(t.T(), int64(1), subs[0].ArtistID)
-	assert.Equal(t.T(), int64(2), subs[1].ArtistID)
+	assert.Equal(t.T(), int64(2), subs[0].ArtistID)
+	assert.Equal(t.T(), int64(1), subs[1].ArtistID)
 }
 
 func (t *testAPISuite) TestSubscriptions_List_Limit() {
@@ -59,7 +59,7 @@ func (t *testAPISuite) TestSubscriptions_List_Limit() {
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 1)
-	assert.Equal(t.T(), int64(1), subs[0].ArtistID)
+	assert.Equal(t.T(), int64(2), subs[0].ArtistID)
 }
 
 func (t *testAPISuite) TestSubscriptions_List_Pagination() {
@@ -73,8 +73,7 @@ func (t *testAPISuite) TestSubscriptions_List_Pagination() {
 
 	// action
 	subs, err := subscriptions.List(t.client, vars.UserObjque, &subscriptions.GetOptions{
-		SortType: "DESC",
-		Before:   ptr.Uint(3),
+		Before: ptr.Uint(3),
 	})
 
 	// assert
@@ -95,34 +94,14 @@ func (t *testAPISuite) TestSubscriptions_List_Pagination_With_Limit() {
 
 	// action
 	subs, err := subscriptions.List(t.client, vars.UserObjque, &subscriptions.GetOptions{
-		SortType: "DESC",
-		Before:   ptr.Uint(3),
-		Limit:    ptr.Uint(1),
+		Before: ptr.Uint(3),
+		Limit:  ptr.Uint(1),
 	})
 
 	// assert
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 1)
 	assert.Equal(t.T(), int64(2), subs[0].ArtistID)
-}
-
-func (t *testAPISuite) TestSubscriptions_List_SortType() {
-	// arrange
-	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistSkrillex}))
-	assert.NoError(t.T(), db.Mgr.EnsureArtistExists(&db.Artist{Name: vars.ArtistSPY}))
-	assert.NoError(t.T(), db.Mgr.SubscribeUser(vars.UserObjque, []int64{
-		1, 2,
-	}))
-
-	// action
-	const sortType = "desc"
-	subs, err := subscriptions.List(t.client, vars.UserObjque, &subscriptions.GetOptions{SortType: sortType})
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Len(t.T(), subs, 2)
-	assert.Equal(t.T(), int64(2), subs[0].ArtistID)
-	assert.Equal(t.T(), int64(1), subs[1].ArtistID)
 }
 
 func (t *testAPISuite) TestSubscriptions_UnSubscribe() {

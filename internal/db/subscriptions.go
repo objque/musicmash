@@ -1,7 +1,6 @@
 package db
 
 import (
-	"fmt"
 	"time"
 
 	sq "github.com/Masterminds/squirrel"
@@ -18,16 +17,13 @@ type Subscription struct {
 }
 
 type GetSubscriptionsOpts struct {
-	Limit    *uint64
-	Before   *uint64
-	SortType string
+	Limit  *uint64
+	Before *uint64
 }
 
 func applySubscriptionsFilters(query sq.SelectBuilder, opts *GetSubscriptionsOpts) sq.SelectBuilder {
-	if opts.SortType != "" {
-		// OrderByClause method generates incorrect query and we can't pass ASC/DESC as an arg
-		query = query.OrderBy(fmt.Sprintf("subscriptions.id %v", opts.SortType))
-	}
+	// OrderByClause method generates incorrect query and we can't pass ASC/DESC as an arg
+	query = query.OrderBy("subscriptions.id DESC")
 
 	if opts.Before != nil {
 		query = query.Where("subscriptions.id < ?", *opts.Before)

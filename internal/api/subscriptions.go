@@ -5,7 +5,6 @@ import (
 	"errors"
 	"net/http"
 	"strconv"
-	"strings"
 
 	"github.com/go-chi/chi"
 	"github.com/musicmash/musicmash/internal/api/httputils"
@@ -73,8 +72,7 @@ func (c *SubscriptionsController) createSubscriptions(w http.ResponseWriter, r *
 func (c *SubscriptionsController) listSubscriptions(w http.ResponseWriter, r *http.Request) {
 	var defaultMaxLimit uint64 = 100
 	opts := db.GetSubscriptionsOpts{
-		Limit:    &defaultMaxLimit,
-		SortType: "ASC",
+		Limit: &defaultMaxLimit,
 	}
 
 	userName, err := GetUser(r)
@@ -109,15 +107,6 @@ func (c *SubscriptionsController) listSubscriptions(w http.ResponseWriter, r *ht
 		}
 
 		opts.Limit = &limit
-	}
-
-	if v := strings.ToUpper(r.URL.Query().Get("sort_type")); v != "" {
-		if v != "ASC" && v != "DESC" {
-			httputils.WriteError(w, errors.New("sort_type must be one of {asc,desc}"))
-			return
-		}
-
-		opts.SortType = v
 	}
 
 	subs, err := db.Mgr.GetUserSubscriptions(userName, &opts)

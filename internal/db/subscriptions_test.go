@@ -87,9 +87,9 @@ func (t *testDBSuite) TestSubscriptions_List_Limit() {
 	// id always equals to zero, because it doesn't load in query
 	assert.Equal(t.T(), uint64(0), subs[0].ID)
 	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
-	assert.Equal(t.T(), int64(1), subs[0].ArtistID)
-	assert.Equal(t.T(), vars.ArtistSkrillex, subs[0].ArtistName)
-	assert.Equal(t.T(), vars.PosterMiddle, subs[0].ArtistPoster)
+	assert.Equal(t.T(), int64(2), subs[0].ArtistID)
+	assert.Equal(t.T(), vars.ArtistSPY, subs[0].ArtistName)
+	assert.Equal(t.T(), vars.PosterSimple, subs[0].ArtistPoster)
 }
 
 func (t *testDBSuite) TestSubscriptions_List_Pagination() {
@@ -106,8 +106,7 @@ func (t *testDBSuite) TestSubscriptions_List_Pagination() {
 
 	// action
 	subs, err := Mgr.GetUserSubscriptions(vars.UserObjque, &GetSubscriptionsOpts{
-		SortType: "DESC",
-		Before:   ptr.Uint(2),
+		Before: ptr.Uint(2),
 	})
 
 	// assert
@@ -139,9 +138,8 @@ func (t *testDBSuite) TestSubscriptions_List_Pagination_With_Limit() {
 
 	// action
 	subs, err := Mgr.GetUserSubscriptions(vars.UserObjque, &GetSubscriptionsOpts{
-		SortType: "DESC",
-		Before:   ptr.Uint(3),
-		Limit:    ptr.Uint(1),
+		Before: ptr.Uint(3),
+		Limit:  ptr.Uint(1),
 	})
 
 	// assert
@@ -153,49 +151,6 @@ func (t *testDBSuite) TestSubscriptions_List_Pagination_With_Limit() {
 	assert.Equal(t.T(), int64(2), subs[0].ArtistID)
 	assert.Equal(t.T(), vars.ArtistSPY, subs[0].ArtistName)
 	assert.Equal(t.T(), vars.PosterSimple, subs[0].ArtistPoster)
-}
-
-func (t *testDBSuite) TestSubscriptions_List_SortType() {
-	// arrange
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{
-		Name:   vars.ArtistSkrillex,
-		Poster: vars.PosterMiddle,
-	}))
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{
-		Name:   vars.ArtistSPY,
-		Poster: vars.PosterSimple,
-	}))
-	assert.NoError(t.T(), Mgr.EnsureArtistExists(&Artist{
-		Name:   vars.ArtistArchitects,
-		Poster: vars.PosterGiant,
-	}))
-	assert.NoError(t.T(), Mgr.SubscribeUser(vars.UserObjque, []int64{1, 2, 3}))
-
-	// action
-	const sortType = "desc"
-	subs, err := Mgr.GetUserSubscriptions(vars.UserObjque, &GetSubscriptionsOpts{SortType: sortType})
-
-	// assert
-	assert.NoError(t.T(), err)
-	assert.Len(t.T(), subs, 3)
-	// id always equals to zero, because it doesn't load in query
-	assert.Equal(t.T(), uint64(0), subs[0].ID)
-	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
-	assert.Equal(t.T(), int64(3), subs[0].ArtistID)
-	assert.Equal(t.T(), vars.ArtistArchitects, subs[0].ArtistName)
-	assert.Equal(t.T(), vars.PosterGiant, subs[0].ArtistPoster)
-
-	assert.Equal(t.T(), uint64(0), subs[1].ID)
-	assert.Equal(t.T(), vars.UserObjque, subs[1].UserName)
-	assert.Equal(t.T(), int64(2), subs[1].ArtistID)
-	assert.Equal(t.T(), vars.ArtistSPY, subs[1].ArtistName)
-	assert.Equal(t.T(), vars.PosterSimple, subs[1].ArtistPoster)
-
-	assert.Equal(t.T(), uint64(0), subs[2].ID)
-	assert.Equal(t.T(), vars.UserObjque, subs[2].UserName)
-	assert.Equal(t.T(), int64(1), subs[2].ArtistID)
-	assert.Equal(t.T(), vars.ArtistSkrillex, subs[2].ArtistName)
-	assert.Equal(t.T(), vars.PosterMiddle, subs[2].ArtistPoster)
 }
 
 func (t *testDBSuite) TestSubscriptions_List_Empty() {

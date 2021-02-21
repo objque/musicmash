@@ -11,17 +11,12 @@ import (
 )
 
 type GetOptions struct {
-	Limit    *uint64
-	Before   *uint64
-	SortType string
+	Limit  *uint64
+	Before *uint64
 }
 
 func buildValues(opts *GetOptions) *url.Values {
 	values := url.Values{}
-
-	if opts.SortType != "" {
-		values.Set("sort_type", opts.SortType)
-	}
 
 	if opts.Limit != nil {
 		values.Set("limit", fmt.Sprintf("%v", *opts.Limit))
