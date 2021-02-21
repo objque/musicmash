@@ -25,7 +25,7 @@ func (t *testDBSuite) TestSubscriptions_Create() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 1)
 	// id always equals to zero, because it doesn't load in query
-	assert.Equal(t.T(), uint64(0), subs[0].ID)
+	assert.Equal(t.T(), uint64(1), subs[0].ID)
 	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
 	assert.Equal(t.T(), int64(1), subs[0].ArtistID)
 	assert.Equal(t.T(), vars.ArtistSkrillex, subs[0].ArtistName)
@@ -51,13 +51,13 @@ func (t *testDBSuite) TestSubscriptions_List() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 2)
 	// id always equals to zero, because it doesn't load in query
-	assert.Equal(t.T(), uint64(0), subs[0].ID)
+	assert.Equal(t.T(), uint64(1), subs[0].ID)
 	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
 	assert.Equal(t.T(), int64(1), subs[0].ArtistID)
 	assert.Equal(t.T(), vars.ArtistSkrillex, subs[0].ArtistName)
 	assert.Equal(t.T(), vars.PosterMiddle, subs[0].ArtistPoster)
 
-	assert.Equal(t.T(), uint64(0), subs[1].ID)
+	assert.Equal(t.T(), uint64(2), subs[1].ID)
 	assert.Equal(t.T(), vars.UserObjque, subs[1].UserName)
 	assert.Equal(t.T(), int64(2), subs[1].ArtistID)
 	assert.Equal(t.T(), vars.ArtistSPY, subs[1].ArtistName)
@@ -85,7 +85,7 @@ func (t *testDBSuite) TestSubscriptions_List_Limit() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 1)
 	// id always equals to zero, because it doesn't load in query
-	assert.Equal(t.T(), uint64(0), subs[0].ID)
+	assert.Equal(t.T(), uint64(2), subs[0].ID)
 	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
 	assert.Equal(t.T(), int64(2), subs[0].ArtistID)
 	assert.Equal(t.T(), vars.ArtistSPY, subs[0].ArtistName)
@@ -113,7 +113,7 @@ func (t *testDBSuite) TestSubscriptions_List_Pagination() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 1)
 	// id always equals to zero, because it doesn't load in query
-	assert.Equal(t.T(), uint64(0), subs[0].ID)
+	assert.Equal(t.T(), uint64(1), subs[0].ID)
 	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
 	assert.Equal(t.T(), int64(1), subs[0].ArtistID)
 	assert.Equal(t.T(), vars.ArtistSkrillex, subs[0].ArtistName)
@@ -146,7 +146,7 @@ func (t *testDBSuite) TestSubscriptions_List_Pagination_With_Limit() {
 	assert.NoError(t.T(), err)
 	assert.Len(t.T(), subs, 1)
 	// id always equals to zero, because it doesn't load in query
-	assert.Equal(t.T(), uint64(0), subs[0].ID)
+	assert.Equal(t.T(), uint64(2), subs[0].ID)
 	assert.Equal(t.T(), vars.UserObjque, subs[0].UserName)
 	assert.Equal(t.T(), int64(2), subs[0].ArtistID)
 	assert.Equal(t.T(), vars.ArtistSPY, subs[0].ArtistName)

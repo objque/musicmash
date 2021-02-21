@@ -8,7 +8,7 @@ import (
 )
 
 type Subscription struct {
-	ID           uint64    `json:"-"`
+	ID           uint64    `json:"id"            db:"id"`
 	CreatedAt    time.Time `json:"-"`
 	UserName     string    `json:"-"             db:"user_name"`
 	ArtistID     int64     `json:"artist_id"     db:"artist_id"`
@@ -46,6 +46,7 @@ func (mgr *AppDatabaseMgr) CreateSubscription(subscription *Subscription) error 
 
 func (mgr *AppDatabaseMgr) GetUserSubscriptions(userName string, opts *GetSubscriptionsOpts) ([]*Subscription, error) {
 	query := sq.Select(
+		"subscriptions.id",
 		"user_name",
 		"artists.id as artist_id",
 		"artists.name as artist_name",
